@@ -4,102 +4,102 @@
 #include <tinker/detail/nonpol.hh>
 
 namespace tinker {
-real switch_cut(switch_t mode)
+real switchCut(Switch mode)
 {
    real cut;
    using namespace limits;
    switch (mode) {
-   case switch_vdw:
+   case SWITCH_VDW:
       cut = vdwtaper;
       break;
-   case switch_repuls:
+   case SWITCH_REPULS:
       cut = reptaper;
       break;
-   case switch_disp:
+   case SWITCH_DISP:
       cut = disptaper;
       break;
-   case switch_charge:
+   case SWITCH_CHARGE:
       cut = chgtaper;
       break;
-   case switch_chgdpl:
+   case SWITCH_CHGDPL:
       cut = std::sqrt(chgtaper * dpltaper);
       break;
-   case switch_dipole:
+   case SWITCH_DIPOLE:
       cut = dpltaper;
       break;
-   case switch_mpole:
+   case SWITCH_MPOLE:
       cut = mpoletaper;
       break;
-   case switch_chgtrn:
+   case SWITCH_CHGTRN:
       cut = ctrntaper;
       break;
-   case switch_ewald:
+   case SWITCH_EWALD:
       cut = ewaldcut;
       break;
-   case switch_dewald:
+   case SWITCH_DEWALD:
       cut = dewaldcut;
       break;
-   case switch_usolve:
+   case SWITCH_USOLVE:
       cut = usolvcut;
       break;
-   case switch_gkv:
+   case SWITCH_GKV:
       cut = nonpol::spcut;
       break;
-   case switch_gksa:
+   case SWITCH_GKSA:
       cut = nonpol::stoff;
       break;
-   default: // switch_default
+   default:
       cut = minOf(vdwtaper, reptaper, disptaper, chgtaper, dpltaper, mpoletaper, ctrntaper);
       break;
    }
    return cut;
 }
 
-real switch_off(switch_t mode)
+real switchOff(Switch mode)
 {
    real off;
    using namespace limits;
    switch (mode) {
-   case switch_vdw:
+   case SWITCH_VDW:
       off = vdwcut;
       break;
-   case switch_repuls:
+   case SWITCH_REPULS:
       off = repcut;
       break;
-   case switch_disp:
+   case SWITCH_DISP:
       off = dispcut;
       break;
-   case switch_charge:
+   case SWITCH_CHARGE:
       off = chgcut;
       break;
-   case switch_chgdpl:
+   case SWITCH_CHGDPL:
       off = std::sqrt(chgcut * dplcut);
       break;
-   case switch_dipole:
+   case SWITCH_DIPOLE:
       off = dplcut;
       break;
-   case switch_mpole:
+   case SWITCH_MPOLE:
       off = mpolecut;
       break;
-   case switch_chgtrn:
+   case SWITCH_CHGTRN:
       off = ctrncut;
       break;
-   case switch_ewald:
+   case SWITCH_EWALD:
       off = ewaldcut;
       break;
-   case switch_dewald:
+   case SWITCH_DEWALD:
       off = dewaldcut;
       break;
-   case switch_usolve:
+   case SWITCH_USOLVE:
       off = usolvcut;
       break;
-   case switch_gkv:
+   case SWITCH_GKV:
       off = nonpol::spoff;
       break;
-   case switch_gksa:
+   case SWITCH_GKSA:
       off = nonpol::stcut;
       break;
-   default: // switch_default
+   default:
       off = minOf(vdwcut, repcut, dispcut, chgcut, dplcut, mpolecut, ctrncut);
       break;
    }

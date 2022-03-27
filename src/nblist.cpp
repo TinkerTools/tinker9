@@ -313,7 +313,7 @@ void nblist_data(RcOp op)
 
    // vlist
    u = vlist_version();
-   cut = switch_off(switch_vdw);
+   cut = switchOff(SWITCH_VDW);
    buf = neigh::lbuffer;
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = vlist_unit;
@@ -340,10 +340,10 @@ void nblist_data(RcOp op)
    u = clist_version();
    cut = -1;
    if (use_potent(charge_term)) {
-      cut = useEwald() ? switch_off(switch_ewald) : switch_off(switch_charge);
+      cut = useEwald() ? switchOff(SWITCH_EWALD) : switchOff(SWITCH_CHARGE);
    }
    if (use_potent(vdw_term)) {
-      double vdw_cut = switch_off(switch_vdw);
+      double vdw_cut = switchOff(SWITCH_VDW);
       if (vdwtyp != evdw_t::hal)
          cut = std::max(cut, vdw_cut);
    }
@@ -370,7 +370,7 @@ void nblist_data(RcOp op)
 
    // mlist
    u = mlist_version();
-   cut = useEwald() ? switch_off(switch_ewald) : switch_off(switch_mpole);
+   cut = useEwald() ? switchOff(SWITCH_EWALD) : switchOff(SWITCH_MPOLE);
    buf = neigh::lbuffer;
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = mlist_unit;
@@ -399,7 +399,7 @@ void nblist_data(RcOp op)
 
    // ulist
    u = ulist_version();
-   cut = switch_off(switch_usolve);
+   cut = switchOff(SWITCH_USOLVE);
    buf = neigh::pbuffer;
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = ulist_unit;
@@ -427,7 +427,7 @@ void nblist_data(RcOp op)
 
    // dsplist
    u = dsplist_version();
-   cut = useDEwald() ? switch_off(switch_dewald) : switch_off(switch_disp);
+   cut = useDEwald() ? switchOff(SWITCH_DEWALD) : switchOff(SWITCH_DISP);
    buf = neigh::lbuffer;
    if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
       auto& unt = dsplist_unit;

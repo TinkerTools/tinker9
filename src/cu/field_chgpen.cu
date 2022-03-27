@@ -315,9 +315,9 @@ void dfield_chgpen_cu(real (*field)[3])
    real off;
 
    if CONSTEXPR (eq<ETYP, EWALD>())
-      off = switch_off(switch_ewald);
+      off = switchOff(SWITCH_EWALD);
    else
-      off = switch_off(switch_mpole);
+      off = switchOff(SWITCH_MPOLE);
 
    real aewald = 0;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
@@ -582,9 +582,9 @@ void ufield_chgpen_cu(const real (*uind)[3], real (*field)[3])
    real off;
 
    if CONSTEXPR (eq<ETYP, EWALD>())
-      off = switch_off(switch_ewald);
+      off = switchOff(SWITCH_EWALD);
    else
-      off = switch_off(switch_mpole);
+      off = switchOff(SWITCH_MPOLE);
 
    real aewald = 0;
    if CONSTEXPR (eq<ETYP, EWALD>()) {

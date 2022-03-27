@@ -26,7 +26,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
    if CONSTEXPR (do_g)
       darray::zero(g::q0, n, ufld, dufld);
 
-   const real off = switch_off(switch_ewald);
+   const real off = switchOff(SWITCH_EWALD);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();

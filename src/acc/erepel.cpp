@@ -23,8 +23,8 @@ void erepel_acc1()
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
 
-   real cut = switch_cut(switch_repuls);
-   real off = switch_off(switch_repuls);
+   real cut = switchCut(SWITCH_REPULS);
+   real off = switchOff(SWITCH_REPULS);
 
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;

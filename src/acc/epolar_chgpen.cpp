@@ -31,11 +31,11 @@ void epolar_chgpen_acc1(const real (*uind)[3])
    real aewald = 0;
    real off;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-      off = switch_off(switch_ewald);
+      off = switchOff(SWITCH_EWALD);
       const PMEUnit pu = ppme_unit;
       aewald = pu->aewald;
    } else {
-      off = switch_off(switch_mpole);
+      off = switchOff(SWITCH_MPOLE);
    }
 
    const real off2 = off * off;

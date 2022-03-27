@@ -344,11 +344,11 @@ void echarge_cu()
    const auto& st = *cspatial_v2_unit;
    real cut, off;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-      off = switch_off(switch_ewald);
+      off = switchOff(SWITCH_EWALD);
       cut = off; // not used
    } else {
-      off = switch_off(switch_charge);
-      cut = switch_cut(switch_charge);
+      off = switchOff(SWITCH_CHARGE);
+      cut = switchCut(SWITCH_CHARGE);
    }
 
    const real f = electric / dielec;

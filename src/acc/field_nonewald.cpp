@@ -15,7 +15,7 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
 {
    darray::zero(g::q0, n, field, fieldp);
 
-   const real off = switch_off(switch_mpole);
+   const real off = switchOff(SWITCH_MPOLE);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
@@ -161,7 +161,7 @@ void ufield_nonewald_acc(
 {
    darray::zero(g::q0, n, field, fieldp);
 
-   const real off = switch_off(switch_mpole);
+   const real off = switchOff(SWITCH_MPOLE);
    const real off2 = off * off;
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();

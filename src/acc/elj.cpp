@@ -18,8 +18,8 @@ void elj_acc1()
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
 
-   const real cut = switch_cut(switch_vdw);
-   const real off = switch_off(switch_vdw);
+   const real cut = switchCut(SWITCH_VDW);
+   const real off = switchOff(SWITCH_VDW);
    const real cut2 = cut * cut;
    const real off2 = off * off;
    const int maxnlist = clist_unit->maxnlst;

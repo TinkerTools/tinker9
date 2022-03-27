@@ -349,8 +349,8 @@ template <class Ver>
 void echgtrn_cu2()
 {
    const auto& st = *mspatial_v2_unit;
-   real cut = switch_cut(switch_chgtrn);
-   real off = switch_off(switch_chgtrn);
+   real cut = switchCut(SWITCH_CHGTRN);
+   real off = switchOff(SWITCH_CHGTRN);
    real f = electric / dielec;
 
    assert(ctrntyp == Chgtrn::SEPARATE);

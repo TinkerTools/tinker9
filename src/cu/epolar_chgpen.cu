@@ -694,9 +694,9 @@ void epolar_chgpen_cu(const real (*uind)[3])
    real off;
 
    if CONSTEXPR (eq<ETYP, EWALD>())
-      off = switch_off(switch_ewald);
+      off = switchOff(SWITCH_EWALD);
    else
-      off = switch_off(switch_mpole);
+      off = switchOff(SWITCH_MPOLE);
 
    const real f = 0.5f * electric / dielec;
    real aewald = 0;

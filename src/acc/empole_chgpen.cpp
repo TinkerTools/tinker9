@@ -28,11 +28,11 @@ void empole_chgpen_acc1()
    real aewald = 0;
    real off;
    if CONSTEXPR (eq<ETYP, EWALD>()) {
-      off = switch_off(switch_ewald);
+      off = switchOff(SWITCH_EWALD);
       const PMEUnit pu = epme_unit;
       aewald = pu->aewald;
    } else {
-      off = switch_off(switch_mpole);
+      off = switchOff(SWITCH_MPOLE);
    }
 
    const real off2 = off * off;

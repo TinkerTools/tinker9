@@ -1180,9 +1180,9 @@ void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
    const auto& st = *mspatial_v2_unit;
    real off;
    if CONSTEXPR (eq<ETYP, EWALD>())
-      off = switch_off(switch_ewald);
+      off = switchOff(SWITCH_EWALD);
    else
-      off = switch_off(switch_mpole);
+      off = switchOff(SWITCH_MPOLE);
 
    const real f = electric / dielec;
    real aewald = 0;

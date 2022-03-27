@@ -303,7 +303,7 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* re
 void sparse_precond_apply2_cu(const real (*rsd)[3], real (*zrsd)[3])
 {
    const auto& st = *uspatial_v2_unit;
-   const real off = switch_off(switch_usolve) + st.buffer;
+   const real off = switchOff(SWITCH_USOLVE) + st.buffer;
 
    launch_k1s(g::s0, n, sparse_precond_cu3, //
       rsd, zrsd, polarity, n, udiag);

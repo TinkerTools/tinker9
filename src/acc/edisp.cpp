@@ -134,13 +134,13 @@ void edisp_acc1()
    real cut, off;
    real aewald = 0;
    if CONSTEXPR (eq<DTYP, DEWALD>()) {
-      off = switch_off(switch_dewald);
+      off = switchOff(SWITCH_DEWALD);
       cut = off;
       PMEUnit pu = dpme_unit;
       aewald = pu->aewald;
    } else {
-      off = switch_off(switch_disp);
-      cut = switch_cut(switch_disp);
+      off = switchOff(SWITCH_DISP);
+      cut = switchCut(SWITCH_DISP);
    }
    const int maxnlist = dsplist_unit->maxnlst;
    const auto* nlst = dsplist_unit->nlst;

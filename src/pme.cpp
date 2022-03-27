@@ -135,8 +135,8 @@ void pmeData(RcOp op)
 
    if (op & rc_init) {
       if (!bound::use_bounds) {
-         double ecut = switch_off(switch_ewald);
-         double dcut = switch_off(switch_dewald);
+         double ecut = switchOff(SWITCH_EWALD);
+         double dcut = switchOff(SWITCH_DEWALD);
          double ext;
          tinker_f_extent(&ext);
          double wbox = 2 * (ext + std::fmax(ecut, dcut));

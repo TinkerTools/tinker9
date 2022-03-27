@@ -352,7 +352,7 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict d
 void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_v2_unit;
-   const real off = switch_off(switch_ewald);
+   const real off = switchOff(SWITCH_EWALD);
 
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
@@ -370,7 +370,7 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
 void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_v2_unit;
-   const real off = switch_off(switch_mpole);
+   const real off = switchOff(SWITCH_MPOLE);
 
    darray::zero(g::q0, n, field, fieldp);
    int ngrid = gpuGridSize(BLOCK_DIM);
@@ -685,7 +685,7 @@ void ufield_ewald_real_cu(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_v2_unit;
-   const real off = switch_off(switch_ewald);
+   const real off = switchOff(SWITCH_EWALD);
 
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
@@ -704,7 +704,7 @@ void ufield_nonewald_cu(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_v2_unit;
-   const real off = switch_off(switch_mpole);
+   const real off = switchOff(SWITCH_MPOLE);
 
    darray::zero(g::q0, n, field, fieldp);
    int ngrid = gpuGridSize(BLOCK_DIM);

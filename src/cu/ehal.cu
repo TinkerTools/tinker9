@@ -414,8 +414,8 @@ void ehal_cu3()
    constexpr bool do_g = Ver::g;
 
    const auto& st = *vspatial_v2_unit;
-   const real cut = switch_cut(switch_vdw);
-   const real off = switch_off(switch_vdw);
+   const real cut = switchCut(SWITCH_VDW);
+   const real off = switchOff(SWITCH_VDW);
 
    if CONSTEXPR (do_g)
       darray::zero(g::q0, n, gxred, gyred, gzred);

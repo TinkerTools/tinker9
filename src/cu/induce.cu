@@ -413,7 +413,7 @@ void sparse_precond_apply_cu(
    const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
    const auto& st = *uspatial_v2_unit;
-   real off = switch_off(switch_usolve);
+   real off = switchOff(SWITCH_USOLVE);
    off = off + st.buffer;
 
    launch_k1s(g::s0, n, sparse_precond_cu0, //
