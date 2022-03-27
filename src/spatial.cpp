@@ -1,36 +1,28 @@
-#include "ff/spatial.h"
 #include "ff/nblist.h"
+#include "ff/spatial.h"
 #include "md/inc.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 
 namespace tinker {
-Spatial::~Spatial()
-{
-   // output
-   darray::deallocate(lst, iak);
-   // internal
-   darray::deallocate(sorted, boxnum);
-   darray::deallocate(naak, xakf, xakf_scan);
-   darray::deallocate(nearby);
-   darray::deallocate(ax_scan);
-   darray::deallocate(xkf);
-   darray::deallocate(update, xold, yold, zold);
-}
-
-void spatial_cut_v1(int& px, int& py, int& pz, int level)
+/// Order of "roll-cut": x-y-z-x-...
+MAYBE_UNUSED
+static void spatial_cut_v1(int& px, int& py, int& pz, int level)
 {
    px = (level + 2) / 3;
    py = (level + 1) / 3;
    pz = (level + 0) / 3;
 }
-void spatial_cut_v2(int& px, int& py, int& pz, int level)
+/// Order of "roll-cut": z-y-x-z-...
+MAYBE_UNUSED
+static void spatial_cut_v2(int& px, int& py, int& pz, int level)
 {
    px = (level + 0) / 3;
    py = (level + 1) / 3;
    pz = (level + 2) / 3;
 }
-void spatial_cut_v3(int& px, int& py, int& pz, int level)
+/// Order of "roll-cut": always cuts "the longest axis".
+static void spatial_cut_v3(int& px, int& py, int& pz, int level)
 {
    // triclinic frac(1,1,1) -> cart(x,y,z)
    // x = (fz * l1.z + fy * l1.y + fx * l1.x)
@@ -70,49 +62,8 @@ void spatial_cut_v3(int& px, int& py, int& pz, int level)
       }
    }
 }
-void spatial_cut(int& px, int& py, int& pz, int level)
+void spatial1_cut(int& px, int& py, int& pz, int level)
 {
    spatial_cut_v3(px, py, pz, level);
-}
-
-void spatial_data_alloc(
-   SpatialUnit& u, int n, double cutoff, double buffer, const real* x, const real* y, const real* z)
-{
-   u = SpatialUnit::open();
-   auto& st = *u;
-
-   // output
-   st.niak = 0;
-   // internal
-   st.n = n;
-   st.nak = (n + Spatial::BLOCK - 1) / Spatial::BLOCK;
-   int level = 1 + floorLog2(st.nak - 1);
-   spatial_cut(st.px, st.py, st.pz, level);
-   st.nx = pow2(st.px + st.py + st.pz);
-   st.nxk = (st.nx + Spatial::BLOCK - 1) / Spatial::BLOCK;
-   st.near = 0;
-   st.xak_sum = 0;
-   st.iak_cap = 0;
-
-   // output
-   st.iak = nullptr;
-   st.lst = nullptr;
-   // internal
-   darray::allocate(st.n, &st.sorted, &st.boxnum);
-   darray::allocate(st.nak, &st.naak, &st.xakf, &st.xakf_scan);
-   darray::allocate(st.nx, &st.nearby);
-   darray::allocate(st.nx + 1, &st.ax_scan);
-   darray::allocate(st.nak * st.nxk, &st.xkf);
-   darray::allocate(st.n, &st.update, &st.xold, &st.yold, &st.zold);
-
-   st.fresh = 0;
-   st.cutoff = cutoff;
-   st.buffer = buffer;
-   st.x = x;
-   st.y = y;
-   st.z = z;
-
-   u.update_deviceptr(st, g::q0);
-   wait_for(g::q0);
 }
 }

@@ -5,7 +5,7 @@
 #include "ff/image.h"
 #include "ff/pchg/echglj.h"
 #include "ff/pme.h"
-#include "ff/spatial2.h"
+#include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
 #include "math/inc.h"
@@ -109,7 +109,7 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
    int niak, const int* restrict iak,
    const int* restrict lst, //
    const int* restrict bnum,
-   const Spatial2::Center* restrict akc, //
+   const Spatial::Center* restrict akc, //
    int nexclude, const int (*restrict exclude)[2],
    const real (*restrict exclude_scale)[2], //
    real eccut, real ecoff, real f, real aewald, const real* restrict chg,

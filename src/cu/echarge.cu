@@ -4,7 +4,7 @@
 #include "ff/image.h"
 #include "ff/pchg/echarge.h"
 #include "ff/pme.h"
-#include "ff/spatial2.h"
+#include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
 #include "mod/nblist.h"

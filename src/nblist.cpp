@@ -5,7 +5,7 @@
 #include "ff/pchg/echarge.h"
 #include "ff/pchg/evdw.h"
 #include "ff/potent.h"
-#include "ff/spatial2.h"
+#include "ff/spatial.h"
 #include "ff/switch.h"
 #include "md/inc.h"
 #include "mod/disp.h"
@@ -234,7 +234,7 @@ static bool alloc_thrust_cache;
 
 // rc_alloc
 static void spatial_alloc( //
-   Spatial2Unit& unt, int n, real cut, real buf, const real* x, const real* y, const real* z,
+   SpatialUnit& unt, int n, real cut, real buf, const real* x, const real* y, const real* z,
    int nstype,                           //
    int ns1 = 0, int (*js1)[2] = nullptr, //
    int ns2 = 0, int (*js2)[2] = nullptr, //
@@ -242,7 +242,7 @@ static void spatial_alloc( //
    int ns4 = 0, int (*js4)[2] = nullptr)
 {
 #if TINKER_CUDART
-   spatial2_data_alloc(unt, n, cut, buf, x, y, z, nstype, //
+   spatialDataAlloc(unt, n, cut, buf, x, y, z, nstype, //
       ns1, js1, ns2, js2, ns3, js3, ns4, js4);
    alloc_thrust_cache = true;
 #else
@@ -250,15 +250,15 @@ static void spatial_alloc( //
 }
 
 // rc_init
-static void spatial_build(Spatial2Unit unt)
+static void spatial_build(SpatialUnit unt)
 {
 #if TINKER_CUDART
-   spatial_data_init_cu(unt);
+   spatialDataInit_cu(unt);
 #else
 #endif
 }
 
-static void spatial_update(Spatial2Unit unt)
+static void spatial_update(SpatialUnit unt)
 {
 #if TINKER_CUDART
    extern int check_spatial(
@@ -267,9 +267,9 @@ static void spatial_update(Spatial2Unit unt)
    int answer =
       check_spatial(st.n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold, st.zold);
    if (answer) {
-      spatial_data_init_cu(unt);
+      spatialDataInit_cu(unt);
    } else {
-      spatial_data_update_sorted(unt);
+      spatialDataUpdateSorted_cu(unt);
    }
 #else
 #endif
@@ -288,7 +288,7 @@ void nblist_data(RcOp op)
       dsplist_unit.close();
 
 #if TINKER_CUDART
-      Spatial2Unit::clear();
+      SpatialUnit::clear();
       cspatial_v2_unit.close();
       vspatial_v2_unit.close();
       uspatial_v2_unit.close();

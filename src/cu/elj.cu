@@ -2,7 +2,7 @@
 #include "ff/energy.h"
 #include "ff/image.h"
 #include "ff/pchg/evdw.h"
-#include "ff/spatial2.h"
+#include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
 #include "math/switch.h"
