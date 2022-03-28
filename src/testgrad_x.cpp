@@ -2,6 +2,7 @@
 #include "md/inc.h"
 #include "tinker9.h"
 #include "tool/io.h"
+#include <cmath>
 #include <tinker/detail/inform.hh>
 
 #define TINKER_TESTGRAD_VIRIAL 0
@@ -76,7 +77,7 @@ void xTestgrad(int, char**)
       real y1 = gdy[i];
       real z1 = gdz[i];
       real norm = x1 * x1 + y1 * y1 + z1 * z1;
-      norm = REAL_SQRT(norm);
+      norm = std::sqrt(norm);
       print(out, fmt, i + 1, x1, y1, z1, norm);
    }
 

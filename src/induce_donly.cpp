@@ -3,6 +3,7 @@
 #include "ff/potent.h"
 #include "md/inc.h"
 #include "tool/io.h"
+#include <cmath>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>

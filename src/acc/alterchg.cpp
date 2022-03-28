@@ -5,6 +5,7 @@
 #include "ff/hippo/elechippo.h"
 #include "ff/pchg/evalence.h"
 #include "math/const.h"
+#include "math/libfunc.h"
 #include "md/inc.h"
 #include <cassert>
 

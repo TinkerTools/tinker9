@@ -1,5 +1,4 @@
 #pragma once
-#include "macro.h"
 #include "tool/rcman.h"
 
 namespace tinker {

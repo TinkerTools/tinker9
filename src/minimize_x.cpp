@@ -3,6 +3,7 @@
 #include "md/inc.h"
 #include "tinker9.h"
 #include "tool/io.h"
+#include <cmath>
 #include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/scales.hh>

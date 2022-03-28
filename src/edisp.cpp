@@ -7,6 +7,7 @@
 #include "ff/potent.h"
 #include "tinker9.h"
 #include "tool/zero.h"
+#include <cmath>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/disp.hh>
 #include <tinker/detail/dsppot.hh>

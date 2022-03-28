@@ -1,5 +1,6 @@
 #include "add.h"
 #include "ff/rattle.h"
+#include "math/sinhc.h"
 #include "md/inc.h"
 #include <tinker/detail/units.hh>
 

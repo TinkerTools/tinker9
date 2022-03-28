@@ -1,4 +1,6 @@
 #include "ff/spatial.h"
+#include "math/maxmin.h"
+#include "math/pow2.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 

@@ -15,6 +15,7 @@
 #include "tinker9.h"
 #include "tool/darray.h"
 #include "tool/io.h"
+#include <cmath>
 #include <fstream>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/chgpot.hh>

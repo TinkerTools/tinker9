@@ -9,6 +9,7 @@
 #include "ff/potent.h"
 #include "tool/io.h"
 #include "tool/zero.h"
+#include <cmath>
 #include <map>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/inform.hh>

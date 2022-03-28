@@ -1,6 +1,8 @@
 #pragma once
 #include "accasync.h"
-#include "math/inc.h"
+#include "math/const.h"
+#include "math/libfunc.h"
+#include "math/parallel.h"
 #include "tool/ptrtrait.h"
 #include <vector>
 
@@ -247,13 +249,4 @@ struct darray
       scale(q, nelem, scal, ptrs...);
    }
 };
-
-/**
- * \ingroup rc
- * Based on the template parameters `T` and `N`, this type is either
- * defined to `T*` or `T(*)[N]` when `N` is greater than 1.
- * `N` is set to 1 by default.
- */
-// template <class T, size_t N = 1>
-// using pointer = typename darray::pointer<T, N>::type;
 }
