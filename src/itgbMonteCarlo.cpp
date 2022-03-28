@@ -1,4 +1,4 @@
-#include "math/inc.h"
+#include "math/random.h"
 #include "md/inc.h"
 #include "md/integrator.h"
 #include "tinker9.h"

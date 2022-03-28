@@ -1,5 +1,7 @@
 #include "ff/box.h"
-#include "math/inc.h"
+#include "math/ou.h"
+#include "math/random.h"
+#include "math/trimatexp.h"
 #include "md/inc.h"
 #include "md/integrator.h"
 #include "tool/io.h"

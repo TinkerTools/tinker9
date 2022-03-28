@@ -1,4 +1,4 @@
-#include "math/inc.h"
+#include "math/trimatexp.h"
 #include "test.h"
 using namespace tinker;
 

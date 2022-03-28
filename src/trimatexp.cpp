@@ -1,4 +1,4 @@
-#include "math/inc.h"
+#include "math/sinhc.h"
 #include <algorithm>
 #include <cmath>
 

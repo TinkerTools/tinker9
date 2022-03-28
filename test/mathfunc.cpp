@@ -1,4 +1,6 @@
-#include "math/inc.h"
+#include "math/libfunc.h"
+#include "math/lu.h"
+#include "math/pow2.h"
 #include "test.h"
 using namespace tinker;
 

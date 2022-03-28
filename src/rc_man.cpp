@@ -40,7 +40,7 @@ void finish()
 }
 }
 
-#include "math/inc.h"
+#include "math/random.h"
 #include "platform.h"
 #include "tool/gpucard.h"
 

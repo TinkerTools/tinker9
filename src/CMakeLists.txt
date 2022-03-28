@@ -73,6 +73,7 @@ itgtNhc.cpp
 itgtNhc06.cpp
 lf_lpiston.cpp
 lpiston.cpp
+mathlu.cpp
 mdegv.cpp
 mdintg.cpp
 mdppg.cpp

@@ -44,6 +44,7 @@ induce_donly.cpp
 lf_lpiston.cpp
 lpiston.cpp
 mathfunc_parallel.cpp
+mathlu.cpp
 mddebug.cpp
 mdegv.cpp
 mdintg.cpp

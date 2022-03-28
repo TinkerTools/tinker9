@@ -2,7 +2,7 @@
 #include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
-#include "math/inc.h"
+#include "math/random.h"
 #include "md/inc.h"
 #include "tinker9.h"
 #include "tool/darray.h"

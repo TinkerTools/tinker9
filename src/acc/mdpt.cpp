@@ -5,7 +5,7 @@
 #include "ff/energy.h"
 #include "ff/molecule.h"
 #include "ff/nblist.h"
-#include "math/inc.h"
+#include "math/random.h"
 #include "md/inc.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>

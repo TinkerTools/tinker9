@@ -1,7 +1,7 @@
 #include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/rattle.h"
-#include "math/inc.h"
+#include "math/random.h"
 #include "md/inc.h"
 #include "md/lflpiston.h"
 #include <tinker/detail/bath.hh>

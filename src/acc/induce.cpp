@@ -5,7 +5,7 @@
 #include "ff/amoeba/induce.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
-#include "math/inc.h"
+#include "math/lu.h"
 #include "md/inc.h"
 #include "seq/damp.h"
 #include "tool/error.h"
