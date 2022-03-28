@@ -139,13 +139,13 @@ void mdBerendsenBarostat_acc(time_prec dt)
       l0 = std::sqrt(hbox[0][0] * hbox[0][0] + hbox[0][1] * hbox[0][1] + hbox[0][2] * hbox[0][2]);
       l1 = std::sqrt(hbox[1][0] * hbox[1][0] + hbox[1][1] * hbox[1][1] + hbox[1][2] * hbox[1][2]);
       l2 = std::sqrt(hbox[2][0] * hbox[2][0] + hbox[2][1] * hbox[2][1] + hbox[2][2] * hbox[2][2]);
-      if (box_shape == MONO_BOX or box_shape == TRI_BOX) {
+      if (box_shape == BoxShape::MONO or box_shape == BoxShape::TRI) {
          // beta
          a1 = (hbox[0][0] * hbox[2][0] + hbox[0][1] * hbox[2][1] + hbox[0][2] * hbox[2][2]) /
             (l0 * l2);
          a1 = radian * std::acos(a1);
       }
-      if (box_shape == TRI_BOX) {
+      if (box_shape == BoxShape::TRI) {
          // alpha
          a0 = (hbox[1][0] * hbox[2][0] + hbox[1][1] * hbox[2][1] + hbox[1][2] * hbox[2][2]) /
             (l1 * l2);

@@ -133,13 +133,13 @@ SEQ_ROUTINE
 inline void imageGeneral(real& restrict xr, real& restrict yr, real& restrict zr, BoxShape sh,
    real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
 {
-   if (sh == ORTHO_BOX) {
+   if (sh == BoxShape::ORTHO) {
       IMAGE_ORTHO__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (sh == MONO_BOX) {
+   } else if (sh == BoxShape::MONO) {
       IMAGE_MONO__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (sh == TRI_BOX) {
+   } else if (sh == BoxShape::TRI) {
       IMAGE_TRI__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (sh == OCT_BOX) {
+   } else if (sh == BoxShape::OCT) {
       IMAGE_OCT__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else {
       // UNBOND_BOX
@@ -158,13 +158,13 @@ SEQ_ROUTINE
 inline real imagen2General(real& xr, real& yr, real& zr, BoxShape sh, real3 l1, real3 l2, real3 l3,
    real3 ra, real3 rb, real3 rc)
 {
-   if (sh == ORTHO_BOX) {
+   if (sh == BoxShape::ORTHO) {
       IMAGE_ORTHO__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (sh == MONO_BOX) {
+   } else if (sh == BoxShape::MONO) {
       IMAGE_MONO__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (sh == TRI_BOX) {
+   } else if (sh == BoxShape::TRI) {
       IMAGE_TRI__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
-   } else if (sh == OCT_BOX) {
+   } else if (sh == BoxShape::OCT) {
       IMAGE_OCT__(xr, yr, zr, l1, l2, l3, ra, rb, rc);
    } else {
       // UNBOND_BOX

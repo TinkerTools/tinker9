@@ -966,16 +966,16 @@ void echglj_cu3()
       mut_coalesced, vlam, vcouple, ev, vir_ev, devx, devy, devz
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   if (box_shape == ORTHO_BOX) {
+   if (box_shape == BoxShape::ORTHO) {
       auto ker1 = echglj_cu5<Ver, PbcOrtho, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
       ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
-   } else if (box_shape == MONO_BOX) {
+   } else if (box_shape == BoxShape::MONO) {
       auto ker1 = echglj_cu5<Ver, PbcMono, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
       ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
-   } else if (box_shape == TRI_BOX) {
+   } else if (box_shape == BoxShape::TRI) {
       auto ker1 = echglj_cu5<Ver, PbcTri, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
       ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
-   } else if (box_shape == OCT_BOX) {
+   } else if (box_shape == BoxShape::OCT) {
       auto ker1 = echglj_cu5<Ver, PbcOct, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
       ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
    } else {

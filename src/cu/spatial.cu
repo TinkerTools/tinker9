@@ -229,7 +229,7 @@ void spatial2_step1(int n, int pz, int2* restrict b2num, //
       ix &= ((1 << px) - 1);
       iy &= ((1 << py) - 1);
       iz &= ((1 << pz) - 1);
-      if (box_shape == OCT_BOX)
+      if (box_shape == BoxShape::OCT)
          ixyz_octahedron(ix, iy, iz, pz, pz, pz);
       coord_t ixyz[3] = {ix, iy, iz};
       AxesToTranspose(ixyz, pz);
@@ -904,13 +904,13 @@ void spatialDataInit_cu(SpatialUnit u)
       u->cap_nakpl, u->nstype,                               //
       si1.bit0, si2.bit0, si3.bit0, si4.bit0);
 
-   if (box_shape == ORTHO_BOX) {
+   if (box_shape == BoxShape::ORTHO) {
       run_spatial2_step5<PbcOrtho>(u);
-   } else if (box_shape == MONO_BOX) {
+   } else if (box_shape == BoxShape::MONO) {
       run_spatial2_step5<PbcMono>(u);
-   } else if (box_shape == TRI_BOX) {
+   } else if (box_shape == BoxShape::TRI) {
       run_spatial2_step5<PbcTri>(u);
-   } else if (box_shape == OCT_BOX) {
+   } else if (box_shape == BoxShape::OCT) {
       run_spatial2_step5<PbcOct>(u);
    } else {
       assert(false);

@@ -16,7 +16,7 @@ extern void boxData_acc(RcOp);
 namespace {
 void set_box(BoxShape shape, const double* p)
 {
-   if (shape == UNBOUND_BOX)
+   if (shape == BoxShape::UNBOUND)
       return;
 
    Box bo;
@@ -57,7 +57,7 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
 
    double eps = 1.0e-6;
    double p[] = {16, 16, 16, 90, 90, 90};
-   set_box(ORTHO_BOX, p);
+   set_box(BoxShape::ORTHO, p);
 
    SECTION("  - volume")
    {
@@ -117,7 +117,7 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
 
    double eps = 1.0e-6;
    double p[] = {32, 24, 20, 90, 30, 90};
-   set_box(MONO_BOX, p);
+   set_box(BoxShape::MONO, p);
 
    SECTION(" - lvec")
    {
@@ -202,7 +202,7 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
 
    double eps = 1.0e-6;
    double p[] = {32, 24, 20, 75, 60, 45};
-   set_box(TRI_BOX, p);
+   set_box(BoxShape::TRI, p);
 
    // volume
    double al = COS(p[3]);

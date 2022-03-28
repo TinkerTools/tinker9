@@ -9,7 +9,6 @@
 #include "mod/evalence.h"
 #include "mod/md.h"
 #include "mod/mutant.h"
-#include "mod/platform.h"
 #include "mod/repel.h"
 #include "mod/vdw.h"
 
@@ -21,6 +20,9 @@
 #include "ff/pme.h"
 #include "ff/rattle.h"
 #include "ff/spatial.h"
+
 #include "tool/cudalib.h"
 #include "tool/gpucard.h"
 #include "tool/rcman.h"
+
+#include "platform.h"

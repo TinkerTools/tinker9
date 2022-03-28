@@ -9,7 +9,7 @@
 namespace tinker {
 void boxExtent(double new_extent)
 {
-   if (box_shape != UNBOUND_BOX)
+   if (box_shape != BoxShape::UNBOUND)
       return;
    if (lvec1.x >= new_extent)
       return;
@@ -56,7 +56,7 @@ void boxGetDefault(Box& p)
 static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape box_shape,
    const real3& lvec1, const real3& lvec2, const real3& lvec3)
 {
-   if (box_shape == ORTHO_BOX) {
+   if (box_shape == BoxShape::ORTHO) {
       recipc.x = 0;
       recipc.y = 0;
       recipc.z = 1.0 / lvec3.z;
@@ -68,7 +68,7 @@ static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape bo
       recipa.x = 1.0 / lvec1.x;
       recipa.y = 0;
       recipa.z = 0;
-   } else if (box_shape == MONO_BOX) {
+   } else if (box_shape == BoxShape::MONO) {
       recipc.x = 0;
       recipc.y = 0;
       recipc.z = 1.0 / lvec3.z;
@@ -80,7 +80,7 @@ static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape bo
       recipa.x = 1.0 / lvec1.x;
       recipa.y = 0;
       recipa.z = -lvec1.z / (lvec1.x * lvec3.z);
-   } else if (box_shape == TRI_BOX) {
+   } else if (box_shape == BoxShape::TRI) {
       recipc.x = 0;
       recipc.y = 0;
       recipc.z = 1.0 / lvec3.z;
@@ -93,7 +93,7 @@ static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape bo
       recipa.y = -lvec1.y / (lvec1.x * lvec2.y);
       recipa.z = lvec1.y * lvec2.z - lvec1.z * lvec2.y;
       recipa.z /= (lvec1.x * lvec2.y * lvec3.z);
-   } else if (box_shape == OCT_BOX) {
+   } else if (box_shape == BoxShape::OCT) {
       recipc.x = 0;
       recipc.y = 0;
       recipc.z = 1.0 / lvec1.x;
@@ -146,20 +146,20 @@ void boxGetAxesAngles(
 
 void boxSetTinkerModule(const Box& p)
 {
-   if (p.box_shape == UNBOUND_BOX)
+   if (p.box_shape == BoxShape::UNBOUND)
       return;
 
    boxes::orthogonal = 0;
    boxes::monoclinic = 0;
    boxes::triclinic = 0;
    boxes::octahedron = 0;
-   if (box_shape == ORTHO_BOX)
+   if (box_shape == BoxShape::ORTHO)
       boxes::orthogonal = 1;
-   else if (box_shape == MONO_BOX)
+   else if (box_shape == BoxShape::MONO)
       boxes::monoclinic = 1;
-   else if (box_shape == TRI_BOX)
+   else if (box_shape == BoxShape::TRI)
       boxes::triclinic = 1;
-   else if (box_shape == OCT_BOX)
+   else if (box_shape == BoxShape::OCT)
       boxes::octahedron = 1;
 
    double xbox, ybox, zbox, a_deg, b_deg, c_deg;
@@ -177,7 +177,7 @@ void boxSetTinkerModule(const Box& p)
 static void boxGetTinkerModule(Box& p)
 {
    if (!bound::use_bounds) {
-      p.box_shape = UNBOUND_BOX;
+      p.box_shape = BoxShape::UNBOUND;
       p.lvec1 = make_real3(0, 0, 0);
       p.lvec2 = make_real3(0, 0, 0);
       p.lvec3 = make_real3(0, 0, 0);
@@ -188,13 +188,13 @@ static void boxGetTinkerModule(Box& p)
    }
 
    if (boxes::orthogonal)
-      p.box_shape = ORTHO_BOX;
+      p.box_shape = BoxShape::ORTHO;
    else if (boxes::monoclinic)
-      p.box_shape = MONO_BOX;
+      p.box_shape = BoxShape::MONO;
    else if (boxes::triclinic)
-      p.box_shape = TRI_BOX;
+      p.box_shape = BoxShape::TRI;
    else if (boxes::octahedron)
-      p.box_shape = OCT_BOX;
+      p.box_shape = BoxShape::OCT;
 
    const auto& r = boxes::recip;
    const auto& l = boxes::lvec;
@@ -222,7 +222,7 @@ void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alpha_
    double beta_deg, double gamma_deg)
 {
    p.box_shape = sh;
-   if (sh == TRI_BOX) {
+   if (sh == BoxShape::TRI) {
       double alpha = alpha_deg * M_PI / 180;
       double beta = beta_deg * M_PI / 180;
       double gamma = gamma_deg * M_PI / 180;
@@ -240,7 +240,7 @@ void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alpha_
       p.lvec1 = make_real3(a, bx, cx);
       p.lvec2 = make_real3(0, by, cy);
       p.lvec3 = make_real3(0, 0, cz);
-   } else if (sh == MONO_BOX) {
+   } else if (sh == BoxShape::MONO) {
       double beta = beta_deg * M_PI / 180;
       double cos_beta = std::cos(beta);
       double sin_beta = std::sin(beta);
@@ -249,11 +249,11 @@ void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alpha_
       p.lvec1 = make_real3(a, 0, cx);
       p.lvec2 = make_real3(0, b, 0);
       p.lvec3 = make_real3(0, 0, cz);
-   } else if (sh == ORTHO_BOX) {
+   } else if (sh == BoxShape::ORTHO) {
       p.lvec1 = make_real3(a, 0, 0);
       p.lvec2 = make_real3(0, b, 0);
       p.lvec3 = make_real3(0, 0, c);
-   } else if (sh == OCT_BOX) {
+   } else if (sh == BoxShape::OCT) {
       p.lvec1 = make_real3(a, 0, 0);
       p.lvec2 = make_real3(0, a, 0);
       p.lvec3 = make_real3(0, 0, a);
@@ -272,7 +272,7 @@ void boxData(RcOp op)
       } else {
          trajbox = nullptr;
       }
-      box_shape = UNBOUND_BOX;
+      box_shape = BoxShape::UNBOUND;
    }
 
    if (op & rc_alloc) {
@@ -291,7 +291,7 @@ void boxData(RcOp op)
 real boxVolume()
 {
    real ans = lvec1.x * lvec2.y * lvec3.z;
-   if (box_shape == OCT_BOX)
+   if (box_shape == BoxShape::OCT)
       ans *= 0.5f;
    return ans;
 }

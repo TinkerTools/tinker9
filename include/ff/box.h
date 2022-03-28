@@ -12,11 +12,6 @@ enum class BoxShape
    TRI,
    OCT
 };
-constexpr BoxShape UNBOUND_BOX = BoxShape::UNBOUND;
-constexpr BoxShape ORTHO_BOX = BoxShape::ORTHO;
-constexpr BoxShape MONO_BOX = BoxShape::MONO;
-constexpr BoxShape TRI_BOX = BoxShape::TRI;
-constexpr BoxShape OCT_BOX = BoxShape::OCT;
 
 /// \ingroup box
 /// \brief Periodic boundary conditions (PBC).

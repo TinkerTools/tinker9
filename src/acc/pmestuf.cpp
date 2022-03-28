@@ -275,9 +275,9 @@ void pme_conv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
       if (term > -50) {
          real denom = hsq * pi * box_volume * bsmod1[k1] * bsmod2[k2] * bsmod3[k3];
          expterm = REAL_EXP(term) / denom;
-         if (box_shape == UNBOUND_BOX)
+         if (box_shape == BoxShape::UNBOUND)
             expterm *= (1 - REAL_COS(pi * lvec1.x * REAL_SQRT(hsq)));
-         else if (box_shape == OCT_BOX)
+         else if (box_shape == BoxShape::OCT)
             if ((k1 + k2 + k3) & 1)
                expterm = 0; // end if ((k1 + k2 + k3) % 2 != 0)
 

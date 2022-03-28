@@ -71,11 +71,11 @@ void disp_pme_conv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
       if (term > -50) {
          real expterm = REAL_EXP(term);
          real erfcterm = REAL_ERFC(b);
-         if (box_shape == UNBOUND_BOX) {
+         if (box_shape == BoxShape::UNBOUND) {
             real coef = (1 - REAL_COS(pi * lvec1.x * REAL_SQRT(hsq)));
             expterm *= coef;
             erfcterm *= coef;
-         } else if (box_shape == OCT_BOX) {
+         } else if (box_shape == BoxShape::OCT) {
             if ((k1 + k2 + k3) & 1) {
                expterm = 0;
                erfcterm = 0;
