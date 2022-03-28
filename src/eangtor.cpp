@@ -17,7 +17,7 @@ void eangtorData(RcOp op)
       nangtor = 0;
       darray::deallocate(iat, kant);
       if (rc_a)
-         buffer_deallocate(rc_flag, eat, vir_eat, deatx, deaty, deatz);
+         bufferDeallocate(rc_flag, eat, vir_eat, deatx, deaty, deatz);
       eat = nullptr;
       vir_eat = nullptr;
       deatx = nullptr;
@@ -35,7 +35,7 @@ void eangtorData(RcOp op)
       deaty = gy;
       deatz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &eat, &vir_eat, &deatx, &deaty, &deatz);
+         bufferAllocate(rc_flag, &eat, &vir_eat, &deatx, &deaty, &deatz);
    }
 
    if (op & rc_init) {
@@ -59,7 +59,7 @@ void eangtor(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_eat, virial_eat);
-      size_t bsize = buffer_size();
+      size_t bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, eat);
       if (do_v)
@@ -72,11 +72,11 @@ void eangtor(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_eat = energy_reduce(eat);
+         energy_eat = energyReduce(eat);
          energy_valence += energy_eat;
       }
       if (do_v) {
-         virial_reduce(virial_eat, vir_eat);
+         virialReduce(virial_eat, vir_eat);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eat[iv];
       }

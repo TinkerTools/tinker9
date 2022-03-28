@@ -20,7 +20,7 @@ void ebondData(RcOp op)
       darray::deallocate(ibnd, bl, bk);
 
       if (rc_a)
-         buffer_deallocate(rc_flag, eb, vir_eb, debx, deby, debz);
+         bufferDeallocate(rc_flag, eb, vir_eb, debx, deby, debz);
       eb = nullptr;
       vir_eb = nullptr;
       debx = nullptr;
@@ -38,7 +38,7 @@ void ebondData(RcOp op)
       deby = gy;
       debz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &eb, &vir_eb, &debx, &deby, &debz);
+         bufferAllocate(rc_flag, &eb, &vir_eb, &debx, &deby, &debz);
    }
 
    if (op & rc_init) {
@@ -72,7 +72,7 @@ void ebond(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_eb, virial_eb);
-      auto bsize = buffer_size();
+      auto bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, eb);
       if (do_v)
@@ -85,11 +85,11 @@ void ebond(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_eb = energy_reduce(eb);
+         energy_eb = energyReduce(eb);
          energy_valence += energy_eb;
       }
       if (do_v) {
-         virial_reduce(virial_eb, vir_eb);
+         virialReduce(virial_eb, vir_eb);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eb[iv];
       }

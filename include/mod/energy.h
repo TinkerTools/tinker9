@@ -78,9 +78,9 @@ TINKER_EXTERN grad_prec* gz_elec;
 /// Energy buffer for the vdw terms.
 /// \var eng_buf_elec
 /// Energy buffer for the electrostatic terms.
-TINKER_EXTERN energy_buffer eng_buf;
-TINKER_EXTERN energy_buffer eng_buf_vdw;
-TINKER_EXTERN energy_buffer eng_buf_elec;
+TINKER_EXTERN EnergyBuffer eng_buf;
+TINKER_EXTERN EnergyBuffer eng_buf_vdw;
+TINKER_EXTERN EnergyBuffer eng_buf_elec;
 
 /// \var vir_buf
 /// Virial buffer for the valence terms.
@@ -88,9 +88,9 @@ TINKER_EXTERN energy_buffer eng_buf_elec;
 /// Virial buffer for the vdw terms.
 /// \var vir_buf_elec
 /// Virial buffer for the electrostatic terms.
-TINKER_EXTERN virial_buffer vir_buf;
-TINKER_EXTERN virial_buffer vir_buf_vdw;
-TINKER_EXTERN virial_buffer vir_buf_elec;
+TINKER_EXTERN VirialBuffer vir_buf;
+TINKER_EXTERN VirialBuffer vir_buf_vdw;
+TINKER_EXTERN VirialBuffer vir_buf_elec;
 
 /// \var esum
 /// Total potential energy.

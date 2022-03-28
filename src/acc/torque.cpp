@@ -48,9 +48,9 @@ void torque_normal(real* restrict a, real _1_na)
  * everything in the "local memory", the segfault would disappear.
  */
 template <int DO_V>
-void torque_acc1(virial_buffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* gz)
+void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* gz)
 {
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
 
    real trq[3], frcz[3], frcx[3], frcy[3];
    real deia[3], deib[3], deic[3], deid[3];

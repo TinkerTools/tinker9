@@ -85,5 +85,5 @@ TINKER_EXTERN double* ratcom_massfrac;
 TINKER_EXTERN energy_prec hc_eksum;
 TINKER_EXTERN energy_prec hc_ekin[3][3];
 TINKER_EXTERN virial_prec hc_vir[9];
-TINKER_EXTERN virial_buffer hc_vir_buf;
+TINKER_EXTERN VirialBuffer hc_vir_buf;
 }

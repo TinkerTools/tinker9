@@ -27,7 +27,7 @@ void empole_ewald_real_self_acc1()
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
    PairMPoleGrad pgrad;
 
    const PMEUnit pu = epme_unit;

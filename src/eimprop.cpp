@@ -24,7 +24,7 @@ void eimpropData(RcOp op)
       deidy = gy;
       deidz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &eid, &vir_eid, &deidx, &deidy, &deidz);
+         bufferAllocate(rc_flag, &eid, &vir_eid, &deidx, &deidy, &deidz);
    }
 
    if (op & rc_init) {
@@ -49,7 +49,7 @@ void eimprop(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_eid, virial_eid);
-      size_t bsize = buffer_size();
+      size_t bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, eid);
       if (do_v)
@@ -62,11 +62,11 @@ void eimprop(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_eid = energy_reduce(eid);
+         energy_eid = energyReduce(eid);
          energy_valence += energy_eid;
       }
       if (do_v) {
-         virial_reduce(virial_eid, vir_eid);
+         virialReduce(virial_eid, vir_eid);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eid[iv];
       }

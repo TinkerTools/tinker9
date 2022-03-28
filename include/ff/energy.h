@@ -61,7 +61,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
 /// \brief First, energy buffers, virial buffers, gradient arrays, and count
 /// buffers are set to 0. Then, evaluate energies, gradients, virials, and count
 /// interactions. Last, update the global energy and virial tensor variables.
-/// Counts are not updated until #count_reduce() is explicitly called. May skip
+/// Counts are not updated until #countReduce() is explicitly called. May skip
 /// some steps based on the version parameter.
 void energy(int vers);
 

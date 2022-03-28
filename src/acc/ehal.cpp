@@ -71,7 +71,7 @@ void ehal_acc1()
    const int maxnlst = vlist_unit->maxnlst;
    const auto* vlst = vlist_unit.deviceptr();
 
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
 
    if CONSTEXPR (do_g)
       darray::zero(g::q0, n, gxred, gyred, gzred);

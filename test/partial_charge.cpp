@@ -109,7 +109,7 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
 
       energy(calc::v3);
       COMPARE_REALS(esum, ref_e, eps_e);
-      COMPARE_INTS(count_reduce(nec), ref_count);
+      COMPARE_INTS(countReduce(nec), ref_count);
 
       energy(calc::v4);
       COMPARE_REALS(esum, ref_e, eps_e);
@@ -227,7 +227,7 @@ TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
 
       energy(calc::v3);
       COMPARE_REALS(esum, ref_e, eps_e);
-      COMPARE_INTS(count_reduce(nec), ref_count);
+      COMPARE_INTS(countReduce(nec), ref_count);
 
       energy(calc::v4);
       COMPARE_REALS(esum, ref_e, eps_e);

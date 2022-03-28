@@ -9,7 +9,7 @@ void shake2_acc(time_prec dt, const vel_prec* vxold, const vel_prec* vyold, cons
    const pos_prec* yold, const pos_prec* zold)
 {
    const double vterm = -1 / (dt * units::ekcal);
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
 
    #pragma acc parallel loop independent async\
            deviceptr(mass,xold,yold,zold,vxold,vyold,vzold,\

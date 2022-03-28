@@ -77,8 +77,8 @@ void alterchg()
    alterchg_acc();
 }
 
-extern void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, virial_buffer vir);
-void dcflux(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, virial_buffer v)
+extern void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, VirialBuffer vir);
+void dcflux(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, VirialBuffer v)
 {
    dcflux_acc(vers, gx, gy, gz, v);
 }

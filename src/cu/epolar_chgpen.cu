@@ -19,8 +19,8 @@ namespace tinker {
 // ck.py Version 2.0.3
 template <class Ver, class ETYP, bool CFLX>
 __global__
-void epolar_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict np,
-   energy_buffer restrict ep, virial_buffer restrict vp, grad_prec* restrict gx,
+void epolar_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict np,
+   EnergyBuffer restrict ep, VirialBuffer restrict vp, grad_prec* restrict gx,
    grad_prec* restrict gy, grad_prec* restrict gz, real off, const unsigned* restrict dwinfo,
    int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
    const real* restrict x, const real* restrict y, const real* restrict z,
@@ -43,12 +43,12 @@ void epolar_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict np,
    if CONSTEXPR (do_a) {
       nptl = 0;
    }
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec eptl;
    if CONSTEXPR (do_e) {
       eptl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vptlxx, vptlyx, vptlzx, vptlyy, vptlzy, vptlzz;
    if CONSTEXPR (do_v) {
       vptlxx = 0;

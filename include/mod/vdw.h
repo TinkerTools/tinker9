@@ -57,9 +57,9 @@ TINKER_EXTERN real* epsilon4;
 TINKER_EXTERN real* atom_rad;
 TINKER_EXTERN real* atom_eps;
 
-TINKER_EXTERN count_buffer nev;
-TINKER_EXTERN energy_buffer ev;
-TINKER_EXTERN virial_buffer vir_ev;
+TINKER_EXTERN CountBuffer nev;
+TINKER_EXTERN EnergyBuffer ev;
+TINKER_EXTERN VirialBuffer vir_ev;
 TINKER_EXTERN grad_prec* devx;
 TINKER_EXTERN grad_prec* devy;
 TINKER_EXTERN grad_prec* devz;

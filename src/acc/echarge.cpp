@@ -36,7 +36,7 @@ void echarge_acc1()
    const int maxnlist = clist_unit->maxnlst;
    const auto* nlst = clist_unit->nlst;
    const auto* lst = clist_unit->lst;
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
 
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
@@ -239,7 +239,7 @@ void echarge_acc3()
    int nfft1 = st.nfft1;
    int nfft2 = st.nfft2;
    int nfft3 = st.nfft3;
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
 
    #pragma acc parallel async deviceptr(pchg,qgrid,nec,ec,x,y,z,decx,decy,decz)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)

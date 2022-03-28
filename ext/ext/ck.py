@@ -644,7 +644,7 @@ if __name__ == '__main__':
     if kcfg in config.keys():
         vcfg, decl, zero, total = config[kcfg], '', '', ''
         for t in vcfg:
-            v = v + ', count_buffer restrict {}'.format(t)
+            v = v + ', CountBuffer restrict {}'.format(t)
             decl = decl + 'int {}tl;'.format(t)
             zero = zero + '{}tl = 0;'.format(t)
             total = total + 'atomic_add({}tl, {}, ithread);'.format(t, t)
@@ -663,11 +663,11 @@ if __name__ == '__main__':
     if kcfg in config.keys():
         vcfg, decl, zero, total = config[kcfg], '', '', ''
         for t in vcfg:
-            v = v + ', energy_buffer restrict {}'.format(t)
+            v = v + ', EnergyBuffer restrict {}'.format(t)
             decl = decl + 'ebuf_prec {}tl;'.format(t)
             zero = zero + '{}tl = 0;'.format(t)
             total = total + 'atomic_add({}tl, {}, ithread);'.format(t, t)
-        v2 = 'using ebuf_prec = energy_buffer_traits::type;\n'
+        v2 = 'using ebuf_prec = EnergyBufferTraits::type;\n'
         v2 = v2 + '%s if CONSTEXPR (do_e) {%s}' % (decl, zero)
         v3 = 'if CONSTEXPR (do_e) {%s}' % total
     d[k] = v
@@ -683,7 +683,7 @@ if __name__ == '__main__':
     if kcfg in config.keys():
         vcfg, decl, zero, total = config[kcfg], '', '', ''
         for t in vcfg:
-            v = v + ', virial_buffer restrict {}'.format(t)
+            v = v + ', VirialBuffer restrict {}'.format(t)
             decl = decl + 'vbuf_prec {}tlxx'.format(t)
             zero = zero + '{}tlxx = 0;'.format(t)
             total = total + 'atomic_add({}tlxx'.format(t)
@@ -694,7 +694,7 @@ if __name__ == '__main__':
             decl = decl + ';'
             zero = zero + '\n'
             total = total + ', {}, ithread);'.format(t)
-        v2 = 'using vbuf_prec = virial_buffer_traits::type;\n'
+        v2 = 'using vbuf_prec = VirialBufferTraits::type;\n'
         v2 = v2 + '%s if CONSTEXPR (do_v) {%s}' % (decl, zero)
         v3 = 'if CONSTEXPR (do_v) {%s}' % total
     d[k] = v

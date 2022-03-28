@@ -17,9 +17,9 @@ namespace tinker {
 // ck.py Version 2.0.3
 template <class Ver>
 __global__
-void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr, energy_buffer restrict er,
-   virial_buffer restrict vr, grad_prec* restrict gx, grad_prec* restrict gy,
-   grad_prec* restrict gz, real cut, real off, const unsigned* restrict rinfo, int nexclude,
+void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffer restrict er,
+   VirialBuffer restrict vr, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
+   real cut, real off, const unsigned* restrict rinfo, int nexclude,
    const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
    const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
    int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
@@ -39,12 +39,12 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nr, energy_buf
    if CONSTEXPR (do_a) {
       nrtl = 0;
    }
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ertl;
    if CONSTEXPR (do_e) {
       ertl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vrtlxx, vrtlyx, vrtlzx, vrtlyy, vrtlzy, vrtlzz;
    if CONSTEXPR (do_v) {
       vrtlxx = 0;

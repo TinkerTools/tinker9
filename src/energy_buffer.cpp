@@ -6,18 +6,18 @@
 #include <cassert>
 
 namespace tinker {
-size_t buffer_size()
+size_t bufferSize()
 {
    size_t bsize = nelem_buffer;
    assert(isPow2(bsize) && "buffer size must be power of 2.");
    return bsize;
 }
 
-void buffer_allocate(
-   int flag, energy_buffer* pe, virial_buffer* pv, grad_prec** px, grad_prec** py, grad_prec** pz)
+void bufferAllocate(
+   int flag, EnergyBuffer* pe, VirialBuffer* pv, grad_prec** px, grad_prec** py, grad_prec** pz)
 {
    assert(flag & calc::analyz);
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    if (flag & calc::energy)
       darray::allocate(bsize, pe);
    if (flag & calc::virial)
@@ -26,8 +26,8 @@ void buffer_allocate(
       darray::allocate(n, px, py, pz);
 }
 
-void buffer_deallocate(
-   int flag, energy_buffer e, virial_buffer v, grad_prec* gx, grad_prec* gy, grad_prec* gz)
+void bufferDeallocate(
+   int flag, EnergyBuffer e, VirialBuffer v, grad_prec* gx, grad_prec* gy, grad_prec* gz)
 {
    assert(flag & calc::analyz);
    if (flag & calc::energy)
@@ -38,32 +38,32 @@ void buffer_deallocate(
       darray::deallocate(gx, gy, gz);
 }
 
-void buffer_allocate(int flag, count_buffer* pc)
+void bufferAllocate(int flag, CountBuffer* pc)
 {
    assert(flag & calc::analyz);
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    darray::allocate(bsize, pc);
 }
 
-void buffer_deallocate(int flag, count_buffer c)
+void bufferDeallocate(int flag, CountBuffer c)
 {
    assert(flag & calc::analyz);
    darray::deallocate(c);
 }
-int count_reduce(const count_buffer ne)
+int countReduce(const CountBuffer ne)
 {
-   int c = reduce_sum(ne, buffer_size(), g::q0);
+   int c = reduce_sum(ne, bufferSize(), g::q0);
    return c;
 }
 
-energy_prec energy_reduce(const energy_buffer e)
+energy_prec energyReduce(const EnergyBuffer e)
 {
-   auto b = reduce_sum(e, buffer_size(), g::q0);
-   energy_prec real_out = to_flt_host<energy_prec>(b);
+   auto b = reduce_sum(e, bufferSize(), g::q0);
+   energy_prec real_out = toFloat_host<energy_prec>(b);
    return real_out;
 }
 
-void virial_reshape(virial_prec (&v_out)[9], const virial_prec (&v1)[virial_buffer_traits::N])
+void virialReshape(virial_prec (&v_out)[9], const virial_prec (&v1)[VirialBufferTraits::N])
 {
    // xx yx zx yy zy zz
    //  0  1  2  3  4  5
@@ -78,18 +78,18 @@ void virial_reshape(virial_prec (&v_out)[9], const virial_prec (&v1)[virial_buff
    v_out[8] = v1[5]; // zz
 }
 
-void virial_reduce(virial_prec (&v1)[virial_buffer_traits::N], const virial_buffer v)
+void virialReduce(virial_prec (&v1)[VirialBufferTraits::N], const VirialBuffer v)
 {
-   virial_buffer_traits::type b[virial_buffer_traits::N];
-   reduce_sum2(b, v, buffer_size(), g::q0);
-   for (size_t i = 0; i < virial_buffer_traits::N; ++i)
-      v1[i] = to_flt_host<virial_prec>(b[i]);
+   VirialBufferTraits::type b[VirialBufferTraits::N];
+   reduce_sum2(b, v, bufferSize(), g::q0);
+   for (size_t i = 0; i < VirialBufferTraits::N; ++i)
+      v1[i] = toFloat_host<virial_prec>(b[i]);
 }
 
-void virial_reduce(virial_prec (&v_out)[9], const virial_buffer v)
+void virialReduce(virial_prec (&v_out)[9], const VirialBuffer v)
 {
-   virial_prec v1[virial_buffer_traits::N];
-   virial_reduce(v1, v);
-   virial_reshape(v_out, v1);
+   virial_prec v1[VirialBufferTraits::N];
+   virialReduce(v1, v);
+   virialReshape(v_out, v1);
 }
 }

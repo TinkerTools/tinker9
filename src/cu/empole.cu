@@ -16,8 +16,8 @@ namespace tinker {
 // ck.py Version 2.0.2
 template <class Ver, class ETYP>
 __global__
-void empole_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem, energy_buffer restrict em,
-   virial_buffer restrict vem, grad_prec* restrict gx, grad_prec* restrict gy,
+void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuffer restrict em,
+   VirialBuffer restrict vem, grad_prec* restrict gx, grad_prec* restrict gy,
    grad_prec* restrict gz, real off, const unsigned* restrict mdpuinfo, int nexclude,
    const int (*restrict exclude)[2], const real (*restrict exclude_scale)[4],
    const real* restrict x, const real* restrict y, const real* restrict z,
@@ -38,12 +38,12 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nem, energy_bu
    if CONSTEXPR (do_a) {
       nemtl = 0;
    }
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec emtl;
    if CONSTEXPR (do_e) {
       emtl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vemtlxx, vemtlyx, vemtlzx, vemtlyy, vemtlzy, vemtlzz;
    if CONSTEXPR (do_v) {
       vemtlxx = 0;

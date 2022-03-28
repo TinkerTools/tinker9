@@ -19,7 +19,7 @@ void eopbendData(RcOp op)
       darray::deallocate(iopb, opbk);
 
       if (rc_a)
-         buffer_deallocate(rc_flag, eopb, vir_eopb, deopbx, deopby, deopbz);
+         bufferDeallocate(rc_flag, eopb, vir_eopb, deopbx, deopby, deopbz);
       eopb = nullptr;
       vir_eopb = nullptr;
       deopbx = nullptr;
@@ -38,7 +38,7 @@ void eopbendData(RcOp op)
       deopby = gy;
       deopbz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &eopb, &vir_eopb, &deopbx, &deopby, &deopbz);
+         bufferAllocate(rc_flag, &eopb, &vir_eopb, &deopbx, &deopby, &deopbz);
    }
 
    if (op & rc_init) {
@@ -73,7 +73,7 @@ void eopbend(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_eopb, virial_eopb);
-      auto bsize = buffer_size();
+      auto bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, eopb);
       if (do_v)
@@ -86,11 +86,11 @@ void eopbend(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_eopb = energy_reduce(eopb);
+         energy_eopb = energyReduce(eopb);
          energy_valence += energy_eopb;
       }
       if (do_v) {
-         virial_reduce(virial_eopb, vir_eopb);
+         virialReduce(virial_eopb, vir_eopb);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eopb[iv];
       }

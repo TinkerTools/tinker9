@@ -27,14 +27,14 @@ template <class Ver, bool rc_a>
 __global__
 void evalence_cu1(
    // ebond
-   energy_buffer restrict eb, virial_buffer restrict vir_eb, grad_prec* restrict debx,
+   EnergyBuffer restrict eb, VirialBuffer restrict vir_eb, grad_prec* restrict debx,
    grad_prec* restrict deby, grad_prec* restrict debz,
 
    ebond_t bndtyp, real bndunit, int nbond, const int (*restrict ibnd)[2], const real* restrict bl,
    const real* restrict bk, real cbnd, real qbnd,
 
    // eangle
-   energy_buffer restrict ea, virial_buffer restrict vir_ea, grad_prec* restrict deax,
+   EnergyBuffer restrict ea, VirialBuffer restrict vir_ea, grad_prec* restrict deax,
    grad_prec* restrict deay, grad_prec* restrict deaz,
 
    const eangle_t* restrict angtyp, real angunit, int nangle, const int (*restrict iang)[4],
@@ -43,41 +43,41 @@ void evalence_cu1(
    real cang, real qang, real pang, real sang,
 
    // estrbnd
-   energy_buffer restrict eba, virial_buffer restrict vir_eba, grad_prec* restrict debax,
+   EnergyBuffer restrict eba, VirialBuffer restrict vir_eba, grad_prec* restrict debax,
    grad_prec* restrict debay, grad_prec* restrict debaz,
 
    real stbnunit, int nstrbnd, const int (*restrict isb)[3], const real (*restrict sbk)[2],
 
    // eurey
-   energy_buffer restrict eub, virial_buffer restrict vir_eub, grad_prec* restrict deubx,
+   EnergyBuffer restrict eub, VirialBuffer restrict vir_eub, grad_prec* restrict deubx,
    grad_prec* restrict deuby, grad_prec* restrict deubz,
 
    real ureyunit, int nurey, const int (*restrict iury)[3], const real* restrict uk,
    const real* restrict ul, real cury, real qury,
 
    // eopbend
-   energy_buffer restrict eopb, virial_buffer restrict vir_eopb, grad_prec* restrict deopbx,
+   EnergyBuffer restrict eopb, VirialBuffer restrict vir_eopb, grad_prec* restrict deopbx,
    grad_prec* restrict deopby, grad_prec* restrict deopbz,
 
    eopbend_t opbtyp, real opbunit, int nopbend, const int* restrict iopb, const real* restrict opbk,
    real copb, real qopb, real popb, real sopb,
 
    // eimprop
-   energy_buffer restrict eid, virial_buffer restrict vir_eid, grad_prec* restrict deidx,
+   EnergyBuffer restrict eid, VirialBuffer restrict vir_eid, grad_prec* restrict deidx,
    grad_prec* restrict deidy, grad_prec* restrict deidz,
 
    real idihunit, int niprop, const int (*restrict iiprop)[4], const real* restrict kprop,
    const real* restrict vprop,
 
    // eimptor
-   energy_buffer restrict eit, virial_buffer restrict vir_eit, grad_prec* restrict deitx,
+   EnergyBuffer restrict eit, VirialBuffer restrict vir_eit, grad_prec* restrict deitx,
    grad_prec* restrict deity, grad_prec* restrict deitz,
 
    real itorunit, int nitors, const int (*restrict iitors)[4], const real (*restrict itors1)[4],
    const real (*restrict itors2)[4], const real (*restrict itors3)[4],
 
    // etors
-   energy_buffer restrict et, virial_buffer restrict vir_et, grad_prec* restrict detx,
+   EnergyBuffer restrict et, VirialBuffer restrict vir_et, grad_prec* restrict detx,
    grad_prec* restrict dety, grad_prec* restrict detz,
 
    real torsunit, int ntors, const int (*restrict itors)[4], const real (*restrict tors1)[4],
@@ -86,25 +86,25 @@ void evalence_cu1(
    const real (*restrict tors6)[4],
 
    // epitors
-   energy_buffer restrict ept, virial_buffer restrict vir_ept, grad_prec* restrict deptx,
+   EnergyBuffer restrict ept, VirialBuffer restrict vir_ept, grad_prec* restrict deptx,
    grad_prec* restrict depty, grad_prec* restrict deptz,
 
    real ptorunit, int npitors, const int (*restrict ipit)[6], const real* restrict kpit,
 
    // estrtor
-   energy_buffer restrict ebt, virial_buffer restrict vir_ebt, grad_prec* restrict debtx,
+   EnergyBuffer restrict ebt, VirialBuffer restrict vir_ebt, grad_prec* restrict debtx,
    grad_prec* restrict debty, grad_prec* restrict debtz,
 
    real storunit, int nstrtor, const int (*restrict ist)[4], const real (*restrict kst)[9],
 
    // eangtor
-   energy_buffer restrict eat, virial_buffer restrict vir_eat, grad_prec* restrict deatx,
+   EnergyBuffer restrict eat, VirialBuffer restrict vir_eat, grad_prec* restrict deatx,
    grad_prec* restrict deaty, grad_prec* restrict deatz,
 
    real atorunit, int nangtor, const int (*restrict iat)[3], const real (*restrict kant)[6],
 
    // etortor
-   energy_buffer restrict ett, virial_buffer restrict vir_ett, grad_prec* restrict dettx,
+   EnergyBuffer restrict ett, VirialBuffer restrict vir_ett, grad_prec* restrict dettx,
    grad_prec* restrict detty, grad_prec* restrict dettz,
 
    real ttorunit, int ntortor, const int (*restrict itt)[3], const int (*restrict ibitor)[5],
@@ -116,7 +116,7 @@ void evalence_cu1(
    const real (*restrict tbxy)[ktrtor::maxtgrd2],
 
    // egeom
-   energy_buffer restrict eg, virial_buffer restrict vir_eg, grad_prec* restrict degx,
+   EnergyBuffer restrict eg, VirialBuffer restrict vir_eg, grad_prec* restrict degx,
    grad_prec* restrict degy, grad_prec* restrict degz,
 
    int npfix, const int* restrict ipfix, const int (*restrict kpfix)[3], const real* restrict xpfix,
@@ -131,7 +131,7 @@ void evalence_cu1(
    int ntfix, const int (*restrict itfix)[4], const real (*restrict tfix)[3],
 
    // total
-   energy_buffer restrict ebuf, virial_buffer restrict vbuf,
+   EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf,
 
    // other
    const real* restrict x, const real* restrict y, const real* restrict z,
@@ -143,7 +143,7 @@ void evalence_cu1(
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int stride = blockDim.x * gridDim.x;
 
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec e0b;   // ebond
    ebuf_prec e0a;   // eangle
    ebuf_prec e0ba;  // estrbnd
@@ -172,7 +172,7 @@ void evalence_cu1(
       e0tt = 0;
       e0g = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec v0bxx, v0byx, v0bzx, v0byy, v0bzy, v0bzz;             // ebond
    vbuf_prec v0axx, v0ayx, v0azx, v0ayy, v0azy, v0azz;             // eangle
    vbuf_prec v0baxx, v0bayx, v0bazx, v0bayy, v0bazy, v0bazz;       // estrbnd
@@ -839,7 +839,7 @@ void evalence_cu(int vers)
    bool flag_tortor = usePotent(Potent::TORTOR);
    bool flag_geom = usePotent(Potent::GEOM);
 
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    if (rc_a and flag_bond) {
       zeroOnHost(energy_eb, virial_eb);
       if (do_e)
@@ -965,11 +965,11 @@ void evalence_cu(int vers)
 
    if (rc_a and flag_bond) {
       if (do_e) {
-         energy_eb = energy_reduce(eb);
+         energy_eb = energyReduce(eb);
          energy_valence += energy_eb;
       }
       if (do_v) {
-         virial_reduce(virial_eb, vir_eb);
+         virialReduce(virial_eb, vir_eb);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eb[iv];
       }
@@ -978,11 +978,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_angle) {
       if (do_e) {
-         energy_ea = energy_reduce(ea);
+         energy_ea = energyReduce(ea);
          energy_valence += energy_ea;
       }
       if (do_v) {
-         virial_reduce(virial_ea, vir_ea);
+         virialReduce(virial_ea, vir_ea);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_ea[iv];
       }
@@ -991,11 +991,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_strbnd) {
       if (do_e) {
-         energy_eba = energy_reduce(eba);
+         energy_eba = energyReduce(eba);
          energy_valence += energy_eba;
       }
       if (do_v) {
-         virial_reduce(virial_eba, vir_eba);
+         virialReduce(virial_eba, vir_eba);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eba[iv];
       }
@@ -1004,11 +1004,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_urey) {
       if (do_e) {
-         energy_eub = energy_reduce(eub);
+         energy_eub = energyReduce(eub);
          energy_valence += energy_eub;
       }
       if (do_v) {
-         virial_reduce(virial_eub, vir_eub);
+         virialReduce(virial_eub, vir_eub);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eub[iv];
       }
@@ -1017,11 +1017,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_opb) {
       if (do_e) {
-         energy_eopb = energy_reduce(eopb);
+         energy_eopb = energyReduce(eopb);
          energy_valence += energy_eopb;
       }
       if (do_v) {
-         virial_reduce(virial_eopb, vir_eopb);
+         virialReduce(virial_eopb, vir_eopb);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eopb[iv];
       }
@@ -1030,11 +1030,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_improp) {
       if (do_e) {
-         energy_eid = energy_reduce(eid);
+         energy_eid = energyReduce(eid);
          energy_valence += energy_eid;
       }
       if (do_v) {
-         virial_reduce(virial_eid, vir_eid);
+         virialReduce(virial_eid, vir_eid);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eid[iv];
       }
@@ -1043,11 +1043,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_imptor) {
       if (do_e) {
-         energy_eit = energy_reduce(eit);
+         energy_eit = energyReduce(eit);
          energy_valence += energy_eit;
       }
       if (do_v) {
-         virial_reduce(virial_eit, vir_eit);
+         virialReduce(virial_eit, vir_eit);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eit[iv];
       }
@@ -1056,11 +1056,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_tors) {
       if (do_e) {
-         energy_et = energy_reduce(et);
+         energy_et = energyReduce(et);
          energy_valence += energy_et;
       }
       if (do_v) {
-         virial_reduce(virial_et, vir_et);
+         virialReduce(virial_et, vir_et);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_et[iv];
       }
@@ -1069,11 +1069,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_pitors) {
       if (do_e) {
-         energy_ept = energy_reduce(ept);
+         energy_ept = energyReduce(ept);
          energy_valence += energy_ept;
       }
       if (do_v) {
-         virial_reduce(virial_ept, vir_ept);
+         virialReduce(virial_ept, vir_ept);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_ept[iv];
       }
@@ -1082,11 +1082,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_strtor) {
       if (do_e) {
-         energy_ebt = energy_reduce(ebt);
+         energy_ebt = energyReduce(ebt);
          energy_valence += energy_ebt;
       }
       if (do_v) {
-         virial_reduce(virial_ebt, vir_ebt);
+         virialReduce(virial_ebt, vir_ebt);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_ebt[iv];
       }
@@ -1095,11 +1095,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_angtor) {
       if (do_e) {
-         energy_eat = energy_reduce(eat);
+         energy_eat = energyReduce(eat);
          energy_valence += energy_eat;
       }
       if (do_v) {
-         virial_reduce(virial_eat, vir_eat);
+         virialReduce(virial_eat, vir_eat);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eat[iv];
       }
@@ -1108,11 +1108,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_tortor) {
       if (do_e) {
-         energy_ett = energy_reduce(ett);
+         energy_ett = energyReduce(ett);
          energy_valence += energy_ett;
       }
       if (do_v) {
-         virial_reduce(virial_ett, vir_ett);
+         virialReduce(virial_ett, vir_ett);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_ett[iv];
       }
@@ -1121,11 +1121,11 @@ void evalence_cu(int vers)
    }
    if (rc_a and flag_geom) {
       if (do_e) {
-         energy_eg = energy_reduce(eg);
+         energy_eg = energyReduce(eg);
          energy_valence += energy_eg;
       }
       if (do_v) {
-         virial_reduce(virial_eg, vir_eg);
+         virialReduce(virial_eg, vir_eg);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eg[iv];
       }

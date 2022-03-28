@@ -64,10 +64,10 @@ void grid_disp(PMEUnit, real* csix);
 void grid_mpole(PMEUnit, real (*fmp)[10]);
 void grid_uind(PMEUnit, real (*find)[3], real (*finp)[3]);
 
-void pme_conv(PMEUnit);                  // update grid
-void pme_conv(PMEUnit, virial_buffer v); // update grid and accumulate vterm
-void pme_conv(PMEUnit, energy_buffer e); // update grid and accumulate eterm
-void pme_conv(PMEUnit, energy_buffer e, virial_buffer v);
+void pme_conv(PMEUnit);                 // update grid
+void pme_conv(PMEUnit, VirialBuffer v); // update grid and accumulate vterm
+void pme_conv(PMEUnit, EnergyBuffer e); // update grid and accumulate eterm
+void pme_conv(PMEUnit, EnergyBuffer e, VirialBuffer v);
 
 void fphi_mpole(PMEUnit);
 void fphi_uind(PMEUnit, real (*fdip_phi1)[10], real (*fdip_phi2)[10], real (*fdip_sum_phi)[20]);
@@ -95,8 +95,8 @@ void grid_mpole_cu(PMEUnit, real (*)[10]);
 void grid_uind_acc(PMEUnit, real (*)[3], real (*)[3]);
 void grid_uind_cu(PMEUnit, real (*)[3], real (*)[3]);
 
-void pme_conv_acc(PMEUnit, energy_buffer, virial_buffer);
-void pme_conv_cu(PMEUnit, energy_buffer, virial_buffer);
+void pme_conv_acc(PMEUnit, EnergyBuffer, VirialBuffer);
+void pme_conv_cu(PMEUnit, EnergyBuffer, VirialBuffer);
 
 void fphi_mpole_acc(PMEUnit, real (*)[20]);
 void fphi_mpole_cu(PMEUnit, real (*)[20]);
@@ -135,5 +135,5 @@ TINKER_EXTERN real (*fdip_phi2)[10];
 TINKER_EXTERN real (*cphidp)[10];
 TINKER_EXTERN real (*fphidp)[20];
 
-TINKER_EXTERN virial_buffer vir_m;
+TINKER_EXTERN VirialBuffer vir_m;
 }

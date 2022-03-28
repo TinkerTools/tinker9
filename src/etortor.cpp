@@ -21,7 +21,7 @@ void etortorData(RcOp op)
       darray::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy, chkttor_ia_);
 
       if (rc_a)
-         buffer_deallocate(rc_flag, ett, vir_ett, dettx, detty, dettz);
+         bufferDeallocate(rc_flag, ett, vir_ett, dettx, detty, dettz);
       ett = nullptr;
       vir_ett = nullptr;
       dettx = nullptr;
@@ -44,7 +44,7 @@ void etortorData(RcOp op)
       detty = gy;
       dettz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &ett, &vir_ett, &dettx, &detty, &dettz);
+         bufferAllocate(rc_flag, &ett, &vir_ett, &dettx, &detty, &dettz);
    }
 
    if (op & rc_init) {
@@ -144,7 +144,7 @@ void etortor(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_ett, virial_ett);
-      auto bsize = buffer_size();
+      auto bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, ett);
       if (do_v)
@@ -157,11 +157,11 @@ void etortor(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_ett = energy_reduce(ett);
+         energy_ett = energyReduce(ett);
          energy_valence += energy_ett;
       }
       if (do_v) {
-         virial_reduce(virial_ett, vir_ett);
+         virialReduce(virial_ett, vir_ett);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_ett[iv];
       }

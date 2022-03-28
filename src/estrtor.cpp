@@ -17,7 +17,7 @@ void estrtorData(RcOp op)
       nstrtor = 0;
       darray::deallocate(ist, kst);
       if (rc_a)
-         buffer_deallocate(rc_flag, ebt, vir_ebt, debtx, debty, debtz);
+         bufferDeallocate(rc_flag, ebt, vir_ebt, debtx, debty, debtz);
       ebt = nullptr;
       vir_ebt = nullptr;
       debtx = nullptr;
@@ -35,7 +35,7 @@ void estrtorData(RcOp op)
       debty = gy;
       debtz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &ebt, &vir_ebt, &debtx, &debty, &debtz);
+         bufferAllocate(rc_flag, &ebt, &vir_ebt, &debtx, &debty, &debtz);
    }
 
    if (op & rc_init) {
@@ -59,7 +59,7 @@ void estrtor(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_ebt, virial_ebt);
-      size_t bsize = buffer_size();
+      size_t bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, ebt);
       if (do_v)
@@ -72,11 +72,11 @@ void estrtor(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_ebt = energy_reduce(ebt);
+         energy_ebt = energyReduce(ebt);
          energy_valence += energy_ebt;
       }
       if (do_v) {
-         virial_reduce(virial_ebt, vir_ebt);
+         virialReduce(virial_ebt, vir_ebt);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_ebt[iv];
       }

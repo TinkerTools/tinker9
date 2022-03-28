@@ -30,7 +30,7 @@ void erepel_acc1()
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
 
    PairRepelGrad pgrad;
 

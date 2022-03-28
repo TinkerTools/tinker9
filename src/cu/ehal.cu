@@ -51,8 +51,8 @@ namespace tinker {
 // ck.py Version 2.0.2
 template <class Ver>
 __global__
-void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffer restrict ev,
-   virial_buffer restrict vev, grad_prec* restrict gx, grad_prec* restrict gy,
+void ehal_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyBuffer restrict ev,
+   VirialBuffer restrict vev, grad_prec* restrict gx, grad_prec* restrict gy,
    grad_prec* restrict gz, real cut, real off, const unsigned* restrict info, int nexclude,
    const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
    const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
@@ -73,12 +73,12 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buff
    if CONSTEXPR (do_a) {
       nevtl = 0;
    }
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec evtl;
    if CONSTEXPR (do_e) {
       evtl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vevtlxx, vevtlyx, vevtlzx, vevtlyy, vevtlzy, vevtlzz;
    if CONSTEXPR (do_v) {
       vevtlxx = 0;

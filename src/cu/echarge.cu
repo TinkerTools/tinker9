@@ -16,8 +16,8 @@ namespace tinker {
 // ck.py Version 2.0.2
 template <class Ver, class ETYP>
 __global__
-void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec, energy_buffer restrict ec,
-   virial_buffer restrict vec, grad_prec* restrict gx, grad_prec* restrict gy,
+void echarge_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nec, EnergyBuffer restrict ec,
+   VirialBuffer restrict vec, grad_prec* restrict gx, grad_prec* restrict gy,
    grad_prec* restrict gz, real cut, real off, const unsigned* restrict info, int nexclude,
    const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
    const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
@@ -37,12 +37,12 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nec, energy_b
    if CONSTEXPR (do_a) {
       nectl = 0;
    }
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ectl;
    if CONSTEXPR (do_e) {
       ectl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vectlxx, vectlyx, vectlzx, vectlyy, vectlzy, vectlzz;
    if CONSTEXPR (do_v) {
       vectlxx = 0;
@@ -400,7 +400,7 @@ void echarge_ewald_real_cu(int vers)
 
 template <class Ver, int bsorder>
 __global__
-void echarge_cu3(count_buffer restrict nec, energy_buffer restrict ec, const real* restrict pchg,
+void echarge_cu3(CountBuffer restrict nec, EnergyBuffer restrict ec, const real* restrict pchg,
    real f, real aewald, int n, int nfft1, int nfft2, int nfft3, const real* restrict x,
    const real* restrict y, const real* restrict z, const real* restrict qgrid, real3 reca,
    real3 recb, real3 recc, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz)

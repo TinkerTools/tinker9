@@ -497,7 +497,7 @@ void rattle2_methyl_cu(time_prec, bool);
 void rattle2(time_prec dt, bool do_v)
 {
    if (do_v) {
-      darray::zero(g::q0, buffer_size(), vir_buf);
+      darray::zero(g::q0, bufferSize(), vir_buf);
    }
 
    rattle2_settle_acc(dt, do_v);
@@ -510,7 +510,7 @@ void rattle2(time_prec dt, bool do_v)
 
    if (do_v) {
       virial_prec v[9];
-      virial_reduce(v, vir_buf);
+      virialReduce(v, vir_buf);
       for (int iv = 0; iv < 9; ++iv) {
          vir[iv] += v[iv];
       }

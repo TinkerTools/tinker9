@@ -13,7 +13,7 @@
 
 namespace tinker {
 template <bool DO_E, bool DO_V>
-void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
+void disp_pme_conv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
@@ -35,7 +35,7 @@ void disp_pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_v)
    const real vbox = boxVolume();
    const real denom0 = 6 * vbox / std::pow(M_PI, 1.5);
 
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
    #pragma acc parallel loop independent async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(gpu_e,gpu_v,qgrid,bsmod1,bsmod2,bsmod3)
@@ -145,7 +145,7 @@ void edisp_acc1()
    const int maxnlist = dsplist_unit->maxnlst;
    const auto* nlst = dsplist_unit->nlst;
    const auto* lst = dsplist_unit->lst;
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
 
    #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,dedspx,dedspy,dedspz,ndisp,edsp,vir_edsp,\
@@ -332,7 +332,7 @@ void edisp_acc2()
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
 
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
    real aewald = dpme_unit->aewald;
    int nfft1 = dpme_unit->nfft1;
    int nfft2 = dpme_unit->nfft2;

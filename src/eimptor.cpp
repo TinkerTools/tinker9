@@ -16,7 +16,7 @@ void eimptorData(RcOp op)
    if (op & rc_dealloc) {
       darray::deallocate(iitors, itors1, itors2, itors3);
       if (rc_a)
-         buffer_deallocate(rc_flag, eit, vir_eit, deitx, deity, deitz);
+         bufferDeallocate(rc_flag, eit, vir_eit, deitx, deity, deitz);
       eit = nullptr;
       vir_eit = nullptr;
       deitx = nullptr;
@@ -33,7 +33,7 @@ void eimptorData(RcOp op)
       deity = gy;
       deitz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &eit, &vir_eit, &deitx, &deity, &deitz);
+         bufferAllocate(rc_flag, &eit, &vir_eit, &deitx, &deity, &deitz);
    }
 
    if (op & rc_init) {
@@ -59,7 +59,7 @@ void eimptor(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_eit, virial_eit);
-      size_t bsize = buffer_size();
+      size_t bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, eit);
       if (do_v)
@@ -72,11 +72,11 @@ void eimptor(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_eit = energy_reduce(eit);
+         energy_eit = energyReduce(eit);
          energy_valence += energy_eit;
       }
       if (do_v) {
-         virial_reduce(virial_eit, vir_eit);
+         virialReduce(virial_eit, vir_eit);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eit[iv];
       }

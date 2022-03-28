@@ -39,7 +39,7 @@ void empole_chgpen_acc1()
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
    PairMPoleGrad pgrad;
 
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
@@ -272,7 +272,7 @@ void empole_generic_ewald_recip_acc()
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
 
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
 
    const PMEUnit pu = epme_unit;
    cmp_to_fmp(pu, cmp, fmp);
@@ -281,7 +281,7 @@ void empole_generic_ewald_recip_acc()
    if CONSTEXPR (do_v) {
       if (vir_m) {
          pme_conv(pu, vir_m);
-         auto size = buffer_size() * virial_buffer_traits::value;
+         auto size = bufferSize() * VirialBufferTraits::value;
          #pragma acc parallel loop independent async deviceptr(vir_m,vir_em)
          for (size_t i = 0; i < size; ++i) {
             vir_em[0][i] += vir_m[0][i];

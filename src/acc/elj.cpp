@@ -26,7 +26,7 @@ void elj_acc1()
    const auto* nlst = clist_unit->nlst;
    const auto* lst = clist_unit->lst;
 
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
 
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\

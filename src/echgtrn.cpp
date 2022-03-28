@@ -21,8 +21,8 @@ void echgtrnData(RcOp op)
       darray::deallocate(chgct, dmpct);
 
       if (rc_a) {
-         buffer_deallocate(calc::analyz, nct);
-         buffer_deallocate(rc_flag, ect, vir_ect, dectx, decty, dectz);
+         bufferDeallocate(calc::analyz, nct);
+         bufferDeallocate(rc_flag, ect, vir_ect, dectx, decty, dectz);
       }
       nct = nullptr;
       ect = nullptr;
@@ -42,8 +42,8 @@ void echgtrnData(RcOp op)
       decty = gy_elec;
       dectz = gz_elec;
       if (rc_a) {
-         buffer_allocate(rc_flag, &nct);
-         buffer_allocate(rc_flag, &ect, &vir_ect, &dectx, &decty, &dectz);
+         bufferAllocate(rc_flag, &nct);
+         bufferAllocate(rc_flag, &ect, &vir_ect, &dectx, &decty, &dectz);
       }
    }
 
@@ -72,7 +72,7 @@ void echgtrn(int vers)
    bool do_g = vers & calc::grad;
 
    zeroOnHost(energy_ect, virial_ect);
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    if (rc_a) {
       if (do_a)
          darray::zero(g::q0, bsize, nct);
@@ -93,15 +93,15 @@ void echgtrn(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_buffer u = ect;
-         energy_prec e = energy_reduce(u);
+         EnergyBuffer u = ect;
+         energy_prec e = energyReduce(u);
          energy_ect += e;
          energy_elec += e;
       }
       if (do_v) {
-         virial_buffer u = vir_ect;
+         VirialBuffer u = vir_ect;
          virial_prec v[9];
-         virial_reduce(v, u);
+         virialReduce(v, u);
          for (int iv = 0; iv < 9; ++iv) {
             virial_ect[iv] += v[iv];
             virial_elec[iv] += v[iv];

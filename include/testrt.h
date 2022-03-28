@@ -106,12 +106,12 @@ void testMdInit(double t = 0, double atm = 0);
 #define COMPARE_REALS(v1, refv, eps) REQUIRE(v1 == Approx(refv).margin(eps))
 #define COMPARE_ENERGY(gpuptr, ref_eng, eps)                                                       \
    {                                                                                               \
-      double eng = energy_reduce(gpuptr);                                                          \
+      double eng = energyReduce(gpuptr);                                                           \
       REQUIRE(eng == Approx(ref_eng).margin(eps));                                                 \
    }
 #define COMPARE_COUNT(gpuptr, ref_count)                                                           \
    {                                                                                               \
-      int count = count_reduce(gpuptr);                                                            \
+      int count = countReduce(gpuptr);                                                             \
       REQUIRE(count == ref_count);                                                                 \
    }
 
@@ -143,7 +143,7 @@ void testMdInit(double t = 0, double atm = 0);
 #define COMPARE_VIR(gpuptr, ref_v, eps)                                                            \
    {                                                                                               \
       virial_prec vir1[9];                                                                         \
-      virial_reduce(vir1, gpuptr);                                                                 \
+      virialReduce(vir1, gpuptr);                                                                  \
       REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                                         \
       REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                                         \
       REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                                         \
@@ -157,8 +157,8 @@ void testMdInit(double t = 0, double atm = 0);
 #define COMPARE_VIR2(gpuptr, gpuptr2, ref_v, eps)                                                  \
    {                                                                                               \
       virial_prec vir1[9], vir2[9];                                                                \
-      virial_reduce(vir1, gpuptr);                                                                 \
-      virial_reduce(vir2, gpuptr2);                                                                \
+      virialReduce(vir1, gpuptr);                                                                  \
+      virialReduce(vir2, gpuptr2);                                                                 \
       REQUIRE(vir1[0] + vir2[0] == Approx(ref_v[0][0]).margin(eps));                               \
       REQUIRE(vir1[1] + vir2[1] == Approx(ref_v[0][1]).margin(eps));                               \
       REQUIRE(vir1[2] + vir2[2] == Approx(ref_v[0][2]).margin(eps));                               \

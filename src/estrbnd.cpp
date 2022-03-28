@@ -17,7 +17,7 @@ void estrbndData(RcOp op)
       darray::deallocate(isb, sbk);
 
       if (rc_a)
-         buffer_deallocate(rc_flag, eba, vir_eba, debax, debay, debaz);
+         bufferDeallocate(rc_flag, eba, vir_eba, debax, debay, debaz);
       eba = nullptr;
       vir_eba = nullptr;
       debax = nullptr;
@@ -36,7 +36,7 @@ void estrbndData(RcOp op)
       debay = gy;
       debaz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &eba, &vir_eba, &debax, &debay, &debaz);
+         bufferAllocate(rc_flag, &eba, &vir_eba, &debax, &debay, &debaz);
    }
 
    if (op & rc_init) {
@@ -62,7 +62,7 @@ void estrbnd(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_eba, virial_eba);
-      auto bsize = buffer_size();
+      auto bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, eba);
       if (do_v)
@@ -75,11 +75,11 @@ void estrbnd(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_eba = energy_reduce(eba);
+         energy_eba = energyReduce(eba);
          energy_valence += energy_eba;
       }
       if (do_v) {
-         virial_reduce(virial_eba, vir_eba);
+         virialReduce(virial_eba, vir_eba);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eba[iv];
       }

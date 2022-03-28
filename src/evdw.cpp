@@ -53,8 +53,8 @@ void evdwData(RcOp op)
       }
 
       if (rc_a) {
-         buffer_deallocate(rc_flag, nev);
-         buffer_deallocate(rc_flag, ev, vir_ev, devx, devy, devz);
+         bufferDeallocate(rc_flag, nev);
+         bufferDeallocate(rc_flag, ev, vir_ev, devx, devy, devz);
       }
       nev = nullptr;
       ev = nullptr;
@@ -310,8 +310,8 @@ void evdwData(RcOp op)
       devy = gy_vdw;
       devz = gz_vdw;
       if (rc_a) {
-         buffer_allocate(rc_flag, &nev);
-         buffer_allocate(rc_flag, &ev, &vir_ev, &devx, &devy, &devz);
+         bufferAllocate(rc_flag, &nev);
+         bufferAllocate(rc_flag, &ev, &vir_ev, &devx, &devy, &devz);
       }
    }
 
@@ -455,7 +455,7 @@ void evdw(int vers)
    bool do_g = vers & calc::grad;
 
    zeroOnHost(energy_ev, virial_ev);
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    if (rc_a) {
       if (do_a)
          darray::zero(g::q0, bsize, nev);
@@ -500,15 +500,15 @@ void evdw(int vers)
    }
    if (rc_a) {
       if (do_e) {
-         energy_buffer u = ev;
-         energy_prec e = energy_reduce(u);
+         EnergyBuffer u = ev;
+         energy_prec e = energyReduce(u);
          energy_ev += e;
          energy_vdw += e;
       }
       if (do_v) {
-         virial_buffer u = vir_ev;
+         VirialBuffer u = vir_ev;
          virial_prec v[9];
-         virial_reduce(v, u);
+         virialReduce(v, u);
          for (int iv = 0; iv < 9; ++iv) {
             virial_ev[iv] += v[iv];
             virial_vdw[iv] += v[iv];

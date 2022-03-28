@@ -23,8 +23,8 @@ void echargeData(RcOp op)
       darray::deallocate(cexclude, cexclude_scale);
 
       if (rc_a) {
-         buffer_deallocate(rc_flag, nec);
-         buffer_deallocate(rc_flag, ec, vir_ec, decx, decy, decz);
+         bufferDeallocate(rc_flag, nec);
+         bufferDeallocate(rc_flag, ec, vir_ec, decx, decy, decz);
       }
       nec = nullptr;
       ec = nullptr;
@@ -116,8 +116,8 @@ void echargeData(RcOp op)
       decy = gy_elec;
       decz = gz_elec;
       if (rc_a) {
-         buffer_allocate(rc_flag, &nec);
-         buffer_allocate(rc_flag, &ec, &vir_ec, &decx, &decy, &decz);
+         bufferAllocate(rc_flag, &nec);
+         bufferAllocate(rc_flag, &ec, &vir_ec, &decx, &decy, &decz);
       }
    }
 
@@ -133,7 +133,7 @@ void echarge(int vers)
    bool do_g = vers & calc::grad;
 
    zeroOnHost(energy_ec, virial_ec);
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    if (rc_a) {
       if (do_a)
          darray::zero(g::q0, bsize, nec);
@@ -159,15 +159,15 @@ void echarge(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_buffer u = ec;
-         energy_prec e = energy_reduce(u);
+         EnergyBuffer u = ec;
+         energy_prec e = energyReduce(u);
          energy_ec += e;
          energy_elec += e;
       }
       if (do_v) {
-         virial_buffer u = vir_ec;
+         VirialBuffer u = vir_ec;
          virial_prec v[9];
-         virial_reduce(v, u);
+         virialReduce(v, u);
          for (int iv = 0; iv < 9; ++iv) {
             virial_ec[iv] += v[iv];
             virial_elec[iv] += v[iv];

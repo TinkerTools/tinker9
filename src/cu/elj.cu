@@ -14,8 +14,8 @@ namespace tinker {
 // ck.py Version 2.0.3
 template <class Ver>
 __global__
-void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffer restrict ev,
-   virial_buffer restrict vev, grad_prec* restrict gx, grad_prec* restrict gy,
+void elj_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyBuffer restrict ev,
+   VirialBuffer restrict vev, grad_prec* restrict gx, grad_prec* restrict gy,
    grad_prec* restrict gz, real cut, real off, const unsigned* restrict info, int nexclude,
    const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
    const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
@@ -36,12 +36,12 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffe
    if CONSTEXPR (do_a) {
       nevtl = 0;
    }
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec evtl;
    if CONSTEXPR (do_e) {
       evtl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vevtlxx, vevtlyx, vevtlzx, vevtlyy, vevtlzy, vevtlzz;
    if CONSTEXPR (do_v) {
       vevtlxx = 0;
@@ -358,7 +358,7 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nev, energy_buffe
 // special vdw14 interactions
 template <class Ver>
 __global__
-void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf, virial_buffer restrict vbuf,
+void elj_cu2(CountBuffer restrict nebuf, EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf,
    grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, TINKER_IMAGE_PARAMS,
    real cut, real off, const real* restrict x, const real* restrict y, const real* restrict z, //
    int njvdw, const real* restrict radmin, const real* restrict epsilon, const int* restrict jvdw,
@@ -370,8 +370,8 @@ void elj_cu2(count_buffer restrict nebuf, energy_buffer restrict ebuf, virial_bu
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
 
-   using ebuf_prec = energy_buffer_traits::type;
-   using vbuf_prec = virial_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    ebuf_prec etl;
    vbuf_prec vtlxx, vtlyx, vtlzx, vtlyy, vtlzy, vtlzz;
    if CONSTEXPR (do_e) {

@@ -200,7 +200,7 @@ void vv_lpiston_init()
    // lp_virial(molP);
 
    // if (constrain) {
-   //    darray::allocate(buffer_size(), &hc_vir_buf);
+   //    darray::allocate(bufferSize(), &hc_vir_buf);
    // }
 
    // // isotropic NPT

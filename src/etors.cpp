@@ -19,7 +19,7 @@ void etorsData(RcOp op)
       darray::deallocate(itors, tors1, tors2, tors3, tors4, tors5, tors6);
 
       if (rc_a)
-         buffer_deallocate(rc_flag, et, vir_et, detx, dety, detz);
+         bufferDeallocate(rc_flag, et, vir_et, detx, dety, detz);
       et = nullptr;
       vir_et = nullptr;
       detx = nullptr;
@@ -37,7 +37,7 @@ void etorsData(RcOp op)
       dety = gy;
       detz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &et, &vir_et, &detx, &dety, &detz);
+         bufferAllocate(rc_flag, &et, &vir_et, &detx, &dety, &detz);
    }
 
    if (op & rc_init) {
@@ -66,7 +66,7 @@ void etors(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_et, virial_et);
-      auto bsize = buffer_size();
+      auto bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, et);
       if (do_v)
@@ -79,11 +79,11 @@ void etors(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_et = energy_reduce(et);
+         energy_et = energyReduce(et);
          energy_valence += energy_et;
       }
       if (do_v) {
-         virial_reduce(virial_et, vir_et);
+         virialReduce(virial_et, vir_et);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_et[iv];
       }

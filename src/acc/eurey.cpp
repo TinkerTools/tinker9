@@ -10,7 +10,7 @@ void eurey_acc1()
    constexpr bool do_e = Ver::e;
    constexpr bool do_v = Ver::v;
 
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
 
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,deubx,deuby,deubz,\

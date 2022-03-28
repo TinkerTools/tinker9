@@ -27,7 +27,7 @@ void empole_nonewald_acc1()
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
    PairMPoleGrad pgrad;
 
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);

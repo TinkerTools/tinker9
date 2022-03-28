@@ -40,7 +40,7 @@ TEST_CASE("ECHGTRN-1", "[ff][hippo][echgtrn][dmso]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(nct), ref_c);
+   COMPARE_INTS(countReduce(nct), ref_c);
 
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);

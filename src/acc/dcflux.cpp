@@ -132,9 +132,9 @@ void ang_dcflux()
 
 template <int DO_V>
 void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
-   virial_buffer restrict vir)
+   VirialBuffer restrict vir)
 {
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
 
    #pragma acc parallel loop independent async\
                deviceptr(decfx,decfy,decfz)
@@ -167,7 +167,7 @@ void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* rest
    }
 }
 
-void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, virial_buffer vir)
+void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, VirialBuffer vir)
 {
    if (vers & calc::virial)
       dcflux_acc1<1>(gx, gy, gz, vir);

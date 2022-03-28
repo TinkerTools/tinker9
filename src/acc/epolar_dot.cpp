@@ -10,7 +10,7 @@ void epolar0_dotprod_acc(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
 {
    const real f = -0.5 * electric / dielec;
 
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
 
    #pragma acc parallel loop independent async\
                deviceptr(ep,gpu_uind,gpu_udirp,polarity_inv)

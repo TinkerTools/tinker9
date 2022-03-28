@@ -17,7 +17,7 @@ void eureyData(RcOp op)
       darray::deallocate(iury, uk, ul);
 
       if (rc_a)
-         buffer_deallocate(rc_flag, eub, vir_eub, deubx, deuby, deubz);
+         bufferDeallocate(rc_flag, eub, vir_eub, deubx, deuby, deubz);
       eub = nullptr;
       vir_eub = nullptr;
       deubx = nullptr;
@@ -37,7 +37,7 @@ void eureyData(RcOp op)
       deuby = gy;
       deubz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &eub, &vir_eub, &deubx, &deuby, &deubz);
+         bufferAllocate(rc_flag, &eub, &vir_eub, &deubx, &deuby, &deubz);
    }
 
    if (op & rc_init) {
@@ -65,7 +65,7 @@ void eurey(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_eub, virial_eub);
-      auto bsize = buffer_size();
+      auto bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, eub);
       if (do_v)
@@ -78,11 +78,11 @@ void eurey(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_eub = energy_reduce(eub);
+         energy_eub = energyReduce(eub);
          energy_valence += energy_eub;
       }
       if (do_v) {
-         virial_reduce(virial_eub, vir_eub);
+         virialReduce(virial_eub, vir_eub);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eub[iv];
       }

@@ -16,9 +16,9 @@ namespace tinker {
 // ck.py Version 2.0.2
 template <class Ver, class DTYP>
 __global__
-void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd, energy_buffer restrict ed,
-   virial_buffer restrict vd, grad_prec* restrict gx, grad_prec* restrict gy,
-   grad_prec* restrict gz, real cut, real off, const unsigned* restrict dinfo, int nexclude,
+void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer restrict ed,
+   VirialBuffer restrict vd, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
+   real cut, real off, const unsigned* restrict dinfo, int nexclude,
    const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
    const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
    int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
@@ -37,12 +37,12 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, count_buffer restrict nd, energy_buff
    if CONSTEXPR (do_a) {
       ndtl = 0;
    }
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec edtl;
    if CONSTEXPR (do_e) {
       edtl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vdtlxx, vdtlyx, vdtlzx, vdtlyy, vdtlzy, vdtlzz;
    if CONSTEXPR (do_v) {
       vdtlxx = 0;
@@ -391,7 +391,7 @@ void edisp_ewald_real_cu(int vers)
 
 template <class Ver, int bsorder>
 __global__
-void edisp_cu3(count_buffer restrict ndisp, energy_buffer restrict edsp, const real* restrict csix,
+void edisp_cu3(CountBuffer restrict ndisp, EnergyBuffer restrict edsp, const real* restrict csix,
    real aewald, int n, int nfft1, int nfft2, int nfft3, const real* restrict x,
    const real* restrict y, const real* restrict z, const real* restrict qgrid, real3 reca,
    real3 recb, real3 recc, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz)

@@ -5,7 +5,7 @@
 namespace tinker {
 template <bool do_a, bool do_e, int CFLX>
 __global__
-void empole_chgpen_self_cu(count_buffer restrict nem, energy_buffer restrict em,
+void empole_chgpen_self_cu(CountBuffer restrict nem, EnergyBuffer restrict em,
    const real (*restrict rpole)[10], real* restrict pot, int n, real f, real aewald)
 {
    real aewald_sq_2 = 2 * aewald * aewald;

@@ -102,7 +102,7 @@ void pme_stream_finish_wait_cu(bool use_pmestream)
 
 template <class Ver, class IMG, class ETYP, class RADRULE, class EPSRULE, bool SOFTCORE, bool VOUT>
 __global__
-void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_prec* restrict gx,
+void echglj_cu5(EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf, grad_prec* restrict gx,
    grad_prec* restrict gy, grad_prec* restrict gz, TINKER_IMAGE_PARAMS, //
    int n, const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl,
    int niak, const int* restrict iak,
@@ -115,7 +115,7 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
    const unsigned int* restrict cvinfo, //
    real evcut, real evoff, const real2* restrict radeps, const int* restrict mut, real vlam,
    evdw_t vcouple, //
-   energy_buffer restrict ev, virial_buffer restrict vev, grad_prec* restrict devx,
+   EnergyBuffer restrict ev, VirialBuffer restrict vev, grad_prec* restrict devx,
    grad_prec* restrict devy, grad_prec* restrict devz)
 {
    constexpr bool do_e = Ver::e;
@@ -126,12 +126,12 @@ void echglj_cu5(energy_buffer restrict ebuf, virial_buffer restrict vbuf, grad_p
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ectl;
    if CONSTEXPR (do_e) {
       ectl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vctlxx, vctlyx, vctlzx, vctlyy, vctlzy, vctlzz;
    if CONSTEXPR (do_v) {
       vctlxx = 0;

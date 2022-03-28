@@ -9,9 +9,9 @@ namespace tinker {
 /// array also includes zero charges.
 TINKER_EXTERN real* pchg;
 
-TINKER_EXTERN count_buffer nec;
-TINKER_EXTERN energy_buffer ec;
-TINKER_EXTERN virial_buffer vir_ec;
+TINKER_EXTERN CountBuffer nec;
+TINKER_EXTERN EnergyBuffer ec;
+TINKER_EXTERN VirialBuffer vir_ec;
 TINKER_EXTERN grad_prec* decx;
 TINKER_EXTERN grad_prec* decy;
 TINKER_EXTERN grad_prec* decz;

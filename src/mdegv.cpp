@@ -5,7 +5,7 @@
 namespace tinker {
 void zero_egv(int vers)
 {
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    if (vers & calc::energy) {
       zeroOnHost(esum, energy_valence, energy_vdw, energy_elec);
       zeroOnDevice3Async(bsize, eng_buf, eng_buf_vdw, eng_buf_elec);
@@ -71,9 +71,9 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const gra
          darray::copyout(queue, n, hgz.data(), gz_src);
          wait_for(queue);
          for (int i = 0; i < n; ++i) {
-            grdx[i] = to_flt_host<double>(hgx[i]);
-            grdy[i] = to_flt_host<double>(hgy[i]);
-            grdz[i] = to_flt_host<double>(hgz[i]);
+            grdx[i] = toFloat_host<double>(hgx[i]);
+            grdy[i] = toFloat_host<double>(hgy[i]);
+            grdz[i] = toFloat_host<double>(hgz[i]);
          }
 #else
          if (sizeof(grad_prec) < sizeof(double)) {

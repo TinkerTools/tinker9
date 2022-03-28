@@ -43,8 +43,8 @@ TEST_CASE("Truncated-Octahedron", "[ff][pbc][arbox]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   // COMPARE_INTS(count_reduce(nev), ref_count);
-   COMPARE_INTS_EPS(count_reduce(nev), ref_count, eps_count);
+   // COMPARE_INTS(countReduce(nev), ref_count);
+   COMPARE_INTS_EPS(countReduce(nev), ref_count, eps_count);
 
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);

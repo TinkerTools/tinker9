@@ -34,7 +34,7 @@ void echgtrn_acc1()
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
 
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\

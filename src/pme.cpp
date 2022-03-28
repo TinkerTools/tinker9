@@ -170,7 +170,7 @@ void pmeData(RcOp op)
          if (usePotent(Potent::POLAR)) {
             darray::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp, &fphidp);
             if (rc_flag & calc::virial)
-               darray::allocate(buffer_size(), &vir_m);
+               darray::allocate(bufferSize(), &vir_m);
             else
                vir_m = nullptr;
          } else {

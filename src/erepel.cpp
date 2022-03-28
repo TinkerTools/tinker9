@@ -27,8 +27,8 @@ void erepelData(RcOp op)
       darray::deallocate(repexclude, repexclude_scale);
 
       if (rc_a) {
-         buffer_deallocate(rc_flag, nrep);
-         buffer_deallocate(rc_flag, er, vir_er, derx, dery, derz);
+         bufferDeallocate(rc_flag, nrep);
+         bufferDeallocate(rc_flag, er, vir_er, derx, dery, derz);
       }
       nrep = nullptr;
       er = nullptr;
@@ -48,8 +48,8 @@ void erepelData(RcOp op)
       dery = gy_vdw;
       derz = gz_vdw;
       if (rc_a) {
-         buffer_allocate(rc_flag, &nrep);
-         buffer_allocate(rc_flag, &er, &vir_er, &derx, &dery, &derz);
+         bufferAllocate(rc_flag, &nrep);
+         bufferAllocate(rc_flag, &er, &vir_er, &derx, &dery, &derz);
       }
 
       r2scale = reppot::r2scale;
@@ -147,7 +147,7 @@ void erepel(int vers)
    bool do_g = vers & calc::grad;
 
    zeroOnHost(energy_er, virial_er);
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    if (rc_a) {
       if (do_a)
          darray::zero(g::q0, bsize, nrep);
@@ -169,9 +169,9 @@ void erepel(int vers)
 
    torque(vers, derx, dery, derz);
    if (do_v) {
-      virial_buffer u2 = vir_trq;
+      VirialBuffer u2 = vir_trq;
       virial_prec v2[9];
-      virial_reduce(v2, u2);
+      virialReduce(v2, u2);
       for (int iv = 0; iv < 9; ++iv) {
          virial_er[iv] += v2[iv];
          virial_vdw[iv] += v2[iv];
@@ -180,15 +180,15 @@ void erepel(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_buffer u = er;
-         energy_prec e = energy_reduce(u);
+         EnergyBuffer u = er;
+         energy_prec e = energyReduce(u);
          energy_er += e;
          energy_vdw += e;
       }
       if (do_v) {
-         virial_buffer u = vir_er;
+         VirialBuffer u = vir_er;
          virial_prec v[9];
-         virial_reduce(v, u);
+         virialReduce(v, u);
          for (int iv = 0; iv < 9; ++iv) {
             virial_er[iv] += v[iv];
             virial_vdw[iv] += v[iv];

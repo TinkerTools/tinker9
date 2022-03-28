@@ -55,8 +55,8 @@ void epolarData(RcOp op)
       darray::deallocate(polarity, thole, pdamp, polarity_inv);
 
       if (rc_a) {
-         buffer_deallocate(rc_flag, nep);
-         buffer_deallocate(rc_flag, ep, vir_ep, depx, depy, depz);
+         bufferDeallocate(rc_flag, nep);
+         bufferDeallocate(rc_flag, ep, vir_ep, depx, depy, depz);
       }
       nep = nullptr;
       ep = nullptr;
@@ -403,8 +403,8 @@ void epolarData(RcOp op)
       depy = gy_elec;
       depz = gz_elec;
       if (rc_a) {
-         buffer_allocate(rc_flag, &nep);
-         buffer_allocate(rc_flag, &ep, &vir_ep, &depx, &depy, &depz);
+         bufferAllocate(rc_flag, &nep);
+         bufferAllocate(rc_flag, &ep, &vir_ep, &depx, &depy, &depz);
       }
 
       if (rc_flag & calc::grad) {
@@ -530,7 +530,7 @@ void epolar(int vers)
    bool do_g = vers & calc::grad;
 
    zeroOnHost(energy_ep, virial_ep);
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    if (rc_a) {
       if (do_a)
          darray::zero(g::q0, bsize, nep);
@@ -551,9 +551,9 @@ void epolar(int vers)
       epolar_nonewald(vers);
    torque(vers, depx, depy, depz);
    if (do_v) {
-      virial_buffer u2 = vir_trq;
+      VirialBuffer u2 = vir_trq;
       virial_prec v2[9];
-      virial_reduce(v2, u2);
+      virialReduce(v2, u2);
       for (int iv = 0; iv < 9; ++iv) {
          virial_ep[iv] += v2[iv];
          virial_elec[iv] += v2[iv];
@@ -562,15 +562,15 @@ void epolar(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_buffer u = ep;
-         energy_prec e = energy_reduce(u);
+         EnergyBuffer u = ep;
+         energy_prec e = energyReduce(u);
          energy_ep += e;
          energy_elec += e;
       }
       if (do_v) {
-         virial_buffer u1 = vir_ep;
+         VirialBuffer u1 = vir_ep;
          virial_prec v1[9];
-         virial_reduce(v1, u1);
+         virialReduce(v1, u1);
          for (int iv = 0; iv < 9; ++iv) {
             virial_ep[iv] = v1[iv];
             virial_elec[iv] += v1[iv];

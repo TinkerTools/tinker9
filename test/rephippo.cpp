@@ -40,7 +40,7 @@ TEST_CASE("EREPEL-1", "[ff][hippo][erepel][c5h12-acnh2]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(nrep), ref_c);
+   COMPARE_INTS(countReduce(nrep), ref_c);
 
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -95,7 +95,7 @@ TEST_CASE("EREPEL-2", "[ff][hippo][erepel][water]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(nrep), ref_c);
+   COMPARE_INTS(countReduce(nrep), ref_c);
 
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);

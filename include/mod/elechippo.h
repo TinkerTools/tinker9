@@ -48,9 +48,9 @@ namespace tinker {
 TINKER_EXTERN real* chgct;
 TINKER_EXTERN real* dmpct;
 
-TINKER_EXTERN count_buffer nct;
-TINKER_EXTERN energy_buffer ect;
-TINKER_EXTERN virial_buffer vir_ect;
+TINKER_EXTERN CountBuffer nct;
+TINKER_EXTERN EnergyBuffer ect;
+TINKER_EXTERN VirialBuffer vir_ect;
 TINKER_EXTERN grad_prec* dectx;
 TINKER_EXTERN grad_prec* decty;
 TINKER_EXTERN grad_prec* dectz;

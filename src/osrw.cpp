@@ -283,14 +283,14 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (do_e) {
       if (!rc_a) {
          energy_prec e;
-         e = energy_reduce(eng_buf);
+         e = energyReduce(eng_buf);
          energy_valence += e;
          if (eng_buf_vdw) {
-            e = energy_reduce(eng_buf_vdw);
+            e = energyReduce(eng_buf_vdw);
             energy_vdw += e;
          }
          if (eng_buf_elec) {
-            e = energy_reduce(eng_buf_elec);
+            e = energyReduce(eng_buf_elec);
             energy_elec += e;
          }
       }
@@ -308,16 +308,16 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (do_v) {
       if (!rc_a) {
          virial_prec v[9];
-         virial_reduce(v, vir_buf);
+         virialReduce(v, vir_buf);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += v[iv];
          if (vir_buf_vdw) {
-            virial_reduce(v, vir_buf_vdw);
+            virialReduce(v, vir_buf_vdw);
             for (int iv = 0; iv < 9; ++iv)
                virial_vdw[iv] += v[iv];
          }
          if (vir_buf_elec) {
-            virial_reduce(v, vir_buf_elec);
+            virialReduce(v, vir_buf_elec);
             for (int iv = 0; iv < 9; ++iv)
                virial_elec[iv] += v[iv];
          }
@@ -357,14 +357,14 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (do_e) {
       if (!rc_a) {
          energy_prec e;
-         e = energy_reduce(eng_buf);
+         e = energyReduce(eng_buf);
          energy_valence += e;
          if (eng_buf_vdw) {
-            e = energy_reduce(eng_buf_vdw);
+            e = energyReduce(eng_buf_vdw);
             energy_vdw += e;
          }
          if (eng_buf_elec) {
-            e = energy_reduce(eng_buf_elec);
+            e = energyReduce(eng_buf_elec);
             energy_elec += e;
          }
       }
@@ -389,16 +389,16 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (do_v) {
       if (!rc_a) {
          virial_prec v[9];
-         virial_reduce(v, vir_buf);
+         virialReduce(v, vir_buf);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += v[iv];
          if (vir_buf_vdw) {
-            virial_reduce(v, vir_buf_vdw);
+            virialReduce(v, vir_buf_vdw);
             for (int iv = 0; iv < 9; ++iv)
                virial_vdw[iv] += v[iv];
          }
          if (vir_buf_elec) {
-            virial_reduce(v, vir_buf_elec);
+            virialReduce(v, vir_buf_elec);
             for (int iv = 0; iv < 9; ++iv)
                virial_elec[iv] += v[iv];
          }

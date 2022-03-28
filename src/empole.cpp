@@ -33,8 +33,8 @@ void empoleData(RcOp op)
 
    if (op & rc_dealloc) {
       if (rc_a) {
-         buffer_deallocate(rc_flag, nem);
-         buffer_deallocate(rc_flag, em, vir_em, demx, demy, demz);
+         bufferDeallocate(rc_flag, nem);
+         bufferDeallocate(rc_flag, em, vir_em, demx, demy, demz);
       }
       nem = nullptr;
       em = nullptr;
@@ -52,8 +52,8 @@ void empoleData(RcOp op)
       demy = gy_elec;
       demz = gz_elec;
       if (rc_a) {
-         buffer_allocate(rc_flag, &nem);
-         buffer_allocate(rc_flag, &em, &vir_em, &demx, &demy, &demz);
+         bufferAllocate(rc_flag, &nem);
+         bufferAllocate(rc_flag, &em, &vir_em, &demx, &demy, &demz);
       }
    }
 
@@ -69,7 +69,7 @@ void empole(int vers)
    bool do_g = vers & calc::grad;
 
    zeroOnHost(energy_em, virial_em);
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    if (rc_a) {
       if (do_a)
          darray::zero(g::q0, bsize, nem);
@@ -88,9 +88,9 @@ void empole(int vers)
       empole_nonewald(vers);
    torque(vers, demx, demy, demz);
    if (do_v) {
-      virial_buffer u2 = vir_trq;
+      VirialBuffer u2 = vir_trq;
       virial_prec v2[9];
-      virial_reduce(v2, u2);
+      virialReduce(v2, u2);
       for (int iv = 0; iv < 9; ++iv) {
          virial_em[iv] += v2[iv];
          virial_elec[iv] += v2[iv];
@@ -99,15 +99,15 @@ void empole(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_buffer u = em;
-         energy_prec e = energy_reduce(u);
+         EnergyBuffer u = em;
+         energy_prec e = energyReduce(u);
          energy_em += e;
          energy_elec += e;
       }
       if (do_v) {
-         virial_buffer u1 = vir_em;
+         VirialBuffer u1 = vir_em;
          virial_prec v1[9];
-         virial_reduce(v1, u1);
+         virialReduce(v1, u1);
          for (int iv = 0; iv < 9; ++iv) {
             virial_em[iv] += v1[iv];
             virial_elec[iv] += v1[iv];

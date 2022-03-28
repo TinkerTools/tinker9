@@ -9,7 +9,7 @@ void estrtor_acc1()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_v = Ver::v;
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
 
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,ebt,vir_ebt,debtx,debty,debtz,\

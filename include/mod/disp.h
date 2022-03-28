@@ -10,9 +10,9 @@ TINKER_EXTERN int ndspexclude;
 TINKER_EXTERN int (*dspexclude)[2];
 TINKER_EXTERN real* dspexclude_scale;
 
-TINKER_EXTERN count_buffer ndisp;
-TINKER_EXTERN energy_buffer edsp;
-TINKER_EXTERN virial_buffer vir_edsp;
+TINKER_EXTERN CountBuffer ndisp;
+TINKER_EXTERN EnergyBuffer edsp;
+TINKER_EXTERN VirialBuffer vir_edsp;
 TINKER_EXTERN grad_prec* dedspx;
 TINKER_EXTERN grad_prec* dedspy;
 TINKER_EXTERN grad_prec* dedspz;

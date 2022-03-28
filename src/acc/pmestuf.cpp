@@ -222,7 +222,7 @@ void grid_uind_acc(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 //====================================================================//
 
 template <bool DO_E, bool DO_V>
-void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
+void pme_conv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
@@ -242,7 +242,7 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
    pterm *= pterm;
    real box_volume = boxVolume();
 
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
    #pragma acc parallel loop independent\
                async(use_pme_stream ? g::qpme : g::q0)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
@@ -307,7 +307,7 @@ void pme_conv_acc1(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
    }
 }
 
-void pme_conv_acc(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
+void pme_conv_acc(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
    if (gpu_vir == nullptr) {
       if (gpu_e == nullptr) {

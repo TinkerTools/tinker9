@@ -45,7 +45,7 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
 
       energy(calc::v3);
       COMPARE_REALS(esum, ref_e, eps_e);
-      COMPARE_INTS(count_reduce(nev), ref_count);
+      COMPARE_INTS(countReduce(nev), ref_count);
 
       energy(calc::v4);
       COMPARE_REALS(esum, ref_e, eps_e);
@@ -99,7 +99,7 @@ TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
 
       energy(calc::v3);
       COMPARE_REALS(esum, ref_e, eps_e);
-      COMPARE_INTS(count_reduce(nev), ref_count);
+      COMPARE_INTS(countReduce(nev), ref_count);
 
       energy(calc::v4);
       COMPARE_REALS(esum, ref_e, eps_e);

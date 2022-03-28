@@ -72,25 +72,25 @@ static void x_analyze_e()
       print(out, fmt, "Torsion-Torsion", energy_ett, countBondedTerm(Potent::TORTOR));
 
    if (usePotent(Potent::VDW))
-      print(out, fmt, "Van der Waals", energy_ev, count_reduce(nev));
+      print(out, fmt, "Van der Waals", energy_ev, countReduce(nev));
 
    if (usePotent(Potent::REPULS))
-      print(out, fmt, "Repulsion", energy_er, count_reduce(nrep));
+      print(out, fmt, "Repulsion", energy_er, countReduce(nrep));
 
    if (usePotent(Potent::DISP))
-      print(out, fmt, "Dispersion", energy_edsp, count_reduce(ndisp));
+      print(out, fmt, "Dispersion", energy_edsp, countReduce(ndisp));
 
    if (usePotent(Potent::CHARGE))
-      print(out, fmt, "Charge-Charge", energy_ec, count_reduce(nec));
+      print(out, fmt, "Charge-Charge", energy_ec, countReduce(nec));
 
    if (usePotent(Potent::MPOLE))
-      print(out, fmt, "Atomic Multipoles", energy_em, count_reduce(nem));
+      print(out, fmt, "Atomic Multipoles", energy_em, countReduce(nem));
 
    if (usePotent(Potent::POLAR))
-      print(out, fmt, "Polarization", energy_ep, count_reduce(nep));
+      print(out, fmt, "Polarization", energy_ep, countReduce(nep));
 
    if (usePotent(Potent::CHGTRN))
-      print(out, fmt, "Charge Transfer", energy_ect, count_reduce(nct));
+      print(out, fmt, "Charge Transfer", energy_ect, countReduce(nct));
 
    if (usePotent(Potent::GEOM))
       print(out, fmt, "Geometric Restraints", energy_eg, countBondedTerm(Potent::GEOM));

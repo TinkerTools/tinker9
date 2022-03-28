@@ -542,7 +542,7 @@ void pair_mplar(                                                          //
 
 template <class Ver, class ETYP>
 __global__
-void emplar_cu1c(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer restrict vbuf,
+void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf,
    grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
    real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
    const real (*restrict uind)[3], const real (*restrict uinp)[3], const real* restrict thole,
@@ -556,12 +556,12 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer
    static_assert(!Ver::a, "");
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
 
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ebuftl;
    if CONSTEXPR (do_e) {
       ebuftl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz;
    if CONSTEXPR (do_v) {
       vbuftlxx = 0;
@@ -749,7 +749,7 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer
 
 template <class Ver, class ETYP>
 __global__
-void emplar_cu1b(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer restrict vbuf,
+void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf,
    grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
    real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
    const real (*restrict uind)[3], const real (*restrict uinp)[3], const real* restrict thole,
@@ -765,12 +765,12 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ebuftl;
    if CONSTEXPR (do_e) {
       ebuftl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz;
    if CONSTEXPR (do_v) {
       vbuftlxx = 0;
@@ -966,7 +966,7 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer
 
 template <class Ver, class ETYP>
 __global__
-void emplar_cu1a(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer restrict vbuf,
+void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf,
    grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
    real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
    const real (*restrict uind)[3], const real (*restrict uinp)[3], const real* restrict thole,
@@ -982,12 +982,12 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, energy_buffer restrict ebuf, virial_buffer
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ebuftl;
    if CONSTEXPR (do_e) {
       ebuftl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz;
    if CONSTEXPR (do_v) {
       vbuftlxx = 0;

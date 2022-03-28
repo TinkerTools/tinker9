@@ -214,7 +214,7 @@ void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3], int nr
    const int (*restrict iratch3)[4],
 
    time_prec dt, vel_prec* restrict vx, vel_prec* restrict vy, vel_prec* restrict vz,
-   virial_buffer restrict vir_buf,
+   VirialBuffer restrict vir_buf,
 
    const pos_prec* restrict xpos, const pos_prec* restrict ypos, const pos_prec* restrict zpos,
    const double* restrict massinv)

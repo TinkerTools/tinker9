@@ -40,7 +40,7 @@ TEST_CASE("EMPOLE-1-EWALD-HIPPO", "[ff][hippo][emhippo][ewald]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(nem), ref_c);
+   COMPARE_INTS(countReduce(nem), ref_c);
 
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -95,7 +95,7 @@ TEST_CASE("EMPOLE-2-NONEWALD-HIPPO", "[ff][hippo][emhippo][nonewald]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(nem), ref_c);
+   COMPARE_INTS(countReduce(nem), ref_c);
 
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);

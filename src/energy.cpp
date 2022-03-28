@@ -27,12 +27,12 @@
 namespace tinker {
 struct DHFlow
 {
-   energy_buffer_traits::type e_val;
-   energy_buffer_traits::type e_vdw;
-   energy_buffer_traits::type e_ele;
-   virial_buffer_traits::type v_val[virial_buffer_traits::N];
-   virial_buffer_traits::type v_vdw[virial_buffer_traits::N];
-   virial_buffer_traits::type v_ele[virial_buffer_traits::N];
+   EnergyBufferTraits::type e_val;
+   EnergyBufferTraits::type e_vdw;
+   EnergyBufferTraits::type e_ele;
+   VirialBufferTraits::type v_val[VirialBufferTraits::N];
+   VirialBufferTraits::type v_vdw[VirialBufferTraits::N];
+   VirialBufferTraits::type v_ele[VirialBufferTraits::N];
 };
 
 static DHFlow ev_hobj;
@@ -391,7 +391,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ev_hobj.e_ele = 0;
    if (do_e) {
       if (!rc_a) {
-         size_t bufsize = buffer_size();
+         size_t bufsize = bufferSize();
          if (ecore_val) {
             must_wait = true;
             reduce_sum_on_device(&ev_dptr->e_val, eng_buf, bufsize, g::q0);
@@ -412,7 +412,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    zeroOnHost(ev_hobj.v_ele);
    if (do_v) {
       if (!rc_a) {
-         size_t bufsize = buffer_size();
+         size_t bufsize = bufferSize();
          if (ecore_val) {
             must_wait = true;
             reduce_sum2_on_device(ev_dptr->v_val, vir_buf, bufsize, g::q0);
@@ -434,13 +434,13 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (do_e) {
       if (!rc_a) {
          if (ecore_val) {
-            energy_valence += to_flt_host<energy_prec>(ev_hobj.e_val);
+            energy_valence += toFloat_host<energy_prec>(ev_hobj.e_val);
          }
          if (ecore_vdw && eng_buf_vdw) {
-            energy_vdw += to_flt_host<energy_prec>(ev_hobj.e_vdw);
+            energy_vdw += toFloat_host<energy_prec>(ev_hobj.e_vdw);
          }
          if (ecore_ele && eng_buf_elec) {
-            energy_elec += to_flt_host<energy_prec>(ev_hobj.e_ele);
+            energy_elec += toFloat_host<energy_prec>(ev_hobj.e_ele);
          }
       }
       esum = energy_valence + energy_vdw + energy_elec;
@@ -448,26 +448,26 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (do_v) {
       if (!rc_a) {
          if (ecore_val) {
-            virial_prec vval[virial_buffer_traits::N], v2val[9];
-            for (int iv = 0; iv < (int)virial_buffer_traits::N; ++iv)
-               vval[iv] = to_flt_host<virial_prec>(ev_hobj.v_val[iv]);
-            virial_reshape(v2val, vval);
+            virial_prec vval[VirialBufferTraits::N], v2val[9];
+            for (int iv = 0; iv < (int)VirialBufferTraits::N; ++iv)
+               vval[iv] = toFloat_host<virial_prec>(ev_hobj.v_val[iv]);
+            virialReshape(v2val, vval);
             for (int iv = 0; iv < 9; ++iv)
                virial_valence[iv] += v2val[iv];
          }
          if (ecore_vdw && vir_buf_vdw) {
-            virial_prec vvdw[virial_buffer_traits::N], v2vdw[9];
-            for (int iv = 0; iv < (int)virial_buffer_traits::N; ++iv)
-               vvdw[iv] = to_flt_host<virial_prec>(ev_hobj.v_vdw[iv]);
-            virial_reshape(v2vdw, vvdw);
+            virial_prec vvdw[VirialBufferTraits::N], v2vdw[9];
+            for (int iv = 0; iv < (int)VirialBufferTraits::N; ++iv)
+               vvdw[iv] = toFloat_host<virial_prec>(ev_hobj.v_vdw[iv]);
+            virialReshape(v2vdw, vvdw);
             for (int iv = 0; iv < 9; ++iv)
                virial_vdw[iv] += v2vdw[iv];
          }
          if (ecore_ele && vir_buf_elec) {
-            virial_prec vele[virial_buffer_traits::N], v2ele[9];
-            for (int iv = 0; iv < (int)virial_buffer_traits::N; ++iv)
-               vele[iv] = to_flt_host<virial_prec>(ev_hobj.v_ele[iv]);
-            virial_reshape(v2ele, vele);
+            virial_prec vele[VirialBufferTraits::N], v2ele[9];
+            for (int iv = 0; iv < (int)VirialBufferTraits::N; ++iv)
+               vele[iv] = toFloat_host<virial_prec>(ev_hobj.v_ele[iv]);
+            virialReshape(v2ele, vele);
             for (int iv = 0; iv < 9; ++iv)
                virial_elec[iv] += v2ele[iv];
          }
@@ -515,7 +515,7 @@ void egvData(RcOp op)
       if (op & rc_alloc) {
          zeroOnHost(eng_buf, eng_buf_vdw, eng_buf_elec);
          if (!rc_a) {
-            auto sz = buffer_size();
+            auto sz = bufferSize();
             darray::allocate(sz, &eng_buf);
             if (useEnergyVdw())
                darray::allocate(sz, &eng_buf_vdw);
@@ -539,7 +539,7 @@ void egvData(RcOp op)
       if (op & rc_alloc) {
          zeroOnHost(vir_buf, vir_buf_vdw, vir_buf_elec);
          if (!rc_a) {
-            auto sz = buffer_size();
+            auto sz = bufferSize();
             darray::allocate(sz, &vir_buf);
             if (useEnergyVdw())
                darray::allocate(sz, &vir_buf_vdw);

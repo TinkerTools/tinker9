@@ -17,7 +17,7 @@ void epitorsData(RcOp op)
       darray::deallocate(ipit, kpit);
 
       if (rc_a)
-         buffer_deallocate(rc_flag, ept, vir_ept, deptx, depty, deptz);
+         bufferDeallocate(rc_flag, ept, vir_ept, deptx, depty, deptz);
       ept = nullptr;
       vir_ept = nullptr;
       deptx = nullptr;
@@ -36,7 +36,7 @@ void epitorsData(RcOp op)
       depty = gy;
       deptz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &ept, &vir_ept, &deptx, &depty, &deptz);
+         bufferAllocate(rc_flag, &ept, &vir_ept, &deptx, &depty, &deptz);
    }
 
    if (op & rc_init) {
@@ -60,7 +60,7 @@ void epitors(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_ept, virial_ept);
-      auto bsize = buffer_size();
+      auto bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, ept);
       if (do_v)
@@ -73,11 +73,11 @@ void epitors(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_ept = energy_reduce(ept);
+         energy_ept = energyReduce(ept);
          energy_valence += energy_ept;
       }
       if (do_v) {
-         virial_reduce(virial_ept, vir_ept);
+         virialReduce(virial_ept, vir_ept);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_ept[iv];
       }

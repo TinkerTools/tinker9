@@ -26,7 +26,7 @@ void egeomData(RcOp op)
       darray::deallocate(itfix, tfix);
 
       if (rc_a)
-         buffer_deallocate(rc_flag, eg, vir_eg, degx, degy, degz);
+         bufferDeallocate(rc_flag, eg, vir_eg, degx, degy, degz);
       eg = nullptr;
       vir_eg = nullptr;
       degx = nullptr;
@@ -52,7 +52,7 @@ void egeomData(RcOp op)
       degy = gy;
       degz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &eg, &vir_eg, &degx, &degy, &degz);
+         bufferAllocate(rc_flag, &eg, &vir_eg, &degx, &degy, &degz);
    }
 
    if (op & rc_init) {
@@ -99,7 +99,7 @@ void egeom(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_eg, virial_eg);
-      auto bsize = buffer_size();
+      auto bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, eg);
       if (do_v)
@@ -112,11 +112,11 @@ void egeom(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_eg = energy_reduce(eg);
+         energy_eg = energyReduce(eg);
          energy_valence += energy_eg;
       }
       if (do_v) {
-         virial_reduce(virial_eg, vir_eg);
+         virialReduce(virial_eg, vir_eg);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_eg[iv];
       }

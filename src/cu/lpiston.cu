@@ -7,7 +7,7 @@
 
 namespace tinker {
 __global__
-void lp_mol_virial_cu1(virial_buffer restrict hc_vir_buf,
+void lp_mol_virial_cu1(VirialBuffer restrict hc_vir_buf,
 
    const double* restrict mass, const pos_prec* restrict xpos, const pos_prec* restrict ypos,
    const pos_prec* restrict zpos, const grad_prec* restrict gx, const grad_prec* restrict gy,
@@ -69,7 +69,7 @@ void lp_mol_virial_cu1(virial_buffer restrict hc_vir_buf,
 
 void lp_mol_virial_cu()
 {
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
    darray::zero(g::q0, bufsize, hc_vir_buf);
 
    launch_k1b(g::s0, n, lp_mol_virial_cu1,
@@ -78,7 +78,7 @@ void lp_mol_virial_cu()
 
       rattle_dmol.nmol, rattle_dmol.imol, rattle_dmol.kmol, rattle_dmol.molmass);
 
-   virial_reduce(hc_vir, hc_vir_buf);
+   virialReduce(hc_vir, hc_vir_buf);
    for (int iv = 0; iv < 9; ++iv)
       hc_vir[iv] += vir[iv];
 }

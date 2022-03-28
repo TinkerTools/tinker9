@@ -40,7 +40,7 @@ TEST_CASE("EDISP-1-NONDEWALD", "[ff][hippo][edisp][nondewald]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(ndisp), ref_c);
+   COMPARE_INTS(countReduce(ndisp), ref_c);
 
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -95,7 +95,7 @@ TEST_CASE("EDISP-2-DEWALD", "[ff][hippo][edisp][dewald]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(ndisp), ref_c);
+   COMPARE_INTS(countReduce(ndisp), ref_c);
 
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);

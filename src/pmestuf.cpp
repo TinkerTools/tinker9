@@ -84,7 +84,7 @@ void pme_conv(PMEUnit pme_u)
       pme_conv_acc(pme_u, nullptr, nullptr);
 }
 
-void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
+void pme_conv(PMEUnit pme_u, VirialBuffer gpu_vir)
 {
 #if TINKER_CUDART
    if (pltfm_config & Platform::CUDA)
@@ -94,7 +94,7 @@ void pme_conv(PMEUnit pme_u, virial_buffer gpu_vir)
       pme_conv_acc(pme_u, nullptr, gpu_vir);
 }
 
-void pme_conv(PMEUnit pme_u, energy_buffer gpu_e)
+void pme_conv(PMEUnit pme_u, EnergyBuffer gpu_e)
 {
 #if TINKER_CUDART
    if (pltfm_config & Platform::CUDA)
@@ -104,7 +104,7 @@ void pme_conv(PMEUnit pme_u, energy_buffer gpu_e)
       pme_conv_acc(pme_u, gpu_e, nullptr);
 }
 
-void pme_conv(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
+void pme_conv(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
 #if TINKER_CUDART
    if (pltfm_config & Platform::CUDA)

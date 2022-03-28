@@ -41,7 +41,7 @@ void epolar_chgpen_acc1(const real (*uind)[3])
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
    PairPolarGrad pgrad;
 
    const real f = 0.5f * electric / dielec;
@@ -343,7 +343,7 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
 
    const real f = electric / dielec;
 
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
 
    auto* fphid = fdip_phi1;
 
@@ -480,7 +480,7 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
    // recip virial
 
    if CONSTEXPR (do_v) {
-      auto size = buffer_size() * virial_buffer_traits::value;
+      auto size = bufferSize() * VirialBufferTraits::value;
       #pragma acc parallel loop independent async deviceptr(vir_ep,vir_m)
       for (int i = 0; i < (int)size; ++i) {
          vir_ep[0][i] -= vir_m[0][i];

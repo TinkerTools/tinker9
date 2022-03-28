@@ -12,11 +12,11 @@ TINKER_EXTERN real* trqx;
 TINKER_EXTERN real* trqy;
 TINKER_EXTERN real* trqz;
 
-TINKER_EXTERN virial_buffer vir_trq;
+TINKER_EXTERN VirialBuffer vir_trq;
 
-TINKER_EXTERN count_buffer nem;
-TINKER_EXTERN energy_buffer em;
-TINKER_EXTERN virial_buffer vir_em;
+TINKER_EXTERN CountBuffer nem;
+TINKER_EXTERN EnergyBuffer em;
+TINKER_EXTERN VirialBuffer vir_em;
 TINKER_EXTERN grad_prec* demx;
 TINKER_EXTERN grad_prec* demy;
 TINKER_EXTERN grad_prec* demz;
@@ -47,9 +47,9 @@ TINKER_EXTERN real (*udirp)[3];
 TINKER_EXTERN real (*uind)[3];
 TINKER_EXTERN real (*uinp)[3];
 
-TINKER_EXTERN count_buffer nep;
-TINKER_EXTERN energy_buffer ep;
-TINKER_EXTERN virial_buffer vir_ep;
+TINKER_EXTERN CountBuffer nep;
+TINKER_EXTERN EnergyBuffer ep;
+TINKER_EXTERN VirialBuffer vir_ep;
 TINKER_EXTERN grad_prec* depx;
 TINKER_EXTERN grad_prec* depy;
 TINKER_EXTERN grad_prec* depz;

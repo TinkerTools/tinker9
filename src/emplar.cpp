@@ -19,9 +19,9 @@ void emplar(int vers)
    emplar_cu(vers);
    torque(vers, demx, demy, demz);
    if (do_v) {
-      virial_buffer u2 = vir_trq;
+      VirialBuffer u2 = vir_trq;
       virial_prec v2[9];
-      virial_reduce(v2, u2);
+      virialReduce(v2, u2);
       for (int iv = 0; iv < 9; ++iv)
          virial_elec[iv] += v2[iv];
    }

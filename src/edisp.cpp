@@ -31,8 +31,8 @@ void edispData(RcOp op)
       darray::deallocate(dspexclude, dspexclude_scale);
 
       if (rc_a) {
-         buffer_deallocate(rc_flag, ndisp);
-         buffer_deallocate(rc_flag, edsp, vir_edsp, dedspx, dedspy, dedspz);
+         bufferDeallocate(rc_flag, ndisp);
+         bufferDeallocate(rc_flag, edsp, vir_edsp, dedspx, dedspy, dedspz);
       }
       ndisp = nullptr;
       edsp = nullptr;
@@ -55,8 +55,8 @@ void edispData(RcOp op)
       dedspy = gy_vdw;
       dedspz = gz_vdw;
       if (rc_a) {
-         buffer_allocate(rc_flag, &ndisp);
-         buffer_allocate(rc_flag, &edsp, &vir_edsp, &dedspx, &dedspy, &dedspz);
+         bufferAllocate(rc_flag, &ndisp);
+         bufferAllocate(rc_flag, &edsp, &vir_edsp, &dedspx, &dedspy, &dedspz);
       }
 
       if (dsppot::use_dcorr && !useDEwald()) {
@@ -171,7 +171,7 @@ void edisp(int vers)
    bool do_g = vers & calc::grad;
 
    zeroOnHost(energy_edsp, virial_edsp);
-   size_t bsize = buffer_size();
+   size_t bsize = bufferSize();
    if (rc_a) {
       if (do_a)
          darray::zero(g::q0, bsize, ndisp);
@@ -208,15 +208,15 @@ void edisp(int vers)
    }
    if (rc_a) {
       if (do_e) {
-         energy_buffer u = edsp;
-         energy_prec e = energy_reduce(u);
+         EnergyBuffer u = edsp;
+         energy_prec e = energyReduce(u);
          energy_edsp += e;
          energy_vdw += e;
       }
       if (do_v) {
-         virial_buffer u = vir_edsp;
+         VirialBuffer u = vir_edsp;
          virial_prec v[9];
-         virial_reduce(v, u);
+         virialReduce(v, u);
          for (int iv = 0; iv < 9; ++iv) {
             virial_edsp[iv] += v[iv];
             virial_vdw[iv] += v[iv];

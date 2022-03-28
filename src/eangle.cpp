@@ -21,7 +21,7 @@ void eangleData(RcOp op)
       darray::deallocate(iang, ak, anat, afld, angtyp);
 
       if (rc_a)
-         buffer_deallocate(rc_flag, ea, vir_ea, deax, deay, deaz);
+         bufferDeallocate(rc_flag, ea, vir_ea, deax, deay, deaz);
       ea = nullptr;
       vir_ea = nullptr;
       deax = nullptr;
@@ -39,7 +39,7 @@ void eangleData(RcOp op)
       deay = gy;
       deaz = gz;
       if (rc_a)
-         buffer_allocate(rc_flag, &ea, &vir_ea, &deax, &deay, &deaz);
+         bufferAllocate(rc_flag, &ea, &vir_ea, &deax, &deay, &deaz);
    }
 
    if (op & rc_init) {
@@ -87,7 +87,7 @@ void eangle(int vers)
 
    if (rc_a) {
       zeroOnHost(energy_ea, virial_ea);
-      auto bsize = buffer_size();
+      auto bsize = bufferSize();
       if (do_e)
          darray::zero(g::q0, bsize, ea);
       if (do_v)
@@ -100,11 +100,11 @@ void eangle(int vers)
 
    if (rc_a) {
       if (do_e) {
-         energy_ea = energy_reduce(ea);
+         energy_ea = energyReduce(ea);
          energy_valence += energy_ea;
       }
       if (do_v) {
-         virial_reduce(virial_ea, vir_ea);
+         virialReduce(virial_ea, vir_ea);
          for (int iv = 0; iv < 9; ++iv)
             virial_valence[iv] += virial_ea[iv];
       }

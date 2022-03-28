@@ -40,7 +40,7 @@ TEST_CASE("EPOLAR-1-EWALD-HIPPO", "[ff][hippo][ephippo][ewald]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(nep), ref_c);
+   COMPARE_INTS(countReduce(nep), ref_c);
 
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -95,7 +95,7 @@ TEST_CASE("EPOLAR-2-NONEWALD-HIPPO", "[ff][hippo][ephippo][nonewald]")
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
-   COMPARE_INTS(count_reduce(nep), ref_c);
+   COMPARE_INTS(countReduce(nep), ref_c);
 
    energy(calc::v4);
    COMPARE_REALS(esum, ref_e, eps_e);

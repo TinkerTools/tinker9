@@ -444,7 +444,7 @@ void constrain2_acc(time_prec dt)
 
    const double eps = rateps / dt;
    const double vterm = 2 / (dt * units::ekcal);
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
 
    #pragma acc parallel loop independent async\
            deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,irat,krat,iratmol)
@@ -512,7 +512,7 @@ void settle2_acc1(time_prec dt)
       return;
 
    const double vterm = 2 / (dt * units::ekcal);
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
 
    #pragma acc parallel loop independent async\
            deviceptr(vx,vy,vz,xpos,ypos,zpos,mass,vir_buf,iratwt)
@@ -678,7 +678,7 @@ void constrain2_ch_acc1(time_prec dt)
       return;
 
    const double vterm = 2 / (dt * units::ekcal);
-   size_t bufsize = buffer_size();
+   size_t bufsize = bufferSize();
 
    #pragma acc parallel loop independent vector_length(64) async\
            deviceptr(massinv,xpos,ypos,zpos,vx,vy,vz,vir_buf,iratch)

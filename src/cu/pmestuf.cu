@@ -919,8 +919,8 @@ template <bool DO_E, bool DO_V>
 __global__
 void pme_conv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
    const real* restrict bsmod1, const real* restrict bsmod2, const real* restrict bsmod3, real f,
-   real aewald, TINKER_IMAGE_PARAMS, real box_volume, energy_buffer restrict gpu_e,
-   virial_buffer restrict gpu_vir)
+   real aewald, TINKER_IMAGE_PARAMS, real box_volume, EnergyBuffer restrict gpu_e,
+   VirialBuffer restrict gpu_vir)
 {
    int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    int stride = blockDim.x * gridDim.x;
@@ -930,12 +930,12 @@ void pme_conv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
    real pterm = pi / aewald;
    pterm *= pterm;
 
-   using ebuf_prec = energy_buffer_traits::type;
+   using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ectl;
    if CONSTEXPR (DO_E) {
       ectl = 0;
    }
-   using vbuf_prec = virial_buffer_traits::type;
+   using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vctlxx, vctlyx, vctlzx, vctlyy, vctlzy, vctlzz;
    if CONSTEXPR (DO_V) {
       vctlxx = 0;
@@ -1018,7 +1018,7 @@ void pme_conv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
 }
 
 template <bool DO_E, bool DO_V>
-void pme_conv_cu2(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
+void pme_conv_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
@@ -1041,7 +1041,7 @@ void pme_conv_cu2(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
       TINKER_IMAGE_ARGS, box_volume, gpu_e, gpu_vir);
 }
 
-void pme_conv_cu(PMEUnit pme_u, energy_buffer gpu_e, virial_buffer gpu_vir)
+void pme_conv_cu(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
    if (gpu_vir == nullptr) {
       if (gpu_e == nullptr) {

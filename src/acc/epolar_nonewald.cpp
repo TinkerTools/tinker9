@@ -29,7 +29,7 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
-   auto bufsize = buffer_size();
+   auto bufsize = bufferSize();
    PairPolarGrad pgrad;
 
    const real f = 0.5 * electric / dielec;

@@ -98,7 +98,7 @@ static void mpoleData(RcOp op)
          trqz = nullptr;
       }
       if (rc_flag & calc::virial) {
-         darray::allocate(buffer_size(), &vir_trq);
+         darray::allocate(bufferSize(), &vir_trq);
       } else {
          vir_trq = nullptr;
       }
@@ -847,7 +847,7 @@ void mpoleInit(int vers)
    if (vers & calc::grad)
       darray::zero(g::q0, n, trqx, trqy, trqz);
    if (vers & calc::virial)
-      darray::zero(g::q0, buffer_size(), vir_trq);
+      darray::zero(g::q0, bufferSize(), vir_trq);
 
    chkpole();
    rotpole();
@@ -855,7 +855,7 @@ void mpoleInit(int vers)
    if (useEwald()) {
       rpole_to_cmp();
       if (vir_m)
-         darray::zero(g::q0, buffer_size(), vir_m);
+         darray::zero(g::q0, bufferSize(), vir_m);
       if (pltfm_config & Platform::CUDA) {
          bool precompute_theta =
             (!TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) || (!TINKER_CU_THETA_ON_THE_FLY_GRID_UIND);
