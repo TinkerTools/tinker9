@@ -1,9 +1,9 @@
 #include "ff/hippo/echgtrn.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/energy.h"
+#include "ff/hippo/elechippo.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "ff/amoeba/elecamoeba.h"
-#include "ff/hippo/elechippo.h"
 #include "tool/darray.h"
 #include "tool/zero.h"
 #include <tinker/detail/chgtrn.hh>

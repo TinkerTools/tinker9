@@ -1,4 +1,5 @@
 #include "add.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/energy.h"
@@ -7,7 +8,6 @@
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
-#include "ff/amoeba/elecamoeba.h"
 #include "seq/pair_field.h"
 #include "tool/gpucard.h"
 

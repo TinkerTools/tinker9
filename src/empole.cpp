@@ -1,9 +1,9 @@
 #include "ff/amoeba/empole.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "ff/amoeba/elecamoeba.h"
 #include "tool/zero.h"
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/sizes.hh>

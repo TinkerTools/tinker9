@@ -6,7 +6,6 @@
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
-#include "ff/hippo/edisp.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_disp.h"
 #include "seq/triangle.h"

@@ -1,5 +1,5 @@
-#include "math/parallel_acc.h"
 #include "accasync.h"
+#include "math/parallel_acc.h"
 #include "tool/ptrtrait.h"
 #include <cassert>
 

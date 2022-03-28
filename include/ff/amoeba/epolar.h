@@ -1,6 +1,5 @@
 #pragma once
 #include "ff/elec.h"
-#include "precision.h"
 #include "tool/rcman.h"
 
 namespace tinker {

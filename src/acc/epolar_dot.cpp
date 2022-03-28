@@ -1,8 +1,8 @@
 #include "add.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
-#include "ff/amoeba/elecamoeba.h"
 #include "ff/pchg/echarge.h"
 
 namespace tinker {

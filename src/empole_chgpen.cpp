@@ -1,3 +1,4 @@
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/empole.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
@@ -5,7 +6,6 @@
 #include "ff/hippo/empolechgpen.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "ff/amoeba/elecamoeba.h"
 #include "tool/zero.h"
 #include <tinker/detail/chgpen.hh>
 #include <tinker/detail/mplpot.hh>

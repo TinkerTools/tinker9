@@ -1,7 +1,7 @@
+#include "accasync.h"
 #include "ff/energy.h"
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
-#include "accasync.h"
 #include "tool/zero.h"
 #include <tinker/detail/torpot.hh>
 #include <tinker/detail/tors.hh>

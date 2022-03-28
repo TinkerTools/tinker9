@@ -1,11 +1,11 @@
 #include "ff/hippo/erepel.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/empole.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
+#include "ff/hippo/erepel.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "ff/amoeba/elecamoeba.h"
-#include "ff/hippo/erepel.h"
 #include "tool/darray.h"
 #include "tool/zero.h"
 #include <tinker/detail/couple.hh>

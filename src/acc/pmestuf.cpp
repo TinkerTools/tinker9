@@ -1,12 +1,11 @@
 #include "add.h"
 #include "comparetypes.h"
-#include "ff/amoeba/mpole1.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/box.h"
 #include "ff/elec.h"
+#include "ff/pchg/echarge.h"
 #include "ff/pme.h"
 #include "md/inc.h"
-#include "ff/amoeba/elecamoeba.h"
-#include "ff/pchg/echarge.h"
 #include "seq/bsplgen.h"
 
 namespace tinker {

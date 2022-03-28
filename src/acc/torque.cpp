@@ -1,8 +1,8 @@
 #include "add.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/elec.h"
 #include "math/inc.h"
 #include "md/inc.h"
-#include "ff/amoeba/elecamoeba.h"
 
 namespace tinker {
 namespace {

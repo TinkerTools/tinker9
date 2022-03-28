@@ -1,8 +1,8 @@
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/box.h"
 #include "ff/potent.h"
 #include "md/inc.h"
-#include "ff/amoeba/elecamoeba.h"
 #include "tinker9.h"
 #include "tool/execq.h"
 #include <condition_variable>

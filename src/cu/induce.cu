@@ -1,4 +1,5 @@
 #include "add.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/induce.h"
 #include "ff/image.h"
@@ -6,7 +7,6 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "md/inc.h"
-#include "ff/amoeba/elecamoeba.h"
 #include "seq/damp.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"

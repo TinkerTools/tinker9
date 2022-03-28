@@ -1,11 +1,11 @@
 #include "add.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/elec.h"
 #include "ff/hippo/cflux.h"
+#include "ff/hippo/elechippo.h"
 #include "ff/pchg/evalence.h"
 #include "math/const.h"
 #include "md/inc.h"
-#include "ff/amoeba/elecamoeba.h"
-#include "ff/hippo/elechippo.h"
 #include <cassert>
 
 namespace tinker {

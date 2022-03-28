@@ -1,6 +1,6 @@
 #pragma once
-#include "math/inc.h"
 #include "accasync.h"
+#include "math/inc.h"
 #include "tool/ptrtrait.h"
 #include <vector>
 

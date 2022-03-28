@@ -1,5 +1,5 @@
 #pragma once
-#include "ff/hippo/chgtrn1.h"
+#include "ff/hippo/echgtrn.h"
 #include "tool/energybuffer.h"
 
 // cflux
