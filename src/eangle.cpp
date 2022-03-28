@@ -1,6 +1,9 @@
+#include "ff/atom.h"
+#include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
+#include "tool/darray.h"
 #include "tool/io.h"
 #include "tool/zero.h"
 #include <cassert>

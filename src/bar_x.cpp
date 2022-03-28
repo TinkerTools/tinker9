@@ -1,8 +1,11 @@
+#include "ff/atom.h"
+#include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "math/inc.h"
 #include "md/inc.h"
 #include "tinker9.h"
+#include "tool/darray.h"
 #include "tool/io.h"
 #include <array>
 #include <fstream>

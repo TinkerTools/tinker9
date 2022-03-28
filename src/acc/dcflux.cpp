@@ -1,6 +1,5 @@
 #include "add.h"
 #include "ff/elec.h"
-#include "ff/energybuffer.h"
 #include "ff/hippo/cflux.h"
 #include "ff/molecule.h"
 #include "ff/pchg/evalence.h"
@@ -9,6 +8,7 @@
 #include "mod/elecamoeba.h"
 #include "mod/elechippo.h"
 #include "seq/bsplgen.h"
+#include "tool/energybuffer.h"
 #include "tool/gpucard.h"
 
 namespace tinker {

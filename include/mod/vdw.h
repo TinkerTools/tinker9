@@ -1,6 +1,6 @@
 #pragma once
-#include "ff/energybuffer.h"
 #include "ff/pchg/evdw1.h"
+#include "tool/energybuffer.h"
 
 namespace tinker {
 /// \ingroup vdw

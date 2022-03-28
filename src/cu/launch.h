@@ -1,5 +1,5 @@
 #pragma once
-#include "mod/energy.h"
+#include "ff/energy.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
 #include "tool/gpucard.h"

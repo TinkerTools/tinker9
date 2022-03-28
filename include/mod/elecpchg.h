@@ -1,5 +1,5 @@
 #pragma once
-#include "ff/energybuffer.h"
+#include "tool/energybuffer.h"
 
 // charge chgpot
 namespace tinker {

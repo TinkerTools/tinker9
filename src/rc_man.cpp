@@ -73,7 +73,7 @@ void deviceData(RcOp op)
    RcMan group42{groupData, op};
 
    RcMan energy42{energyData, op};
-   RcMan osrw42{osrw_data, op};
+   RcMan osrw42{osrwData, op};
 
    // Neighbor lists must be initialized after potential initialization.
    // xred, yred, and zred need to be initialized in vdw (Halgren 14-7)

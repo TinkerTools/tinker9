@@ -2,6 +2,7 @@
 #include "tinker9.h"
 #include "tool/io.h"
 #include <chrono>
+#include <cmath>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>

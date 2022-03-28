@@ -1,7 +1,7 @@
 #pragma once
 #include "ff/amoeba/mpole1.h"
 #include "ff/amoeba/upred1.h"
-#include "ff/energybuffer.h"
+#include "tool/energybuffer.h"
 
 // mpole
 namespace tinker {

@@ -1,3 +1,5 @@
+#include "ff/atom.h"
+#include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
@@ -11,6 +13,7 @@
 #include "mod/repel.h"
 #include "mod/vdw.h"
 #include "tinker9.h"
+#include "tool/darray.h"
 #include "tool/io.h"
 #include <fstream>
 #include <tinker/detail/bound.hh>

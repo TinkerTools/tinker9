@@ -1,6 +1,6 @@
 #pragma once
-#include "ff/energybuffer.h"
 #include "ff/hippo/chgtrn1.h"
+#include "tool/energybuffer.h"
 
 // cflux
 namespace tinker {
