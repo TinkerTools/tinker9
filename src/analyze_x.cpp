@@ -223,7 +223,7 @@ void xAnalyze(int, char**)
    int nframe_processed = 0;
    do {
       mdReadFrameCopyinToXyz(ipt, done);
-      refresh_neighbors();
+      nblistRefresh();
       nframe_processed++;
       if (nframe_processed > 1)
          print(out, "\n Analysis for Archive Structure :%16d\n", nframe_processed);

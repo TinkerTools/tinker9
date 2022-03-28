@@ -404,7 +404,7 @@ void evdwData(RcOp op)
 void elj(int vers)
 {
 #if TINKER_CUDART
-   if (clist_version() & NBL_SPATIAL)
+   if (clistVersion() & Nbl::SPATIAL)
       elj_cu(vers);
    else
 #endif
@@ -424,7 +424,7 @@ void emm3hb(int vers)
 void ehal(int vers)
 {
 #if TINKER_CUDART
-   if (vlist_version() & NBL_SPATIAL)
+   if (vlistVersion() & Nbl::SPATIAL)
       ehal_cu(vers);
    else
 #endif

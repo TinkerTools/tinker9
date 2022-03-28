@@ -1,5 +1,6 @@
 #pragma once
 #include "ff/atom.h"
+#include "ff/box.h"
 #include "mod/energy.h"
 #include <map>
 #include <string>

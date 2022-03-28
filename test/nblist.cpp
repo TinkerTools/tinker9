@@ -1,4 +1,4 @@
-#include "mod/nblist.h"
+#include "ff/nblist.h"
 #include "md/inc.h"
 #include "platform.h"
 #include "test.h"
@@ -187,7 +187,7 @@ TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
       // update nblist
       if (ifr < trajn) {
          goto_frame(ifr);
-         refresh_neighbors();
+         nblistRefresh();
       } else
          break;
    }

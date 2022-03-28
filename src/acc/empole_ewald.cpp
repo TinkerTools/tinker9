@@ -2,11 +2,11 @@
 #include "ff/amoeba/empole.h"
 #include "ff/energy.h"
 #include "ff/image.h"
+#include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/switch.h"
 #include "mod/elecamoeba.h"
 #include "mod/elecpchg.h"
-#include "mod/nblist.h"
 #include "seq/pair_mpole.h"
 #include "tool/gpucard.h"
 

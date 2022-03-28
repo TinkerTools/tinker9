@@ -135,7 +135,7 @@ void empoleChgpen(int vers)
 void empole_chgpen_nonewald(int vers, int use_cf)
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       empole_chgpen_nonewald_cu(vers, use_cf);
    else
 #endif
@@ -151,7 +151,7 @@ void empole_chgpen_ewald(int vers, int use_cf)
 void empole_chgpen_ewald_real_self(int vers, int use_cf)
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       empole_chgpen_ewald_real_self_cu(vers, use_cf);
    else
 #endif

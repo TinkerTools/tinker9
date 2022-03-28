@@ -56,7 +56,7 @@ void mdCopyPosToXyz(bool check_nblist)
 {
    mdCopyPosToXyz_acc();
    if (check_nblist)
-      refresh_neighbors();
+      nblistRefresh();
 }
 
 void mdPos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,

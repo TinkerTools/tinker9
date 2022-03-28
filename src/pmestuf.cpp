@@ -51,7 +51,7 @@ void grid_uind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
       TINKER_THROW(format("grid_uind(): bsorder is %d; must be 5.\n", bso));
 
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       grid_uind_cu(pme_u, fuind, fuinp);
    else
 #endif

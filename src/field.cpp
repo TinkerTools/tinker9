@@ -42,7 +42,7 @@ void dfield(real (*field)[3], real (*fieldp)[3])
 void dfieldNonEwald(real (*field)[3], real (*fieldp)[3])
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       dfield_nonewald_cu(field, fieldp);
    else
 #endif
@@ -64,7 +64,7 @@ void dfield_ewald_recip_self(real (*field)[3], real (*fieldp)[3])
 void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       dfield_ewald_real_cu(field, fieldp);
    else
 #endif
@@ -83,7 +83,7 @@ void ufieldNonEwald(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       ufield_nonewald_cu(uind, uinp, field, fieldp);
    else
 #endif
@@ -106,7 +106,7 @@ void ufield_ewald_real(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       ufield_ewald_real_cu(uind, uinp, field, fieldp);
    else
 #endif

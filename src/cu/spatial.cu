@@ -338,8 +338,7 @@ __global__
 void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted, int* restrict bnum,
    int2* restrict b2num, const real* restrict x, const real* restrict y, const real* restrict z,
    int ZERO_LBUF, real* restrict xold, real* restrict yold, real* restrict zold, //
-   TINKER_IMAGE_PARAMS, real cutbuf, Spatial::Center* restrict akc,
-   Spatial::Center* restrict half)
+   TINKER_IMAGE_PARAMS, real cutbuf, Spatial::Center* restrict akc, Spatial::Center* restrict half)
 {
    real xbox, ybox, zbox;
    xbox = lvec1.x * lvec1.x + lvec2.x * lvec2.x + lvec3.x * lvec3.x;

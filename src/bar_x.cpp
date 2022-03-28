@@ -198,7 +198,7 @@ void x_bar_makebar()
       done = false;
       do {
          mdReadFrameCopyinToXyz(a_arc, done);
-         refresh_neighbors();
+         nblistRefresh();
          energy(calc::energy);
          ua0.push_back(esum);
          int i = ua0.size();
@@ -238,7 +238,7 @@ void x_bar_makebar()
    done = false;
    do {
       mdReadFrameCopyinToXyz(a_arc, done);
-      refresh_neighbors();
+      nblistRefresh();
       energy(calc::energy);
       double vol = boxVolume();
       ua1.push_back(esum);
@@ -311,7 +311,7 @@ void x_bar_makebar()
       done = false;
       do {
          mdReadFrameCopyinToXyz(b_arc, done);
-         refresh_neighbors();
+         nblistRefresh();
          energy(calc::energy);
          ub1.push_back(esum);
          int i = ub1.size();
@@ -351,7 +351,7 @@ void x_bar_makebar()
    done = false;
    do {
       mdReadFrameCopyinToXyz(b_arc, done);
-      refresh_neighbors();
+      nblistRefresh();
       energy(calc::energy);
       double vol = boxVolume();
       ub0.push_back(esum);

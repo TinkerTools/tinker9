@@ -7,7 +7,6 @@
 #include "launch.h"
 #include "md/inc.h"
 #include "mod/elecamoeba.h"
-#include "mod/nblist.h"
 #include "seq/damp.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"

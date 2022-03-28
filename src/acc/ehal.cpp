@@ -1,10 +1,10 @@
 #include "add.h"
 #include "ff/atom.h"
 #include "ff/image.h"
+#include "ff/nblist.h"
 #include "ff/pchg/evdw.h"
 #include "ff/switch.h"
 #include "math/switch.h"
-#include "mod/nblist.h"
 #include "seq/pair_hal.h"
 #include "tool/gpucard.h"
 

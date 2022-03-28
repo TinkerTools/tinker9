@@ -81,3 +81,19 @@ void spatialDataAlloc(SpatialUnit& u, int n, double cutoff, double buffer, //
 void spatialDataInit_cu(SpatialUnit);
 void spatialDataUpdateSorted_cu(SpatialUnit);
 }
+
+//====================================================================//
+//                                                                    //
+//                          Global Variables                          //
+//                                                                    //
+//====================================================================//
+
+namespace tinker {
+TINKER_EXTERN SpatialUnit cspatial_v2_unit;
+TINKER_EXTERN SpatialUnit vspatial_v2_unit;
+TINKER_EXTERN SpatialUnit uspatial_v2_unit;
+TINKER_EXTERN SpatialUnit mspatial_v2_unit;
+TINKER_EXTERN SpatialUnit dspspatial_v2_unit;
+
+constexpr int cspatial_fresh_mask_echglj = 0x00000001;
+}

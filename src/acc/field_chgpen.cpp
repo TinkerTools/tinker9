@@ -3,12 +3,12 @@
 #include "ff/hippo/empolechgpen.h"
 #include "ff/hippo/epolarchgpen.h"
 #include "ff/image.h"
+#include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
 #include "mod/elecamoeba.h"
 #include "mod/elechippo.h"
-#include "mod/nblist.h"
 #include "seq/pair_field_chgpen.h"
 #include "tool/gpucard.h"
 

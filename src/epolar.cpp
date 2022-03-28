@@ -601,7 +601,7 @@ void epolar_nonewald(int vers)
       epolar0DotProd(uind, udirp);
    if (vers != calc::v0) {
 #if TINKER_CUDART
-      if (mlist_version() & NBL_SPATIAL)
+      if (mlistVersion() & Nbl::SPATIAL)
          epolar_nonewald_cu(ver2, uind, uinp);
       else
 #endif
@@ -636,7 +636,7 @@ void epolar_ewald(int vers)
 void epolar_ewald_real(int vers)
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       epolar_ewald_real_cu(vers, uind, uinp);
    else
 #endif

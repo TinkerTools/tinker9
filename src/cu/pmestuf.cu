@@ -5,10 +5,10 @@
 #include "ff/box.h"
 #include "ff/elec.h"
 #include "ff/pme.h"
+#include "ff/spatial.h"
 #include "launch.h"
 #include "md/inc.h"
 #include "mod/elecpchg.h"
-#include "mod/nblist.h"
 #include "seq/bsplgen.h"
 #include "tool/gpucard.h"
 

@@ -3,11 +3,11 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/energy.h"
 #include "ff/image.h"
+#include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
 #include "mod/elecamoeba.h"
-#include "mod/nblist.h"
 #include "seq/pair_field.h"
 #include "tool/gpucard.h"
 

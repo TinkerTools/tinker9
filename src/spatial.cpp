@@ -1,5 +1,5 @@
-#include "ff/nblist.h"
 #include "ff/spatial.h"
+#include "ff/nblist.h"
 #include "md/inc.h"
 #include "tool/darray.h"
 #include "tool/error.h"

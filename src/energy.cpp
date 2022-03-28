@@ -192,7 +192,7 @@ static bool amoeba_emplar(int vers)
    if (vers & calc::analyz)
       return false;
 
-   return usePotent(Potent::MPOLE) && usePotent(Potent::POLAR) && (mlist_version() & NBL_SPATIAL);
+   return usePotent(Potent::MPOLE) && usePotent(Potent::POLAR) && (mlistVersion() & Nbl::SPATIAL);
 }
 
 static bool amoeba_empole(int vers)
@@ -223,7 +223,7 @@ static bool amoeba_echglj(int vers)
       return false;
    if (!usePotent(Potent::CHARGE) || !usePotent(Potent::VDW))
       return false;
-   if (!(clist_version() & NBL_SPATIAL))
+   if (!(clistVersion() & Nbl::SPATIAL))
       return false;
    if (ebuffer != 0)
       return false;

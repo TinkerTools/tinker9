@@ -19,7 +19,7 @@ void sparsePrecondBuild2() {}
 void sparsePrecondApply2(const real (*rsd)[3], real (*zrsd)[3])
 {
 #if TINKER_CUDART
-   if (ulist_version() & NBL_SPATIAL)
+   if (ulistVersion() & Nbl::SPATIAL)
       sparse_precond_apply2_cu(rsd, zrsd);
    else
 #endif

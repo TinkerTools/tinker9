@@ -148,7 +148,7 @@ void echarge(int vers)
    if (useEwald()) {
       echarge_ewald_recip_self(vers);
 #if TINKER_CUDART
-      if (clist_version() & NBL_SPATIAL)
+      if (clistVersion() & Nbl::SPATIAL)
          echarge_ewald_real_cu(vers);
       else
 #endif
@@ -181,7 +181,7 @@ void echarge(int vers)
 void echarge_nonewald(int vers)
 {
 #if TINKER_CUDART
-   if (clist_version() & NBL_SPATIAL)
+   if (clistVersion() & Nbl::SPATIAL)
       echarge_nonewald_cu(vers);
    else
 #endif

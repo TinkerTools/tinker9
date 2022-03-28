@@ -41,7 +41,7 @@ void dfieldChgpen(real (*field)[3])
 void dfield_chgpen_nonewald(real (*field)[3])
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       dfield_chgpen_nonewald_cu(field);
    else
 #endif
@@ -62,7 +62,7 @@ void dfield_chgpen_ewald_recip_self(real (*field)[3])
 void dfield_chgpen_ewald_real(real (*field)[3])
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       dfield_chgpen_ewald_real_cu(field);
    else
 #endif
@@ -80,7 +80,7 @@ void ufieldChgpen(const real (*uind)[3], real (*field)[3])
 void ufield_chgpen_nonewald(const real (*uind)[3], real (*field)[3])
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       ufield_chgpen_nonewald_cu(uind, field);
    else
 #endif
@@ -101,7 +101,7 @@ void ufield_chgpen_ewald_recip_self(const real (*uind)[3], real (*field)[3])
 void ufield_chgpen_ewald_real(const real (*uind)[3], real (*field)[3])
 {
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       ufield_chgpen_ewald_real_cu(uind, field);
    else
 #endif

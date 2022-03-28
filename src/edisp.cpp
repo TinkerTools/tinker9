@@ -230,7 +230,7 @@ void edisp(int vers)
 void edisp_ewald(int vers)
 {
 #if TINKER_CUDART
-   if (dsplist_version() & NBL_SPATIAL)
+   if (dsplistVersion() & Nbl::SPATIAL)
       edisp_ewald_real_cu(vers);
    else
 #endif
@@ -278,7 +278,7 @@ void edisp_ewald(int vers)
 void edisp_nonewald(int vers)
 {
 #if TINKER_CUDART
-   if (dsplist_version() & NBL_SPATIAL)
+   if (dsplistVersion() & Nbl::SPATIAL)
       edisp_nonewald_cu(vers);
    else
 #endif

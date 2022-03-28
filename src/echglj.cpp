@@ -22,7 +22,7 @@
 namespace tinker {
 void echgljData(RcOp op)
 {
-   if (!(clist_version() & NBL_SPATIAL))
+   if (!(clistVersion() & Nbl::SPATIAL))
       return;
 
    if (!usePotent(Potent::CHARGE) || !usePotent(Potent::VDW))

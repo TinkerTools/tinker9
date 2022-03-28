@@ -78,7 +78,7 @@ void deviceData(RcOp op)
    // Neighbor lists must be initialized after potential initialization.
    // xred, yred, and zred need to be initialized in vdw (Halgren 14-7)
    // and will be used in nblist setups.
-   RcMan nbl42{nblist_data, op};
+   RcMan nbl42{nblistData, op};
 
    RcMan rattle42{rattleData, op};
    RcMan vel42{mdVelData, op};

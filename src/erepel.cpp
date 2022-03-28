@@ -161,7 +161,7 @@ void erepel(int vers)
 
    mpoleInit(vers);
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       erepel_cu(vers);
    else
 #endif

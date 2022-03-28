@@ -1,22 +1,16 @@
 #pragma once
-#include "ff/box.h"
-#include "tool/darray.h"
 #include "tool/genunit.h"
 #include "tool/rcman.h"
 
 namespace tinker {
-enum class nblist_t
+enum class Nbl
 {
    UNDEFINED = 0x00,   ///< Undefined.
    DOUBLE_LOOP = 0x01, ///< Double loop.
    VERLET = 0x02,      ///< Verlet neighbor list.
    SPATIAL = 0x04      ///< Spatial decomposition.
 };
-TINKER_ENABLE_ENUM_BITMASK(nblist_t);
-constexpr nblist_t NBL_UNDEFINED = nblist_t::UNDEFINED;
-constexpr nblist_t NBL_DOUBLE_LOOP = nblist_t::DOUBLE_LOOP;
-constexpr nblist_t NBL_VERLET = nblist_t::VERLET;
-constexpr nblist_t NBL_SPATIAL = nblist_t::SPATIAL;
+TINKER_ENABLE_ENUM_BITMASK(Nbl);
 
 /// \brief
 /// Verlet list: pairwise neighbor list indices and storage.
@@ -39,37 +33,44 @@ struct NBList
 };
 using NBListUnit = GenericUnit<NBList, GenericUnitVersion::ENABLE_ON_DEVICE>;
 
-/**
- * \brief
- * For Halgren Buffered 14-7 potential only, otherwise returns NBL_UNDEFINED.
- *
- * |                  | PBC                            | Unbound         |
- * |------------------|--------------------------------|-----------------|
- * | Inf. Cutoff      | N/A                            | double loop     |
- * | Cutoff + No List | double loop                    | double loop     |
- * | Cutoff + List    | verlet list or sptaial decomp. | verlet list (a) |
- *
- * (a) We cannot use spatial decomposition because Tinker only set up a cubic
- *     box for nonperiodic PME once. There is no guarantee that all of the atoms
- *     will stay within the cubic box even if we moved the center of mass to
- *     origin.
- */
-nblist_t vlist_version();
-nblist_t dlist_version();
-/**
- * \brief
- * For partial charge models and for VDW models that do not have a separate set
- * of coordinates.
- */
-nblist_t clist_version();
-nblist_t mlist_version();
-nblist_t ulist_version();
-nblist_t dsplist_version();
+/// \brief
+/// For Halgren Buffered 14-7 potential only, otherwise returns Nbl::UNDEFINED.
+///
+/// |                  | PBC                            | Unbound         |
+/// |------------------|--------------------------------|-----------------|
+/// | Inf. Cutoff      | N/A                            | double loop     |
+/// | Cutoff + No List | double loop                    | double loop     |
+/// | Cutoff + List    | verlet list or sptaial decomp. | verlet list (a) |
+///
+/// (a) We cannot use spatial decomposition because Tinker only set up a cubic
+///     box for nonperiodic PME once. There is no guarantee that all of the atoms
+///     will stay within the cubic box even if we moved the center of mass to
+///     origin.
+Nbl vlistVersion();
+Nbl dlistVersion();
 
-void nblist_data(RcOp);
+/// \brief
+/// For partial charge models and for VDW models that do not have a separate set
+/// of coordinates.
+Nbl clistVersion();
+Nbl mlistVersion();
+Nbl ulistVersion();
+Nbl dsplistVersion();
 
-void nblist_build_acc(NBListUnit); // rc_init
-void nblist_update_acc(NBListUnit);
+void nblistData(RcOp);
+void nblistRefresh();
+}
 
-void refresh_neighbors();
+//====================================================================//
+//                                                                    //
+//                          Global Variables                          //
+//                                                                    //
+//====================================================================//
+
+namespace tinker {
+TINKER_EXTERN NBListUnit vlist_unit;
+TINKER_EXTERN NBListUnit clist_unit;
+TINKER_EXTERN NBListUnit mlist_unit;
+TINKER_EXTERN NBListUnit ulist_unit;
+TINKER_EXTERN NBListUnit dsplist_unit;
 }

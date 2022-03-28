@@ -11,7 +11,6 @@
 #include "mod/disp.h"
 #include "mod/elecamoeba.h"
 #include "mod/elechippo.h"
-#include "mod/nblist.h"
 #include "mod/repel.h"
 #include "platform.h"
 #include "tool/darray.h"
@@ -31,130 +30,130 @@ NBList::~NBList()
 
 //====================================================================//
 
-nblist_t vlist_version()
+Nbl vlistVersion()
 {
-   nblist_t u;
+   Nbl u;
    if (!usePotent(Potent::VDW)) {
-      u = NBL_UNDEFINED;
+      u = Nbl::UNDEFINED;
    } else if (vdwtyp != evdw_t::hal) {
-      u = NBL_UNDEFINED;
+      u = Nbl::UNDEFINED;
    } else if (!limits::use_vlist) {
-      u = NBL_DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP;
    } else if (!bound::use_bounds) {
-      u = NBL_VERLET;
+      u = Nbl::VERLET;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
-         u = NBL_SPATIAL;
+         u = Nbl::SPATIAL;
       else
 #endif
-         u = NBL_VERLET;
+         u = Nbl::VERLET;
    }
    return u;
 }
 
-nblist_t dlist_version()
+Nbl dlistVersion()
 {
-   return NBL_UNDEFINED;
+   return Nbl::UNDEFINED;
 }
 
-nblist_t clist_version()
+Nbl clistVersion()
 {
-   nblist_t u;
+   Nbl u;
    // First, forget about VDW, only check partial charge models.
    if (!usePotent(Potent::CHARGE) /* and !usePotent(Potent::SOLV) */) {
-      u = NBL_UNDEFINED;
+      u = Nbl::UNDEFINED;
    } else if (!limits::use_clist) {
-      u = NBL_DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP;
    } else if (!bound::use_bounds) {
-      u = NBL_VERLET;
+      u = Nbl::VERLET;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
-         u = NBL_SPATIAL;
+         u = Nbl::SPATIAL;
       else
 #endif
-         u = NBL_VERLET;
+         u = Nbl::VERLET;
    }
-   if (u != NBL_UNDEFINED)
+   if (u != Nbl::UNDEFINED)
       return u;
    // Then, check VDW if no partial charge term is in use.
    if (!usePotent(Potent::VDW)) {
-      u = NBL_UNDEFINED;
+      u = Nbl::UNDEFINED;
    } else if (vdwtyp == evdw_t::hal) {
-      u = NBL_UNDEFINED;
+      u = Nbl::UNDEFINED;
    } else if (!limits::use_vlist) {
-      u = NBL_DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP;
    } else if (!bound::use_bounds) {
-      u = NBL_VERLET;
+      u = Nbl::VERLET;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
-         u = NBL_SPATIAL;
+         u = Nbl::SPATIAL;
       else
 #endif
-         u = NBL_VERLET;
+         u = Nbl::VERLET;
    }
    return u;
 }
 
-nblist_t mlist_version()
+Nbl mlistVersion()
 {
-   nblist_t u;
+   Nbl u;
    if (!usePotent(Potent::MPOLE) and !usePotent(Potent::POLAR) and !usePotent(Potent::CHGTRN) and
       !usePotent(Potent::REPULS) /* and !usePotent(Potent::SOLV) */) {
-      u = NBL_UNDEFINED;
+      u = Nbl::UNDEFINED;
    } else if (!limits::use_mlist) {
-      u = NBL_DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP;
    } else if (!bound::use_bounds) {
-      u = NBL_VERLET;
+      u = Nbl::VERLET;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
-         u = NBL_SPATIAL;
+         u = Nbl::SPATIAL;
       else
 #endif
-         u = NBL_VERLET;
+         u = Nbl::VERLET;
    }
    return u;
 }
 
-nblist_t ulist_version()
+Nbl ulistVersion()
 {
-   nblist_t u;
+   Nbl u;
    if (!usePotent(Potent::POLAR)) {
-      u = NBL_UNDEFINED;
+      u = Nbl::UNDEFINED;
    } else if (!limits::use_ulist) {
-      u = NBL_DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP;
    } else if (!bound::use_bounds) {
-      u = NBL_VERLET;
+      u = Nbl::VERLET;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
-         u = NBL_SPATIAL;
+         u = Nbl::SPATIAL;
       else
 #endif
-         u = NBL_VERLET;
+         u = Nbl::VERLET;
    }
    return u;
 }
 
-nblist_t dsplist_version()
+Nbl dsplistVersion()
 {
-   nblist_t u;
+   Nbl u;
    if (!usePotent(Potent::DISP)) {
-      u = NBL_UNDEFINED;
+      u = Nbl::UNDEFINED;
    } else if (!limits::use_dlist) {
-      u = NBL_DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP;
    } else if (!bound::use_bounds) {
-      u = NBL_VERLET;
+      u = Nbl::VERLET;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
-         u = NBL_SPATIAL;
+         u = Nbl::SPATIAL;
       else
 #endif
-         u = NBL_VERLET;
+         u = Nbl::VERLET;
    }
    return u;
 }
@@ -192,10 +191,10 @@ static int nblist_maxlst(int maxn, double cutoff, double buffer)
 }
 
 // rc_alloc
-static void nblist_alloc(nblist_t version, NBListUnit& nblu, int maxn, real cutoff, real buffer,
+static void nblist_alloc(Nbl version, NBListUnit& nblu, int maxn, real cutoff, real buffer,
    const real* x, const real* y, const real* z)
 {
-   if (version & NBL_DOUBLE_LOOP)
+   if (version & Nbl::DOUBLE_LOOP)
       maxn = 1;
 
    nblu = NBListUnit::open();
@@ -277,7 +276,9 @@ static void spatial_update(SpatialUnit unt)
 
 //====================================================================//
 
-void nblist_data(RcOp op)
+void nblist_build_acc(NBListUnit); // rc_init
+void nblist_update_acc(NBListUnit);
+void nblistData(RcOp op)
 {
    if (op & rc_dealloc) {
       NBListUnit::clear();
@@ -307,15 +308,15 @@ void nblist_data(RcOp op)
 #if TINKER_CUDART
    alloc_thrust_cache = false;
 #endif
-   nblist_t u = NBL_UNDEFINED;
+   Nbl u = Nbl::UNDEFINED;
    double cut = 0;
    double buf = 0;
 
    // vlist
-   u = vlist_version();
+   u = vlistVersion();
    cut = switchOff(Switch::VDW);
    buf = neigh::lbuffer;
-   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+   if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = vlist_unit;
       if (op & rc_alloc) {
          nblist_alloc(u, unt, 2500, cut, buf, xred, yred, zred);
@@ -325,7 +326,7 @@ void nblist_data(RcOp op)
          nblist_build_acc(unt);
       }
    }
-   if (u & NBL_SPATIAL) {
+   if (u & Nbl::SPATIAL) {
       auto& un2 = vspatial_v2_unit;
       if (op & rc_alloc) {
          spatial_alloc(un2, n, cut, buf, xred, yred, zred, 1, nvexclude, vexclude);
@@ -337,7 +338,7 @@ void nblist_data(RcOp op)
    }
 
    // clist
-   u = clist_version();
+   u = clistVersion();
    cut = -1;
    if (usePotent(Potent::CHARGE)) {
       cut = useEwald() ? switchOff(Switch::EWALD) : switchOff(Switch::CHARGE);
@@ -348,7 +349,7 @@ void nblist_data(RcOp op)
          cut = std::max(cut, vdw_cut);
    }
    buf = neigh::lbuffer;
-   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+   if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = clist_unit;
       if (op & rc_alloc) {
          nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
@@ -357,7 +358,7 @@ void nblist_data(RcOp op)
          nblist_build_acc(unt);
       }
    }
-   if (u & NBL_SPATIAL) {
+   if (u & Nbl::SPATIAL) {
       auto& un2 = cspatial_v2_unit;
       if (op & rc_alloc) {
          spatial_alloc(un2, n, cut, buf, x, y, z, 3, //
@@ -369,10 +370,10 @@ void nblist_data(RcOp op)
    }
 
    // mlist
-   u = mlist_version();
+   u = mlistVersion();
    cut = useEwald() ? switchOff(Switch::EWALD) : switchOff(Switch::MPOLE);
    buf = neigh::lbuffer;
-   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+   if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = mlist_unit;
       if (op & rc_alloc) {
          nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
@@ -381,7 +382,7 @@ void nblist_data(RcOp op)
          nblist_build_acc(unt);
       }
    }
-   if (u & NBL_SPATIAL) {
+   if (u & Nbl::SPATIAL) {
       auto& un2 = mspatial_v2_unit;
       if (op & rc_alloc) {
          if (mplpot::use_chgpen) {
@@ -398,10 +399,10 @@ void nblist_data(RcOp op)
    }
 
    // ulist
-   u = ulist_version();
+   u = ulistVersion();
    cut = switchOff(Switch::USOLVE);
    buf = neigh::pbuffer;
-   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+   if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = ulist_unit;
       if (op & rc_alloc) {
          const int maxnlst = 500;
@@ -411,7 +412,7 @@ void nblist_data(RcOp op)
          nblist_build_acc(unt);
       }
    }
-   if (u & NBL_SPATIAL) {
+   if (u & Nbl::SPATIAL) {
       auto& un2 = uspatial_v2_unit;
       if (op & rc_alloc) {
          if (mplpot::use_chgpen) {
@@ -426,10 +427,10 @@ void nblist_data(RcOp op)
    }
 
    // dsplist
-   u = dsplist_version();
+   u = dsplistVersion();
    cut = useDEwald() ? switchOff(Switch::DEWALD) : switchOff(Switch::DISP);
    buf = neigh::lbuffer;
-   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+   if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = dsplist_unit;
       if (op & rc_alloc) {
          nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
@@ -438,7 +439,7 @@ void nblist_data(RcOp op)
          nblist_build_acc(unt);
       }
    }
-   if (u & NBL_SPATIAL) {
+   if (u & Nbl::SPATIAL) {
       auto& un2 = dspspatial_v2_unit;
       if (op & rc_alloc) {
          spatial_alloc(un2, n, cut, buf, x, y, z, 1, ndspexclude, dspexclude);
@@ -454,26 +455,26 @@ void nblist_data(RcOp op)
 #endif
 }
 
-void refresh_neighbors()
+void nblistRefresh()
 {
-   nblist_t u = NBL_UNDEFINED;
+   Nbl u = Nbl::UNDEFINED;
 
    // vlist
-   u = vlist_version();
-   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+   u = vlistVersion();
+   if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = vlist_unit;
       ehal_reduce_xyz();
       nblist_update_acc(unt);
    }
-   if (u & NBL_SPATIAL) {
+   if (u & Nbl::SPATIAL) {
       auto& un2 = vspatial_v2_unit;
       ehal_reduce_xyz();
       spatial_update(un2);
    }
 
    // clist
-   u = clist_version();
-   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+   u = clistVersion();
+   if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = clist_unit;
       if (rc_flag & calc::traj) {
          unt->x = x;
@@ -483,7 +484,7 @@ void refresh_neighbors()
       }
       nblist_update_acc(unt);
    }
-   if (u & NBL_SPATIAL) {
+   if (u & Nbl::SPATIAL) {
       auto& un2 = cspatial_v2_unit;
       if (rc_flag & calc::traj) {
          un2->x = x;
@@ -494,8 +495,8 @@ void refresh_neighbors()
    }
 
    // mlist
-   u = mlist_version();
-   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+   u = mlistVersion();
+   if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = mlist_unit;
       if (rc_flag & calc::traj) {
          unt->x = x;
@@ -505,7 +506,7 @@ void refresh_neighbors()
       }
       nblist_update_acc(unt);
    }
-   if (u & NBL_SPATIAL) {
+   if (u & Nbl::SPATIAL) {
       auto& un2 = mspatial_v2_unit;
       if (rc_flag & calc::traj) {
          un2->x = x;
@@ -516,8 +517,8 @@ void refresh_neighbors()
    }
 
    // ulist
-   u = ulist_version();
-   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+   u = ulistVersion();
+   if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = ulist_unit;
       if (rc_flag & calc::traj) {
          unt->x = x;
@@ -527,7 +528,7 @@ void refresh_neighbors()
       }
       nblist_update_acc(unt);
    }
-   if (u & NBL_SPATIAL) {
+   if (u & Nbl::SPATIAL) {
       auto& un2 = uspatial_v2_unit;
       if (rc_flag & calc::traj) {
          un2->x = x;
@@ -538,8 +539,8 @@ void refresh_neighbors()
    }
 
    // dsplist
-   u = dsplist_version();
-   if (u & (NBL_DOUBLE_LOOP | NBL_VERLET)) {
+   u = dsplistVersion();
+   if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = dsplist_unit;
       if (rc_flag & calc::traj) {
          unt->x = x;
@@ -549,7 +550,7 @@ void refresh_neighbors()
       }
       nblist_update_acc(unt);
    }
-   if (u & NBL_SPATIAL) {
+   if (u & Nbl::SPATIAL) {
       auto& un2 = dspspatial_v2_unit;
       if (rc_flag & calc::traj) {
          un2->x = x;

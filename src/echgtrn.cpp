@@ -85,7 +85,7 @@ void echgtrn(int vers)
    }
 
 #if TINKER_CUDART
-   if (mlist_version() & NBL_SPATIAL)
+   if (mlistVersion() & Nbl::SPATIAL)
       echgtrn_cu(vers);
    else
 #endif
