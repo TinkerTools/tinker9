@@ -1,6 +1,7 @@
+#include "ff/energy.h"
 #include "math/random.h"
-#include "md/inc.h"
 #include "md/integrator.h"
+#include "md/pt.h"
 #include "tinker9.h"
 #include "tool/darray.h"
 #include "tool/io.h"

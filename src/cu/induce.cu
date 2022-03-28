@@ -6,7 +6,6 @@
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
-#include "md/inc.h"
 #include "seq/damp.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"

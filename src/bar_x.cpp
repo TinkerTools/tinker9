@@ -3,7 +3,7 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "math/random.h"
-#include "md/inc.h"
+#include "md/pq.h"
 #include "tinker9.h"
 #include "tool/darray.h"
 #include "tool/io.h"

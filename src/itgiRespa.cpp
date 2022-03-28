@@ -1,6 +1,7 @@
 #include "ff/energy.h"
-#include "md/inc.h"
 #include "md/integrator.h"
+#include "md/intg.h"
+#include "md/pq.h"
 
 namespace tinker {
 const char* RespaIntegrator::name() const

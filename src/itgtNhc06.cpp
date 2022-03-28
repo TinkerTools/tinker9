@@ -1,5 +1,7 @@
-#include "md/inc.h"
+#include "ff/rattle.h"
 #include "md/integrator.h"
+#include "md/pq.h"
+#include "md/pt.h"
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {

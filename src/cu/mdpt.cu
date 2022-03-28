@@ -1,5 +1,5 @@
 #include "launch.h"
-#include "md/inc.h"
+#include "md/pt.h"
 #include "reduce.h"
 #include "tool/gpucard.h"
 #include <tinker/detail/units.hh>

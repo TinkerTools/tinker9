@@ -1,5 +1,4 @@
 #pragma once
-#include "ff/rattle.h"
 #include "precision.h"
 #include <cstdio>
 #include <string>

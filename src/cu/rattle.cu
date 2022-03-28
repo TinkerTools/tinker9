@@ -2,7 +2,7 @@
 #include "comparetypes.h"
 #include "ff/rattle.h"
 #include "launch.h"
-#include "md/inc.h"
+#include "md/pq.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {

@@ -1,5 +1,5 @@
 #include "launch.h"
-#include "md/inc.h"
+#include "md/pq.h"
 #include "reduce.h"
 #include "tool/darray.h"
 #include "tool/gpucard.h"

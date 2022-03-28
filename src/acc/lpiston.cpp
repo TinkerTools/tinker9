@@ -1,7 +1,8 @@
 #include "add.h"
+#include "ff/energy.h"
 #include "ff/rattle.h"
 #include "math/sinhc.h"
-#include "md/inc.h"
+#include "md/pq.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {

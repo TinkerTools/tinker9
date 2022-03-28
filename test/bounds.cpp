@@ -1,4 +1,4 @@
-#include "md/inc.h"
+#include "md/pq.h"
 #include "test.h"
 #include "testrt.h"
 #include "tool/io.h"

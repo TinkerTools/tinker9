@@ -4,8 +4,10 @@
 #include "ff/energy.h"
 #include "ff/rattle.h"
 #include "math/inc.h"
-#include "md/inc.h"
 #include "md/integrator.h"
+#include "md/intg.h"
+#include "md/pq.h"
+#include "md/pt.h"
 #include "tool/darray.h"
 #include "tool/io.h"
 #include <cassert>

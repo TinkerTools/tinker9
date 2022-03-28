@@ -1,7 +1,6 @@
 #pragma once
 #include "comparetypes.h"
 #include "ff/elec.h"
-#include "md/inc.h"
 #include "seq/damp.h"
 #include "seq/damp_hippo.h"
 

@@ -1,4 +1,5 @@
-#include "md/inc.h"
+#include "md/pq.h"
+#include "platform.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <tinker/detail/bound.hh>

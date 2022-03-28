@@ -1,5 +1,5 @@
 #include "add.h"
-#include "md/inc.h"
+#include "md/pq.h"
 
 namespace tinker {
 void scale_gradient_acc(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z)

@@ -1,4 +1,5 @@
 #include "ff/pme.h"
+#include "ff/atom.h"
 #include "ff/box.h"
 #include "ff/elec.h"
 #include "ff/hippo/edisp.h"
@@ -6,7 +7,6 @@
 #include "ff/potent.h"
 #include "ff/switch.h"
 #include "math/inc.h"
-#include "md/inc.h"
 #include "tinker9.h"
 #include "tool/error.h"
 #include <tinker/detail/bound.hh>

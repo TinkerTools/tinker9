@@ -1,4 +1,6 @@
-#include "md/inc.h"
+#include "ff/energy.h"
+#include "md/pq.h"
+#include "md/pt.h"
 #include "platform.h"
 #include <cassert>
 #include <tinker/detail/mdstuf.hh>

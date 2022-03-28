@@ -1,7 +1,5 @@
 #pragma once
 #include "ff/atom.h"
-#include "precision.h"
-#include "tool/rcman.h"
 #include <istream>
 
 namespace tinker {
@@ -87,4 +85,23 @@ void mdVelAvbfAn(int nrespa, vel_prec a[3][3], vel_prec b[3][3],     //
 
 /// \ingroup mdpq
 void mdVelData(RcOp);
+}
+
+//====================================================================//
+//                                                                    //
+//                          Global Variables                          //
+//                                                                    //
+//====================================================================//
+
+namespace tinker {
+/// \ingroup mdpq
+/// \{
+/// \var vx
+/// \brief Velocities.
+/// \var vy
+/// \copydoc vx
+/// \var vz
+/// \copydoc vx
+/// \}
+TINKER_EXTERN vel_prec *vx, *vy, *vz;
 }

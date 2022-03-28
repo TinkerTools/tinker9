@@ -7,7 +7,7 @@
 #include "ff/pchg/evalence.h"
 #include "ff/pchg/evdw.h"
 #include "ff/potent.h"
-#include "md/inc.h"
+#include "md/pq.h"
 
 namespace tinker {
 void osrw_altele_acc(double el)

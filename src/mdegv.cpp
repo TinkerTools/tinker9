@@ -1,5 +1,4 @@
 #include "ff/energy.h"
-#include "md/inc.h"
 #include "tool/zero.h"
 
 namespace tinker {

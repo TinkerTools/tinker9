@@ -1,7 +1,7 @@
+#include "ff/atom.h"
 #include "ff/hippo/inducechgpen.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "md/inc.h"
 #include "tool/io.h"
 #include <cmath>
 #include <tinker/detail/inform.hh>

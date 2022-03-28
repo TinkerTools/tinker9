@@ -1,5 +1,5 @@
+#include "ff/atom.h"
 #include "ff/molecule.h"
-#include "md/inc.h"
 #include "tool/darray.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/sizes.hh>

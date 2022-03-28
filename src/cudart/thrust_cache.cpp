@@ -1,4 +1,4 @@
-#include "md/inc.h"
+#include "ff/atom.h"
 #include "tool/darray.h"
 #include "tool/thrustcache.h"
 

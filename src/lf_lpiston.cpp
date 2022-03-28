@@ -2,8 +2,9 @@
 #include "ff/energy.h"
 #include "ff/rattle.h"
 #include "math/random.h"
-#include "md/inc.h"
 #include "md/lflpiston.h"
+#include "md/pq.h"
+#include "md/pt.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>

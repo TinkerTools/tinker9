@@ -1,5 +1,5 @@
 #include "ff/nblist.h"
-#include "md/inc.h"
+#include "ff/atom.h"
 #include "platform.h"
 #include "test.h"
 #include "testrt.h"

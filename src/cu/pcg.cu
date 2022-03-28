@@ -2,7 +2,6 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/induce.h"
 #include "launch.h"
-#include "md/inc.h"
 #include "tool/cudalib.h"
 #include "tool/io.h"
 #include <tinker/detail/inform.hh>

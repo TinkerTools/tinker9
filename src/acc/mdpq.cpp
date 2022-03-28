@@ -1,7 +1,7 @@
 #include "add.h"
 #include "ff/image.h"
 #include "ff/molecule.h"
-#include "md/inc.h"
+#include "md/pq.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {

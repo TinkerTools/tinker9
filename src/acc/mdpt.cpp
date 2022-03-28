@@ -6,7 +6,8 @@
 #include "ff/molecule.h"
 #include "ff/nblist.h"
 #include "math/random.h"
-#include "md/inc.h"
+#include "md/pq.h"
+#include "md/pt.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/bound.hh>

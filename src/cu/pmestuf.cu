@@ -8,7 +8,6 @@
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "launch.h"
-#include "md/inc.h"
 #include "seq/bsplgen.h"
 #include "tool/gpucard.h"
 

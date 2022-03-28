@@ -2,7 +2,6 @@
 #include "ff/elec.h"
 #include "ff/switch.h"
 #include "math/switch.h"
-#include "md/inc.h"
 #include "seq/damp_hippo.h"
 
 namespace tinker {

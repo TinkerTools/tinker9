@@ -1,5 +1,6 @@
 #include "ff/rattle.h"
-#include "md/inc.h"
+#include "ff/atom.h"
+#include "ff/energy.h"
 #include "tool/darray.h"
 #include "tool/energybuffer.h"
 #include "tool/io.h"

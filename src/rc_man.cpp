@@ -49,8 +49,9 @@ void finish()
 #include "ff/molecule.h"
 #include "ff/nblist.h"
 #include "ff/rattle.h"
-#include "md/inc.h"
+#include "md/intg.h"
 #include "md/osrw.h"
+#include "md/pq.h"
 #include "tool/cudalib.h"
 
 namespace tinker {

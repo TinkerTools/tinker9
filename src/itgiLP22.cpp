@@ -1,3 +1,4 @@
+#include "ff/rattle.h"
 #include "md/integrator.h"
 #include "tinker9.h"
 

@@ -1,7 +1,8 @@
 #include "ff/rattle.h"
 #include "add.h"
 #include "comparetypes.h"
-#include "md/inc.h"
+#include "ff/energy.h"
+#include "md/pq.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 #include <tinker/detail/inform.hh>

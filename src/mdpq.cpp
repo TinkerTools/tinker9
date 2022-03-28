@@ -1,6 +1,7 @@
 #include "ff/box.h"
+#include "ff/energy.h"
 #include "ff/nblist.h"
-#include "md/inc.h"
+#include "md/pq.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 #include "tool/gpucard.h"

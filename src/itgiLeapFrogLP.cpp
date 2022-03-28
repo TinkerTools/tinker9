@@ -1,5 +1,4 @@
 #include "ff/energy.h"
-#include "md/inc.h"
 #include "md/integrator.h"
 #include "md/lflpiston.h"
 #include "tool/darray.h"

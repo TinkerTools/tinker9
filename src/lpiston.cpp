@@ -2,7 +2,8 @@
 #include "ff/energy.h"
 #include "ff/rattle.h"
 #include "math/inc.h"
-#include "md/inc.h"
+#include "md/pq.h"
+#include "md/pt.h"
 #include "tinker9.h"
 #include "tool/error.h"
 #include <cmath>

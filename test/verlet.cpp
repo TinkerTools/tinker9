@@ -1,4 +1,3 @@
-#include "md/inc.h"
 #include "test.h"
 #include "testrt.h"
 #include <tinker/detail/inform.hh>

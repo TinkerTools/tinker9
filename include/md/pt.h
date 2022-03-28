@@ -40,3 +40,26 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp);
 void mdBerendsenBarostat(time_prec dt);
 void mdBerendsenBarostat_acc(time_prec);
 }
+
+//====================================================================//
+//                                                                    //
+//                          Global Variables                          //
+//                                                                    //
+//====================================================================//
+
+namespace tinker {
+/// \ingroup mdintg
+/// \{
+/// \var x_pmonte
+/// \brief Temporary coordinates created for the Monte Carlo barostat.
+/// \var y_pmonte
+/// \copydoc x_pmonte
+/// \var z_pmonte
+/// \copydoc x_pmonte
+/// \}
+TINKER_EXTERN pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
+
+TINKER_EXTERN double qbar;
+TINKER_EXTERN double vbar;
+TINKER_EXTERN double vbar_matrix[3][3];
+}

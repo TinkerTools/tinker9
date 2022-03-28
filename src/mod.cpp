@@ -21,7 +21,9 @@
 #include "ff/pchg/evalence.h"
 #include "ff/pchg/evdw.h"
 
-#include "md/md.h"
+#include "md/intg.h"
+#include "md/pq.h"
+#include "md/pt.h"
 
 #include "tool/cudalib.h"
 #include "tool/gpucard.h"

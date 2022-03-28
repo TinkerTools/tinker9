@@ -1,5 +1,5 @@
+#include "ff/atom.h"
 #include "ff/energy.h"
-#include "md/inc.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <cmath>

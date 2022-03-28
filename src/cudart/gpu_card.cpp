@@ -1,5 +1,4 @@
 #include "algorithm"
-#include "md/inc.h"
 #include "tinker9.h"
 #include "tool/error.h"
 #include "tool/exec.h"

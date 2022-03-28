@@ -1,4 +1,4 @@
-#include "md/inc.h"
+#include "md/intg.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <chrono>

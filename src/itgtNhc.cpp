@@ -1,5 +1,7 @@
-#include "md/inc.h"
+#include "ff/energy.h"
 #include "md/integrator.h"
+#include "md/pq.h"
+#include "md/pt.h"
 #include "tool/darray.h"
 #include "tool/io.h"
 #include <algorithm>

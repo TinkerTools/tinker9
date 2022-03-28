@@ -1,8 +1,10 @@
 #include "ff/box.h"
+#include "ff/energy.h"
+#include "ff/rattle.h"
 #include "math/ou.h"
 #include "math/random.h"
-#include "md/inc.h"
 #include "md/integrator.h"
+#include "md/pt.h"
 #include "tool/io.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/mdstuf.hh>
