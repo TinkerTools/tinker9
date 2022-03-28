@@ -59,7 +59,7 @@ int countReduce(const CountBuffer ne)
 energy_prec energyReduce(const EnergyBuffer e)
 {
    auto b = reduce_sum(e, bufferSize(), g::q0);
-   energy_prec real_out = toFloat_host<energy_prec>(b);
+   energy_prec real_out = toFloat<energy_prec>(b);
    return real_out;
 }
 
@@ -83,7 +83,7 @@ void virialReduce(virial_prec (&v1)[VirialBufferTraits::N], const VirialBuffer v
    VirialBufferTraits::type b[VirialBufferTraits::N];
    reduce_sum2(b, v, bufferSize(), g::q0);
    for (size_t i = 0; i < VirialBufferTraits::N; ++i)
-      v1[i] = toFloat_host<virial_prec>(b[i]);
+      v1[i] = toFloat<virial_prec>(b[i]);
 }
 
 void virialReduce(virial_prec (&v_out)[9], const VirialBuffer v)

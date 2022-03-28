@@ -434,13 +434,13 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    if (do_e) {
       if (!rc_a) {
          if (ecore_val) {
-            energy_valence += toFloat_host<energy_prec>(ev_hobj.e_val);
+            energy_valence += toFloat<energy_prec>(ev_hobj.e_val);
          }
          if (ecore_vdw && eng_buf_vdw) {
-            energy_vdw += toFloat_host<energy_prec>(ev_hobj.e_vdw);
+            energy_vdw += toFloat<energy_prec>(ev_hobj.e_vdw);
          }
          if (ecore_ele && eng_buf_elec) {
-            energy_elec += toFloat_host<energy_prec>(ev_hobj.e_ele);
+            energy_elec += toFloat<energy_prec>(ev_hobj.e_ele);
          }
       }
       esum = energy_valence + energy_vdw + energy_elec;
@@ -450,7 +450,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          if (ecore_val) {
             virial_prec vval[VirialBufferTraits::N], v2val[9];
             for (int iv = 0; iv < (int)VirialBufferTraits::N; ++iv)
-               vval[iv] = toFloat_host<virial_prec>(ev_hobj.v_val[iv]);
+               vval[iv] = toFloat<virial_prec>(ev_hobj.v_val[iv]);
             virialReshape(v2val, vval);
             for (int iv = 0; iv < 9; ++iv)
                virial_valence[iv] += v2val[iv];
@@ -458,7 +458,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          if (ecore_vdw && vir_buf_vdw) {
             virial_prec vvdw[VirialBufferTraits::N], v2vdw[9];
             for (int iv = 0; iv < (int)VirialBufferTraits::N; ++iv)
-               vvdw[iv] = toFloat_host<virial_prec>(ev_hobj.v_vdw[iv]);
+               vvdw[iv] = toFloat<virial_prec>(ev_hobj.v_vdw[iv]);
             virialReshape(v2vdw, vvdw);
             for (int iv = 0; iv < 9; ++iv)
                virial_vdw[iv] += v2vdw[iv];
@@ -466,7 +466,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          if (ecore_ele && vir_buf_elec) {
             virial_prec vele[VirialBufferTraits::N], v2ele[9];
             for (int iv = 0; iv < (int)VirialBufferTraits::N; ++iv)
-               vele[iv] = toFloat_host<virial_prec>(ev_hobj.v_ele[iv]);
+               vele[iv] = toFloat<virial_prec>(ev_hobj.v_ele[iv]);
             virialReshape(v2ele, vele);
             for (int iv = 0; iv < 9; ++iv)
                virial_elec[iv] += v2ele[iv];

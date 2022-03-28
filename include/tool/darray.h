@@ -136,22 +136,6 @@ namespace tinker {
  */
 struct darray
 {
-   template <class T, size_t N>
-   struct pointer;
-
-   template <class T>
-   struct pointer<T, 1>
-   {
-      typedef T* type;
-   };
-
-   template <class T, size_t N>
-   struct pointer
-   {
-      static_assert(N > 1, "");
-      typedef T (*type)[N];
-   };
-
    template <class PTR>
    static typename PtrTrait<PTR>::type* flatten(PTR p)
    {
@@ -270,6 +254,6 @@ struct darray
  * defined to `T*` or `T(*)[N]` when `N` is greater than 1.
  * `N` is set to 1 by default.
  */
-template <class T, size_t N = 1>
-using pointer = typename darray::pointer<T, N>::type;
+// template <class T, size_t N = 1>
+// using pointer = typename darray::pointer<T, N>::type;
 }

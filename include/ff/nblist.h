@@ -1,4 +1,5 @@
 #pragma once
+#include "precision.h"
 #include "tool/genunit.h"
 #include "tool/rcman.h"
 

@@ -1,18 +1,17 @@
 #pragma once
 #include "math/pow2.h"
 #include "precision.h"
-#include "tool/darray.h"
 
 namespace tinker {
 /// \brief Convert a fixed-point value to floating-point value on host.
 template <class T>
-inline T toFloat_host(fixed val)
+inline T toFloat(fixed val)
 {
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
 }
 
 template <class F, class T>
-inline F toFloat_host(T val)
+inline F toFloat(T val)
 {
    return val;
 }
@@ -69,9 +68,9 @@ using CountBufferTraits = BufferTraits<int, 1>;
 using EnergyBufferTraits = BufferTraits<e_prec, 1>;
 using VirialBufferTraits = BufferTraits<v_prec, 6>;
 
-using CountBuffer = pointer<CountBufferTraits::type, CountBufferTraits::value>;
-using EnergyBuffer = pointer<EnergyBufferTraits::type, EnergyBufferTraits::value>;
-using VirialBuffer = pointer<VirialBufferTraits::type, VirialBufferTraits::value>;
+using CountBuffer = CountBufferTraits::type*;
+using EnergyBuffer = EnergyBufferTraits::type*;
+using VirialBuffer = VirialBufferTraits::type (*)[VirialBufferTraits::value];
 
 void bufferAllocate(int flag, EnergyBuffer*, VirialBuffer*, grad_prec**, grad_prec**, grad_prec**);
 void bufferDeallocate(int flag, EnergyBuffer, VirialBuffer, grad_prec*, grad_prec*, grad_prec*);

@@ -2,6 +2,7 @@
 #include "ff/atom.h"
 #include "ff/box.h"
 #include "mod/energy.h"
+#include "tool/darray.h"
 #include <map>
 #include <string>
 
