@@ -52,13 +52,13 @@ void bufferDeallocate(int flag, CountBuffer c)
 }
 int countReduce(const CountBuffer ne)
 {
-   int c = reduce_sum(ne, bufferSize(), g::q0);
+   int c = reduceSum(ne, bufferSize(), g::q0);
    return c;
 }
 
 energy_prec energyReduce(const EnergyBuffer e)
 {
-   auto b = reduce_sum(e, bufferSize(), g::q0);
+   auto b = reduceSum(e, bufferSize(), g::q0);
    energy_prec real_out = toFloat<energy_prec>(b);
    return real_out;
 }
@@ -81,7 +81,7 @@ void virialReshape(virial_prec (&v_out)[9], const virial_prec (&v1)[VirialBuffer
 void virialReduce(virial_prec (&v1)[VirialBufferTraits::N], const VirialBuffer v)
 {
    VirialBufferTraits::type b[VirialBufferTraits::N];
-   reduce_sum2(b, v, bufferSize(), g::q0);
+   reduceSum2(b, v, bufferSize(), g::q0);
    for (size_t i = 0; i < VirialBufferTraits::N; ++i)
       v1[i] = toFloat<virial_prec>(b[i]);
 }

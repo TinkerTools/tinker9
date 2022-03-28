@@ -394,15 +394,15 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          size_t bufsize = bufferSize();
          if (ecore_val) {
             must_wait = true;
-            reduce_sum_on_device(&ev_dptr->e_val, eng_buf, bufsize, g::q0);
+            reduceSumOnDevice(&ev_dptr->e_val, eng_buf, bufsize, g::q0);
          }
          if (ecore_vdw && eng_buf_vdw) {
             must_wait = true;
-            reduce_sum_on_device(&ev_dptr->e_vdw, eng_buf_vdw, bufsize, g::q0);
+            reduceSumOnDevice(&ev_dptr->e_vdw, eng_buf_vdw, bufsize, g::q0);
          }
          if (ecore_ele && eng_buf_elec) {
             must_wait = true;
-            reduce_sum_on_device(&ev_dptr->e_ele, eng_buf_elec, bufsize, g::q0);
+            reduceSumOnDevice(&ev_dptr->e_ele, eng_buf_elec, bufsize, g::q0);
          }
       }
    }
@@ -415,15 +415,15 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          size_t bufsize = bufferSize();
          if (ecore_val) {
             must_wait = true;
-            reduce_sum2_on_device(ev_dptr->v_val, vir_buf, bufsize, g::q0);
+            reduceSum2OnDevice(ev_dptr->v_val, vir_buf, bufsize, g::q0);
          }
          if (ecore_vdw && vir_buf_vdw) {
             must_wait = true;
-            reduce_sum2_on_device(ev_dptr->v_vdw, vir_buf_vdw, bufsize, g::q0);
+            reduceSum2OnDevice(ev_dptr->v_vdw, vir_buf_vdw, bufsize, g::q0);
          }
          if (ecore_ele && vir_buf_elec) {
             must_wait = true;
-            reduce_sum2_on_device(ev_dptr->v_ele, vir_buf_elec, bufsize, g::q0);
+            reduceSum2OnDevice(ev_dptr->v_ele, vir_buf_elec, bufsize, g::q0);
          }
       }
    }

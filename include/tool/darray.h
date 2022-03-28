@@ -220,7 +220,7 @@ struct darray
       constexpr size_t N = PtrTrait<PTR>::n;
       typedef typename PtrTrait<PTR2>::type T2;
       static_assert(std::is_same<T, T2>::value, "");
-      return dotprod(flatten(ptr), flatten(b), nelem * N, q);
+      return dotProd(flatten(ptr), flatten(b), nelem * N, q);
    }
 
    template <class ANS, class PTR, class PTR2>
@@ -232,14 +232,14 @@ struct darray
       static_assert(std::is_same<T, T2>::value, "");
       typedef typename PtrTrait<ANS>::type TA;
       static_assert(std::is_same<T, TA>::value, "");
-      dotprod(ans, flatten(ptr), flatten(ptr2), nelem * N, q);
+      dotProd(ans, flatten(ptr), flatten(ptr2), nelem * N, q);
    }
 
    template <class FLT, class PTR>
    static void scale(int q, size_t nelem, FLT scal, PTR ptr)
    {
       constexpr size_t N = PtrTrait<PTR>::n;
-      scale_array(flatten(ptr), scal, nelem * N, q);
+      scaleArray(flatten(ptr), scal, nelem * N, q);
    }
 
    template <class FLT, class PTR, class... PTRS>

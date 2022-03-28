@@ -24,8 +24,10 @@
 /// \defgroup test  Unit Tests
 /// \defgroup async  Asynchronous Flow Control
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
+
 /// \defgroup math  Math
-/// \defgroup parallel_algo  Parallel Algorithms
+/// \defgroup math_parallel  Parallel Algorithms
+/// \ingroup math
 
 /// \defgroup box  Periodic Boundary Box
 /// \defgroup mdegv  Energy, Gradient, and Virial Tensor

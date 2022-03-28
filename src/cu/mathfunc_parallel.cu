@@ -1,5 +1,5 @@
 #include "accasync.h"
-#include "math/parallel_cu.h"
+#include "math/parallelcu.h"
 #include "reduce.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
@@ -38,17 +38,17 @@ T reduce_general(const T* a, size_t nelem, int queue)
 }
 
 template <class T>
-T reduce_sum_cu(const T* a, size_t nelem, int queue)
+T reduceSum_cu(const T* a, size_t nelem, int queue)
 {
    return reduce_general<T, OpPlus<T>>(a, nelem, queue);
 }
-template int reduce_sum_cu(const int*, size_t, int);
-template float reduce_sum_cu(const float*, size_t, int);
-template double reduce_sum_cu(const double*, size_t, int);
-template unsigned long long reduce_sum_cu(const unsigned long long*, size_t, int);
+template int reduceSum_cu(const int*, size_t, int);
+template float reduceSum_cu(const float*, size_t, int);
+template double reduceSum_cu(const double*, size_t, int);
+template unsigned long long reduceSum_cu(const unsigned long long*, size_t, int);
 
 template <class HT, size_t HN, class DPTR>
-void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem, int queue)
+void reduceSum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem, int queue)
 {
    typedef typename PtrTrait<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type T;
@@ -72,12 +72,12 @@ void reduce_sum2_cu(HT (&restrict h_ans)[HN], DPTR restrict a, size_t nelem, int
    for (size_t j = 0; j < HN; ++j)
       h_ans[j] = hptr[j];
 }
-template void reduce_sum2_cu(float (&)[6], float (*)[8], size_t, int);
-template void reduce_sum2_cu(double (&)[6], double (*)[8], size_t, int);
-template void reduce_sum2_cu(unsigned long long (&)[6], unsigned long long (*)[8], size_t, int);
+template void reduceSum2_cu(float (&)[6], float (*)[8], size_t, int);
+template void reduceSum2_cu(double (&)[6], double (*)[8], size_t, int);
+template void reduceSum2_cu(unsigned long long (&)[6], unsigned long long (*)[8], size_t, int);
 
 template <class T>
-void reduce_sum_on_device_cu(T* dp_ans, const T* a, size_t nelem, int queue)
+void reduceSumOnDevice_cu(T* dp_ans, const T* a, size_t nelem, int queue)
 {
    cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;
    T* dptr = (T*)dptr_buf;
@@ -89,13 +89,13 @@ void reduce_sum_on_device_cu(T* dp_ans, const T* a, size_t nelem, int queue)
    reduce<T, BLOCK_DIM, Op><<<grid_size, BLOCK_DIM, 0, st>>>(dptr, a, nelem);
    reduce<T, BLOCK_DIM, Op><<<1, BLOCK_DIM, 0, st>>>(dp_ans, dptr, grid_size);
 }
-template void reduce_sum_on_device_cu(int*, const int*, size_t, int);
-template void reduce_sum_on_device_cu(float*, const float*, size_t, int);
-template void reduce_sum_on_device_cu(double*, const double*, size_t, int);
-template void reduce_sum_on_device_cu(unsigned long long*, const unsigned long long*, size_t, int);
+template void reduceSumOnDevice_cu(int*, const int*, size_t, int);
+template void reduceSumOnDevice_cu(float*, const float*, size_t, int);
+template void reduceSumOnDevice_cu(double*, const double*, size_t, int);
+template void reduceSumOnDevice_cu(unsigned long long*, const unsigned long long*, size_t, int);
 
 template <class HT, size_t HN, class DPTR>
-void reduce_sum2_on_device_cu(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
+void reduceSum2OnDevice_cu(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
 {
    typedef typename PtrTrait<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type T;
@@ -113,13 +113,13 @@ void reduce_sum2_on_device_cu(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
    reduce2<T, BLOCK_DIM, HN, N, OpPlus<T>><<<grid_size, BLOCK_DIM, 0, st>>>(dptr, v, nelem);
    reduce2<T, BLOCK_DIM, HN, HN, OpPlus<T>><<<1, BLOCK_DIM, 0, st>>>(dpt2, dptr, grid_size);
 }
-template void reduce_sum2_on_device_cu(float (&)[6], float (*)[8], size_t, int);
-template void reduce_sum2_on_device_cu(double (&)[6], double (*)[8], size_t, int);
-template void reduce_sum2_on_device_cu(
+template void reduceSum2OnDevice_cu(float (&)[6], float (*)[8], size_t, int);
+template void reduceSum2OnDevice_cu(double (&)[6], double (*)[8], size_t, int);
+template void reduceSum2OnDevice_cu(
    unsigned long long (&)[6], unsigned long long (*)[8], size_t, int);
 
 template <>
-void dotprod_cu<float>(float* ans, const float* a, const float* b, size_t nelem, int queue)
+void dotProd_cu<float>(float* ans, const float* a, const float* b, size_t nelem, int queue)
 {
    bool dq = queue == g::q1;
    cublasHandle_t hd = (dq ? g::h1 : g::h0);
@@ -127,7 +127,7 @@ void dotprod_cu<float>(float* ans, const float* a, const float* b, size_t nelem,
 }
 
 template <>
-void dotprod_cu<double>(double* ans, const double* a, const double* b, size_t nelem, int queue)
+void dotProd_cu<double>(double* ans, const double* a, const double* b, size_t nelem, int queue)
 {
    bool dq = queue == g::q1;
    cublasHandle_t hd = (dq ? g::h1 : g::h0);

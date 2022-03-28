@@ -76,27 +76,27 @@ TEST_CASE("Reduce", "[util][math][reduce]")
    darray::copyin(g::q0, N, du2, vu2.data());
    wait_for(g::q0);
 
-   ai = reduce_sum(di, N, g::q0);
+   ai = reduceSum(di, N, g::q0);
    REQUIRE(ai == refi);
 
-   af = reduce_sum(df, N, g::q0);
+   af = reduceSum(df, N, g::q0);
    REQUIRE(af == reff);
 
-   ad = reduce_sum(dd, N, g::q0);
+   ad = reduceSum(dd, N, g::q0);
    REQUIRE(ad == refd);
 
-   au = reduce_sum(du, N, g::q0);
+   au = reduceSum(du, N, g::q0);
    REQUIRE(au == refu);
 
-   reduce_sum2(af2, df2, N, g::q0);
+   reduceSum2(af2, df2, N, g::q0);
    for (int j = 0; j < H; ++j)
       REQUIRE(af2[j] == reff2[j]);
 
-   reduce_sum2(ad2, dd2, N, g::q0);
+   reduceSum2(ad2, dd2, N, g::q0);
    for (int j = 0; j < H; ++j)
       REQUIRE(ad2[j] == refd2[j]);
 
-   reduce_sum2(au2, du2, N, g::q0);
+   reduceSum2(au2, du2, N, g::q0);
    for (int j = 0; j < H; ++j)
       REQUIRE(au2[j] == refu2[j]);
 

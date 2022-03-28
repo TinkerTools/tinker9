@@ -1,11 +1,11 @@
 #include "accasync.h"
-#include "math/parallel_acc.h"
+#include "math/parallelacc.h"
 #include "tool/ptrtrait.h"
 #include <cassert>
 
 namespace tinker {
 template <class T>
-T reduce_sum_acc(const T* gpu_a, size_t cpu_n, int queue)
+T reduceSum_acc(const T* gpu_a, size_t cpu_n, int queue)
 {
    T val = 0;
    #pragma acc parallel loop independent async(queue)\
@@ -15,13 +15,13 @@ T reduce_sum_acc(const T* gpu_a, size_t cpu_n, int queue)
    #pragma acc wait(queue)
    return val;
 }
-template int reduce_sum_acc(const int*, size_t, int);
-template float reduce_sum_acc(const float*, size_t, int);
-template double reduce_sum_acc(const double*, size_t, int);
-template unsigned long long reduce_sum_acc(const unsigned long long*, size_t, int);
+template int reduceSum_acc(const int*, size_t, int);
+template float reduceSum_acc(const float*, size_t, int);
+template double reduceSum_acc(const double*, size_t, int);
+template unsigned long long reduceSum_acc(const unsigned long long*, size_t, int);
 
 template <class HT, size_t HN, class DPTR>
-void reduce_sum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem, int queue)
+void reduceSum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem, int queue)
 {
    typedef typename PtrTrait<DPTR>::type CONST_DT;
    typedef typename std::remove_const<CONST_DT>::type DT;
@@ -40,12 +40,12 @@ void reduce_sum2_acc(HT (&restrict h_ans)[HN], DPTR restrict v, size_t nelem, in
       h_ans[iv] = ans;
    }
 }
-template void reduce_sum2_acc(float (&)[6], float (*)[8], size_t, int);
-template void reduce_sum2_acc(double (&)[6], double (*)[8], size_t, int);
-template void reduce_sum2_acc(unsigned long long (&)[6], unsigned long long (*)[8], size_t, int);
+template void reduceSum2_acc(float (&)[6], float (*)[8], size_t, int);
+template void reduceSum2_acc(double (&)[6], double (*)[8], size_t, int);
+template void reduceSum2_acc(unsigned long long (&)[6], unsigned long long (*)[8], size_t, int);
 
 template <class T>
-void reduce_sum_on_device_acc(T* dp_ans, const T* a, size_t nelem, int queue)
+void reduceSumOnDevice_acc(T* dp_ans, const T* a, size_t nelem, int queue)
 {
    static T ans1;
    static bool first = true;
@@ -65,13 +65,13 @@ void reduce_sum_on_device_acc(T* dp_ans, const T* a, size_t nelem, int queue)
       *dp_ans = ans1;
    }
 }
-template void reduce_sum_on_device_acc(int*, const int*, size_t, int);
-template void reduce_sum_on_device_acc(float*, const float*, size_t, int);
-template void reduce_sum_on_device_acc(double*, const double*, size_t, int);
-template void reduce_sum_on_device_acc(unsigned long long*, const unsigned long long*, size_t, int);
+template void reduceSumOnDevice_acc(int*, const int*, size_t, int);
+template void reduceSumOnDevice_acc(float*, const float*, size_t, int);
+template void reduceSumOnDevice_acc(double*, const double*, size_t, int);
+template void reduceSumOnDevice_acc(unsigned long long*, const unsigned long long*, size_t, int);
 
 template <class T, size_t HN, class DPTR>
-void reduce_sum2_on_device_acc(T (&dref)[HN], DPTR v, size_t nelem, int queue)
+void reduceSum2OnDevice_acc(T (&dref)[HN], DPTR v, size_t nelem, int queue)
 {
    static T ans1;
    static bool first = true;
@@ -94,13 +94,13 @@ void reduce_sum2_on_device_acc(T (&dref)[HN], DPTR v, size_t nelem, int queue)
       }
    }
 }
-template void reduce_sum2_on_device_acc(float (&)[6], float (*)[8], size_t, int);
-template void reduce_sum2_on_device_acc(double (&)[6], double (*)[8], size_t, int);
-template void reduce_sum2_on_device_acc(
+template void reduceSum2OnDevice_acc(float (&)[6], float (*)[8], size_t, int);
+template void reduceSum2OnDevice_acc(double (&)[6], double (*)[8], size_t, int);
+template void reduceSum2OnDevice_acc(
    unsigned long long (&)[6], unsigned long long (*)[8], size_t, int);
 
 template <class T>
-T dotprod_acc(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n, int queue)
+T dotProd_acc(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n, int queue)
 {
    T val = 0;
    #pragma acc parallel loop independent async(queue)\
@@ -111,11 +111,11 @@ T dotprod_acc(const T* restrict gpu_a, const T* restrict gpu_b, size_t cpu_n, in
    #pragma acc wait(queue)
    return val;
 }
-template float dotprod_acc(const float*, const float*, size_t, int);
-template double dotprod_acc(const double*, const double*, size_t, int);
+template float dotProd_acc(const float*, const float*, size_t, int);
+template double dotProd_acc(const double*, const double*, size_t, int);
 
 template <class T>
-void dotprod_acc(T* ans, const T* a, const T* b, size_t nelem, int queue)
+void dotProd_acc(T* ans, const T* a, const T* b, size_t nelem, int queue)
 {
    static T ans1;
    static bool first = true;
@@ -135,17 +135,17 @@ void dotprod_acc(T* ans, const T* a, const T* b, size_t nelem, int queue)
       *ans = ans1;
    }
 }
-template void dotprod_acc(float*, const float*, const float*, size_t, int);
-template void dotprod_acc(double*, const double*, const double*, size_t, int);
+template void dotProd_acc(float*, const float*, const float*, size_t, int);
+template void dotProd_acc(double*, const double*, const double*, size_t, int);
 
 template <class T>
-void scale_array_acc(T* gpu_dst, T scal, size_t nelem, int queue)
+void scaleArray_acc(T* gpu_dst, T scal, size_t nelem, int queue)
 {
    #pragma acc parallel loop independent async(queue) deviceptr(gpu_dst)
    for (size_t i = 0; i < nelem; ++i) {
       gpu_dst[i] *= scal;
    }
 }
-template void scale_array_acc(float*, float, size_t, int);
-template void scale_array_acc(double*, double, size_t, int);
+template void scaleArray_acc(float*, float, size_t, int);
+template void scaleArray_acc(double*, double, size_t, int);
 }
