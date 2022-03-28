@@ -4,8 +4,8 @@
 #include "ff/pchg/evalence.h"
 #include "math/const.h"
 #include "md/inc.h"
-#include "mod/elecamoeba.h"
-#include "mod/elechippo.h"
+#include "ff/amoeba/elecamoeba.h"
+#include "ff/hippo/elechippo.h"
 #include <cassert>
 
 namespace tinker {

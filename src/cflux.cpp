@@ -4,7 +4,7 @@
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
 #include "md/inc.h"
-#include "mod/elechippo.h"
+#include "ff/hippo/elechippo.h"
 #include "tool/io.h"
 #include "tool/zero.h"
 #include <cassert>

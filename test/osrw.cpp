@@ -1,6 +1,6 @@
 #include "md/osrw.h"
-#include "mod/elecamoeba.h"
-#include "mod/vdw.h"
+#include "ff/amoeba/elecamoeba.h"
+#include "ff/pchg/evdw.h"
 #include "test.h"
 #include "testrt.h"
 

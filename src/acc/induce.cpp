@@ -6,7 +6,7 @@
 #include "ff/nblist.h"
 #include "math/inc.h"
 #include "md/inc.h"
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "seq/damp.h"
 #include "tool/error.h"
 #include "tool/gpucard.h"

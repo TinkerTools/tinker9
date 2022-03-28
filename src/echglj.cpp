@@ -309,11 +309,4 @@ void echglj(int vers)
    }
 #endif
 }
-
-int* mut_coalesced;
-real* chg_coalesced;
-real* radeps_coalesced;
-grad_prec* gx_coalesced;
-grad_prec* gy_coalesced;
-grad_prec* gz_coalesced;
 }

@@ -6,8 +6,8 @@
 #include "ff/pme.h"
 #include "ff/switch.h"
 #include "math/switch.h"
-#include "mod/elecamoeba.h"
-#include "mod/elecpchg.h"
+#include "ff/amoeba/elecamoeba.h"
+#include "ff/pchg/echarge.h"
 #include "seq/pair_polar.h"
 #include "tool/gpucard.h"
 

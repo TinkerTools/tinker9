@@ -3,7 +3,7 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "tool/zero.h"
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/sizes.hh>

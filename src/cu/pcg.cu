@@ -2,7 +2,7 @@
 #include "ff/amoeba/induce.h"
 #include "launch.h"
 #include "md/inc.h"
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "tool/cudalib.h"
 #include "tool/io.h"
 #include <tinker/detail/inform.hh>

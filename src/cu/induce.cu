@@ -6,7 +6,7 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "md/inc.h"
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "seq/damp.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"

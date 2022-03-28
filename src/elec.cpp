@@ -10,9 +10,9 @@
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
-#include "mod/elecamoeba.h"
-#include "mod/elechippo.h"
-#include "mod/vdw.h"
+#include "ff/amoeba/elecamoeba.h"
+#include "ff/hippo/elechippo.h"
+#include "ff/pchg/evdw.h"
 #include "tool/io.h"
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/charge.hh>

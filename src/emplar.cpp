@@ -2,7 +2,7 @@
 #include "ff/amoeba/empole.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "tool/error.h"
 #include "tool/zero.h"
 

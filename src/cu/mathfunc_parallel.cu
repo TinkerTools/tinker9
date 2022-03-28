@@ -1,5 +1,5 @@
 #include "math/parallel_cu.h"
-#include "mod/accasync.h"
+#include "accasync.h"
 #include "reduce.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"

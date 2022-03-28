@@ -2,8 +2,8 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "mod/elecamoeba.h"
-#include "mod/elechippo.h"
+#include "ff/amoeba/elecamoeba.h"
+#include "ff/hippo/elechippo.h"
 #include "tool/darray.h"
 #include "tool/zero.h"
 #include <tinker/detail/chgtrn.hh>

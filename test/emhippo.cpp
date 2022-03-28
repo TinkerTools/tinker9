@@ -1,4 +1,4 @@
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "test.h"
 #include "testrt.h"
 

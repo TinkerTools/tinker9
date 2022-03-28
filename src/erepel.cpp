@@ -4,8 +4,8 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "mod/elecamoeba.h"
-#include "mod/repel.h"
+#include "ff/amoeba/elecamoeba.h"
+#include "ff/hippo/erepel.h"
 #include "tool/darray.h"
 #include "tool/zero.h"
 #include <tinker/detail/couple.hh>

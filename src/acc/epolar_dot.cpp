@@ -2,8 +2,8 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
-#include "mod/elecamoeba.h"
-#include "mod/elecpchg.h"
+#include "ff/amoeba/elecamoeba.h"
+#include "ff/pchg/echarge.h"
 
 namespace tinker {
 void epolar0_dotprod_acc(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])

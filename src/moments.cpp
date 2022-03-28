@@ -5,7 +5,7 @@
 #include "ff/hippo/inducechgpen.h"
 #include "ff/potent.h"
 #include "md/inc.h"
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "tinker9.h"
 #include "tool/darray.h"
 #include <cmath>

@@ -5,8 +5,8 @@
 #include "ff/elec.h"
 #include "ff/pme.h"
 #include "md/inc.h"
-#include "mod/elecamoeba.h"
-#include "mod/elecpchg.h"
+#include "ff/amoeba/elecamoeba.h"
+#include "ff/pchg/echarge.h"
 #include "seq/bsplgen.h"
 
 namespace tinker {

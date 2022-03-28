@@ -1,4 +1,4 @@
-#include "mod/repel.h"
+#include "ff/hippo/erepel.h"
 #include "test.h"
 #include "testrt.h"
 

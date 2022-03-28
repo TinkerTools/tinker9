@@ -1,14 +1,14 @@
 #include "md/osrw.h"
 #include "ff/potent.h"
 #include "md/inc.h"
-#include "mod/disp.h"
-#include "mod/elecamoeba.h"
-#include "mod/elechippo.h"
-#include "mod/elecpchg.h"
-#include "mod/evalence.h"
-#include "mod/mutant.h"
-#include "mod/repel.h"
-#include "mod/vdw.h"
+#include "ff/hippo/edisp.h"
+#include "ff/amoeba/elecamoeba.h"
+#include "ff/hippo/elechippo.h"
+#include "ff/pchg/echarge.h"
+#include "ff/pchg/evalence.h"
+#include "ff/pchg/evdw.h"
+#include "ff/hippo/erepel.h"
+#include "ff/pchg/evdw.h"
 
 namespace tinker {
 void osrw_altele_acc(double el)

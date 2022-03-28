@@ -8,7 +8,7 @@
 #include "ff/spatial.h"
 #include "launch.h"
 #include "md/inc.h"
-#include "mod/elecpchg.h"
+#include "ff/pchg/echarge.h"
 #include "seq/bsplgen.h"
 #include "tool/gpucard.h"
 

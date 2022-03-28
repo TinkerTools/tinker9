@@ -2,7 +2,7 @@
 #include "ff/box.h"
 #include "ff/potent.h"
 #include "md/inc.h"
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "tinker9.h"
 #include "tool/execq.h"
 #include <condition_variable>

@@ -1,7 +1,6 @@
 #pragma once
 #include "ff/pchg/echarge.h"
 #include "ff/pchg/evdw.h"
-#include "mod/accasync.h"
 #include "tool/rcman.h"
 
 namespace tinker {
@@ -39,8 +38,23 @@ inline void pme_stream_start_wait(bool use_pmestream) {}
 inline void pme_stream_finish_record(bool use_pmestream) {}
 inline void pme_stream_finish_wait(bool use_pmestream) {}
 #endif
+}
 
-extern int* mut_coalesced;     // n
-extern real* chg_coalesced;    // n
-extern real* radeps_coalesced; // 2*n
+//====================================================================//
+//                                                                    //
+//                          Global Variables                          //
+//                                                                    //
+//====================================================================//
+
+// chglj
+namespace tinker {
+TINKER_EXTERN int ncvexclude;
+TINKER_EXTERN int (*cvexclude)[2];
+TINKER_EXTERN real (*cvexclude_scale)[2];
+
+TINKER_EXTERN bool vdwpr_in_use;
+
+TINKER_EXTERN int* mut_coalesced;     // n
+TINKER_EXTERN real* chg_coalesced;    // n
+TINKER_EXTERN real* radeps_coalesced; // 2*n
 }

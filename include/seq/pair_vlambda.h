@@ -1,5 +1,5 @@
 #pragma once
-#include "ff/pchg/evdw1.h"
+#include "ff/pchg/evdw.h"
 #include "math/switch.h"
 #include "seqdef.h"
 

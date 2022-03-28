@@ -7,7 +7,7 @@
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "ff/switch.h"
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "seq/pair_field.h"
 #include "tool/gpucard.h"
 

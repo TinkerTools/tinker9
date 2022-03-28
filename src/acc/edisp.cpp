@@ -6,7 +6,7 @@
 #include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/switch.h"
-#include "mod/disp.h"
+#include "ff/hippo/edisp.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_disp.h"
 #include "tool/gpucard.h"

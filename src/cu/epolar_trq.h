@@ -1,6 +1,6 @@
 #pragma once
 #include "macro.h"
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 
 namespace tinker {
 __global__

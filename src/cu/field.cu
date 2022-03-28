@@ -6,7 +6,7 @@
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
-#include "mod/elecamoeba.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "seq/pair_field.h"
 #include "seq/triangle.h"
 #include "tool/cudalib.h"

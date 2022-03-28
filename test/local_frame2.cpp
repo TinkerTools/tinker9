@@ -1,4 +1,4 @@
-#include "mod/vdw.h"
+#include "ff/pchg/evdw.h"
 #include "test.h"
 #include "testrt.h"
 

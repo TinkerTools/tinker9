@@ -1,16 +1,5 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
-#include "mod/accasync.h"
-#include "mod/disp.h"
-#include "mod/elecamoeba.h"
-#include "mod/elechippo.h"
-#include "mod/elecpchg.h"
-#include "mod/evalence.h"
-#include "mod/md.h"
-#include "mod/mutant.h"
-#include "mod/repel.h"
-#include "mod/vdw.h"
-
 #include "ff/atom.h"
 #include "ff/box.h"
 #include "ff/elec.h"
@@ -21,8 +10,22 @@
 #include "ff/rattle.h"
 #include "ff/spatial.h"
 
+#include "ff/amoeba/elecamoeba.h"
+
+#include "ff/hippo/edisp.h"
+#include "ff/hippo/elechippo.h"
+#include "ff/hippo/erepel.h"
+
+#include "ff/pchg/echarge.h"
+#include "ff/pchg/echglj.h"
+#include "ff/pchg/evalence.h"
+#include "ff/pchg/evdw.h"
+
+#include "md/md.h"
+
 #include "tool/cudalib.h"
 #include "tool/gpucard.h"
 #include "tool/rcman.h"
 
+#include "accasync.h"
 #include "platform.h"
