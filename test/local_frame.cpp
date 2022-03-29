@@ -4,6 +4,7 @@
 #include "ff/amoeba/induce.h"
 #include "test.h"
 #include "testrt.h"
+#include <array>
 #include <tinker/detail/units.hh>
 
 using namespace tinker;

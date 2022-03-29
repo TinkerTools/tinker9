@@ -179,7 +179,7 @@ protected:
 public:
    NhcDevice(int nhclen, int nc, double dfree, //
       double (*kin)(), void (*scale)(double), std::string str);
-   void printDetail(FILE*);
+   void printDetail(FILE*) override;
    void control1(time_prec time_prec) override;
    void control2(time_prec time_prec, bool) override;
 

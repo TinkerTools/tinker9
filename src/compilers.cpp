@@ -1,4 +1,4 @@
-#include "tool/compilers.h"
+#include "macro.h"
 #include "tool/io.h"
 
 namespace tinker {
