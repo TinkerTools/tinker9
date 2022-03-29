@@ -48,6 +48,13 @@ void mdBerendsenBarostat_acc(time_prec);
 //====================================================================//
 
 namespace tinker {
+/// \var eksum
+/// Kinetic energy.
+/// \var ekin
+/// Kinetic energy tensor.
+TINKER_EXTERN energy_prec eksum;
+TINKER_EXTERN energy_prec ekin[3][3];
+
 /// \ingroup mdintg
 /// \{
 /// \var x_pmonte

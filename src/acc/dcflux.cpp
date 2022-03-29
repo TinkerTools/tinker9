@@ -6,7 +6,7 @@
 #include "ff/hippo/elechippo.h"
 #include "ff/molecule.h"
 #include "ff/pchg/evalence.h"
-#include "math/inc.h"
+#include "math/libfunc.h"
 #include "seq/bsplgen.h"
 #include "tool/energybuffer.h"
 #include "tool/gpucard.h"

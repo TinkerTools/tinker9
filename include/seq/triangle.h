@@ -1,5 +1,5 @@
 #pragma once
-#include "math/inc.h"
+#include "math/libfunc.h"
 
 namespace tinker {
 __device__

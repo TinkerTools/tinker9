@@ -4,6 +4,7 @@
 #include "ff/potent.h"
 #include "md/intg.h"
 #include "md/pq.h"
+#include "md/pt.h"
 #include "tinker9.h"
 #include "tool/execq.h"
 #include <condition_variable>

@@ -2,7 +2,7 @@
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/atom.h"
 #include "ff/elec.h"
-#include "math/inc.h"
+#include "math/libfunc.h"
 
 namespace tinker {
 namespace {

@@ -8,7 +8,7 @@
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
-#include "math/inc.h"
+#include "math/libfunc.h"
 #include "md/osrw.h"
 #include "seq/pair_charge.h"
 #include "seq/pair_lj.h"

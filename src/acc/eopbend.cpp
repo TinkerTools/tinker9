@@ -1,7 +1,6 @@
 #include "add.h"
 #include "ff/energy.h"
 #include "ff/pchg/evalence.h"
-#include "math/inc.h"
 #include "seq/opbend.h"
 #include <cassert>
 

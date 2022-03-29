@@ -1,5 +1,5 @@
 #pragma once
-#include "math/inc.h"
+#include "math/libfunc.h"
 #include "math/switch.h"
 #include "seqdef.h"
 

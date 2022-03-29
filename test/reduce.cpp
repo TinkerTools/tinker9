@@ -1,5 +1,4 @@
 #include "ff/atom.h"
-#include "math/inc.h"
 #include "test.h"
 #include "testrt.h"
 using namespace tinker;

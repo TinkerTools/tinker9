@@ -1,7 +1,7 @@
 #pragma once
 #include "comparetypes.h"
 #include "ff/elec.h"
-#include "math/inc.h"
+#include "math/libfunc.h"
 #include "math/switch.h"
 #include "seq/damp_hippodisp.h"
 #include "seqdef.h"

@@ -1,4 +1,4 @@
-#include "math/inc.h"
+#include "math/random.h"
 #include "tinker9.h"
 #include <chrono>
 #include <random>

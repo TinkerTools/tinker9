@@ -3,7 +3,6 @@
 
 #include "ff/energy.h"
 #include "ff/rattle.h"
-#include "math/inc.h"
 #include "md/integrator.h"
 #include "md/intg.h"
 #include "md/pq.h"

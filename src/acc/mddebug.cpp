@@ -1,5 +1,4 @@
 #include "accasync.h"
-#include "math/inc.h"
 #include "md/pq.h"
 #include "tool/darray.h"
 #include "tool/error.h"

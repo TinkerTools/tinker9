@@ -1,10 +1,11 @@
+#include "md/integrator.h"
+#include "md/pt.h"
 #include "test.h"
 #include "testrt.h"
 #include <tinker/detail/inform.hh>
 
 using namespace tinker;
 
-#include "md/integrator.h"
 #if TINKER_REAL_SIZE == 8
 static int usage_ = calc::xyz | calc::vel | calc::mass | calc::energy | calc::grad | calc::md;
 

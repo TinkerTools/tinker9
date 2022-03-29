@@ -248,13 +248,6 @@ TINKER_EXTERN energy_prec energy_valence;
 TINKER_EXTERN energy_prec energy_vdw;
 TINKER_EXTERN energy_prec energy_elec;
 
-/// \var eksum
-/// Kinetic energy.
-/// \var ekin
-/// Kinetic energy tensor.
-TINKER_EXTERN energy_prec eksum;
-TINKER_EXTERN energy_prec ekin[3][3];
-
 /// \var vir
 /// Total potential virial tensor.
 /// \var virial_valence

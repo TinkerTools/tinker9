@@ -1,5 +1,6 @@
 #include "ff/switch.h"
-#include "math/inc.h"
+#include "math/maxmin.h"
+#include <cmath>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/nonpol.hh>
 

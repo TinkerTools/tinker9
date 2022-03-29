@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/elec.h"
-#include "math/inc.h"
+#include "math/libfunc.h"
 #include "math/switch.h"
 #include "seqdef.h"
 
