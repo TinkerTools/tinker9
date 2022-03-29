@@ -1,12 +1,11 @@
-#include "tool/io.h"
+#include "tool/iotext.h"
 #include <algorithm>
 #include <bitset>
 #include <cassert>
-#include <regex>
 #include <sstream>
 
 namespace tinker {
-bool Text::is_ws(char ch)
+bool Text::isWhiteSpace(char ch)
 {
    static std::string ws = whitespaces;
    return ws.find(ch) != std::string::npos;
@@ -25,12 +24,6 @@ void Text::replace(std::string& src, std::string old, char r)
          rc = r;
       }
    }
-}
-
-void Text::replace_by_kv(std::string& src, std::string key, std::string value)
-{
-   std::regex rpl(key);
-   src = std::regex_replace(src, rpl, value);
 }
 
 std::vector<std::string> Text::split(std::string str, std::string delimiters)

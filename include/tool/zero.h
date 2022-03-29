@@ -1,10 +1,8 @@
 #pragma once
 #include <cstddef>
 
-namespace tinker {
-//====================================================================//
 // host
-
+namespace tinker {
 inline void zeroOnHost(int& v)
 {
    v = 0;
@@ -44,10 +42,10 @@ void zeroOnHost(T& v, Ts&... vs)
    zeroOnHost(v);
    zeroOnHost(vs...);
 }
+}
 
-//====================================================================//
 // device
-
+namespace tinker {
 template <class T>
 void zeroOnDevice3Async_acc(int nelem, T* a1, T* a2, T* a3);
 

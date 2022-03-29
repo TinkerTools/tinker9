@@ -69,8 +69,6 @@ void boxSetDefault(const Box&);
 void boxGetDefault(Box&);
 void boxSetDefaultRecip();
 void boxSetTinkerModule(const Box&);
-void boxGetAxesAngles(const Box&, double& a, double& b, double& c, //
-   double& alpha, double& beta, double& gamma);
 
 /// \ingroup box
 /// \brief Similar to Tinker `lattice` subroutine.

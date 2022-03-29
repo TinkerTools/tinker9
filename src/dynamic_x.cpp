@@ -6,7 +6,6 @@
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>
-#include <tinker/detail/keys.hh>
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {
@@ -27,21 +26,10 @@ void xDynamic(int, char**)
 
    // check for keywords containing any altered parameters
 
+   std::string intgstr;
+   get_kv("INTEGRATOR", intgstr, "BEEMAN");
    FstrView integrate = mdstuf::integrate;
-   integrate = "BEEMAN";
-   for (auto i = 0; i < keys::nkey; ++i) {
-      auto record = Text::string(keys::keyline[i]);
-      auto vs = Text::split(record);
-      if (vs.size()) {
-         auto keyword = vs.at(0);
-         Text::upcase(keyword);
-         if (keyword == "INTEGRATOR") {
-            record = vs.at(1);
-            Text::upcase(record);
-            integrate = record;
-         }
-      }
-   }
+   integrate = intgstr;
 
    // initialize the simulation length as number of time steps
 

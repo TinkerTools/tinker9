@@ -114,8 +114,8 @@ void boxSetDefaultRecip()
    boxCopyin();
 }
 
-void boxGetAxesAngles(
-   const Box& p, double& a, double& b, double& c, double& alpha, double& beta, double& gamma)
+static void boxGetAxesAngles(const Box& p, double& a, double& b, double& c, //
+   double& alpha, double& beta, double& gamma)
 {
    auto DOT3 = [](const double* a, const double* b) -> double {
       return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];

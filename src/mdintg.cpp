@@ -1,6 +1,3 @@
-#define TINKER_ENABLE_LOG 0
-#include "tool/log.h"
-
 #include "ff/energy.h"
 #include "ff/rattle.h"
 #include "md/integrator.h"
@@ -8,6 +5,7 @@
 #include "md/pq.h"
 #include "md/pt.h"
 #include "tool/darray.h"
+#include "tool/error.h"
 #include "tool/io.h"
 #include <cassert>
 #include <tinker/detail/bath.hh>
@@ -38,7 +36,6 @@ static BasicIntegrator* intg;
 void mdPropagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {
-      TINKER_LOG("Integrating Step %10d", istep);
       intg->dynamic(istep, dt_ps);
 
       // mdstat

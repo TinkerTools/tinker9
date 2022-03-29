@@ -1,6 +1,3 @@
-#define TINKER_ENABLE_LOG 0
-#include "tool/log.h"
-
 #include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/molecule.h"
@@ -224,8 +221,6 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
       double step = volmove * step_rdm;
       volnew = volold + step;
       double scale = std::pow(volnew / volold, third);
-      TINKER_LOG(
-         "MC Barostat Isotropic: random = %.6f dV = %.6f scale = %.6f", step_rdm, step, scale);
 
       lvec1 *= scale;
       lvec2 *= scale;
@@ -274,7 +269,6 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
    energy(calc::energy);
    energy_prec enew;
    copy_energy(calc::energy, &enew);
-   TINKER_LOG("MC Barostat Enew = %.6f Eold = %.6f", enew, eold);
    double dpot = enew - eold;
    double dpv = bath::atmsph * (volnew - volold) / units::prescon;
 
@@ -290,12 +284,7 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
 
    // reject the step, and restore values prior to trial change
    double exp_rdm = random<double>();
-   TINKER_LOG("MC Barostat (kT): dU = %.6f dPV = %.6f dK = %.6f", dpot, dpv, dkin);
-   TINKER_LOG("MC Barostat Accep. Ratio: %.6f; random: %.6f; "
-              "reject this move if ramdom .gt. Accep. Ratio",
-      expterm, exp_rdm);
    if (exp_rdm > expterm) {
-      TINKER_LOG("MC Barostat Move Rejected");
       esum = eold;
       boxSetDefault(boxold);
       darray::copy(g::q0, n, xpos, x_pmonte);
@@ -303,15 +292,6 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
       darray::copy(g::q0, n, zpos, z_pmonte);
       mdCopyPosToXyz();
       nblistRefresh();
-   } else {
-#if TINKER_ENABLE_LOG
-      Box p;
-      boxGetDefault(p);
-      double xbox, ybox, zbox, a_deg, b_deg, c_deg;
-      boxGetAxesAngles(p, xbox, ybox, zbox, a_deg, b_deg, c_deg);
-      TINKER_LOG("MC Barostat Move Accepted; New box"_s + 6 * "%12.6f"_s, xbox, ybox, zbox, a_deg,
-         b_deg, c_deg);
-#endif
    }
 }
 }

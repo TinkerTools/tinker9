@@ -20,6 +20,15 @@
 /// \ingroup md
 
 /// \defgroup io  I/O and Text
+/// \defgroup io_read  Input
+/// \ingroup io
+/// \defgroup io_print  Formatted Output
+/// \ingroup io
+/// \defgroup io_fstrview  Fortran String View
+/// \ingroup io
+/// \defgroup io_text  Text Class
+/// \ingroup io
+
 /// \defgroup error  Errors and Exceptions
 /// \defgroup test  Unit Tests
 /// \defgroup async  Asynchronous Flow Control

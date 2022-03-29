@@ -1,9 +1,9 @@
-#include "tool/io.h"
+#include "tool/iofortstr.h"
+#include "tool/iotext.h"
 #include <algorithm>
-#include <cstring>
 
 namespace tinker {
-void FortranStringView::copy_with_blank(char* dst, size_t dstlen, const char* src, size_t first_n)
+void FortranStringView::copyWithBlank(char* dst, size_t dstlen, const char* src, size_t first_n)
 {
    if (dst != src) {
       auto m = std::min(dstlen, first_n);
@@ -14,7 +14,7 @@ void FortranStringView::copy_with_blank(char* dst, size_t dstlen, const char* sr
    }
 }
 
-bool FortranStringView::if_eq(const char* src, size_t len) const
+bool FortranStringView::ifEq(const char* src, size_t len) const
 {
    auto lb = this->len_trim();
    auto lc = std::max(lb, len);
@@ -23,10 +23,10 @@ bool FortranStringView::if_eq(const char* src, size_t len) const
    // or copy src to buffer, then compare m_b and buffer.
    const char* ptr = m_b;
    if (len > lb) {
-      copy_with_blank(&buffer[0], lc, m_b, lb);
+      copyWithBlank(&buffer[0], lc, m_b, lb);
       ptr = src;
    } else {
-      copy_with_blank(&buffer[0], lc, src, len);
+      copyWithBlank(&buffer[0], lc, src, len);
    }
    return !std::strncmp(ptr, buffer.c_str(), lc);
 }
@@ -36,52 +36,36 @@ size_t FortranStringView::size() const
    return m_e - m_b;
 }
 
-FortranStringView::FortranStringView(const char* src, size_t len)
-   : m_b(const_cast<char*>(src))
+FortranStringView::FortranStringView(char* src, size_t len)
+   : m_b(src)
    , m_e(m_b + len)
-{}
-
-FortranStringView::FortranStringView(const char* src)
-   : m_b(const_cast<char*>(src))
-   , m_e(m_b + std::strlen(src))
-{}
-
-FortranStringView::FortranStringView(const std::string& src)
-   : m_b(const_cast<char*>(&src[0]))
-   , m_e(m_b + src.size())
 {}
 
 FortranStringView& FortranStringView::operator=(const char* src)
 {
-   copy_with_blank(m_b, size(), src, std::strlen(src));
+   copyWithBlank(m_b, size(), src, std::strlen(src));
    return *this;
 }
 
 FortranStringView& FortranStringView::operator=(const std::string& src)
 {
-   copy_with_blank(m_b, size(), &src[0], src.size());
-   return *this;
-}
-
-FortranStringView& FortranStringView::operator=(const FortranStringView& src)
-{
-   copy_with_blank(m_b, size(), src.m_b, src.size());
+   copyWithBlank(m_b, size(), &src[0], src.size());
    return *this;
 }
 
 bool FortranStringView::operator==(const char* src) const
 {
-   return if_eq(src, std::strlen(src));
+   return ifEq(src, std::strlen(src));
 }
 
 bool FortranStringView::operator==(const std::string& src) const
 {
-   return if_eq(src.c_str(), src.size());
+   return ifEq(src.c_str(), src.size());
 }
 
 bool FortranStringView::operator==(const FortranStringView& src) const
 {
-   return if_eq(src.m_b, src.size());
+   return ifEq(src.m_b, src.size());
 }
 
 size_t FortranStringView::len_trim() const
@@ -90,7 +74,7 @@ size_t FortranStringView::len_trim() const
    size_t pos = 0;
    for (; pos < size() && m_b[pos] != 0; ++pos)
       ;
-   for (; pos > 0 && Text::is_ws(m_b[pos - 1]); --pos)
+   for (; pos > 0 && Text::isWhiteSpace(m_b[pos - 1]); --pos)
       ;
    return pos;
 }
