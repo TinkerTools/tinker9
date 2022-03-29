@@ -31,8 +31,6 @@ epitors.cpp
 epolar.cpp
 epolar_chgpen.cpp
 erepel.cpp
-error_nix.cpp
-error_prterr.cpp
 estrbnd.cpp
 estrtor.cpp
 etors.cpp
@@ -40,7 +38,6 @@ etortor.cpp
 eurey.cpp
 evalence.cpp
 evdw.cpp
-exec.cpp
 field.cpp
 field_chgpen.cpp
 group.cpp
@@ -101,6 +98,9 @@ testgrad_x.cpp
 testrt.cpp
 tinker_rt.cpp
 tinker_suppl.cpp
+tool/errlinux.cpp
+tool/errprint.cpp
+tool/exec.cpp
 tool/iofortstr.cpp
 tool/iotext.cpp
 trimatexp.cpp

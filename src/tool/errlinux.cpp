@@ -1,6 +1,5 @@
 #if defined(__APPLE__) || defined(__linux__)
 #   include "macro.h"
-#   include "tool/error.h"
 #   include "tool/io.h"
 #   include <cxxabi.h>
 #   include <execinfo.h>
@@ -8,12 +7,12 @@
 namespace tinker {
 enum class BackTraceOS
 {
-   macOS,
-   Linux
+   MACOS,
+   LINUX
 };
 
-template <BackTraceOS os>
-void print_backtrace_tmpl(std::FILE* fp)
+template <BackTraceOS OS>
+static void print_backtrace_tmpl(std::FILE* fp)
 {
    const int max_frames = 128;
    void* callstack[max_frames];
@@ -34,7 +33,7 @@ void print_backtrace_tmpl(std::FILE* fp)
       // e.g.
       // 3   libdyld.dylib                       0x00007fffbc358235 start + 1
       // [0] [1]                                 [2]                [3]     [5]
-      if CONSTEXPR (os == BackTraceOS::macOS) {
+      if CONSTEXPR (OS == BackTraceOS::MACOS) {
          auto vs = Text::split(tmp);
          num = vs.at(0);
          caller = vs.at(1);
@@ -45,7 +44,7 @@ void print_backtrace_tmpl(std::FILE* fp)
       // /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xe7)
       // [0x7f4c7dd9db97] [0]                             [1]               [2]
       // [3]
-      else if CONSTEXPR (os == BackTraceOS::Linux) {
+      else if CONSTEXPR (OS == BackTraceOS::LINUX) {
          Text::replace(tmp, "()[]+", ' ');
          auto vs = Text::split(tmp);
          num = std::to_string(i);
@@ -70,12 +69,11 @@ void print_backtrace_tmpl(std::FILE* fp)
 void printBacktrace(std::FILE* out)
 {
 #   if defined(__APPLE__)
-   print_backtrace_tmpl<BackTraceOS::macOS>(out);
+   print_backtrace_tmpl<BackTraceOS::MACOS>(out);
 #   elif defined(__linux__)
-   print_backtrace_tmpl<BackTraceOS::Linux>(out);
+   print_backtrace_tmpl<BackTraceOS::LINUX>(out);
 #   endif
    std::fflush(out);
 }
 }
-
 #endif

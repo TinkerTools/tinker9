@@ -21,7 +21,7 @@ void set_box(BoxShape shape, const double* p)
 
    Box bo;
    boxLattice(bo, shape, p[0], p[1], p[2], p[3], p[4], p[5]);
-   boxSetDefault(bo);
+   boxSetCurrent(bo);
 }
 }
 

@@ -106,7 +106,7 @@ void mdReadFrameCopyinToXyz(std::istream& ipt, int& done)
       if (matched == 6) {
          Box p;
          boxLattice(p, box_shape, l1, l2, l3, a1, a2, a3);
-         boxSetDefault(p);
+         boxSetCurrent(p);
       } else {
          std::sscanf(line.data(), "%d%s%lf%lf%lf", &index, name, &xr, &yr, &zr);
          index -= 1;

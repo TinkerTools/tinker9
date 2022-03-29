@@ -1,24 +1,24 @@
 #pragma once
-#include "tool/io.h"
+#include "tool/ioprint.h"
+#include "tool/iotext.h"
 #include <stdexcept>
 
 namespace tinker {
 /// \ingroup error
-/// Writes out a set of coordinates to a disk file
-/// prior to aborting on a serious error.
+/// \brief Writes the current coordinates to a disk file prior to aborting on a serious error.
 void printError();
 
 /// \ingroup error
-/// Prints the call stack to a `FILE` pointer.
+/// \brief Prints the call stack to a `FILE` pointer.
 void printBacktrace(std::FILE* out = stderr);
 
 /// \ingroup error
-/// Translates error code to text.
+/// \brief Translates the error code to text.
 template <class T>
-std::string translateErrorCode(T error_num);
+std::string translateErrorCode(T errcode);
 
 /// \ingroup error
-/// Errors and exceptions that we do not intend to fix or handle.
+/// \brief Errors and exceptions that we do not intend to fix or handle.
 class FatalError : public std::exception
 {
 private:
@@ -42,7 +42,7 @@ public:
 
 /// \def TINKER_THROW
 /// \ingroup error
-/// Throws a fatal error message as a `FatalError` exception.
+/// \brief Throws a fatal error message as a `FatalError` exception.
 #define TINKER_THROW(msg)                                                                          \
    do {                                                                                            \
       printBacktrace();                                                                            \
@@ -69,8 +69,7 @@ public:
 
 /// \def TINKER_ALWAYS_CHECK_RT
 /// \ingroup error
-/// Defined to `true` in the source code to enable `check_rt` for the release
-/// build.
+/// \brief Defined to `true` in the source code to enable `check_rt` for the release build.
 /// \see check_rt
 #ifndef TINKER_ALWAYS_CHECK_RT
 #   define TINKER_ALWAYS_CHECK_RT 0
@@ -78,9 +77,9 @@ public:
 
 /// \def check_rt
 /// \ingroup error
-/// It normally does not do extra work other than the function call it captures,
-/// unless if either `TINKER_DEBUG` or `TINKER_ALWAYS_CHECK_RT` is `true`,
-/// `check_rt()` will check the error code returned by the function call.
+/// \brief It normally does not do extra work other than the function call it captures,
+/// unless if either `TINKER_DEBUG` or `TINKER_ALWAYS_CHECK_RT` is `true` and this macro
+/// will then check the error code returned by the function call.
 /// \see TINKER_DEBUG
 /// \see TINKER_ALWAYS_CHECK_RT
 #if TINKER_DEBUG || TINKER_ALWAYS_CHECK_RT
@@ -91,7 +90,7 @@ public:
 
 /// \def always_check_rt
 /// \ingroup error
-/// Always checks returned error code and neglects the related macros.
+/// \brief Always checks returned error code.
 /// \see check_rt
 #define always_check_rt(...) TINKER_ALWAYS_CHECK_RT_(__VA_ARGS__)(__VA_ARGS__)
 }

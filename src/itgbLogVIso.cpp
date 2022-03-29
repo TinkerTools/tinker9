@@ -96,6 +96,6 @@ void IsoBaroDevice::control3(time_prec dt)
    lvec1 *= eterm2;
    lvec2 *= eterm2;
    lvec3 *= eterm2;
-   boxSetDefaultRecip();
+   boxSetCurrentRecip();
 }
 }

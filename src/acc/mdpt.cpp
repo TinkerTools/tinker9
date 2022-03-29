@@ -155,7 +155,7 @@ void mdBerendsenBarostat_acc(time_prec dt)
       }
       Box newbox;
       boxLattice(newbox, box_shape, l0, l1, l2, a0, a1, a2);
-      boxSetDefault(newbox);
+      boxSetCurrent(newbox);
 
       #pragma acc parallel loop independent async\
               deviceptr(xpos,ypos,zpos) firstprivate(ascale[0:3][0:3])
@@ -175,7 +175,7 @@ void mdBerendsenBarostat_acc(time_prec dt)
       lvec1 *= scale;
       lvec2 *= scale;
       lvec3 *= scale;
-      boxSetDefaultRecip();
+      boxSetCurrentRecip();
 
       #pragma acc parallel loop independent async\
               deviceptr(xpos,ypos,zpos)
@@ -208,7 +208,7 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
 
    // save the system state prior to trial box size change
    Box boxold;
-   boxGetDefault(boxold);
+   boxGetCurrent(boxold);
    double volold = boxVolume();
    double volnew = 0;
    double eold = epot;
@@ -225,7 +225,7 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
       lvec1 *= scale;
       lvec2 *= scale;
       lvec3 *= scale;
-      boxSetDefaultRecip();
+      boxSetCurrentRecip();
 
       if (volscale == "MOLECULAR") {
          int nmol = molecule.nmol;
@@ -286,7 +286,7 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
    double exp_rdm = random<double>();
    if (exp_rdm > expterm) {
       esum = eold;
-      boxSetDefault(boxold);
+      boxSetCurrent(boxold);
       darray::copy(g::q0, n, xpos, x_pmonte);
       darray::copy(g::q0, n, ypos, y_pmonte);
       darray::copy(g::q0, n, zpos, z_pmonte);

@@ -141,7 +141,7 @@ void lf_langevin_piston(time_prec dt, virial_prec press)
    lvec1.x = xtlabc;
    lvec2.y = xtlabc;
    lvec3.z = xtlabc;
-   boxSetDefaultRecip();
+   boxSetCurrentRecip();
 
    pnh_lp = pnh_lp + pnhv_lp * dt + 0.5 * dt * dt * pnhf_lp;
 

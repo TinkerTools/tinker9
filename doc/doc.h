@@ -1,6 +1,7 @@
 #error This header file should never have been included.
 
 /// \defgroup general  General Information
+
 /// \defgroup platform  Platforms and Syntaxes
 /// \defgroup cpp_syntax  C++ Syntax
 /// \ingroup platform
@@ -30,6 +31,7 @@
 /// \ingroup io
 
 /// \defgroup error  Errors and Exceptions
+
 /// \defgroup test  Unit Tests
 /// \defgroup async  Asynchronous Flow Control
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue

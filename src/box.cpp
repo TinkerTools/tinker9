@@ -28,7 +28,7 @@ void boxCopyin()
    boxCopyin_acc();
 }
 
-void boxSetDefault(const Box& p)
+void boxSetCurrent(const Box& p)
 {
    box_shape = p.box_shape;
    lvec1 = p.lvec1;
@@ -41,7 +41,7 @@ void boxSetDefault(const Box& p)
    boxCopyin();
 }
 
-void boxGetDefault(Box& p)
+void boxGetCurrent(Box& p)
 {
    p.box_shape = box_shape;
    p.lvec1 = lvec1;
@@ -107,7 +107,7 @@ static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape bo
    }
 }
 
-void boxSetDefaultRecip()
+void boxSetCurrentRecip()
 {
    boxSetRecip(recipa, recipb, recipc, box_shape, lvec1, lvec2, lvec3);
 
@@ -283,7 +283,7 @@ void boxData(RcOp op)
    if (op & rc_init) {
       Box p;
       boxGetTinkerModule(p);
-      boxSetDefault(p);
+      boxSetCurrent(p);
    }
 }
 

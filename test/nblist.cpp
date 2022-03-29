@@ -52,7 +52,7 @@ void goto_frame(int idx0)
    y = trajy + n * idx0;
    z = trajz + n * idx0;
    const Box& b = trajbox[idx0];
-   boxSetDefault(b);
+   boxSetCurrent(b);
 }
 
 void copyin_arc_file(const std::string& arcfile, int first1, int last1, int step)

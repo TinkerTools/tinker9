@@ -65,9 +65,9 @@ struct Box
 namespace tinker {
 void boxData(RcOp);
 void boxExtent(double new_extent);
-void boxSetDefault(const Box&);
-void boxGetDefault(Box&);
-void boxSetDefaultRecip();
+void boxSetCurrent(const Box&);
+void boxGetCurrent(Box&);
+void boxSetCurrentRecip();
 void boxSetTinkerModule(const Box&);
 
 /// \ingroup box

@@ -154,6 +154,6 @@ void AnisoBaroDevice::control3(time_prec dt)
    lvec1.x = h0[0][0], lvec1.y = h0[0][1], lvec1.z = h0[0][2];
    lvec2.x = h0[1][0], lvec2.y = h0[1][1], lvec2.z = h0[1][2];
    lvec3.x = h0[2][0], lvec3.y = h0[2][1], lvec3.z = h0[2][2];
-   boxSetDefaultRecip();
+   boxSetCurrentRecip();
 }
 }

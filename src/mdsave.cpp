@@ -60,7 +60,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    // duplicate
 
    dup_buf_esum = esum;
-   boxGetDefault(dup_buf_box);
+   boxGetCurrent(dup_buf_box);
    darray::copy(g::q0, n, dup_buf_x, xpos);
    darray::copy(g::q0, n, dup_buf_y, ypos);
    darray::copy(g::q0, n, dup_buf_z, zpos);

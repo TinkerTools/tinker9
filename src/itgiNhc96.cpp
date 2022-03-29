@@ -135,7 +135,7 @@ static void nhc_npt(int istep, time_prec dt)
    lvec1 *= eterm2;
    lvec2 *= eterm2;
    lvec3 *= eterm2;
-   boxSetDefaultRecip();
+   boxSetCurrentRecip();
 
    // update atomic positions via coupling to barostat
    // eq. 42 coordinates
