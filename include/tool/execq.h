@@ -2,6 +2,7 @@
 
 namespace tinker {
 inline namespace v1 {
+/// \ingroup async
 /// \brief A helper class for mdsave.
 class ExecQ
 {

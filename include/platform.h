@@ -12,6 +12,7 @@ enum class Platform
 };
 TINKER_ENABLE_ENUM_BITMASK(Platform);
 
+/// \ingroup platform
 void platformData(RcOp);
 }
 
@@ -22,5 +23,6 @@ void platformData(RcOp);
 //====================================================================//
 
 namespace tinker {
+/// \ingroup platform
 TINKER_EXTERN Platform pltfm_config;
 }

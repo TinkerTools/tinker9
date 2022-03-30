@@ -3,7 +3,7 @@
 #include <type_traits>
 
 namespace tinker {
-/// \ingroup rc
+/// \ingroup cpp_syntax
 /// \brief A helper class to get the traits of the given 1D or 2D pointer type.
 ///
 /// Example:

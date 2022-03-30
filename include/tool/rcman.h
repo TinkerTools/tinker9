@@ -5,7 +5,7 @@
 namespace tinker {
 inline namespace v1 {
 /// \ingroup rc
-/// Direct mathematical calculation of enum class is prohibited in C++ syntax.
+/// \brief Direct mathematical calculation of enum class is prohibited in C++ syntax.
 template <class E>
 struct EnableEnumBitMask
 {
@@ -15,7 +15,7 @@ struct EnableEnumBitMask
 
 /// \def TINKER_ENABLE_ENUM_BITMASK
 /// \ingroup rc
-/// Explicitly enables mathematical calculation by casting enum class to integer.
+/// \brief Explicitly enables mathematical calculation by casting enum class to integer.
 #define TINKER_ENABLE_ENUM_BITMASK(x)                                                              \
    template <>                                                                                     \
    struct EnableEnumBitMask<x>                                                                     \
@@ -23,6 +23,7 @@ struct EnableEnumBitMask
       static constexpr bool value = true;                                                          \
    }
 
+/// \ingroup rc
 template <class E>
 constexpr typename std::enable_if<EnableEnumBitMask<E>::value, E>::type operator|(E lhs, E rhs)
 {
@@ -30,6 +31,7 @@ constexpr typename std::enable_if<EnableEnumBitMask<E>::value, E>::type operator
    return static_cast<E>(static_cast<ut>(lhs) | static_cast<ut>(rhs));
 }
 
+/// \ingroup rc
 template <class E>
 constexpr bool operator&(E lhs, E rhs)
 {
@@ -37,6 +39,7 @@ constexpr bool operator&(E lhs, E rhs)
    return static_cast<bool>(static_cast<ut>(lhs) & static_cast<ut>(rhs));
 }
 
+/// \ingroup rc
 enum class ResourceOperation
 {
    DEALLOC = 0x001,
@@ -44,23 +47,25 @@ enum class ResourceOperation
    INIT = 0x004
 };
 TINKER_ENABLE_ENUM_BITMASK(ResourceOperation);
+/// \ingroup rc
+/// Type alias.
 using RcOp = ResourceOperation;
 
 /// \ingroup rc
-/// Deallocates resource.
+/// \brief Deallocates resource.
 constexpr RcOp rc_dealloc = RcOp::DEALLOC;
 
 /// \ingroup rc
-/// Allocates resource.
+/// \brief Allocates resource.
 constexpr RcOp rc_alloc = RcOp::ALLOC;
 
 /// \ingroup rc
-/// Initializes resource.
+/// \brief Initializes resource.
 constexpr RcOp rc_init = RcOp::INIT;
 
 /// \ingroup rc
-/// Resource management. Allocates resource in the object constructor and
-/// deallocates resource in the object destructor.
+/// \brief Resource management. Allocates resources in the object constructor and
+/// deallocates resources in the object destructor.
 ///
 /// To deallocate resource in reverse order of allocation, use named objects.
 /// \code
@@ -76,10 +81,8 @@ constexpr RcOp rc_init = RcOp::INIT;
 class ResourceManagement
 {
 private:
-   void (*m_f)(RcOp);
+   void (*m_f)(RcOp); // pointer to function void fooData(RcOp);
    RcOp m_op;
-   bool will_dealloc() const;
-   bool only_dealloc() const;
 
 public:
    /// \param f   Function to (de)allocate and/or initialize resource.
@@ -89,19 +92,19 @@ public:
 };
 
 /// \ingroup rc
-/// Type alias.
+/// \brief Type alias.
 using RcMan = ResourceManagement;
 
 /// \ingroup rc
-/// Sets up host and device environment.
+/// \brief Sets up host and device environment.
 void initialize();
 
 /// \ingroup rc
-/// Cleans up host and device environment.
+/// \brief Cleans up host and device environment.
 void finish();
 
 /// \ingroup rc
-/// Set up and clean up device environment.
+/// \brief Set up and clean up device environment.
 void deviceData(RcOp);
 }
 

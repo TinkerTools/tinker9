@@ -35,5 +35,6 @@ T normal(T u, T s);
 template <class T>
 T chiSquared(int k);
 
+/// \ingroup math
 void randomData(RcOp);
 }

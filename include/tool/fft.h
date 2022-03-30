@@ -59,5 +59,6 @@ struct FFTPlan
 
    virtual ~FFTPlan() {}
 };
+/// \ingroup fft
 using FFTPlanUnit = GenericUnit<FFTPlan, GenericUnitVersion::DISABLE_ON_DEVICE>;
 }

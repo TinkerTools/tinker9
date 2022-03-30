@@ -1,28 +1,18 @@
 #include "tool/rcman.h"
 
 namespace tinker {
-bool ResourceManagement::will_dealloc() const
-{
-   return m_op & rc_dealloc;
-}
-
-bool ResourceManagement::only_dealloc() const
-{
-   return m_op == rc_dealloc;
-}
-
 ResourceManagement::ResourceManagement(void (*f)(RcOp), RcOp op)
    : m_f(f)
    , m_op(op)
 {
-   if (!will_dealloc()) {
+   if (not(m_op & rc_dealloc)) {
       m_f(m_op);
    }
 }
 
 ResourceManagement::~ResourceManagement()
 {
-   if (only_dealloc()) {
+   if (m_op == rc_dealloc) {
       m_f(m_op);
    }
 }
