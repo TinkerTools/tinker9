@@ -167,7 +167,7 @@ void mdBerendsenBarostat_acc(time_prec dt)
          ypos[i] = xk * ascale[1][0] + yk * ascale[1][1] + zk * ascale[1][2];
          zpos[i] = xk * ascale[2][0] + yk * ascale[2][1] + zk * ascale[2][2];
       }
-      mdCopyPosToXyz();
+      copyPosToXyz();
    } else {
       double scale = 1 + (dt * bath::compress / bath::taupres) * (pres - bath::atmsph);
       scale = std::pow(scale, third);
@@ -184,7 +184,7 @@ void mdBerendsenBarostat_acc(time_prec dt)
          ypos[i] *= scale;
          zpos[i] *= scale;
       }
-      mdCopyPosToXyz();
+      copyPosToXyz();
    }
 }
 
@@ -260,7 +260,7 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
                zpos[k] += zmove;
             }
          }
-         mdCopyPosToXyz();
+         copyPosToXyz();
       }
    }
 
@@ -290,7 +290,7 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
       darray::copy(g::q0, n, xpos, x_pmonte);
       darray::copy(g::q0, n, ypos, y_pmonte);
       darray::copy(g::q0, n, zpos, z_pmonte);
-      mdCopyPosToXyz();
+      copyPosToXyz();
       nblistRefresh();
    }
 }

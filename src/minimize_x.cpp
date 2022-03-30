@@ -167,7 +167,7 @@ void minimize_set_xx(int n, double* xx, const double* scale)
 void minimize_set_xyz(int n, const double* xx, const double* scale)
 {
    minimize_set_pos_acc(n, xx, scale);
-   mdCopyPosToXyz();
+   copyPosToXyz();
    nblistRefresh();
 }
 }

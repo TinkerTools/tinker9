@@ -1,9 +1,7 @@
 #pragma once
 #include <cstddef>
 
-//====================================================================//
 // constexpr functions
-
 namespace tinker {
 /// \ingroup math
 /// \brief Return true if and only if `val` is a power of 2.
@@ -51,9 +49,7 @@ constexpr size_t pow2Ge(size_t val)
 }
 }
 
-//====================================================================//
 // inline functions
-
 namespace tinker {
 /// \ingroup math
 /// \brief Non-constexpr `floorLog2(int)`.

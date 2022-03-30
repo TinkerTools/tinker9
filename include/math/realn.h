@@ -4,6 +4,8 @@
 #include "seqdef.h"
 
 namespace tinker {
+/// \ingroup math
+/// \{
 #if TINKER_REAL_SIZE == 8
 using real2 = double2;
 using real3 = double3;
@@ -133,4 +135,5 @@ inline real3 cross(real3 a, real3 b)
 {
    return cross(a.x, a.y, a.z, b.x, b.y, b.z);
 }
+/// \}
 }

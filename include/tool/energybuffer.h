@@ -68,13 +68,13 @@ struct BufferTraits<float, Nincr>
 };
 }
 
+/// \ingroup ff
 /// \{
 /// \brief The lengths of all of the energy buffers are the same and are implicitly
 /// dependent on the number of atoms in the system.
 /// \note Must be a power of 2.
 size_t bufferSize();
 
-/// \ingroup ff
 using CountBufferTraits = BufferTraits<int, 1>;
 using EnergyBufferTraits = BufferTraits<e_prec, 1>;
 using VirialBufferTraits = BufferTraits<v_prec, 6>;

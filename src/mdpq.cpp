@@ -14,51 +14,7 @@
 #include <tinker/detail/usage.hh>
 
 namespace tinker {
-void nData(RcOp op)
-{
-   if (op & rc_dealloc) {
-      trajn = -1;
-      n = 0;
-      padded_n = 0;
-      nelem_buffer = 0;
-   }
 
-   if (op & rc_alloc) {
-      n = atoms::n;
-      padded_n = (n + WARP_SIZE - 1) / WARP_SIZE;
-      padded_n *= WARP_SIZE;
-
-      if (calc::traj & rc_flag) {
-         // trajn must have been initialized by this point
-         assert(trajn >= 0);
-      }
-
-#if TINKER_CUDART
-      nelem_buffer = gpuMaxNParallel(idevice);
-      nelem_buffer = pow2Ge(nelem_buffer);
-#elif TINKER_HOST
-      nelem_buffer = 1;
-#endif
-
-      if (usage::nuse != n) {
-         TINKER_THROW("All atoms must be active.");
-      }
-   }
-}
-
-//====================================================================//
-
-void mdCopyPosToXyz()
-{
-   mdCopyPosToXyz_acc();
-}
-
-void mdCopyPosToXyz(bool check_nblist)
-{
-   mdCopyPosToXyz_acc();
-   if (check_nblist)
-      nblistRefresh();
-}
 
 void mdPos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,
    const vel_prec* vly, const vel_prec* vlz)
@@ -83,7 +39,7 @@ void mdBounds()
       return;
 
    mdBounds_acc();
-   mdCopyPosToXyz();
+   copyPosToXyz();
 }
 
 void mdReadFrameCopyinToXyz(std::istream& ipt, int& done)
@@ -132,64 +88,6 @@ void mdReadFrameCopyinToXyz(std::istream& ipt, int& done)
       done = true;
 }
 
-void xyzData(RcOp op)
-{
-   if ((calc::xyz & rc_flag) == 0)
-      return;
-
-   if (op & rc_dealloc) {
-      if (calc::traj & rc_flag) {
-         darray::deallocate(trajx, trajy, trajz);
-         x = nullptr;
-         y = nullptr;
-         z = nullptr;
-      } else {
-         trajx = nullptr;
-         trajy = nullptr;
-         trajz = nullptr;
-         darray::deallocate(x, y, z);
-         if (sizeof(pos_prec) == sizeof(real)) {
-            xpos = nullptr;
-            ypos = nullptr;
-            zpos = nullptr;
-         } else {
-            darray::deallocate(xpos, ypos, zpos);
-         }
-      }
-   }
-
-   if (op & rc_alloc) {
-      if (calc::traj & rc_flag) {
-         darray::allocate(n * trajn, &trajx, &trajy, &trajz);
-         x = trajx;
-         y = trajy;
-         z = trajz;
-      } else {
-         darray::allocate(n, &x, &y, &z);
-         if (sizeof(pos_prec) == sizeof(real)) {
-            xpos = (pos_prec*)x;
-            ypos = (pos_prec*)y;
-            zpos = (pos_prec*)z;
-         } else {
-            darray::allocate(n, &xpos, &ypos, &zpos);
-         }
-      }
-   }
-
-   if (op & rc_init) {
-      if (calc::traj & rc_flag) {
-         darray::copyin(g::q0, n, x, atoms::x);
-         darray::copyin(g::q0, n, y, atoms::y);
-         darray::copyin(g::q0, n, z, atoms::z);
-      } else {
-         darray::copyin(g::q0, n, xpos, atoms::x);
-         darray::copyin(g::q0, n, ypos, atoms::y);
-         darray::copyin(g::q0, n, zpos, atoms::z);
-         mdCopyPosToXyz();
-      }
-   }
-}
-
 //====================================================================//
 
 void mdVelB(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, //
@@ -208,29 +106,6 @@ void mdVel2(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad
    time_prec dt2, const grad_prec* grx2, const grad_prec* gry2, const grad_prec* grz2)
 {
    mdVel2_acc(dt, grx, gry, grz, dt2, grx2, gry2, grz2);
-}
-
-void massData(RcOp op)
-{
-   if ((calc::mass & rc_flag) == 0)
-      return;
-
-   if (op & rc_dealloc) {
-      darray::deallocate(mass, massinv);
-   }
-
-   if (op & rc_alloc) {
-      darray::allocate(n, &mass, &massinv);
-   }
-
-   if (op & rc_init) {
-      std::vector<double> mbuf(n);
-      for (int i = 0; i < n; ++i)
-         mbuf[i] = 1 / atomid::mass[i];
-      darray::copyin(g::q0, n, massinv, mbuf.data());
-      darray::copyin(g::q0, n, mass, atomid::mass);
-      waitFor(g::q0);
-   }
 }
 
 void mdVelData(RcOp op)

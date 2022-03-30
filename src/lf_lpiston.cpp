@@ -169,7 +169,7 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
 
          if (userat) {
             shake(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z);
-            mdCopyPosToXyz(true);
+            copyPosToXyz(true);
             darray::copy(g::q0, n, leapfrog_x, xpos);
             darray::copy(g::q0, n, leapfrog_y, ypos);
             darray::copy(g::q0, n, leapfrog_z, zpos);
@@ -188,7 +188,7 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
             darray::copy(g::q0, n, leapfrog_z, zpos);
          }
 
-         mdCopyPosToXyz(true);
+         copyPosToXyz(true);
          energy(vers1);
       }
 
@@ -248,7 +248,7 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
    propagate_pos_lf(dt_ps, xpos, ypos, zpos, leapfrog_x, leapfrog_y, leapfrog_z, leapfrog_vxold,
       leapfrog_vyold, leapfrog_vzold);
    lf_langevin_piston(dt_ps, press);
-   mdCopyPosToXyz(true);
+   copyPosToXyz(true);
    energy(vers1);
 
    darray::copy(g::q0, n, leapfrog_x, xpos);

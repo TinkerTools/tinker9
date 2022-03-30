@@ -1,10 +1,9 @@
 #pragma once
 #include "macro.h"
-#include <cmath>
+#include "math/libfunc.h"
+#include "seqdef.h"
 
-//====================================================================//
 // sinhc on host
-
 namespace tinker {
 /// \ingroup math
 /// \brief \f$ \sinh(x)/x \f$
@@ -19,12 +18,7 @@ T sinhc(T x)
 }
 }
 
-//====================================================================//
 // sinhc on device
-
-#include "math/libfunc.h"
-#include "seqdef.h"
-
 namespace tinker {
 inline namespace v1 {
 #pragma acc routine seq
@@ -272,6 +266,8 @@ inline void fsinhcImpl(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d, T
 }
 }
 
+/// \ingroup math
+/// \{
 #pragma acc routine seq
 template <class T>
 SEQ_CUDA
@@ -336,4 +332,5 @@ inline void fsinhc7(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d, T& r
 {
    fsinhcImpl<7, T>(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
 }
+/// \}
 }

@@ -147,7 +147,7 @@ static void nhc_npt(int istep, time_prec dt)
    double poly = 1 + term2 * (e2 + term2 * (e4 + term2 * (e6 + term2 * e8)));
    poly *= expterm * dt;
    mdPosAxbv(eterm2, poly);
-   mdCopyPosToXyz(true);
+   copyPosToXyz(true);
 
    energy(vers1);
 

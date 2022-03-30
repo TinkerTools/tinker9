@@ -4,16 +4,9 @@
 
 namespace tinker {
 /// \ingroup mdpq
-/// \brief Update #x, #y, #z by #xpos, #ypos, and #zpos.
-/// If #xpos etc. are only aliases, return directly.
-void mdCopyPosToXyz();
-void mdCopyPosToXyz(bool check_nblist);
-void mdCopyPosToXyz_acc();
-
-/// \ingroup mdpq
 /// \brief Update #x, #y, #z via `x += v * dt`.
 /// Currently #xpos, #ypos, and #zpos are integrated first, then uses
-/// #mdCopyPosToXyz() to update #x, #y, #z.
+/// #copyPosToXyz() to update #x, #y, #z.
 void mdPos(time_prec dt);
 void mdPos(time_prec, pos_prec*, pos_prec*, pos_prec*, //
    const vel_prec*, const vel_prec*, const vel_prec*);

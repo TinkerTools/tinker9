@@ -417,7 +417,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
    //    }
 
    //    if (ir < nrespa - 1) {
-   //       mdCopyPosToXyz(false);
+   //       copyPosToXyz(false);
    //       energy(vers1, RESPA_FAST, respaTSConfig());
    //       if (vers1 & calc::virial) {
    //          lp_virial(molP);
@@ -430,7 +430,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
    //          // lp_rats1 = 1.0 / s;
    //          // lprat(dt, rattle_xold, rattle_yold, rattle_zold);
    //       }
-   //       mdCopyPosToXyz(true);
+   //       copyPosToXyz(true);
    //    }
    // }
 
@@ -756,7 +756,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //    }
 
 //    if (ir < nrespa - 1) {
-//       mdCopyPosToXyz(false);
+//       copyPosToXyz(false);
 //       energy(vers1, RESPA_FAST, respaTSConfig());
 //       if (vers1 & calc::virial) {
 //          lp_virial(molP);
@@ -769,7 +769,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //          // if using S_b, "rattle" will work here.
 //          rattle(dt, rattle_xold, rattle_yold, rattle_zold);
 //       }
-//       mdCopyPosToXyz(true);
+//       copyPosToXyz(true);
 //    }
 // }
 
@@ -953,7 +953,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //    }
 
 //    if (ir < nrespa - 1) {
-//       mdCopyPosToXyz(false);
+//       copyPosToXyz(false);
 //       energy(vers1, RESPA_FAST, respaTSConfig());
 //       if (vers1 & calc::virial) {
 //          lp_virial(molP);
@@ -962,7 +962,7 @@ void vv_lpiston_npt(int istep, time_prec dt)
 //       }
 //       mdVel(dti, gx, gy, gz);
 //    } else {
-//       mdCopyPosToXyz(true);
+//       copyPosToXyz(true);
 //    }
 // }
 

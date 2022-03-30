@@ -5,20 +5,6 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void mdCopyPosToXyz_acc()
-{
-   if CONSTEXPR (sizeof(pos_prec) == sizeof(real))
-      return;
-   else
-      #pragma acc parallel loop independent async\
-                  deviceptr(x,y,z,xpos,ypos,zpos)
-      for (int i = 0; i < n; ++i) {
-         x[i] = xpos[i];
-         y[i] = ypos[i];
-         z[i] = zpos[i];
-      }
-}
-
 void mdPos_acc(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,
    const vel_prec* vly, const vel_prec* vlz)
 {

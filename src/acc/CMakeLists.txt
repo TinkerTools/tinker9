@@ -35,6 +35,7 @@ estrtor.cpp
 etors.cpp
 etortor.cpp
 eurey.cpp
+ffatom.cpp
 field_chgpen.cpp
 field_ewald.cpp
 field_nonewald.cpp

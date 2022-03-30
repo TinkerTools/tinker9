@@ -3,9 +3,23 @@
 #include "tool/rcman.h"
 
 namespace tinker {
+/// \ingroup ff
 void nData(RcOp);
+/// \ingroup ff
 void massData(RcOp);
+/// \ingroup ff
 void xyzData(RcOp);
+
+/// \ingroup ff
+/// \brief Update #x, #y, #z by #xpos, #ypos, and #zpos.
+/// If #xpos etc. are only aliases, return directly.
+void copyPosToXyz();
+
+/// \ingroup ff
+/// \brief Update #x, #y, #z by #xpos, #ypos, and #zpos.
+/// If #xpos etc. are only aliases, return directly.
+/// \param refreshNBList  If `true`, refresh the neighbor lists by the end.
+void copyPosToXyz(bool refreshNBList);
 }
 
 //====================================================================//
@@ -16,19 +30,14 @@ void xyzData(RcOp);
 
 namespace tinker {
 /// \ingroup ff
-/// \var n
 /// \brief Number of atoms.
-///
+TINKER_EXTERN int padded_n;
 /// \ingroup ff
-/// \var padded_n
 /// \brief Number of atoms padded by #WARP_SIZE.
 /// \see WARP_SIZE
-///
-/// \ingroup ff
-/// \var trajn
-/// \brief Number of the trajectory frames.
 TINKER_EXTERN int n;
-TINKER_EXTERN int padded_n;
+/// \ingroup ff
+/// \brief Number of the trajectory frames.
 TINKER_EXTERN int trajn;
 
 /// \ingroup ff
@@ -67,12 +76,9 @@ TINKER_EXTERN pos_prec *xpos, *ypos, *zpos;
 static_assert(sizeof(pos_prec) >= sizeof(real), "Type pos_prec cannot be shorter than type real.");
 
 /// \ingroup ff
-/// \{
-/// \var mass
 /// \brief Atomic mass.
-/// \var massinv
-/// \brief Inversed atomic mass.
-/// \}
 TINKER_EXTERN double* mass;
+/// \ingroup ff
+/// \brief Inversed atomic mass.
 TINKER_EXTERN double* massinv;
 }

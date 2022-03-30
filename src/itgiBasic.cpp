@@ -79,7 +79,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
    if (nrespa == 1) {
       m_prop->updatePosition(dt);
       m_prop->rattle(dt);
-      mdCopyPosToXyz(true);
+      copyPosToXyz(true);
       energy(vers1);
       if (vers1 & calc::virial)
          if (not atomic)
@@ -91,7 +91,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
 
       for (int ifast = 1; ifast < nrespa; ++ifast) {
          m_prop->updatePosition(dta);
-         mdCopyPosToXyz(false);
+         copyPosToXyz(false);
          energy(vers1, RESPA_FAST, respaTSConfig());
          m_prop->updateVelocityR0(dta);
          if (vers1 & calc::virial) {
@@ -107,7 +107,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       }
       m_prop->updatePosition(dta);
       m_prop->rattle(dt);
-      mdCopyPosToXyz(true);
+      copyPosToXyz(true);
 
       // fast force
       energy(vers1, RESPA_FAST, respaTSConfig());
