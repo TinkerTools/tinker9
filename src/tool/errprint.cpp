@@ -13,7 +13,7 @@ void printError()
    darray::copyout(g::q0, n, atoms::x, xpos);
    darray::copyout(g::q0, n, atoms::y, ypos);
    darray::copyout(g::q0, n, atoms::z, zpos);
-   wait_for(g::q0);
+   waitFor(g::q0);
    tinker_f_prterr();
 }
 }

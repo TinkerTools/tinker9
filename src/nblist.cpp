@@ -223,7 +223,7 @@ static void nblist_alloc(Nbl version, NBListUnit& nblu, int maxn, real cutoff, r
    st.buffer = buffer;
 
    nblu.deviceptrUpdate(st, g::q0);
-   wait_for(g::q0);
+   waitFor(g::q0);
 }
 
 #if TINKER_CUDART

@@ -6,7 +6,7 @@
 #include <cuda_runtime.h>
 
 namespace tinker {
-void wait_for(int queue)
+void waitFor(int queue)
 {
    cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;
    check_rt(cudaStreamSynchronize(st));

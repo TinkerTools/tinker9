@@ -125,14 +125,14 @@ void erepelData(RcOp op)
       darray::allocate(nrepexclude, &repexclude, &repexclude_scale);
       darray::copyin(g::q0, nrepexclude, repexclude, exclik.data());
       darray::copyin(g::q0, nrepexclude, repexclude_scale, excls.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 
    if (op & rc_init) {
       darray::copyin(g::q0, n, sizpr, repel::sizpr);
       darray::copyin(g::q0, n, dmppr, repel::dmppr);
       darray::copyin(g::q0, n, elepr, repel::elepr);
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 

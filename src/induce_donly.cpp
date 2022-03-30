@@ -52,7 +52,7 @@ void induce2(real (*ud)[3])
       std::vector<double> uindbuf;
       uindbuf.resize(3 * n);
       darray::copyout(g::q0, n, uindbuf.data(), ud);
-      wait_for(g::q0);
+      waitFor(g::q0);
       bool header = true;
       for (int i = 0; i < n; ++i) {
          if (polar::polarity[i] != 0) {

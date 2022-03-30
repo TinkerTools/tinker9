@@ -142,14 +142,14 @@ void edispData(RcOp op)
       darray::allocate(ndspexclude, &dspexclude, &dspexclude_scale);
       darray::copyin(g::q0, ndspexclude, dspexclude, exclik.data());
       darray::copyin(g::q0, ndspexclude, dspexclude_scale, excls.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 
    if (op & rc_init) {
       csixpr = disp::csixpr;
       darray::copyin(g::q0, n, csix, disp::csix);
       darray::copyin(g::q0, n, adisp, disp::adisp);
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 

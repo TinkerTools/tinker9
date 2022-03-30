@@ -86,7 +86,7 @@ void egeomData(RcOp op)
       }
       darray::copyin(g::q0, ntfix, itfix, itfixbuf.data());
       darray::copyin(g::q0, ntfix, tfix, restrn::tfix);
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 

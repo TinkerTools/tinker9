@@ -47,7 +47,7 @@ void estrbndData(RcOp op)
       }
       darray::copyin(g::q0, nangle, isb, ibuf.data());
       darray::copyin(g::q0, nangle, sbk, strbnd::sbk);
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       stbnunit = angpot::stbnunit;
    }

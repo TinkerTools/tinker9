@@ -295,8 +295,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
    // initial r(0) M r(0)
 
    real sum, sump;
-   sum = darray::dot_wait(g::q0, n, rsd, zrsd);
-   sump = darray::dot_wait(g::q0, n, rsdp, zrsdp);
+   sum = darray::dotThenReturn(g::q0, n, rsd, zrsd);
+   sump = darray::dotThenReturn(g::q0, n, rsdp, zrsdp);
 
    // conjugate gradient iteration of the mutual induced dipoles
 
@@ -331,8 +331,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
       // a <- p T p
       real a, ap;
-      a = darray::dot_wait(g::q0, n, conj, vec);
-      ap = darray::dot_wait(g::q0, n, conjp, vecp);
+      a = darray::dotThenReturn(g::q0, n, conj, vec);
+      ap = darray::dotThenReturn(g::q0, n, conjp, vecp);
       // a <- r M r / p T p
       if (a != 0)
          a = sum / a;
@@ -369,8 +369,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
       real b, bp;
       real sum1, sump1;
-      sum1 = darray::dot_wait(g::q0, n, rsd, zrsd);
-      sump1 = darray::dot_wait(g::q0, n, rsdp, zrsdp);
+      sum1 = darray::dotThenReturn(g::q0, n, rsd, zrsd);
+      sump1 = darray::dotThenReturn(g::q0, n, rsdp, zrsdp);
       b = 0;
       bp = 0;
       if (sum != 0)
@@ -394,8 +394,8 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
 
       real epsd;
       real epsp;
-      epsd = darray::dot_wait(g::q0, n, rsd, rsd);
-      epsp = darray::dot_wait(g::q0, n, rsdp, rsdp);
+      epsd = darray::dotThenReturn(g::q0, n, rsd, rsd);
+      epsp = darray::dotThenReturn(g::q0, n, rsdp, rsdp);
 
       epsold = eps;
       eps = REAL_MAX(epsd, epsp);

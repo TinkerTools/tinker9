@@ -54,7 +54,7 @@ void eangleData(RcOp op)
       darray::copyin(g::q0, nangle, ak, angbnd::ak);
       darray::copyin(g::q0, nangle, anat, angbnd::anat);
       darray::copyin(g::q0, nangle, afld, angbnd::afld);
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       angunit = angpot::angunit;
       cang = angpot::cang;
@@ -77,7 +77,7 @@ void eangleData(RcOp op)
          }
       }
       darray::copyin(g::q0, nangle, angtyp, angtypvec.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 

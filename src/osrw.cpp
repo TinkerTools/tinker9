@@ -150,7 +150,7 @@ void osrwData(RcOp op)
             darray::copy(g::q0, ntors, osrw_tors5, tors5);
             darray::copy(g::q0, ntors, osrw_tors6, tors6);
             darray::copyin(g::q0, osrw_ntbnd, osrw_itbnd, buf.data());
-            wait_for(g::q0);
+            waitFor(g::q0);
          }
       }
 

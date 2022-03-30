@@ -258,7 +258,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
    // initial r(0) M r(0)
 
    real sum;
-   sum = darray::dot_wait(g::q0, n, rsd, zrsd);
+   sum = darray::dotThenReturn(g::q0, n, rsd, zrsd);
 
    // conjugate gradient iteration of the mutual induced dipoles
 
@@ -291,7 +291,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
       // a <- p T p
       real a;
-      a = darray::dot_wait(g::q0, n, conj, vec);
+      a = darray::dotThenReturn(g::q0, n, conj, vec);
       // a <- r M r / p T p
       if (a != 0)
          a = sum / a;
@@ -321,7 +321,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
 
       real b;
       real sum1;
-      sum1 = darray::dot_wait(g::q0, n, rsd, zrsd);
+      sum1 = darray::dotThenReturn(g::q0, n, rsd, zrsd);
       b = sum1 / sum;
       if (sum == 0)
          b = 0;
@@ -338,7 +338,7 @@ void induce_mutual_pcg2_acc(real (*uind)[3])
       sum = sum1;
 
       real epsd;
-      epsd = darray::dot_wait(g::q0, n, rsd, rsd);
+      epsd = darray::dotThenReturn(g::q0, n, rsd, rsd);
       epsold = eps;
       eps = epsd;
       eps = debye * REAL_SQRT(eps / n);

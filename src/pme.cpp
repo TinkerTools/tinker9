@@ -105,16 +105,16 @@ void pme_op_copyin(PMEUnit unit)
    std::vector<double> bsmodbuf(maxfft);
    tinker_f_dftmod(bsmodbuf.data(), bsarray.data(), &st.nfft1, &st.bsorder);
    darray::copyin(g::q0, st.nfft1, st.bsmod1, bsmodbuf.data());
-   wait_for(g::q0);
+   waitFor(g::q0);
    tinker_f_dftmod(bsmodbuf.data(), bsarray.data(), &st.nfft2, &st.bsorder);
    darray::copyin(g::q0, st.nfft2, st.bsmod2, bsmodbuf.data());
-   wait_for(g::q0);
+   waitFor(g::q0);
    tinker_f_dftmod(bsmodbuf.data(), bsarray.data(), &st.nfft3, &st.bsorder);
    darray::copyin(g::q0, st.nfft3, st.bsmod3, bsmodbuf.data());
-   wait_for(g::q0);
+   waitFor(g::q0);
 
    unit.deviceptrUpdate(st, g::q0);
-   wait_for(g::q0);
+   waitFor(g::q0);
 }
 }
 }

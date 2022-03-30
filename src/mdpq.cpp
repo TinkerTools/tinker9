@@ -229,7 +229,7 @@ void massData(RcOp op)
          mbuf[i] = 1 / atomid::mass[i];
       darray::copyin(g::q0, n, massinv, mbuf.data());
       darray::copyin(g::q0, n, mass, atomid::mass);
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 
@@ -256,7 +256,7 @@ void mdVelData(RcOp op)
       darray::copyin(g::q0, n, vx, vvx.data());
       darray::copyin(g::q0, n, vy, vvy.data());
       darray::copyin(g::q0, n, vz, vvz.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 }

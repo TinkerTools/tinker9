@@ -55,7 +55,7 @@ void eopbendData(RcOp op)
          ibuf[i] = opbend::iopb[i] - 1;
       darray::copyin(g::q0, nangle, iopb, ibuf.data());
       darray::copyin(g::q0, nangle, opbk, opbend::opbk);
-      wait_for(g::q0);
+      waitFor(g::q0);
       opbunit = angpot::opbunit;
       copb = angpot::copb;
       qopb = angpot::qopb;

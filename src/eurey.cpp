@@ -48,7 +48,7 @@ void eureyData(RcOp op)
       darray::copyin(g::q0, nangle, iury, ibuf.data());
       darray::copyin(g::q0, nangle, uk, urey::uk);
       darray::copyin(g::q0, nangle, ul, urey::ul);
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       cury = urypot::cury;
       qury = urypot::qury;

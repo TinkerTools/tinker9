@@ -107,7 +107,7 @@ void echargeData(RcOp op)
       darray::allocate(ncexclude, &cexclude, &cexclude_scale);
       darray::copyin(g::q0, ncexclude, cexclude, exclik.data());
       darray::copyin(g::q0, ncexclude, cexclude_scale, excl.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       nec = nullptr;
       ec = eng_buf_elec;

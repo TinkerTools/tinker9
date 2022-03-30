@@ -429,7 +429,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    }
    if (must_wait) {
       deviceMemoryCopyoutBytesAsync(&ev_hobj, ev_dptr, sizeof(DHFlow), g::q0);
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
    if (do_e) {
       if (!rc_a) {

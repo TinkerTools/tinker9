@@ -204,7 +204,7 @@ void epolarData(RcOp op)
       darray::allocate(nuexclude, &uexclude, &uexclude_scale);
       darray::copyin(g::q0, nuexclude, uexclude, exclik.data());
       darray::copyin(g::q0, nuexclude, uexclude_scale, excls.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       d1scale = polpot::d1scale;
       d2scale = polpot::d2scale;
@@ -387,13 +387,13 @@ void epolarData(RcOp op)
       darray::allocate(ndpuexclude, &dpuexclude, &dpuexclude_scale);
       darray::copyin(g::q0, ndpuexclude, dpuexclude, dpu_ik_vec.data());
       darray::copyin(g::q0, ndpuexclude, dpuexclude_scale, dpu_sc_vec.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       ndpexclude = excls.size() / 2;
       darray::allocate(ndpexclude, &dpexclude, &dpexclude_scale);
       darray::copyin(g::q0, ndpexclude, dpexclude, exclik.data());
       darray::copyin(g::q0, ndpexclude, dpexclude_scale, excls.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
 
@@ -485,7 +485,7 @@ void epolarData(RcOp op)
       darray::copyin(g::q0, n, thole, polar::thole);
       darray::copyin(g::q0, n, pdamp, polar::pdamp);
       darray::copyin(g::q0, n, polarity_inv, pinvbuf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 
@@ -499,7 +499,7 @@ void induce(real (*ud)[3], real (*up)[3])
       std::vector<double> uindbuf;
       uindbuf.resize(3 * n);
       darray::copyout(g::q0, n, uindbuf.data(), ud);
-      wait_for(g::q0);
+      waitFor(g::q0);
       bool header = true;
       for (int i = 0; i < n; ++i) {
          if (polar::polarity[i] != 0) {

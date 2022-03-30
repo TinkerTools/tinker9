@@ -35,7 +35,7 @@ void eimpropData(RcOp op)
       darray::copyin(g::q0, niprop, iiprop, ibuf.data());
       darray::copyin(g::q0, niprop, kprop, improp::kprop);
       darray::copyin(g::q0, niprop, vprop, improp::vprop);
-      wait_for(g::q0);
+      waitFor(g::q0);
       idihunit = torpot::idihunit;
    }
 }

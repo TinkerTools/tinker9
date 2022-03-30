@@ -39,13 +39,13 @@ void groupData(RcOp op)
          buf[i] = group::kgrp[i] - 1;
       }
       darray::copyin(g::q0, n, st.kgrp, buf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       for (int i = 0; i < n; ++i) {
          buf[i] = group::grplist[i];
       }
       darray::copyin(g::q0, n, st.grplist, buf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       for (int i = 0; i <= st.ngrp; ++i) {
          int j = 2 * i;
@@ -54,7 +54,7 @@ void groupData(RcOp op)
       }
       darray::copyin(g::q0, st.ngrp + 1, st.igrp, buf.data());
       darray::copyin(g::q0, st.ngrp + 1, st.grpmass, group::grpmass);
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       std::vector<real> wgrpv((1 + st.ngrp) * (1 + st.ngrp));
       for (int i = 0; i <= st.ngrp; ++i) {
@@ -65,7 +65,7 @@ void groupData(RcOp op)
          }
       }
       darray::copyin(g::q0, wgrpv.size(), st.wgrp, wgrpv.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 }

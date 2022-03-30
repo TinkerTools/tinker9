@@ -238,7 +238,7 @@ void echgljData(RcOp op)
       darray::allocate(ncvexclude, &cvexclude, &cvexclude_scale);
       darray::copyin(g::q0, ncvexclude, cvexclude, ik_vec.data());
       darray::copyin(g::q0, ncvexclude, cvexclude_scale, scal_vec.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       darray::allocate(n, &atom_rad, &atom_eps);
       darray::allocate(n, &mut_coalesced);
       darray::allocate(n, &chg_coalesced);
@@ -262,7 +262,7 @@ void echgljData(RcOp op)
       }
       darray::copyin(g::q0, n, atom_rad, vrad.data());
       darray::copyin(g::q0, n, atom_eps, veps.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 
 #if TINKER_CUDART

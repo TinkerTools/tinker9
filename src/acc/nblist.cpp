@@ -106,7 +106,7 @@ int check_spatial(int n, real lbuf, int* restrict update, const real* restrict x
    }
    int ans;
    darray::copyout(g::q0, 1, &ans, &update[0]);
-   wait_for(g::q0);
+   waitFor(g::q0);
    return ans;
 }
 

@@ -825,7 +825,7 @@ void run_spatial2_step5(SpatialUnit u)
       n, u->nak, cutbuf, TINKER_IMAGE_ARGS, //
       u->akpf, u->sorted, u->akc, u->half);
    darray::copyout(g::q0, 1, &u->niak, dev_niak);
-   wait_for(g::q0);
+   waitFor(g::q0);
    if (u->niak > u->nak * Spatial::LSTCAP) {
       int cap = Spatial::LSTCAP;
       printError();
@@ -870,7 +870,7 @@ void spatialDataInit_cu(SpatialUnit u)
       si1.ns, si1.js, si2.ns, si2.js,   //
       si3.ns, si3.js, si4.ns, si4.js);
    darray::copyout(g::q0, 1, &u->nakpl, nakpl_ptr0);
-   wait_for(g::q0);
+   waitFor(g::q0);
    if (WARP_SIZE + u->nakpl > (unsigned)u->cap_nakpl) {
       u->cap_nakpl = WARP_SIZE + u->nakpl;
       darray::deallocate(u->iakpl);

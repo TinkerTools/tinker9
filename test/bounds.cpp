@@ -54,7 +54,7 @@ TEST_CASE("Bounds", "[ff][box]")
    darray::copyout(g::q0, 2, xans, x);
    darray::copyout(g::q0, 2, yans, y);
    darray::copyout(g::q0, 2, zans, z);
-   wait_for(g::q0);
+   waitFor(g::q0);
 
    COMPARE_REALS(xans[0], xref[0], eps);
    COMPARE_REALS(yans[0], yref[0], eps);

@@ -45,7 +45,7 @@ void eangtorData(RcOp op)
          ibuf[i] = angtor::iat[i] - 1;
       darray::copyin(g::q0, nangtor, iat, ibuf.data());
       darray::copyin(g::q0, nangtor, kant, angtor::kant);
-      wait_for(g::q0);
+      waitFor(g::q0);
       atorunit = torpot::atorunit;
    }
 }

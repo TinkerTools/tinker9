@@ -147,7 +147,7 @@ void epolarChgpenData(RcOp op)
       }
       darray::copyin(g::q0, n, polarity, polar::polarity);
       darray::copyin(g::q0, n, polarity_inv, pinvbuf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 

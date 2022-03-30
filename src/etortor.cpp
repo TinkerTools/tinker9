@@ -54,19 +54,19 @@ void etortorData(RcOp op)
       for (int i = 0; i < 5 * nbitor; ++i)
          ibuf[i] = bitor_::ibitor[i] - 1;
       darray::copyin(g::q0, nbitor, ibitor, ibuf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       ibuf.resize(3 * nbitor);
       for (int i = 0; i < 3 * nbitor; ++i)
          ibuf[i] = tortor::itt[i] - 1;
       darray::copyin(g::q0, nbitor, itt, ibuf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       ibuf.resize(ktrtor::maxntt);
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tnx[i];
       darray::copyin(g::q0, ktrtor::maxntt, tnx, ibuf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tny[i];
       darray::copyin(g::q0, ktrtor::maxntt, tny, ibuf.data());
@@ -76,7 +76,7 @@ void etortorData(RcOp op)
       darray::copyin(g::q0, ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
       darray::copyin(g::q0, ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
       darray::copyin(g::q0, ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       ttorunit = torpot::ttorunit;
 
@@ -131,7 +131,7 @@ void etortorData(RcOp op)
          ibuf[itortor] = ia;
       }
       darray::copyin(g::q0, ntortor, chkttor_ia_, ibuf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 

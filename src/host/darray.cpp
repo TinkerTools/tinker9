@@ -3,7 +3,7 @@
 #include <cstring>
 
 namespace tinker {
-void wait_for(int) {}
+void waitFor(int) {}
 
 void deviceMemoryCopyinBytesAsync(void* dst, const void* src, size_t nbytes, int)
 {

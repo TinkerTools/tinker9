@@ -52,7 +52,7 @@ void etorsData(RcOp op)
       darray::copyin(g::q0, ntors, tors4, tors::tors4);
       darray::copyin(g::q0, ntors, tors5, tors::tors5);
       darray::copyin(g::q0, ntors, tors6, tors::tors6);
-      wait_for(g::q0);
+      waitFor(g::q0);
       torsunit = torpot::torsunit;
    }
 }

@@ -356,7 +356,7 @@ void rattleData(RcOp op)
          darray::copyin(g::q0, n, rattle_dmol.molecule, hvec_molec.data());
          if (rc_flag & calc::md)
             darray::copyin(g::q0, n, ratcom_massfrac, hvec_massfrac.data());
-         wait_for(g::q0);
+         waitFor(g::q0);
       }
 
       rateps = freeze::rateps;
@@ -412,25 +412,25 @@ void rattleData(RcOp op)
       darray::allocate(nratwt, &iratwt, &kratwt);
       darray::copyin(g::q0, nratwt, iratwt, veciwater.data());
       darray::copyin(g::q0, nratwt, kratwt, veckwater.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       assert(vecich.size() % 2 == 0);
       nratch = vecich.size() / 2;
       darray::allocate(nratch, &iratch, &kratch);
       darray::copyin(g::q0, nratch, iratch, vecich.data());
       darray::copyin(g::q0, nratch, kratch, veckch.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       assert(vecich2.size() % 3 == 0);
       nratch2 = vecich2.size() / 3;
       darray::allocate(nratch2, &iratch2, &kratch2);
       darray::copyin(g::q0, nratch2, iratch2, vecich2.data());
       darray::copyin(g::q0, nratch2, kratch2, veckch2.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       assert(vecich3.size() % 4 == 0);
       nratch3 = vecich3.size() / 4;
       darray::allocate(nratch3, &iratch3, &kratch3);
       darray::copyin(g::q0, nratch3, iratch3, vecich3.data());
       darray::copyin(g::q0, nratch3, kratch3, veckch3.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       // erase water-like and methyl-like constraints in hc_mols
       hc_mols.erase(std::remove_if(hc_mols.begin(), hc_mols.end(),
@@ -466,7 +466,7 @@ void rattleData(RcOp op)
       darray::copyin(g::q0, nrat, irat, iratn.data());
       darray::copyin(g::q0, nrat, krat, kr.data());
       darray::copyin(g::q0, nratmol, iratmol, iratm.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       darray::allocate(n, &rattle_xold, &rattle_yold, &rattle_zold);
 

@@ -94,13 +94,13 @@ void mdsave_dup_then_write(int istep, time_prec dt)
       darray::copyout(g::q1, n, atoms::x, dup_buf_x);
       darray::copyout(g::q1, n, atoms::y, dup_buf_y);
       darray::copyout(g::q1, n, atoms::z, dup_buf_z);
-      wait_for(g::q1);
+      waitFor(g::q1);
    } else {
       std::vector<pos_prec> arrx(n), arry(n), arrz(n);
       darray::copyout(g::q1, n, arrx.data(), dup_buf_x);
       darray::copyout(g::q1, n, arry.data(), dup_buf_y);
       darray::copyout(g::q1, n, arrz.data(), dup_buf_z);
-      wait_for(g::q1);
+      waitFor(g::q1);
       for (int i = 0; i < n; ++i) {
          atoms::x[i] = arrx[i];
          atoms::y[i] = arry[i];
@@ -113,7 +113,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
       darray::copyout(g::q1, n, arrx.data(), dup_buf_vx);
       darray::copyout(g::q1, n, arry.data(), dup_buf_vy);
       darray::copyout(g::q1, n, arrz.data(), dup_buf_vz);
-      wait_for(g::q1);
+      waitFor(g::q1);
       for (int i = 0; i < n; ++i) {
          int j = 3 * i;
          moldyn::v[j] = arrx[i];
@@ -145,7 +145,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    if (mdsave_use_uind()) {
       darray::copyout(g::q1, n, polar::uind, dup_buf_uind);
-      wait_for(g::q1);
+      waitFor(g::q1);
    }
 
    // Record mdsave_end_event when g::s1 is available.

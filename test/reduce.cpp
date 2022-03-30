@@ -73,7 +73,7 @@ TEST_CASE("Reduce", "[util][math][reduce]")
    darray::copyin(g::q0, N, df2, vf2.data());
    darray::copyin(g::q0, N, dd2, vd2.data());
    darray::copyin(g::q0, N, du2, vu2.data());
-   wait_for(g::q0);
+   waitFor(g::q0);
 
    ai = reduceSum(di, N, g::q0);
    REQUIRE(ai == refi);

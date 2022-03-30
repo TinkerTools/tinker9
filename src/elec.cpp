@@ -62,7 +62,7 @@ static void pchgData(RcOp op)
          pchgbuf[i] *= el;
       }
       darray::copyin(g::q0, n, pchg, pchgbuf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 
@@ -133,7 +133,7 @@ static void mpoleData(RcOp op)
          zaxisbuf[i].polaxe = val;
       }
       darray::copyin(g::q0, n, zaxis, zaxisbuf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       std::vector<double> polebuf(mpl_total * n);
       for (int i = 0; i < n; ++i) {
@@ -155,7 +155,7 @@ static void mpoleData(RcOp op)
          polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
       }
       darray::copyin(g::q0, n, pole, polebuf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 
@@ -495,7 +495,7 @@ static void mdpuscaleData(RcOp op)
       darray::allocate(nmexclude, &mexclude, &mexclude_scale);
       darray::copyin(g::q0, nmexclude, mexclude, exclik.data());
       darray::copyin(g::q0, nmexclude, mexclude_scale, excls.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       std::vector<int> ik_vec;
       std::vector<real> scal_vec;
@@ -511,7 +511,7 @@ static void mdpuscaleData(RcOp op)
       darray::allocate(nmdpuexclude, &mdpuexclude, &mdpuexclude_scale);
       darray::copyin(g::q0, nmdpuexclude, mdpuexclude, ik_vec.data());
       darray::copyin(g::q0, nmdpuexclude, mdpuexclude_scale, scal_vec.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 
    if (op & rc_init) {}
@@ -776,7 +776,7 @@ static void chgpenData(RcOp op)
       darray::allocate(nwexclude, &wexclude, &wexclude_scale);
       darray::copyin(g::q0, nwexclude, wexclude, exclik.data());
       darray::copyin(g::q0, nwexclude, wexclude_scale, excls.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       std::vector<int> ik_vec;
       std::vector<real> scal_vec;
@@ -791,7 +791,7 @@ static void chgpenData(RcOp op)
       darray::allocate(nmdwexclude, &mdwexclude, &mdwexclude_scale);
       darray::copyin(g::q0, nmdwexclude, mdwexclude, ik_vec.data());
       darray::copyin(g::q0, nmdwexclude, mdwexclude_scale, scal_vec.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       darray::allocate(n, &pcore, &pval0, &pval, &palpha);
    }
 
@@ -800,7 +800,7 @@ static void chgpenData(RcOp op)
       darray::copyin(g::q0, n, pval0, chgpen::pval0);
       darray::copyin(g::q0, n, pval, chgpen::pval);
       darray::copyin(g::q0, n, palpha, chgpen::palpha);
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 

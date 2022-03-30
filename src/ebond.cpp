@@ -59,7 +59,7 @@ void ebondData(RcOp op)
       darray::copyin(g::q0, nbond, ibnd, ibndvec.data());
       darray::copyin(g::q0, nbond, bl, bndstr::bl);
       darray::copyin(g::q0, nbond, bk, bndstr::bk);
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 

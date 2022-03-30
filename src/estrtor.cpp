@@ -45,7 +45,7 @@ void estrtorData(RcOp op)
          ibuf[i] = strtor::ist[i] - 1;
       darray::copyin(g::q0, nstrtor, ist, ibuf.data());
       darray::copyin(g::q0, nstrtor, kst, strtor::kst);
-      wait_for(g::q0);
+      waitFor(g::q0);
       storunit = torpot::storunit;
    }
 }

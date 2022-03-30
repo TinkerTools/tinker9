@@ -68,7 +68,7 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const gra
          darray::copyout(queue, n, hgx.data(), gx_src);
          darray::copyout(queue, n, hgy.data(), gy_src);
          darray::copyout(queue, n, hgz.data(), gz_src);
-         wait_for(queue);
+         waitFor(queue);
          for (int i = 0; i < n; ++i) {
             grdx[i] = toFloat<double>(hgx[i]);
             grdy[i] = toFloat<double>(hgy[i]);
@@ -80,7 +80,7 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const gra
             darray::copyout(queue, n, hgx.data(), gx_src);
             darray::copyout(queue, n, hgy.data(), gy_src);
             darray::copyout(queue, n, hgz.data(), gz_src);
-            wait_for(queue);
+            waitFor(queue);
             for (int i = 0; i < n; ++i) {
                grdx[i] = hgx[i];
                grdy[i] = hgy[i];
@@ -90,7 +90,7 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const gra
             darray::copyout(queue, n, grdx, (double*)gx_src);
             darray::copyout(queue, n, grdy, (double*)gy_src);
             darray::copyout(queue, n, grdz, (double*)gz_src);
-            wait_for(queue);
+            waitFor(queue);
          }
 #endif
       }

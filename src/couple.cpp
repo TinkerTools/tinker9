@@ -34,7 +34,7 @@ void coupleData(RcOp op)
       }
       darray::copyin(g::q0, n, couple_i12, ibuf.data());
       darray::copyin(g::q0, n, couple_n12, couple::n12);
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 }

@@ -27,20 +27,20 @@ void moleculeData(RcOp op)
          buf[j + 1] = molcul::imol[j + 1];
       }
       darray::copyin(g::q0, st.nmol, st.imol, buf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       for (int i = 0; i < n; ++i) {
          buf[i] = molcul::kmol[i] - 1;
       }
       darray::copyin(g::q0, n, st.kmol, buf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       for (int i = 0; i < n; ++i) {
          buf[i] = molcul::molcule[i] - 1;
       }
       darray::copyin(g::q0, n, st.molecule, buf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       st.totmass = molcul::totmass;
       darray::copyin(g::q0, st.nmol, st.molmass, molcul::molmass);
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 }

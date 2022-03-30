@@ -62,7 +62,7 @@ void cfluxData(RcOp op)
          ibalstvec[i] = atmlst::balist[i] - 1;
       }
       darray::copyin(g::q0, nangle, balist, ibalstvec.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
    }
 }
 

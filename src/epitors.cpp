@@ -46,7 +46,7 @@ void epitorsData(RcOp op)
          ibuf[i] = pitors::ipit[i] - 1;
       darray::copyin(g::q0, ntors, ipit, ibuf.data());
       darray::copyin(g::q0, ntors, kpit, pitors::kpit);
-      wait_for(g::q0);
+      waitFor(g::q0);
       ptorunit = torpot::ptorunit;
    }
 }

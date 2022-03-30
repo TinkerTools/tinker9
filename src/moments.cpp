@@ -46,7 +46,7 @@ void moments()
    darray::copyout(g::q0, n, xv.data(), xpos);
    darray::copyout(g::q0, n, yv.data(), ypos);
    darray::copyout(g::q0, n, zv.data(), zpos);
-   wait_for(g::q0);
+   waitFor(g::q0);
    for (int i = 0; i < n; ++i) {
       atoms::x[i] = xv[i];
       atoms::y[i] = yv[i];
@@ -135,7 +135,7 @@ void moments()
       } else {
          std::fill(uindv.begin(), uindv.end(), 0);
       }
-      wait_for(g::q0);
+      waitFor(g::q0);
       for (int i = 0; i < n and mpole::npole > 0; ++i) {
          int t = 0;
          mpole::rpole[13 * i + (t++)] = rpolev[10 * i + mpl_pme_0];

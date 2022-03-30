@@ -242,7 +242,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       fieldp.resize(n);
       darray::copyout(g::q0, n, &fieldd[0][0], udir);
       darray::copyout(g::q0, n, &fieldp[0][0], udirp);
-      wait_for(g::q0);
+      waitFor(g::q0);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(fieldd[i][j] == Approx(ref_dir_field_d[i][j]).margin(eps_f));
@@ -283,13 +283,13 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       }
       darray::copyin(g::q0, n, uind, &ud[0][0]);
       darray::copyin(g::q0, n, uinp, &up[0][0]);
-      wait_for(g::q0);
+      waitFor(g::q0);
       ufieldNonEwald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
       darray::copyout(g::q0, n, &ud[0][0], udir);
       darray::copyout(g::q0, n, &up[0][0], udirp);
-      wait_for(g::q0);
+      waitFor(g::q0);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] == Approx(ref_ufield_d[i][j]).margin(eps_f));
@@ -325,7 +325,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
       up.resize(n);
       darray::copyout(g::q0, n, &ud[0][0], uind);
       darray::copyout(g::q0, n, &up[0][0], uinp);
-      wait_for(g::q0);
+      waitFor(g::q0);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] * debye == Approx(ref_ud_debye[i][j]).margin(eps_f));
@@ -426,7 +426,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       fieldp.resize(n);
       darray::copyout(g::q0, n, &fieldd[0][0], udir);
       darray::copyout(g::q0, n, &fieldp[0][0], udirp);
-      wait_for(g::q0);
+      waitFor(g::q0);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(fieldd[i][j] == Approx(ref_dir_field_d[i][j]).margin(eps_f));
@@ -467,13 +467,13 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       }
       darray::copyin(g::q0, n, uind, &ud[0][0]);
       darray::copyin(g::q0, n, uinp, &up[0][0]);
-      wait_for(g::q0);
+      waitFor(g::q0);
       ufieldEwald(uind, uinp, udir, udirp);
       ud.resize(n);
       up.resize(n);
       darray::copyout(g::q0, n, &ud[0][0], udir);
       darray::copyout(g::q0, n, &up[0][0], udirp);
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
@@ -510,7 +510,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
       up.resize(n);
       darray::copyout(g::q0, n, &ud[0][0], uind);
       darray::copyout(g::q0, n, &up[0][0], uinp);
-      wait_for(g::q0);
+      waitFor(g::q0);
       for (int i = 0; i < n; ++i) {
          for (int j = 0; j < 3; ++j) {
             REQUIRE(ud[i][j] * debye == Approx(ref_ud_debye[i][j]).margin(eps_f));

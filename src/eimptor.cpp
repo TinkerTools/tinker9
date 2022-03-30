@@ -45,7 +45,7 @@ void eimptorData(RcOp op)
       darray::copyin(g::q0, nitors, itors1, imptor::itors1);
       darray::copyin(g::q0, nitors, itors2, imptor::itors2);
       darray::copyin(g::q0, nitors, itors3, imptor::itors3);
-      wait_for(g::q0);
+      waitFor(g::q0);
       itorunit = torpot::itorunit;
    }
 }

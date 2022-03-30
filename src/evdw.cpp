@@ -220,7 +220,7 @@ void evdwData(RcOp op)
       darray::allocate(nvexclude, &vexclude, &vexclude_scale);
       darray::copyin(g::q0, nvexclude, vexclude, exclik.data());
       darray::copyin(g::q0, nvexclude, vexclude_scale, excls.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       // check VDW14 interations
       nvdw14 = 0;
@@ -299,7 +299,7 @@ void evdwData(RcOp op)
             darray::allocate(jcount * jcount, &radmin4, &epsilon4);
             darray::allocate(nvdw14, &vdw14ik);
             darray::copyin(g::q0, nvdw14, vdw14ik, v14ikbuf.data());
-            wait_for(g::q0);
+            waitFor(g::q0);
          }
       }
 
@@ -332,11 +332,11 @@ void evdwData(RcOp op)
          }
          darray::copyin(g::q0, n, ired, iredbuf.data());
          darray::copyin(g::q0, n, kred, kredbuf.data());
-         wait_for(g::q0);
+         waitFor(g::q0);
       }
 
       darray::copyin(g::q0, n, jvdw, jvdwbuf.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       njvdw = jcount;
 
       // see also kvdw.f
@@ -353,7 +353,7 @@ void evdwData(RcOp op)
       }
       darray::copyin(g::q0, jcount * jcount, radmin, radvec.data());
       darray::copyin(g::q0, jcount * jcount, epsilon, epsvec.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
 
       if (nvdw14) {
          std::vector<double> rad4buf, eps4buf;
@@ -369,7 +369,7 @@ void evdwData(RcOp op)
          }
          darray::copyin(g::q0, jcount * jcount, radmin4, rad4buf.data());
          darray::copyin(g::q0, jcount * jcount, epsilon4, eps4buf.data());
-         wait_for(g::q0);
+         waitFor(g::q0);
       }
 
       if (static_cast<int>(evdw_t::decouple) == mutant::vcouple)
@@ -385,7 +385,7 @@ void evdwData(RcOp op)
          }
       }
       darray::copyin(g::q0, n, mut, mutvec.data());
-      wait_for(g::q0);
+      waitFor(g::q0);
       vlam = mutant::vlambda;
 
       // Initialize elrc and vlrc.
