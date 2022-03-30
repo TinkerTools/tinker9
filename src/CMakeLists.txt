@@ -5,7 +5,6 @@ cmake_minimum_required (VERSION 3.12)
 set (__T9_CPP_SRC
 analyze_x.cpp
 bar_x.cpp
-box.cpp
 cflux.cpp
 compilers.cpp
 couple.cpp
@@ -38,6 +37,7 @@ eurey.cpp
 evalence.cpp
 evdw.cpp
 ff/atom.cpp
+ff/box.cpp
 field.cpp
 field_chgpen.cpp
 group.cpp

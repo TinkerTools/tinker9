@@ -63,18 +63,25 @@ struct Box
 }
 
 namespace tinker {
+/// \ingroup box
 void boxData(RcOp);
-void boxExtent(double new_extent);
-void boxSetCurrent(const Box&);
-void boxGetCurrent(Box&);
+/// \ingroup box
+void boxExtent(double newExtent);
+/// \ingroup box
+void boxSetCurrent(const Box& p);
+/// \ingroup box
+void boxGetCurrent(Box& p);
+/// \ingroup box
 void boxSetCurrentRecip();
-void boxSetTinkerModule(const Box&);
+/// \ingroup box
+void boxSetTinkerModule(const Box& p);
 
 /// \ingroup box
 /// \brief Similar to Tinker `lattice` subroutine.
 void boxLattice(Box& p, BoxShape sh, double a, double b, double c, //
-   double alpha_deg, double beta_deg, double gamma_deg);
+   double alphaDeg, double betaDeg, double gammaDeg);
 
+/// \ingroup box
 void boxCopyin();
 
 /// \ingroup box
@@ -92,14 +99,33 @@ real boxVolume();
 //====================================================================//
 
 namespace tinker {
+/// \ingroup box
 TINKER_EXTERN BoxShape box_shape;
+/// \ingroup box
 TINKER_EXTERN real3 lvec1;
+/// \ingroup box
 TINKER_EXTERN real3 lvec2;
+/// \ingroup box
 TINKER_EXTERN real3 lvec3;
+/// \ingroup box
 TINKER_EXTERN real3 recipa;
+/// \ingroup box
 TINKER_EXTERN real3 recipb;
+/// \ingroup box
 TINKER_EXTERN real3 recipc;
 
+/// \def TINKER_IMAGE_LVEC_PARAMS
+/// \ingroup box
+/// \def TINKER_IMAGE_LVEC_ARGS
+/// \ingroup box
+/// \def TINKER_IMAGE_RECIP_PARAMS
+/// \ingroup box
+/// \def TINKER_IMAGE_RECIP_ARGS
+/// \ingroup box
+/// \def TINKER_IMAGE_PARAMS
+/// \ingroup box
+/// \def TINKER_IMAGE_ARGS
+/// \ingroup box
 #define TINKER_IMAGE_LVEC_PARAMS  real3 lvec1, real3 lvec2, real3 lvec3
 #define TINKER_IMAGE_LVEC_ARGS    lvec1, lvec2, lvec3
 #define TINKER_IMAGE_RECIP_PARAMS real3 recipa, real3 recipb, real3 recipc

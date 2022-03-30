@@ -1,55 +1,86 @@
 #include "ff/box.h"
 #include "ff/atom.h"
-#include "tinker9.h"
 #include "tool/darray.h"
+#include <cstdlib>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
+#include <tinker/routines.h>
 
 namespace tinker {
-void boxExtent(double new_extent)
-{
-   if (box_shape != BoxShape::UNBOUND)
-      return;
-   if (lvec1.x >= new_extent)
-      return;
-
-   double w1x = 1.0 / new_extent;
-   lvec1.x = new_extent;
-   lvec2.y = new_extent;
-   lvec3.z = new_extent;
-   recipa.x = w1x;
-   recipb.y = w1x;
-   recipc.z = w1x;
-}
-
+extern void boxData_acc(RcOp);
 extern void boxCopyin_acc();
-void boxCopyin()
+
+static void boxGetTinkerModule(Box& p)
 {
-   boxCopyin_acc();
+   if (not bound::use_bounds) {
+      p.box_shape = BoxShape::UNBOUND;
+      p.lvec1 = make_real3(0, 0, 0);
+      p.lvec2 = make_real3(0, 0, 0);
+      p.lvec3 = make_real3(0, 0, 0);
+      p.recipa = make_real3(0, 0, 0);
+      p.recipb = make_real3(0, 0, 0);
+      p.recipc = make_real3(0, 0, 0);
+      return;
+   }
+
+   if (boxes::orthogonal)
+      p.box_shape = BoxShape::ORTHO;
+   else if (boxes::monoclinic)
+      p.box_shape = BoxShape::MONO;
+   else if (boxes::triclinic)
+      p.box_shape = BoxShape::TRI;
+   else if (boxes::octahedron)
+      p.box_shape = BoxShape::OCT;
+
+   const auto& r = boxes::recip;
+   const auto& l = boxes::lvec;
+   p.recipa.x = r[0][0];
+   p.recipa.y = r[0][1];
+   p.recipa.z = r[0][2];
+   p.recipb.x = 0; // r[1][0];
+   p.recipb.y = r[1][1];
+   p.recipb.z = r[1][2];
+   p.recipc.x = 0; // r[2][0];
+   p.recipc.y = 0; // r[2][1];
+   p.recipc.z = r[2][2];
+   p.lvec1.x = l[0][0];
+   p.lvec1.y = l[0][1];
+   p.lvec1.z = l[0][2];
+   p.lvec2.x = 0; // l[1][0];
+   p.lvec2.y = l[1][1];
+   p.lvec2.z = l[1][2];
+   p.lvec3.x = 0; // l[1][1];
+   p.lvec3.y = 0; // l[1][2];
+   p.lvec3.z = l[2][2];
 }
 
-void boxSetCurrent(const Box& p)
+static void boxGetAxesAngles(const Box& p, double& a, double& b, double& c, //
+   double& alpha, double& beta, double& gamma)
 {
-   box_shape = p.box_shape;
-   lvec1 = p.lvec1;
-   lvec2 = p.lvec2;
-   lvec3 = p.lvec3;
-   recipa = p.recipa;
-   recipb = p.recipb;
-   recipc = p.recipc;
+   auto DOT3 = [](const double* a, const double* b) -> double {
+      return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+   };
 
-   boxCopyin();
-}
+   double ax[3] = {p.lvec1.x, p.lvec2.x, p.lvec3.x};
+   double bx[3] = {p.lvec1.y, p.lvec2.y, p.lvec3.y};
+   double cx[3] = {p.lvec1.z, p.lvec2.z, p.lvec3.z};
 
-void boxGetCurrent(Box& p)
-{
-   p.box_shape = box_shape;
-   p.lvec1 = lvec1;
-   p.lvec2 = lvec2;
-   p.lvec3 = lvec3;
-   p.recipa = recipa;
-   p.recipb = recipb;
-   p.recipc = recipc;
+   double xbox = std::sqrt(DOT3(ax, ax));
+   double ybox = std::sqrt(DOT3(bx, bx));
+   double zbox = std::sqrt(DOT3(cx, cx));
+   double cos_a = DOT3(bx, cx) / (ybox * zbox);
+   double cos_b = DOT3(cx, ax) / (zbox * xbox);
+   double cos_c = DOT3(ax, bx) / (xbox * ybox);
+   double a_deg = (180 / M_PI) * std::acos(cos_a);
+   double b_deg = (180 / M_PI) * std::acos(cos_b);
+   double c_deg = (180 / M_PI) * std::acos(cos_c);
+
+   a = xbox;
+   b = ybox;
+   c = zbox;
+   alpha = a_deg;
+   beta = b_deg;
+   gamma = c_deg;
 }
 
 static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape box_shape,
@@ -106,41 +137,80 @@ static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape bo
       recipa.z = 0;
    }
 }
+}
+
+namespace tinker {
+void boxData(RcOp op)
+{
+   boxData_acc(op);
+
+   if (op & rc_dealloc) {
+      if (calc::traj & rc_flag) {
+         std::free(trajbox);
+      } else {
+         trajbox = nullptr;
+      }
+      box_shape = BoxShape::UNBOUND;
+   }
+
+   if (op & rc_alloc) {
+      if (calc::traj & rc_flag) {
+         trajbox = (Box*)std::malloc(sizeof(Box) * trajn);
+      }
+   }
+
+   if (op & rc_init) {
+      Box p;
+      boxGetTinkerModule(p);
+      boxSetCurrent(p);
+   }
+}
+
+void boxExtent(double newExtent)
+{
+   if (box_shape != BoxShape::UNBOUND)
+      return;
+   if (lvec1.x >= newExtent)
+      return;
+
+   double w1x = 1.0 / newExtent;
+   lvec1.x = newExtent;
+   lvec2.y = newExtent;
+   lvec3.z = newExtent;
+   recipa.x = w1x;
+   recipb.y = w1x;
+   recipc.z = w1x;
+}
+
+void boxSetCurrent(const Box& p)
+{
+   box_shape = p.box_shape;
+   lvec1 = p.lvec1;
+   lvec2 = p.lvec2;
+   lvec3 = p.lvec3;
+   recipa = p.recipa;
+   recipb = p.recipb;
+   recipc = p.recipc;
+
+   boxCopyin();
+}
+
+void boxGetCurrent(Box& p)
+{
+   p.box_shape = box_shape;
+   p.lvec1 = lvec1;
+   p.lvec2 = lvec2;
+   p.lvec3 = lvec3;
+   p.recipa = recipa;
+   p.recipb = recipb;
+   p.recipc = recipc;
+}
 
 void boxSetCurrentRecip()
 {
    boxSetRecip(recipa, recipb, recipc, box_shape, lvec1, lvec2, lvec3);
 
    boxCopyin();
-}
-
-static void boxGetAxesAngles(const Box& p, double& a, double& b, double& c, //
-   double& alpha, double& beta, double& gamma)
-{
-   auto DOT3 = [](const double* a, const double* b) -> double {
-      return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-   };
-
-   double ax[3] = {p.lvec1.x, p.lvec2.x, p.lvec3.x};
-   double bx[3] = {p.lvec1.y, p.lvec2.y, p.lvec3.y};
-   double cx[3] = {p.lvec1.z, p.lvec2.z, p.lvec3.z};
-
-   double xbox = std::sqrt(DOT3(ax, ax));
-   double ybox = std::sqrt(DOT3(bx, bx));
-   double zbox = std::sqrt(DOT3(cx, cx));
-   double cos_a = DOT3(bx, cx) / (ybox * zbox);
-   double cos_b = DOT3(cx, ax) / (zbox * xbox);
-   double cos_c = DOT3(ax, bx) / (xbox * ybox);
-   double a_deg = (180 / M_PI) * std::acos(cos_a);
-   double b_deg = (180 / M_PI) * std::acos(cos_b);
-   double c_deg = (180 / M_PI) * std::acos(cos_c);
-
-   a = xbox;
-   b = ybox;
-   c = zbox;
-   alpha = a_deg;
-   beta = b_deg;
-   gamma = c_deg;
 }
 
 void boxSetTinkerModule(const Box& p)
@@ -173,58 +243,14 @@ void boxSetTinkerModule(const Box& p)
    tinker_f_lattice();
 }
 
-static void boxGetTinkerModule(Box& p)
-{
-   if (!bound::use_bounds) {
-      p.box_shape = BoxShape::UNBOUND;
-      p.lvec1 = make_real3(0, 0, 0);
-      p.lvec2 = make_real3(0, 0, 0);
-      p.lvec3 = make_real3(0, 0, 0);
-      p.recipa = make_real3(0, 0, 0);
-      p.recipb = make_real3(0, 0, 0);
-      p.recipc = make_real3(0, 0, 0);
-      return;
-   }
-
-   if (boxes::orthogonal)
-      p.box_shape = BoxShape::ORTHO;
-   else if (boxes::monoclinic)
-      p.box_shape = BoxShape::MONO;
-   else if (boxes::triclinic)
-      p.box_shape = BoxShape::TRI;
-   else if (boxes::octahedron)
-      p.box_shape = BoxShape::OCT;
-
-   const auto& r = boxes::recip;
-   const auto& l = boxes::lvec;
-   p.recipa.x = r[0][0];
-   p.recipa.y = r[0][1];
-   p.recipa.z = r[0][2];
-   p.recipb.x = 0; // r[1][0];
-   p.recipb.y = r[1][1];
-   p.recipb.z = r[1][2];
-   p.recipc.x = 0; // r[2][0];
-   p.recipc.y = 0; // r[2][1];
-   p.recipc.z = r[2][2];
-   p.lvec1.x = l[0][0];
-   p.lvec1.y = l[0][1];
-   p.lvec1.z = l[0][2];
-   p.lvec2.x = 0; // l[1][0];
-   p.lvec2.y = l[1][1];
-   p.lvec2.z = l[1][2];
-   p.lvec3.x = 0; // l[1][1];
-   p.lvec3.y = 0; // l[1][2];
-   p.lvec3.z = l[2][2];
-}
-
-void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alpha_deg,
-   double beta_deg, double gamma_deg)
+void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alphaDeg, double betaDeg,
+   double gammaDeg)
 {
    p.box_shape = sh;
    if (sh == BoxShape::TRI) {
-      double alpha = alpha_deg * M_PI / 180;
-      double beta = beta_deg * M_PI / 180;
-      double gamma = gamma_deg * M_PI / 180;
+      double alpha = alphaDeg * M_PI / 180;
+      double beta = betaDeg * M_PI / 180;
+      double gamma = gammaDeg * M_PI / 180;
       double cos_alpha = std::cos(alpha);
       double cos_beta = std::cos(beta);
       double cos_gamma = std::cos(gamma);
@@ -240,7 +266,7 @@ void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alpha_
       p.lvec2 = make_real3(0, by, cy);
       p.lvec3 = make_real3(0, 0, cz);
    } else if (sh == BoxShape::MONO) {
-      double beta = beta_deg * M_PI / 180;
+      double beta = betaDeg * M_PI / 180;
       double cos_beta = std::cos(beta);
       double sin_beta = std::sin(beta);
       double cx = c * cos_beta;
@@ -260,31 +286,9 @@ void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alpha_
    boxSetRecip(p.recipa, p.recipb, p.recipc, p.box_shape, p.lvec1, p.lvec2, p.lvec3);
 }
 
-extern void boxData_acc(RcOp);
-void boxData(RcOp op)
+void boxCopyin()
 {
-   boxData_acc(op);
-
-   if (op & rc_dealloc) {
-      if (calc::traj & rc_flag) {
-         std::free(trajbox);
-      } else {
-         trajbox = nullptr;
-      }
-      box_shape = BoxShape::UNBOUND;
-   }
-
-   if (op & rc_alloc) {
-      if (calc::traj & rc_flag) {
-         trajbox = (Box*)std::malloc(sizeof(Box) * trajn);
-      }
-   }
-
-   if (op & rc_init) {
-      Box p;
-      boxGetTinkerModule(p);
-      boxSetCurrent(p);
-   }
+   boxCopyin_acc();
 }
 
 real boxVolume()

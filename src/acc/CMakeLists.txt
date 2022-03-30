@@ -4,7 +4,6 @@ cmake_minimum_required (VERSION 3.12)
 ## libtinker9_acc.a
 add_library (tinker9_acc OBJECT
 alterchg.cpp
-box.cpp
 compilers.cpp
 cudalib.cpp
 dcflux.cpp
@@ -36,6 +35,7 @@ etors.cpp
 etortor.cpp
 eurey.cpp
 ffatom.cpp
+ffbox.cpp
 field_chgpen.cpp
 field_ewald.cpp
 field_nonewald.cpp

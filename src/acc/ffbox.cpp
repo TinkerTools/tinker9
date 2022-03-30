@@ -8,8 +8,7 @@ void boxData_acc(RcOp op)
    }
 
    if (op & rc_alloc) {
-      #pragma acc enter data async\
-              create(lvec1,lvec2,lvec3,recipa,recipb,recipc)
+      #pragma acc enter data async create(lvec1,lvec2,lvec3,recipa,recipb,recipc)
    }
 }
 
