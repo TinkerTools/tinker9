@@ -145,8 +145,6 @@ void egvData(RcOp);
 //====================================================================//
 
 namespace tinker {
-TINKER_EXTERN int nelem_buffer;
-
 /// \ingroup mdegv
 /// \page mdegv
 ///

@@ -9,7 +9,7 @@ namespace tinker {
 /// \note `value` and `buffer` elements are of the same type.
 #pragma acc routine seq
 template <class T>
-void atomic_add(T value, T* buffer, size_t offset = 0)
+inline void atomic_add(T value, T* buffer, size_t offset = 0)
 {
    #pragma acc atomic update
    buffer[offset] += value;
@@ -22,7 +22,7 @@ void atomic_add(T value, T* buffer, size_t offset = 0)
 template <class T,
    class = typename std::enable_if<std::is_same<T, float>::value ||
       std::is_same<T, double>::value>::type>
-void atomic_add(T value, fixed* buffer, size_t offset = 0)
+inline void atomic_add(T value, fixed* buffer, size_t offset = 0)
 {
    // float -> (signed) long long -> fixed
    #pragma acc atomic update
@@ -33,7 +33,7 @@ void atomic_add(T value, fixed* buffer, size_t offset = 0)
 /// \brief Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]`.
 #pragma acc routine seq
 template <class T>
-void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8], size_t offset = 0)
+inline void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8], size_t offset = 0)
 {
    atomic_add(vxx, buffer[offset], 0);
    atomic_add(vyx, buffer[offset], 1);
@@ -49,7 +49,8 @@ void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8], size_t
 template <class T,
    class = typename std::enable_if<std::is_same<T, float>::value ||
       std::is_same<T, double>::value>::type>
-void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, fixed (*buffer)[8], size_t offset = 0)
+inline void atomic_add(
+   T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, fixed (*buffer)[8], size_t offset = 0)
 {
    atomic_add(vxx, buffer[offset], 0);
    atomic_add(vyx, buffer[offset], 1);
@@ -63,7 +64,7 @@ void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, fixed (*buffer)[8], si
 /// \brief Converts `val` of floating-point from its original type to type `G`.
 #pragma acc routine seq
 template <class G, class T>
-G floatTo(T val)
+inline G floatTo(T val)
 {
    static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value, "");
    if CONSTEXPR (std::is_same<G, fixed>::value)
@@ -76,7 +77,7 @@ G floatTo(T val)
 /// \brief Converts `val` of fixed-point to floating-point.
 #pragma acc routine seq
 template <class T>
-T fixedTo(fixed val)
+inline T fixedTo(fixed val)
 {
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
 }

@@ -1,17 +1,11 @@
 #pragma once
 #include "tool/rcman.h"
-
-namespace tinker {
-void gpuData(RcOp);
-int gpuGridSize(int nthreads_per_block);
-int gpuMaxNParallel(int idev);
-}
+#include <string>
+#include <vector>
 
 #if TINKER_CUDART
-#   include <string>
-#   include <vector>
-
 namespace tinker {
+/// \ingroup nvidia
 struct DeviceAttribute
 {
    int device;
@@ -39,12 +33,25 @@ struct DeviceAttribute
    int clock_rate_kHz; // not memory clock rate
 };
 
+/// \ingroup nvidia
 std::string gpuCudaRuntimeVersion();
+/// \ingroup nvidia
 std::string gpuCudaDriverVersion();
+/// \ingroup nvidia
 std::string gpuThrustVersion();
+/// \ingroup nvidia
 std::vector<DeviceAttribute>& gpuDeviceAttributes();
 }
 #endif
+
+namespace tinker {
+/// \ingroup platform
+void gpuData(RcOp);
+/// \ingroup platform
+int gpuGridSize(int nthreads_per_block);
+/// \ingroup platform
+int gpuMaxNParallel(int idev);
+}
 
 //====================================================================//
 //                                                                    //
@@ -62,8 +69,10 @@ constexpr unsigned ALL_LANES = 0xFFFFFFFF;
 /// \ingroup nvidia
 /// \brief Default dimension of thread blocks.
 constexpr unsigned BLOCK_DIM = /* 64 */ 128 /* 256 */;
-
+/// \ingroup nvidia
 constexpr int PME_BLOCKDIM = 64;
+/// \ingroup platform
 TINKER_EXTERN int ndevice;
+/// \ingroup platform
 TINKER_EXTERN int idevice;
 }

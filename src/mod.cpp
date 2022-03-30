@@ -26,6 +26,7 @@
 #include "md/pt.h"
 
 #include "tool/cudalib.h"
+#include "tool/energybuffer.h"
 #include "tool/gpucard.h"
 #include "tool/rcman.h"
 

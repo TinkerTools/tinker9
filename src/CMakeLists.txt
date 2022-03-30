@@ -25,7 +25,6 @@ emplar.cpp
 empole.cpp
 empole_chgpen.cpp
 energy.cpp
-energy_buffer.cpp
 eopbend.cpp
 epitors.cpp
 epolar.cpp
@@ -98,6 +97,7 @@ testgrad_x.cpp
 testrt.cpp
 tinker_rt.cpp
 tinker_suppl.cpp
+tool/energybuffer.cpp
 tool/errlinux.cpp
 tool/errprint.cpp
 tool/exec.cpp
@@ -110,7 +110,7 @@ if (HOST)
 host/darray.cpp
 host/execq.cpp
 host/fft.cpp
-host/gpu_card.cpp
+host/gpucard.cpp
    )
 else ()
    list (APPEND __T9_CPP_SRC
@@ -118,7 +118,7 @@ cudart/darray.cpp
 cudart/error.cpp
 cudart/execq.cpp
 cudart/fft.cpp
-cudart/gpu_card.cpp
+cudart/gpucard.cpp
 cudart/thrustcache.cpp
    )
 endif ()

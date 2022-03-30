@@ -9,6 +9,8 @@
 /// \ingroup platform
 /// \defgroup acc_syntax  OpenACC Specific Code
 /// \ingroup platform
+/// \defgroup nvidia  NVIDIA GPU
+/// \ingroup platform
 
 /// \defgroup prec  Precisions
 
@@ -58,8 +60,6 @@
 /// \defgroup mdpt  Thermostats (T) and Barostats (P)
 
 /// \defgroup osrw  OSRW
-
-/// \defgroup nvidia  NVIDIA GPU
 */
 
 //====================================================================//

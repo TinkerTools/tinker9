@@ -1,9 +1,6 @@
 #pragma once
 #include "macro.h"
 
-namespace tinker {
-/// \brief Global handles for the GPU runtime libraries.
-namespace g {
 /// \page async
 /// \ingroup async
 ///
@@ -31,6 +28,10 @@ namespace g {
 /// on different platforms though, on the CUDA platform, every OpenACC queue is
 /// built on top of a CUDA stream.
 
+namespace tinker {
+/// \ingroup async
+/// \brief Global handles for the GPU runtime libraries.
+namespace g {
 /// \ingroup async
 /// \brief Default OpenACC async queue.
 TINKER_EXTERN int q0;
@@ -41,5 +42,7 @@ TINKER_EXTERN int q1;
 /// \brief OpenACC async queue for %PME.
 TINKER_EXTERN int qpme;
 }
+
+/// \ingroup async
 TINKER_EXTERN bool use_pme_stream;
 }

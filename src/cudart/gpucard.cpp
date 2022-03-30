@@ -1,8 +1,8 @@
-#include "algorithm"
+#include "tool/gpucard.h"
 #include "tinker9.h"
 #include "tool/error.h"
 #include "tool/exec.h"
-#include "tool/gpucard.h"
+#include <algorithm>
 #include <cuda_runtime.h>
 #include <thrust/version.h>
 
@@ -39,7 +39,7 @@ std::vector<DeviceAttribute>& gpuDeviceAttributes()
    return a;
 }
 
-static std::string get_nvidia_smi()
+static std::string getNvidiaSmi()
 {
    std::string smi = "nvidia-smi";
    int val1 = std::system("which nvidia-smi > /dev/null");
@@ -53,7 +53,7 @@ static std::string get_nvidia_smi()
    return smi;
 }
 
-static void get_device_attribute(DeviceAttribute& a, int device = 0)
+static void getDeviceAttribute(DeviceAttribute& a, int device = 0)
 {
    cudaDeviceProp prop;
    check_rt(cudaGetDeviceProperties(&prop, device));
@@ -142,14 +142,14 @@ static void get_device_attribute(DeviceAttribute& a, int device = 0)
 
    check_rt(cudaDeviceReset());
 
-   if (!found_cc) {
+   if (not found_cc) {
       TINKER_THROW(format("The source code should be updated for compute capability %d; "
                           "Please let us know",
          a.cc));
    }
 }
 
-static int recommend_device(int ndev)
+static int recommendDevice(int ndev)
 {
    int usp = -1; // user-specified cuda device; -1 for not set
    const char* usp_str = nullptr;
@@ -176,7 +176,7 @@ static int recommend_device(int ndev)
    std::vector<double> gflops;
    for (int i = 0; i < ndev; ++i) {
       const auto& a = gpuDeviceAttributes()[i];
-      std::string smi = get_nvidia_smi();
+      std::string smi = getNvidiaSmi();
       std::string cmd = format("%s --query-gpu=utilization.gpu "
                                "--format=csv,noheader,nounits -i %s",
          smi, a.pci_string);
@@ -225,16 +225,21 @@ static int recommend_device(int ndev)
       idev = usp;
    } else {
       print(stdout,
-         "\n CUDA-DEVICE Warning,"
+         "\n"
+         " CUDA-DEVICE Warning,"
          " Program recommended Device %d but Device %d was set from %s\n",
          prcd[0], usp, usp_str);
       idev = usp;
    }
-   print(stdout, "\n GPU Device :  Setting Device ID to %d from %s\n", idev, usp_str);
+   print(stdout,
+      "\n"
+      " GPU Device :  Setting Device ID to %d from %s\n",
+      idev, usp_str);
    return idev;
 }
 
 static unsigned int cuda_device_flags = 0;
+
 void gpuData(RcOp op)
 {
    if (op & rc_dealloc) {
@@ -259,9 +264,9 @@ void gpuData(RcOp op)
       auto& all = gpuDeviceAttributes();
       all.resize(ndevice);
       for (int i = 0; i < ndevice; ++i)
-         get_device_attribute(all[i], i);
+         getDeviceAttribute(all[i], i);
 
-      idevice = recommend_device(ndevice);
+      idevice = recommendDevice(ndevice);
 
       check_rt(cudaSetDevice(idevice));
 

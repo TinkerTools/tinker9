@@ -1,31 +1,33 @@
 #pragma once
 #include "math/pow2.h"
 #include "precision.h"
+#include <type_traits>
 
 namespace tinker {
-/// \brief Convert a fixed-point value to floating-point value on host.
-template <class T>
-inline T toFloat(fixed val)
+/// \ingroup prec
+/// \brief Converts a fixed-point value to floating-point value on host.
+template <class F>
+inline F toFloat(fixed val)
 {
-   return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
+   static_assert(std::is_same<F, float>::value or std::is_same<F, double>::value, "");
+   return static_cast<F>(static_cast<long long>(val)) / 0x100000000ull;
 }
 
+/// \ingroup prec
+/// \brief Converts to floating-point value on host.
 template <class F, class T>
 inline F toFloat(T val)
 {
+   static_assert(std::is_same<F, float>::value or std::is_same<F, double>::value, "");
+   static_assert(std::is_same<T, float>::value or std::is_same<T, double>::value, "");
    return val;
 }
+}
 
-/// \brief The lengths of all of the energy buffers are the same and are implicitly
-/// dependent on the number of atoms in the system.
-/// \note Must be a power of 2.
-size_t bufferSize();
-
-/// \brief
-/// Poor man's buffer array for energy, virial tensor, etc. accumulation.
-/// In fact, the buffer itself is not fancy. It is just a raw pointer to a
-/// pre-allocated array on device. This class stores some properties that
-/// cannot easily be fetched from the raw pointers.
+namespace tinker {
+inline namespace v1 {
+/// \ingroup ff
+/// \brief Traits of the energy buffers on device.
 ///
 /// This table shows a few possible definitions of the buffers (which may or
 /// may not be the definitions actually used).
@@ -55,7 +57,8 @@ struct BufferTraits
    using type = T;
 };
 
-/// \brief Special rules for `float` increments where fixed-point buffer is used.
+/// \ingroup ff
+/// \brief Special rules for `float` elements where fixed-point buffer is used.
 template <size_t Nincr>
 struct BufferTraits<float, Nincr>
 {
@@ -63,30 +66,77 @@ struct BufferTraits<float, Nincr>
    static constexpr size_t value = pow2Ge(Nincr);
    using type = fixed;
 };
+}
 
+/// \{
+/// \brief The lengths of all of the energy buffers are the same and are implicitly
+/// dependent on the number of atoms in the system.
+/// \note Must be a power of 2.
+size_t bufferSize();
+
+/// \ingroup ff
 using CountBufferTraits = BufferTraits<int, 1>;
 using EnergyBufferTraits = BufferTraits<e_prec, 1>;
 using VirialBufferTraits = BufferTraits<v_prec, 6>;
-
 using CountBuffer = CountBufferTraits::type*;
 using EnergyBuffer = EnergyBufferTraits::type*;
 using VirialBuffer = VirialBufferTraits::type (*)[VirialBufferTraits::value];
 
-void bufferAllocate(int flag, EnergyBuffer*, VirialBuffer*, grad_prec**, grad_prec**, grad_prec**);
-void bufferDeallocate(int flag, EnergyBuffer, VirialBuffer, grad_prec*, grad_prec*, grad_prec*);
-void bufferAllocate(int, CountBuffer*);
-void bufferDeallocate(int, CountBuffer);
+/// \brief Allocates a set of variables for an energy term as necessary.
+/// \param flag  Controls the variables to be allocated.
+/// \param pe    Pointer of the EnergyBuffer.
+/// \param pv    Pointer of the VirialBuffer.
+/// \param px    Pointer of the x gradient.
+/// \param py    Pointer of the y gradient.
+/// \param pz    Pointer of the z gradient.
+void bufferAllocate(int flag, EnergyBuffer* pe, VirialBuffer* pv, //
+   grad_prec** px, grad_prec** py, grad_prec** pz);
 
-/// \brief
-/// Get the number of the non-bonded interactions, energy, or virial from the
-/// corresponding buffer. These operations unnecessarily finish within `O(1)`
-/// time complexity.
+/// \brief Deallocates a set of variables for an energy term as necessary.
+/// \param flag  Controls the variables to be deallocated.
+/// \param e     The EnergyBuffer.
+/// \param v     The VirialBuffer.
+/// \param gx    The x gradient.
+/// \param gy    The y gradient.
+/// \param gz    The z gradient.
+void bufferDeallocate(int flag, EnergyBuffer e, VirialBuffer v, //
+   grad_prec* gx, grad_prec* gy, grad_prec* gz);
+
+/// \brief Allocates a CountBuffer for an energy term as necessary.
+/// \param flag  Controls the variable to be allocated.
+/// \param pc    Pointer of the CountBuffer.
+void bufferAllocate(int flag, CountBuffer* pc);
+
+/// \brief Deallocates a CountBuffer for an energy term as necessary.
+/// \param flag  Controls the variable to be deallocated.
+/// \param c     The CountBuffer.
+void bufferDeallocate(int flag, CountBuffer c);
+
+/// \brief Gets the number of the non-bonded interactions, energy, and virial from a buffer.
+/// \note These operations unnecessarily finish within `O(1)` time complexity.
 int countReduce(const CountBuffer b);
-/// \see countReduce
+
+/// \copydoc countReduce
 energy_prec energyReduce(const EnergyBuffer b);
-void virialReshape(virial_prec (&output)[9], const virial_prec (&input)[VirialBufferTraits::N]);
-/// \see countReduce
+
+/// \copydoc countReduce
 void virialReduce(virial_prec (&)[VirialBufferTraits::N], const VirialBuffer b);
-/// \see countReduce
+
+/// \copydoc countReduce
 void virialReduce(virial_prec (&)[9], const VirialBuffer b);
+
+/// \brief Transforms the shape of a virial variable.
+void virialReshape(virial_prec (&output)[9], const virial_prec (&input)[VirialBufferTraits::N]);
+/// \}
+}
+
+//====================================================================//
+//                                                                    //
+//                          Global Variables                          //
+//                                                                    //
+//====================================================================//
+
+namespace tinker {
+/// \ingroup ff
+TINKER_EXTERN int nelem_buffer;
 }
