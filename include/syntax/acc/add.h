@@ -5,6 +5,8 @@
 
 namespace tinker {
 /// \ingroup acc_syntax
+/// \brief Adds `value` to `buffer[offset]`.
+/// \note `value` and `buffer` elements are of the same type.
 #pragma acc routine seq
 template <class T>
 void atomic_add(T value, T* buffer, size_t offset = 0)
@@ -14,6 +16,8 @@ void atomic_add(T value, T* buffer, size_t offset = 0)
 }
 
 /// \ingroup acc_syntax
+/// \brief Adds `value` to `buffer[offset]` via fixed-point arithmetic.
+/// \tparam T  Must be of floating-point type.
 #pragma acc routine seq
 template <class T,
    class = typename std::enable_if<std::is_same<T, float>::value ||
@@ -26,6 +30,7 @@ void atomic_add(T value, fixed* buffer, size_t offset = 0)
 }
 
 /// \ingroup acc_syntax
+/// \brief Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]`.
 #pragma acc routine seq
 template <class T>
 void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8], size_t offset = 0)
@@ -39,6 +44,7 @@ void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8], size_t
 }
 
 /// \ingroup acc_syntax
+/// \brief Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]` via fixed-point arithmetic.
 #pragma acc routine seq
 template <class T,
    class = typename std::enable_if<std::is_same<T, float>::value ||
@@ -54,6 +60,7 @@ void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, fixed (*buffer)[8], si
 }
 
 /// \ingroup acc_syntax
+/// \brief Converts `val` of floating-point from its original type to type `G`.
 #pragma acc routine seq
 template <class G, class T>
 G floatTo(T val)
@@ -65,10 +72,8 @@ G floatTo(T val)
       return static_cast<G>(val);
 }
 
-/**
- * \ingroup acc_syntax
- * Converts fixed-point `val` to floating-point.
- */
+/// \ingroup acc_syntax
+/// \brief Converts `val` of fixed-point to floating-point.
 #pragma acc routine seq
 template <class T>
 T fixedTo(fixed val)

@@ -1,12 +1,9 @@
 #pragma once
 #include "precision.h"
+#include "seqdef.h"
 #include <cmath>
 
-//====================================================================//
 // erfc
-
-#include "seqdef.h"
-
 extern "C"
 {
    // The helper function for the complementary error function.
@@ -21,8 +18,7 @@ extern "C"
    }
 
    // The complementary error function.
-   // C. Hastings. Approximations for Digital Computers.
-   // Princeton Univ. Press. (1955) p. 167.
+   // C. Hastings. Approximations for Digital Computers. Princeton Univ. Press. (1955) p. 167.
    SEQ_ROUTINE
    inline float tinkerErfcfHastings(float x)
    {
@@ -30,9 +26,6 @@ extern "C"
       return tinkerErfcfHastings2Args(x, exp2a);
    }
 }
-
-//====================================================================//
-// libfunc
 
 // integer functions
 #define INT_ABS abs

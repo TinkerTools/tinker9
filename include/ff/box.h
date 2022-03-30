@@ -1,6 +1,6 @@
 #pragma once
+#include "math/realn.h"
 #include "tool/rcman.h"
-#include "tool/realn.h"
 
 namespace tinker {
 /// \ingroup box

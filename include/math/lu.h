@@ -12,6 +12,6 @@ namespace tinker {
 ///    Numerical Recipes (C++), 3rd Ed., Section 2.3,
 ///    Cambridge University Press (2007).
 ///    </a>
-template <int n, class R>
-void symlusolve(const R* aUpRowMajor, R* b);
+template <int N, class T>
+void symlusolve(const T* aUpRowMajor, T* b);
 }

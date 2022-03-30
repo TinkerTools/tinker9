@@ -1,5 +1,4 @@
 #pragma once
-#include "macro.h"
 
 namespace tinker {
 /// \ingroup acc_syntax

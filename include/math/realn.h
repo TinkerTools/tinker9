@@ -11,9 +11,7 @@ using real4 = double4;
 #   define make_real2(x, y)       make_double2((x), (y))
 #   define make_real3(x, y, z)    make_double3((x), (y), (z))
 #   define make_real4(x, y, z, w) make_double4((x), (y), (z), (w))
-#endif
-
-#if TINKER_REAL_SIZE == 4
+#elif TINKER_REAL_SIZE == 4
 using real2 = float2;
 using real3 = float3;
 using real4 = float4;

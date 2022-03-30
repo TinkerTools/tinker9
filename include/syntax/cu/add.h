@@ -14,15 +14,14 @@ inline double atomicAdd(double* ptr, double v)
       assumed = old;
       old = atomicCAS(ullptr, assumed, __double_as_longlong(v + __longlong_as_double(assumed)));
    } while (assumed != old);
-   // using floating-point comparison will hang in case of NaN
-   // (since NaN != NaN)
+   // using floating-point comparison will hang in case of NaN (since NaN != NaN)
    return __longlong_as_double(old);
 }
 #endif
 
 namespace tinker {
 /// \ingroup cuda_syntax
-/// Adds `value` to `buffer[offset]`.
+/// \brief Adds `value` to `buffer[offset]`.
 /// \note `value` and `buffer` elements are of the same type.
 template <class T>
 __device__
@@ -32,8 +31,8 @@ inline void atomic_add(T value, T* buffer, size_t offset = 0)
 }
 
 /// \ingroup cuda_syntax
-/// Adds `value` to `buffer[offset]` via fixed-point arithmetic.
-/// \tparam  T Must be a floating-point type.
+/// \brief Adds `value` to `buffer[offset]` via fixed-point arithmetic.
+/// \tparam T  Must be of floating-point type.
 template <class T,
    class = typename std::enable_if<std::is_same<T, float>::value ||
       std::is_same<T, double>::value>::type>
@@ -45,7 +44,7 @@ inline void atomic_add(T value, fixed* buffer, size_t offset = 0)
 }
 
 /// \ingroup cuda_syntax
-/// Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]`.
+/// \brief Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]`.
 template <class T>
 __device__
 inline void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8], size_t offset = 0)
@@ -59,7 +58,7 @@ inline void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8],
 }
 
 /// \ingroup cuda_syntax
-/// Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]`.
+/// \brief Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]` via fixed-point arithmetic.
 template <class T,
    class = typename std::enable_if<std::is_same<T, float>::value ||
       std::is_same<T, double>::value>::type>
@@ -76,7 +75,7 @@ inline void atomic_add(
 }
 
 /// \ingroup cuda_syntax
-/// Converts floating-point `val` from its original type to type `G`.
+/// \brief Converts `val` of floating-point from its original type to type `G`.
 template <class G, class T>
 __device__
 inline G floatTo(T val)
@@ -89,7 +88,7 @@ inline G floatTo(T val)
 }
 
 /// \ingroup cuda_syntax
-/// Converts fixed-point `val` to floating-point.
+/// \brief Converts `val` of fixed-point to floating-point.
 template <class T>
 __device__
 inline T fixedTo(fixed val)

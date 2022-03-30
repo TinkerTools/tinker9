@@ -1,16 +1,12 @@
 #pragma once
 
-/**
- * \def SEQ_ROUTINE
- * \ingroup acc_syntax
- * Expands to `_Pragma("acc routine seq")` in OpenACC source files, since we
- * cannot use the `#pragma acc` syntax in a macro.
- */
+/// \def SEQ_ROUTINE
+/// \ingroup acc_syntax
+/// \brief Expands to `_Pragma("acc routine seq")` in OpenACC source files.
+/// `#pragma acc` cannot be used in macro.
 #define SEQ_ROUTINE _Pragma("acc routine seq")
 
-/**
- * \def SEQ_CUDA
- * \ingroup acc_syntax
- * Is an empty macro in the OpenACC source code.
- */
+/// \def SEQ_CUDA
+/// \ingroup acc_syntax
+/// \brief An empty macro in the OpenACC source code.
 #define SEQ_CUDA
