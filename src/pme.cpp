@@ -113,7 +113,7 @@ void pme_op_copyin(PMEUnit unit)
    darray::copyin(g::q0, st.nfft3, st.bsmod3, bsmodbuf.data());
    wait_for(g::q0);
 
-   unit.update_deviceptr(st, g::q0);
+   unit.deviceptrUpdate(st, g::q0);
    wait_for(g::q0);
 }
 }

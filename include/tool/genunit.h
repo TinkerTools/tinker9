@@ -4,6 +4,7 @@
 #include <memory>
 
 namespace tinker {
+inline namespace v1 {
 enum class GenericUnitVersion
 {
    DISABLE_ON_DEVICE,
@@ -39,6 +40,7 @@ struct GenericUnitAlloc<GenericUnitVersion::ENABLE_ON_DEVICE>
       deviceMemoryCopyinBytesAsync(d, s, nb, queue);
    }
 };
+}
 
 /// \ingroup rc
 /// \brief Resource handle. Analogous to Fortran i/o unit represented by a signed integer.
@@ -48,14 +50,10 @@ class GenericUnit
 private:
    static constexpr bool USE_DPTR =
       (VERSION == GenericUnitVersion::DISABLE_ON_DEVICE ? false : true);
-   using mem_op = GenericUnitAlloc<VERSION>;
+
    int unit;
 
-   /// \note
-   /// The host vector will almost definitely expand its capacity, so if you
-   /// don't want to implement the move constructors and/or the copy constructors
-   /// of every possible type T, don't change vector of host pointers to vector
-   /// of host objects.
+   using mem_op = GenericUnitAlloc<VERSION>;
    using hostptr_vec = std::vector<std::unique_ptr<T>>;
    using deviceptr_vec = std::vector<std::unique_ptr<T, decltype(&mem_op::deallocate)>>;
 
@@ -85,7 +83,7 @@ private:
    }
 
 public:
-   /// Gets the number of open units.
+   /// \brief Gets the number of open units.
    static int size()
    {
       if CONSTEXPR (USE_DPTR)
@@ -93,17 +91,15 @@ public:
       return hostptrs().size();
    }
 
-   /// Releases all of the resources and reset `size()` to 0.
+   /// \brief Releases all of the resources and reset `size()` to 0.
    static void clear()
    {
-      // call ~T() on host here
-      hostptrs().clear();
-      // call deallocate(T*) on device here
+      hostptrs().clear(); // call ~T() on host
       if CONSTEXPR (USE_DPTR)
-         deviceptrs().clear();
+         deviceptrs().clear(); // call deallocate(T*) on device
    }
 
-   /// Resizes the capacity for the objects on host.
+   /// \brief Resizes the capacity for the objects on host.
    /// \note Cannot be called if device pointers are used.
    template <class DT = T>
    static void resize(int s)
@@ -114,8 +110,7 @@ public:
          hostptrs().emplace_back(new DT);
    }
 
-   /// Similar to opening a new Fortran i/o unit.
-   /// \return The new unit.
+   /// \brief Returns a new unit, similar to opening a new Fortran i/o unit.
    static GenericUnit open()
    {
       hostptrs().emplace_back(new T);
@@ -140,60 +135,65 @@ public:
       return unit;
    }
 
-   /// Whether or not the current unit is open.
+   /// \brief Whether the current unit is open.
    bool valid() const
    {
       return unit >= 0;
    }
 
-   /// Closes the current unit.
+   /// \brief Closes the current unit.
    /// \note The resource will not be released until `clear()` is called.
    void close()
    {
       unit = -1;
    }
 
-   /// Gets the (const) reference to the object on host.
+   /// \{
+   /// \brief Gets the (const) reference to the object on host.
    const T& operator*() const
    {
       return obj();
    }
-   /// Gets the (const) reference to the object on host.
+
    T& operator*()
    {
       return obj();
    }
+   /// \}
 
-   /// Gets the (const) pointer to the object on host.
+   /// \{
+   /// \brief Gets the (const) pointer to the object on host.
    const T* operator->() const
    {
       return &obj();
    }
-   /// Gets the (const) pointer to the object on host.
+
    T* operator->()
    {
       return &obj();
    }
+   /// \}
 
-   /// Gets device pointer to the object.
+   /// \{
+   /// \brief Gets (const) device pointer to the object.
    const T* deviceptr() const
    {
       assert(0 <= unit && (size_t)unit < deviceptrs().size() &&
          "const T* GenericUnit::deviceptr() const");
       return deviceptrs()[unit].get();
    }
-   /// Gets device pointer to the object.
+
    T* deviceptr()
    {
       assert(0 <= unit && unit < (int)deviceptrs().size() && "T* GenericUnit::deviceptr()");
       return deviceptrs()[unit].get();
    }
+   /// \}
 
-   /// Updates the object on device by an object on host.
-   /// \param hobj
-   /// The reference to the same object on host that can be accessed by the same
-   /// unit number.
-   void update_deviceptr(const T& hobj, int queue)
+   /// \brief Updates the object on device by an object on host.
+   /// \param hobj   Reference to the object on host that can be accessed by the same unit number.
+   /// \param queue  Device queue for the update.
+   void deviceptrUpdate(const T& hobj, int queue)
    {
       assert(&hobj == &this->obj());
       mem_op::copyin(this->deviceptr(), &hobj, sizeof(T), queue);

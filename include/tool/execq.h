@@ -1,7 +1,8 @@
 #pragma once
-#include <cstddef>
 
 namespace tinker {
+inline namespace v1 {
+/// \brief A helper class for mdsave.
 class ExecQ
 {
 private:
@@ -14,4 +15,5 @@ public:
    void beginCopyout();
    void endCopyout();
 };
+}
 }

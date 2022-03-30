@@ -18,7 +18,7 @@ namespace tinker {
 ///
 /// The multi-dimensional `FFTW3` Fortran API in Tinker is called as follows,
 /// \code{.f}
-///       call dfftw_plan_dft_3d (planf,nfft1,nfft2,nfft3,qgrid,qgrid,ifront,iguess)
+/// call dfftw_plan_dft_3d (planf,nfft1,nfft2,nfft3,qgrid,qgrid,ifront,iguess)
 /// \endcode
 /// which is different from the C API.
 ///
@@ -35,14 +35,12 @@ namespace tinker {
 /// > that, whenever you create an FFTW plan for a multi-dimensional transform,
 /// > you must always reverse the ordering of the dimensions.
 ///
-///
 /// [`cuFFT` C API]
 /// (https://docs.nvidia.com/cuda/cufft/index.html#function-cufftplan3d)
 /// is similar to FFTW C API:
 ///
 /// \code{.cpp}
-/// cufftResult
-///    cufftPlan3d(cufftHandle *plan, int nx, int ny, int nz, cufftType type);
+/// cufftResult cufftPlan3d(cufftHandle *plan, int nx, int ny, int nz, cufftType type);
 /// \endcode
 ///
 /// > nx: The transform size in the x dimension. This is slowest changing
