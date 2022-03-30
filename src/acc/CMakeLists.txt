@@ -8,7 +8,6 @@ box.cpp
 compilers.cpp
 cudalib.cpp
 dcflux.cpp
-device_zero.cpp
 eangle.cpp
 eangtor.cpp
 ebond.cpp
@@ -45,6 +44,7 @@ lf_lpiston.cpp
 lpiston.cpp
 mathfunc_parallel.cpp
 mathlu.cpp
+mathzero.cpp
 mddebug.cpp
 mdegv.cpp
 mdintg.cpp

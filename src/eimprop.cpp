@@ -1,7 +1,7 @@
 #include "ff/energy.h"
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
-#include "tool/zero.h"
+#include "math/zero.h"
 #include <tinker/detail/improp.hh>
 #include <tinker/detail/torpot.hh>
 

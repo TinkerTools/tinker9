@@ -10,8 +10,8 @@
 #include "ff/pchg/evalence.h"
 #include "ff/pchg/evdw.h"
 #include "ff/potent.h"
+#include "math/zero.h"
 #include "tinker9.h"
-#include "tool/zero.h"
 
 namespace tinker {
 bool use_osrw;

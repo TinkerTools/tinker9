@@ -6,8 +6,8 @@
 #include "ff/hippo/erepel.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "math/zero.h"
 #include "tool/darray.h"
-#include "tool/zero.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/repel.hh>
 #include <tinker/detail/reppot.hh>

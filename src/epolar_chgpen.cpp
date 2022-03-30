@@ -9,8 +9,8 @@
 #include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
+#include "math/zero.h"
 #include "tool/io.h"
-#include "tool/zero.h"
 #include <map>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mplpot.hh>

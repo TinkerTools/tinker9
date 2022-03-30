@@ -3,9 +3,9 @@
 #include "ff/energy.h"
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
+#include "math/zero.h"
 #include "tool/darray.h"
 #include "tool/io.h"
-#include "tool/zero.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angpot.hh>

@@ -5,6 +5,7 @@
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
 #include "launch.h"
+#include "math/zero.h"
 #include "seq/angle.h"
 #include "seq/angtor.h"
 #include "seq/bond.h"
@@ -19,7 +20,6 @@
 #include "seq/tortor.h"
 #include "seq/urey.h"
 #include "tool/gpucard.h"
-#include "tool/zero.h"
 #include <cassert>
 
 namespace tinker {

@@ -2,9 +2,9 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "math/zero.h"
 #include "tinker9.h"
 #include "tool/io.h"
-#include "tool/zero.h"
 #include <cassert>
 #include <map>
 #include <tinker/detail/couple.hh>

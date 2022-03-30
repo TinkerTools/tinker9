@@ -5,7 +5,7 @@
 #include "ff/pchg/echglj.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
-#include "tool/zero.h"
+#include "math/zero.h"
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/sizes.hh>

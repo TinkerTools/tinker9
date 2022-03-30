@@ -5,8 +5,8 @@
 #include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
+#include "math/zero.h"
 #include "tinker9.h"
-#include "tool/zero.h"
 #include <cmath>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/disp.hh>

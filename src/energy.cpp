@@ -2,9 +2,9 @@
 #include "ff/hippo/cflux.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "math/zero.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
-#include "tool/zero.h"
 
 #include "ff/amoeba/emplar.h"
 #include "ff/amoeba/empole.h"

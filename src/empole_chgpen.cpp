@@ -6,7 +6,7 @@
 #include "ff/hippo/empolechgpen.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
-#include "tool/zero.h"
+#include "math/zero.h"
 #include <tinker/detail/chgpen.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/potent.hh>

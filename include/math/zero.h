@@ -3,32 +3,44 @@
 
 // host
 namespace tinker {
+/// \ingroup math
+/// \brief Zeros variable on host.
 inline void zeroOnHost(int& v)
 {
    v = 0;
 }
 
+/// \ingroup math
+/// \brief Zeros variable on host.
 inline void zeroOnHost(float& v)
 {
    v = 0;
 }
 
+/// \ingroup math
+/// \brief Zeros variable on host.
 inline void zeroOnHost(double& v)
 {
    v = 0;
 }
 
+/// \ingroup math
+/// \brief Zeros variable on host.
 inline void zeroOnHost(unsigned long long& v)
 {
    v = 0;
 }
 
+/// \ingroup math
+/// \brief Zeros variable on host.
 template <class T>
 void zeroOnHost(T*& ptr)
 {
    ptr = nullptr;
 }
 
+/// \ingroup math
+/// \brief Zeros variables on host.
 template <class T, size_t N>
 void zeroOnHost(T (&v)[N])
 {
@@ -36,6 +48,8 @@ void zeroOnHost(T (&v)[N])
       zeroOnHost(v[i]);
 }
 
+/// \ingroup math
+/// \brief Zeros variables on host.
 template <class T, class... Ts>
 void zeroOnHost(T& v, Ts&... vs)
 {
@@ -49,6 +63,8 @@ namespace tinker {
 template <class T>
 void zeroOnDevice3Async_acc(int nelem, T* a1, T* a2, T* a3);
 
+/// \ingroup math
+/// \brief Zeros variables on device.
 template <class T>
 void zeroOnDevice3Async(int nelem, T* a1, T* a2, T* a3)
 {
@@ -58,6 +74,8 @@ void zeroOnDevice3Async(int nelem, T* a1, T* a2, T* a3)
 template <class T, int N>
 void zeroOnDevice3Async_acc(int nelem, T (*a1)[N], T (*a2)[N], T (*a3)[N]);
 
+/// \ingroup math
+/// \brief Zeros variables on device.
 template <class T, int N>
 void zeroOnDevice3Async(int nelem, T (*a1)[N], T (*a2)[N], T (*a3)[N])
 {
@@ -68,6 +86,8 @@ template <class T>
 void zeroOnDevice9Async_acc(
    int nelem, T* a1, T* a2, T* a3, T* a4, T* a5, T* a6, T* a7, T* a8, T* a9);
 
+/// \ingroup math
+/// \brief Zeros variables on device.
 template <class T>
 void zeroOnDevice9Async(int nelem, T* a1, T* a2, T* a3, T* a4, T* a5, T* a6, T* a7, T* a8, T* a9)
 {

@@ -1,5 +1,4 @@
 #include "precision.h"
-#include "tool/zero.h"
 
 namespace tinker {
 template <class T>
@@ -16,7 +15,8 @@ void zeroOnDevice3Async_acc(int nelem, T* a1, T* a2, T* a3)
    }
 }
 template void zeroOnDevice3Async_acc(int, fixed*, fixed*, fixed*);
-template void zeroOnDevice3Async_acc(int, real*, real*, real*);
+template void zeroOnDevice3Async_acc(int, float*, float*, float*);
+template void zeroOnDevice3Async_acc(int, double*, double*, double*);
 
 template <class T, int N>
 void zeroOnDevice3Async_acc(int nelem, T (*b1)[N], T (*b2)[N], T (*b3)[N])
@@ -35,7 +35,8 @@ void zeroOnDevice3Async_acc(int nelem, T (*b1)[N], T (*b2)[N], T (*b3)[N])
    }
 }
 template void zeroOnDevice3Async_acc(int, fixed (*)[8], fixed (*)[8], fixed (*)[8]);
-template void zeroOnDevice3Async_acc(int, real (*)[8], real (*)[8], real (*)[8]);
+template void zeroOnDevice3Async_acc(int, float (*)[8], float (*)[8], float (*)[8]);
+template void zeroOnDevice3Async_acc(int, double (*)[8], double (*)[8], double (*)[8]);
 
 template <class T>
 void zeroOnDevice9Async_acc(
@@ -66,5 +67,7 @@ void zeroOnDevice9Async_acc(
 template void zeroOnDevice9Async_acc(
    int, fixed*, fixed*, fixed*, fixed*, fixed*, fixed*, fixed*, fixed*, fixed*);
 template void zeroOnDevice9Async_acc(
-   int, real*, real*, real*, real*, real*, real*, real*, real*, real*);
+   int, float*, float*, float*, float*, float*, float*, float*, float*, float*);
+template void zeroOnDevice9Async_acc(
+   int, double*, double*, double*, double*, double*, double*, double*, double*, double*);
 }

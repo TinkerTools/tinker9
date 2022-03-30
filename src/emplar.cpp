@@ -3,8 +3,8 @@
 #include "ff/amoeba/empole.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
+#include "math/zero.h"
 #include "tool/error.h"
-#include "tool/zero.h"
 
 namespace tinker {
 extern void emplar_cu(int);

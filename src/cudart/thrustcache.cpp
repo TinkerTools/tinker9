@@ -1,11 +1,11 @@
+#include "tool/thrustcache.h"
 #include "ff/atom.h"
 #include "tool/darray.h"
-#include "tool/thrustcache.h"
 
 namespace tinker {
 ThrustCache::ThrustCache()
-   : nbytes(0)
-   , ptr(nullptr)
+   : ptr(nullptr)
+   , nbytes(0)
 {}
 
 auto ThrustCache::allocate(ptrdiff_t numbyte) -> value_type*

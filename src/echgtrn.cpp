@@ -4,8 +4,8 @@
 #include "ff/hippo/elechippo.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "math/zero.h"
 #include "tool/darray.h"
-#include "tool/zero.h"
 #include <tinker/detail/chgtrn.hh>
 #include <tinker/detail/ctrpot.hh>
 

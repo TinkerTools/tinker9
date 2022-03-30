@@ -1,5 +1,5 @@
 #include "ff/energy.h"
-#include "tool/zero.h"
+#include "math/zero.h"
 
 namespace tinker {
 void zero_egv(int vers)

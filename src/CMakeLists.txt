@@ -119,7 +119,7 @@ cudart/error.cpp
 cudart/execq.cpp
 cudart/fft.cpp
 cudart/gpu_card.cpp
-cudart/thrust_cache.cpp
+cudart/thrustcache.cpp
    )
 endif ()
 add_library (tinker9_cpp OBJECT "${__T9_CPP_SRC}")

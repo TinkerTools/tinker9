@@ -4,8 +4,8 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "math/zero.h"
 #include "tool/io.h"
-#include "tool/zero.h"
 #include <array>
 #include <map>
 #include <set>

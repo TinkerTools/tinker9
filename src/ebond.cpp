@@ -1,8 +1,8 @@
 #include "ff/energy.h"
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
+#include "math/zero.h"
 #include "tool/io.h"
-#include "tool/zero.h"
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>
 #include <tinker/detail/potent.hh>
