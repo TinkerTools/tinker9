@@ -105,7 +105,7 @@ void disp_pme_conv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
    }
 }
 
-void disp_pme_conv_acc(int vers)
+void disp_pmeConv_acc(int vers)
 {
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;

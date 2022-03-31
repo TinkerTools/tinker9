@@ -4,18 +4,16 @@
 #include "ff/amoeba/empole.h"
 #include "ff/box.h"
 #include "ff/elec.h"
-#include "ff/pchg/echarge.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "launch.h"
 #include "seq/bsplgen.h"
-#include "tool/gpucard.h"
 
 namespace tinker {
 // compute theta values on the fly
 template <class T, int bsorder>
 __global__
-void grid_put_cu1(const real* restrict x, const real* restrict y, const real* restrict z, int n,
+void gridPut_cu1(const real* restrict x, const real* restrict y, const real* restrict z, int n,
    int nfft1, int nfft2, int nfft3, const real* restrict ptr1, const real* restrict ptr2,
    real* restrict qgrid, real3 recip_a, real3 recip_b, real3 recip_c)
 {
@@ -186,7 +184,7 @@ void grid_put_cu1(const real* restrict x, const real* restrict y, const real* re
 // use pre-computed theta values
 template <class T, int bsorder>
 __global__
-void grid_put_cu2(const int* restrict igrid, const real* restrict thetai1,
+void gridPut_cu2(const int* restrict igrid, const real* restrict thetai1,
    const real* restrict thetai2, const real* restrict thetai3,
    const Spatial::SortedAtom* restrict sorted, int n, int padded_n, int nfft1, int nfft2, int nfft3,
    const real* restrict ptr1, const real* ptr2, real* restrict qgrid)
@@ -257,7 +255,7 @@ void grid_put_cu2(const int* restrict igrid, const real* restrict thetai1,
    }
 }
 
-void grid_pchg_cu(PMEUnit pme_u, real* pchg)
+void gridPchg_cu(PMEUnit pme_u, real* pchg)
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -271,17 +269,17 @@ void grid_pchg_cu(PMEUnit pme_u, real* pchg)
    using type = std::remove_pointer<decltype(st.qgrid)>::type;
    check_rt(cudaMemsetAsync(st.qgrid, 0, 2 * nt * sizeof(type), stream));
    if (st.bsorder == 5) {
-      auto ker = grid_put_cu1<PCHG, 5>;
+      auto ker = gridPut_cu1<PCHG, 5>;
       launch_k2s(stream, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, pchg, nullptr, st.qgrid,
          recipa, recipb, recipc);
    } else if (st.bsorder == 4) {
-      auto ker = grid_put_cu1<PCHG, 4>;
+      auto ker = gridPut_cu1<PCHG, 4>;
       launch_k2s(stream, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, pchg, nullptr, st.qgrid,
          recipa, recipb, recipc);
    }
 }
 
-void grid_disp_cu(PMEUnit pme_u, real* csix)
+void gridDisp_cu(PMEUnit pme_u, real* csix)
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -290,12 +288,12 @@ void grid_disp_cu(PMEUnit pme_u, real* csix)
    int nt = n1 * n2 * n3;
 
    darray::zero(g::q0, 2 * nt, st.qgrid);
-   auto ker = grid_put_cu1<DISP, 4>;
+   auto ker = gridPut_cu1<DISP, 4>;
    launch_k2s(g::s0, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, csix, nullptr, st.qgrid, recipa,
       recipb, recipc);
 }
 
-void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
+void gridMpole_cu(PMEUnit pme_u, real (*fmp)[10])
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -305,18 +303,18 @@ void grid_mpole_cu(PMEUnit pme_u, real (*fmp)[10])
 
    darray::zero(g::q0, 2 * nt, st.qgrid);
    if (TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) {
-      auto ker = grid_put_cu1<MPOLE, 5>;
+      auto ker = gridPut_cu1<MPOLE, 5>;
       launch_k2s(g::s0, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, (const real*)fmp, nullptr,
          st.qgrid, recipa, recipb, recipc);
    } else {
-      auto ker = grid_put_cu2<MPOLE, 5>;
+      auto ker = gridPut_cu2<MPOLE, 5>;
       int npa = 5 * 5 * 5 * n;
       launch_k1s(g::s0, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
          mspatial_v2_unit->sorted, n, padded_n, n1, n2, n3, (const real*)fmp, nullptr, st.qgrid);
    }
 }
 
-void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
+void gridUind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -326,11 +324,11 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 
    darray::zero(g::q0, 2 * nt, st.qgrid);
    if (TINKER_CU_THETA_ON_THE_FLY_GRID_UIND) {
-      auto ker = grid_put_cu1<UIND, 5>;
+      auto ker = gridPut_cu1<UIND, 5>;
       launch_k2s(g::s0, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, (const real*)fuind,
          (const real*)fuinp, st.qgrid, recipa, recipb, recipc);
    } else {
-      auto ker = grid_put_cu2<UIND, 5>;
+      auto ker = gridPut_cu2<UIND, 5>;
       int npa = 5 * 5 * 5 * n;
       launch_k1s(g::s0, npa, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3,
          mspatial_v2_unit->sorted, n, padded_n, n1, n2, n3, (const real*)fuind, (const real*)fuinp,
@@ -340,7 +338,7 @@ void grid_uind_cu(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 
 template <int LEVEL, int bsorder>
 __global__
-void bspline_fill_cu1(int* restrict igrid, real* restrict thetai1, real* restrict thetai2,
+void bsplineFill_cu1(int* restrict igrid, real* restrict thetai1, real* restrict thetai2,
    real* restrict thetai3, const real* restrict x, const real* restrict y, const real* restrict z,
    int n, int padded_n, int nfft1, int nfft2, int nfft3, real3 recip_a, real3 recip_b,
    real3 recip_c)
@@ -373,15 +371,15 @@ void bspline_fill_cu1(int* restrict igrid, real* restrict thetai1, real* restric
    }
 }
 
-void bspline_fill_cu(PMEUnit u, int level)
+void bsplineFill_cu(PMEUnit u, int level)
 {
    auto& st = *u;
    if (level == 2) {
-      auto ker = bspline_fill_cu1<2, 5>;
+      auto ker = bsplineFill_cu1<2, 5>;
       launch_k1s(g::s0, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3, x, y, z, n, padded_n,
          st.nfft1, st.nfft2, st.nfft3, recipa, recipb, recipc);
    } else if (level == 3) {
-      auto ker = bspline_fill_cu1<3, 5>;
+      auto ker = bsplineFill_cu1<3, 5>;
       launch_k1s(g::s0, n, ker, st.igrid, st.thetai1, st.thetai2, st.thetai3, x, y, z, n, padded_n,
          st.nfft1, st.nfft2, st.nfft3, recipa, recipb, recipc);
    }
@@ -390,7 +388,7 @@ void bspline_fill_cu(PMEUnit u, int level)
 // compute theta values on the fly
 template <class T, int bsorder>
 __global__
-void fphi_get_cu(int n, int nfft1, int nfft2, int nfft3, const real* restrict x,
+void fphiGet_cu(int n, int nfft1, int nfft2, int nfft3, const real* restrict x,
    const real* restrict y, const real* restrict z, real* restrict opt1, real* restrict opt2,
    real* restrict opt3, const real* restrict qgrid, real3 recip_a, real3 recip_b, real3 recip_c)
 {
@@ -877,19 +875,19 @@ void fphi_get_cu(int n, int nfft1, int nfft2, int nfft3, const real* restrict x,
    }
 }
 
-void fphi_mpole_cu(PMEUnit pme_u, real (*fphi)[20])
+void fphiMpole_cu(PMEUnit pme_u, real (*fphi)[20])
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
    int n2 = st.nfft2;
    int n3 = st.nfft3;
 
-   auto ker = fphi_get_cu<MPOLE, 5>;
+   auto ker = fphiGet_cu<MPOLE, 5>;
    launch_k2s(g::s0, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, (real*)fphi, nullptr, nullptr,
       st.qgrid, recipa, recipb, recipc);
 }
 
-void fphi_uind_cu(
+void fphiUind_cu(
    PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10], real (*fdip_sum_phi)[20])
 {
    auto& st = *pme_u;
@@ -897,26 +895,26 @@ void fphi_uind_cu(
    int n2 = st.nfft2;
    int n3 = st.nfft3;
 
-   auto ker = fphi_get_cu<UIND, 5>;
+   auto ker = fphiGet_cu<UIND, 5>;
    launch_k2s(g::s0, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, (real*)fdip_phi1,
       (real*)fdip_phi2, (real*)fdip_sum_phi, st.qgrid, recipa, recipb, recipc);
 }
 
-void fphi_uind2_cu(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
+void fphiUind2_cu(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
    int n2 = st.nfft2;
    int n3 = st.nfft3;
 
-   auto ker = fphi_get_cu<UIND2, 5>;
+   auto ker = fphiGet_cu<UIND2, 5>;
    launch_k2s(g::s0, PME_BLOCKDIM, n, ker, n, n1, n2, n3, x, y, z, (real*)fdip_phi1,
       (real*)fdip_phi2, nullptr, st.qgrid, recipa, recipb, recipc);
 }
 
 template <bool DO_E, bool DO_V>
 __global__
-void pme_conv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
+void pmeConv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
    const real* restrict bsmod1, const real* restrict bsmod2, const real* restrict bsmod3, real f,
    real aewald, TINKER_IMAGE_PARAMS, real box_volume, EnergyBuffer restrict gpu_e,
    VirialBuffer restrict gpu_vir)
@@ -1017,7 +1015,7 @@ void pme_conv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
 }
 
 template <bool DO_E, bool DO_V>
-void pme_conv_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
+void pmeConv_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
@@ -1033,26 +1031,26 @@ void pme_conv_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
    real aewald = st.aewald;
    real box_volume = boxVolume();
 
-   auto ker = pme_conv_cu1<DO_E, DO_V>;
+   auto ker = pmeConv_cu1<DO_E, DO_V>;
    auto stream = use_pme_stream ? g::spme : g::s0;
    int ngrid = gpuGridSize(BLOCK_DIM);
    ker<<<ngrid, BLOCK_DIM, 0, stream>>>(n1, n2, n3, qgrid, bsmod1, bsmod2, bsmod3, f, aewald,
       TINKER_IMAGE_ARGS, box_volume, gpu_e, gpu_vir);
 }
 
-void pme_conv_cu(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
+void pmeConv_cu(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
    if (gpu_vir == nullptr) {
       if (gpu_e == nullptr) {
-         pme_conv_cu2<false, false>(pme_u, nullptr, nullptr);
+         pmeConv_cu2<false, false>(pme_u, nullptr, nullptr);
       } else {
-         pme_conv_cu2<true, false>(pme_u, gpu_e, nullptr);
+         pmeConv_cu2<true, false>(pme_u, gpu_e, nullptr);
       }
    } else {
       if (gpu_e == nullptr) {
-         pme_conv_cu2<false, true>(pme_u, nullptr, gpu_vir);
+         pmeConv_cu2<false, true>(pme_u, nullptr, gpu_vir);
       } else {
-         pme_conv_cu2<true, true>(pme_u, gpu_e, gpu_vir);
+         pmeConv_cu2<true, true>(pme_u, gpu_e, gpu_vir);
       }
    }
 }

@@ -275,26 +275,26 @@ void empole_generic_ewald_recip_acc()
    auto bufsize = bufferSize();
 
    const PMEUnit pu = epme_unit;
-   cmp_to_fmp(pu, cmp, fmp);
-   grid_mpole(pu, fmp);
+   cmpToFmp(pu, cmp, fmp);
+   gridMpole(pu, fmp);
    fftfront(pu);
    if CONSTEXPR (do_v) {
       if (vir_m) {
-         pme_conv(pu, vir_m);
+         pmeConv(pu, vir_m);
          auto size = bufferSize() * VirialBufferTraits::value;
          #pragma acc parallel loop independent async deviceptr(vir_m,vir_em)
          for (size_t i = 0; i < size; ++i) {
             vir_em[0][i] += vir_m[0][i];
          }
       } else {
-         pme_conv(pu, vir_em);
+         pmeConv(pu, vir_em);
       }
    } else {
-      pme_conv(pu);
+      pmeConv(pu);
    }
    fftback(pu);
-   fphi_mpole(pu);
-   fphi_to_cphi(pu, fphi, cphi);
+   fphiMpole(pu);
+   fphiToCphi(pu, fphi, cphi);
 
    auto& st = *pu;
    const int nfft1 = st.nfft1;

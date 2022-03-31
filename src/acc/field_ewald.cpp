@@ -21,16 +21,16 @@ void dfield_ewald_recip_self_acc(real (*field)[3])
    const real aewald = pu->aewald;
    const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
 
-   cmp_to_fmp(pu, cmp, fmp);
-   grid_mpole(pu, fmp);
+   cmpToFmp(pu, cmp, fmp);
+   gridMpole(pu, fmp);
    fftfront(pu);
    if (vir_m)
-      pme_conv(pu, vir_m);
+      pmeConv(pu, vir_m);
    else
-      pme_conv(pu);
+      pmeConv(pu);
    fftback(pu);
-   fphi_mpole(pu);
-   fphi_to_cphi(pu, fphi, cphi);
+   fphiMpole(pu);
+   fphiToCphi(pu, fphi, cphi);
 
    #pragma acc parallel loop independent async deviceptr(field,cphi,rpole)
    for (int i = 0; i < n; ++i) {
@@ -202,13 +202,13 @@ void ufield_ewald_recip_self_acc(
    const int nfft3 = st.nfft3;
    const real aewald = st.aewald;
 
-   cuind_to_fuind(pu, uind, uinp, fuind, fuinp);
-   grid_uind(pu, fuind, fuinp);
+   cuindToFuind(pu, uind, uinp, fuind, fuinp);
+   gridUind(pu, fuind, fuinp);
    fftfront(pu);
    // TODO: store vs. recompute qfac
-   pme_conv(pu);
+   pmeConv(pu);
    fftback(pu);
-   fphi_uind2(pu, fdip_phi1, fdip_phi2);
+   fphiUind2(pu, fdip_phi1, fdip_phi2);
 
    const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
 

@@ -196,19 +196,19 @@ void echarge_ewald_recip_self(int vers)
    // ewald real space
 
    const PMEUnit pu = epme_unit;
-   grid_pchg(pu, pchg);
+   gridPchg(pu, pchg);
    fftfront(pu);
    if (vers & calc::virial) {
       if (vers & calc::energy) {
-         pme_conv(pu, ec, vir_ec);
+         pmeConv(pu, ec, vir_ec);
       } else {
-         pme_conv(pu, vir_ec);
+         pmeConv(pu, vir_ec);
       }
    } else {
       if (vers & calc::energy) {
-         pme_conv(pu, ec);
+         pmeConv(pu, ec);
       } else {
-         pme_conv(pu);
+         pmeConv(pu);
       }
    }
    if (vers & calc::grad) {

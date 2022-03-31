@@ -353,7 +353,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3], const real (*gpu_ui
    auto* fphid = fdip_phi1;
    auto* fphip = fdip_phi2;
 
-   cuind_to_fuind(pu, gpu_uind, gpu_uinp, fuind, fuinp);
+   cuindToFuind(pu, gpu_uind, gpu_uinp, fuind, fuinp);
    if CONSTEXPR (do_e) {
       #pragma acc parallel loop independent async deviceptr(fuind,fphi,ep)
       for (int i = 0; i < n; ++i) {
@@ -363,12 +363,12 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3], const real (*gpu_ui
          atomic_add(e, ep, offset);
       }
    }
-   grid_uind(pu, fuind, fuinp);
+   gridUind(pu, fuind, fuinp);
    fftfront(pu);
    // TODO: store vs. recompute qfac
-   pme_conv(pu);
+   pmeConv(pu);
    fftback(pu);
-   fphi_uind(pu, fphid, fphip, fphidp);
+   fphiUind(pu, fphid, fphip, fphidp);
 
    // increment the dipole polarization gradient contributions
 
@@ -429,7 +429,7 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3], const real (*gpu_ui
    // end do
    // Notice that only 10 * n elements were scaled in the original code.
    darray::scale(g::q0, n, 0.5f * f, fphidp);
-   fphi_to_cphi(pu, fphidp, cphidp);
+   fphiToCphi(pu, fphidp, cphidp);
 
    // recip and self torques
 
@@ -595,8 +595,8 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3], const real (*gpu_ui
          cmp[i][2] += gpu_uinp[i][1];
          cmp[i][3] += gpu_uinp[i][2];
       }
-      cmp_to_fmp(pvu, cmp, fmp);
-      grid_mpole(pvu, fmp);
+      cmpToFmp(pvu, cmp, fmp);
+      gridMpole(pvu, fmp);
       fftfront(pvu);
 
       // qgrid: pu_qgrid
@@ -607,8 +607,8 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3], const real (*gpu_ui
          cmp[i][2] += (gpu_uind[i][1] - gpu_uinp[i][1]);
          cmp[i][3] += (gpu_uind[i][2] - gpu_uinp[i][2]);
       }
-      cmp_to_fmp(pu, cmp, fmp);
-      grid_mpole(pu, fmp);
+      cmpToFmp(pu, cmp, fmp);
+      gridMpole(pu, fmp);
       fftfront(pu);
 
       const auto* d = pu.deviceptr();

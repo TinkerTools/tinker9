@@ -161,7 +161,7 @@ void edisp_ewald_real_cu(int vers);
 void edisp_ewald_real_acc(int vers);
 void edisp_ewald_recip_self_cu(int vers);
 void edisp_ewald_recip_self_acc(int vers);
-void disp_pme_conv_acc(int vers);
+void disp_pmeConv_acc(int vers);
 
 void edisp(int vers)
 {
@@ -243,9 +243,9 @@ void edisp_ewald(int vers)
    bool do_g = vers & calc::grad;
    PMEUnit u = dpme_unit;
 
-   grid_disp(u, csix);
+   gridDisp(u, csix);
    fftfront(u);
-   disp_pme_conv_acc(vers);
+   disp_pmeConv_acc(vers);
    if (do_g) {
       fftback(u);
    }

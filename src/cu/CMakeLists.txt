@@ -22,6 +22,7 @@ epolar_chgpen.cu
 epolar.cu
 erepel.cu
 evalence.cu
+ffpme.cu
 field_chgpen.cu
 field.cu
 induce.cu
@@ -32,7 +33,6 @@ mdintg.cu
 mdpt.cu
 pcg.cu
 pcg_donly.cu
-pmestuf.cu
 rattle.cu
 spatial.cu
 )

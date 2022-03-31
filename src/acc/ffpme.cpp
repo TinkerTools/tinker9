@@ -4,13 +4,12 @@
 #include "ff/atom.h"
 #include "ff/box.h"
 #include "ff/elec.h"
-#include "ff/pchg/echarge.h"
 #include "ff/pme.h"
 #include "seq/bsplgen.h"
 
 namespace tinker {
 template <class T>
-void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
+static void gridPut_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
 {
    auto& st = *pme_u;
    auto* qgrid = st.qgrid;
@@ -198,30 +197,28 @@ void grid_put_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
    }
 }
 
-void grid_pchg_acc(PMEUnit pme_u, real* pchg)
+void gridPchg_acc(PMEUnit pme_u, real* pchg)
 {
-   grid_put_acc<PCHG>(pme_u, pchg, nullptr);
+   gridPut_acc<PCHG>(pme_u, pchg, nullptr);
 }
 
-void grid_disp_acc(PMEUnit pme_u, real* csix)
+void gridDisp_acc(PMEUnit pme_u, real* csix)
 {
-   grid_put_acc<DISP>(pme_u, csix, nullptr);
+   gridPut_acc<DISP>(pme_u, csix, nullptr);
 }
 
-void grid_mpole_acc(PMEUnit pme_u, real (*fmp)[10])
+void gridMpole_acc(PMEUnit pme_u, real (*fmp)[10])
 {
-   grid_put_acc<MPOLE>(pme_u, (real*)fmp, nullptr);
+   gridPut_acc<MPOLE>(pme_u, (real*)fmp, nullptr);
 }
 
-void grid_uind_acc(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
+void gridUind_acc(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 {
-   grid_put_acc<UIND>(pme_u, (real*)fuind, (real*)fuinp);
+   gridPut_acc<UIND>(pme_u, (real*)fuind, (real*)fuinp);
 }
-
-//====================================================================//
 
 template <bool DO_E, bool DO_V>
-void pme_conv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
+static void pmeConv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
@@ -306,27 +303,25 @@ void pme_conv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
    }
 }
 
-void pme_conv_acc(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
+void pmeConv_acc(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
    if (gpu_vir == nullptr) {
       if (gpu_e == nullptr) {
-         pme_conv_acc1<false, false>(pme_u, nullptr, nullptr);
+         pmeConv_acc1<false, false>(pme_u, nullptr, nullptr);
       } else {
-         pme_conv_acc1<true, false>(pme_u, gpu_e, nullptr);
+         pmeConv_acc1<true, false>(pme_u, gpu_e, nullptr);
       }
    } else {
       if (gpu_e == nullptr) {
-         pme_conv_acc1<false, true>(pme_u, nullptr, gpu_vir);
+         pmeConv_acc1<false, true>(pme_u, nullptr, gpu_vir);
       } else {
-         pme_conv_acc1<true, true>(pme_u, gpu_e, gpu_vir);
+         pmeConv_acc1<true, true>(pme_u, gpu_e, gpu_vir);
       }
    }
 }
 
-//====================================================================//
-
 template <class T>
-void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
+static void fphiGet_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
 {
    auto& st = *pme_u;
    auto* qgrid = st.qgrid;
@@ -719,25 +714,23 @@ void fphi_get_acc(PMEUnit pme_u, real* opt1, real* opt2, real* opt3)
    }    // end for (int i)
 }
 
-void fphi_mpole_acc(PMEUnit pme_u, real (*gpu_fphi)[20])
+void fphiMpole_acc(PMEUnit pme_u, real (*gpu_fphi)[20])
 {
-   fphi_get_acc<MPOLE>(pme_u, (real*)gpu_fphi, nullptr, nullptr);
+   fphiGet_acc<MPOLE>(pme_u, (real*)gpu_fphi, nullptr, nullptr);
 }
 
-void fphi_uind_acc(PMEUnit pme_u, real (*gpu_fdip_phi1)[10], real (*gpu_fdip_phi2)[10],
+void fphiUind_acc(PMEUnit pme_u, real (*gpu_fdip_phi1)[10], real (*gpu_fdip_phi2)[10],
    real (*gpu_fdip_sum_phi)[20])
 {
-   fphi_get_acc<UIND>(pme_u, (real*)gpu_fdip_phi1, (real*)gpu_fdip_phi2, (real*)gpu_fdip_sum_phi);
+   fphiGet_acc<UIND>(pme_u, (real*)gpu_fdip_phi1, (real*)gpu_fdip_phi2, (real*)gpu_fdip_sum_phi);
 }
 
-void fphi_uind2_acc(PMEUnit pme_u, real (*gpu_fdip_phi1)[10], real (*gpu_fdip_phi2)[10])
+void fphiUind2_acc(PMEUnit pme_u, real (*gpu_fdip_phi1)[10], real (*gpu_fdip_phi2)[10])
 {
-   fphi_get_acc<UIND2>(pme_u, (real*)gpu_fdip_phi1, (real*)gpu_fdip_phi2, nullptr);
+   fphiGet_acc<UIND2>(pme_u, (real*)gpu_fdip_phi1, (real*)gpu_fdip_phi2, nullptr);
 }
 
-//====================================================================//
-
-void rpole_to_cmp_acc()
+void rpoleToCmp_acc()
 {
    #pragma acc parallel loop independent async deviceptr(rpole,cmp)
    for (int i = 0; i < n; ++i) {
@@ -754,7 +747,7 @@ void rpole_to_cmp_acc()
    }
 }
 
-void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
+void cmpToFmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
 {
    auto& st = *pme_u;
    int nfft1 = st.nfft1;
@@ -849,7 +842,7 @@ void cmp_to_fmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
    }
 }
 
-void cuind_to_fuind_acc(
+void cuindToFuind_acc(
    PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3], real (*fuind)[3], real (*fuinp)[3])
 {
    auto& st = *pme_u;
@@ -879,7 +872,7 @@ void cuind_to_fuind_acc(
    }
 }
 
-void fphi_to_cphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
+void fphiToCphi_acc(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
 {
    auto& st = *pme_u;
    int nfft1 = st.nfft1;

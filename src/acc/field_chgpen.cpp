@@ -158,13 +158,13 @@ void ufield_chgpen_ewald_recip_self_acc(const real (*uind)[3], real (*field)[3])
    const int nfft3 = st.nfft3;
    const real aewald = st.aewald;
 
-   cuind_to_fuind(pu, uind, uind, fuind, fuind);
-   grid_uind(pu, fuind, fuind);
+   cuindToFuind(pu, uind, uind, fuind, fuind);
+   gridUind(pu, fuind, fuind);
    fftfront(pu);
    // TODO: store vs. recompute qfac
-   pme_conv(pu);
+   pmeConv(pu);
    fftback(pu);
-   fphi_uind2(pu, fdip_phi1, fdip_phi2);
+   fphiUind2(pu, fdip_phi1, fdip_phi2);
 
    const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
 

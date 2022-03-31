@@ -40,6 +40,7 @@ ff/box.cpp
 ff/elec.cpp
 ff/molecule.cpp
 ff/potent.cpp
+ff/pme.cpp
 ff/switch.cpp
 field.cpp
 field_chgpen.cpp
@@ -87,8 +88,6 @@ nhc.cpp
 nose.cpp
 osrw.cpp
 platform.cpp
-pme.cpp
-pmestuf.cpp
 random.cpp
 rc_man.cpp
 spatial.cpp

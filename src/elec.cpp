@@ -37,7 +37,7 @@ void mpoleInit(int vers)
    rotpole();
 
    if (useEwald()) {
-      rpole_to_cmp();
+      rpoleToCmp();
       if (vir_m)
          darray::zero(g::q0, bufferSize(), vir_m);
       if (pltfm_config & Platform::CUDA) {
@@ -45,15 +45,15 @@ void mpoleInit(int vers)
             (!TINKER_CU_THETA_ON_THE_FLY_GRID_MPOLE) || (!TINKER_CU_THETA_ON_THE_FLY_GRID_UIND);
          if (epme_unit.valid()) {
             if (precompute_theta)
-               bspline_fill(epme_unit, 3);
+               bsplineFill(epme_unit, 3);
          }
          if (ppme_unit.valid() && (ppme_unit != epme_unit)) {
             if (precompute_theta)
-               bspline_fill(ppme_unit, 2);
+               bsplineFill(ppme_unit, 2);
          }
          if (pvpme_unit.valid()) {
             if (precompute_theta)
-               bspline_fill(pvpme_unit, 2);
+               bsplineFill(pvpme_unit, 2);
          }
       }
    }

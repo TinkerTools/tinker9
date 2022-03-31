@@ -36,6 +36,7 @@ etortor.cpp
 eurey.cpp
 ffatom.cpp
 ffbox.cpp
+ffpme.cpp
 field_chgpen.cpp
 field_ewald.cpp
 field_nonewald.cpp
@@ -54,7 +55,6 @@ mdpt.cpp
 minimize.cpp
 nblist.cpp
 osrw.cpp
-pmestuf.cpp
 rattle.cpp
 rotpole.cpp
 torque.cpp
