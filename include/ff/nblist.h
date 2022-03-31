@@ -4,6 +4,7 @@
 #include "tool/rcman.h"
 
 namespace tinker {
+/// \ingroup nblist
 enum class Nbl
 {
    UNDEFINED = 0x00,   ///< Undefined.
@@ -13,8 +14,8 @@ enum class Nbl
 };
 TINKER_ENABLE_ENUM_BITMASK(Nbl);
 
-/// \brief
-/// Verlet list: pairwise neighbor list indices and storage.
+/// \ingroup nblist
+/// \brief Verlet list: pairwise neighbor list indices and storage.
 struct NBList
 {
    int* nlst;     ///< number of sites in list for each atom
@@ -32,8 +33,10 @@ struct NBList
 
    ~NBList();
 };
+/// \ingroup nblist
 using NBListUnit = GenericUnit<NBList, GenericUnitVersion::ENABLE_ON_DEVICE>;
 
+/// \ingroup nblist
 /// \brief
 /// For Halgren Buffered 14-7 potential only, otherwise returns Nbl::UNDEFINED.
 ///
@@ -48,17 +51,21 @@ using NBListUnit = GenericUnit<NBList, GenericUnitVersion::ENABLE_ON_DEVICE>;
 ///     will stay within the cubic box even if we moved the center of mass to
 ///     origin.
 Nbl vlistVersion();
-Nbl dlistVersion();
-
-/// \brief
-/// For partial charge models and for VDW models that do not have a separate set
-/// of coordinates.
+/// \ingroup nblist
+/// \brief For partial charge models and for VDW models that do not
+/// have a separate set of coordinates.
 Nbl clistVersion();
+/// \ingroup nblist
 Nbl mlistVersion();
+/// \ingroup nblist
 Nbl ulistVersion();
+/// \ingroup nblist
 Nbl dsplistVersion();
 
+/// \ingroup nblist
 void nblistData(RcOp);
+
+/// \ingroup nblist
 void nblistRefresh();
 }
 
@@ -69,9 +76,12 @@ void nblistRefresh();
 //====================================================================//
 
 namespace tinker {
+/// \ingroup nblist
+/// \{
 TINKER_EXTERN NBListUnit vlist_unit;
 TINKER_EXTERN NBListUnit clist_unit;
 TINKER_EXTERN NBListUnit mlist_unit;
 TINKER_EXTERN NBListUnit ulist_unit;
 TINKER_EXTERN NBListUnit dsplist_unit;
+/// \}
 }

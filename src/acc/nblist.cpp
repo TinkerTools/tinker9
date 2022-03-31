@@ -5,13 +5,13 @@
 
 #if TINKER_CUDART
 namespace tinker {
-#   define m_swap_(a, b)                                                                           \
+#   define m_swap(a, b)                                                                            \
       {                                                                                            \
          auto tmp = b;                                                                             \
          b = a;                                                                                    \
          a = tmp;                                                                                  \
       }
-#   define m_max_heap_(arr, start, end)                                                            \
+#   define m_max_heap(arr, start, end)                                                             \
       {                                                                                            \
          int dad = start;                                                                          \
          int son = dad * 2 + 1;                                                                    \
@@ -21,7 +21,7 @@ namespace tinker {
             if (arr[dad] > arr[son])                                                               \
                return;                                                                             \
             else {                                                                                 \
-               m_swap_(arr[dad], arr[son]);                                                        \
+               m_swap(arr[dad], arr[son]);                                                         \
                dad = son;                                                                          \
                son = dad * 2 + 1;                                                                  \
             }                                                                                      \
@@ -29,25 +29,25 @@ namespace tinker {
       }
 
 #pragma acc routine seq
-inline void sort_v1_(int* arr, int len)
+inline static void nblistSort_acc1(int* arr, int len)
 {
    // heapsort
    for (int i = len / 2 - 1; i >= 0; --i) {
-      m_max_heap_(arr, i, len - 1);
+      m_max_heap(arr, i, len - 1);
    }
 
    for (int i = len - 1; i > 0; --i) {
-      m_swap_(arr[0], arr[i]);
-      m_max_heap_(arr, 0, i - 1);
+      m_swap(arr[0], arr[i]);
+      m_max_heap(arr, 0, i - 1);
    }
 }
-#   undef m_swap_
-#   undef m_max_heap_
+#   undef m_swap
+#   undef m_max_heap
 }
 #else
 #   include <algorithm>
 namespace tinker {
-inline void sort_v1_(int* arr, int len)
+inline static void nblistSort_acc1(int* arr, int len)
 {
    std::sort(arr, arr + len);
 }
@@ -55,65 +55,8 @@ inline void sort_v1_(int* arr, int len)
 #endif
 
 namespace tinker {
-void check_nblist(int n, real lbuf, int* restrict update, const real* restrict x,
-   const real* restrict y, const real* restrict z, real* restrict xold, real* restrict yold,
-   real* restrict zold)
-{
-   const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
-   #pragma acc parallel loop independent async\
-               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(update,x,y,z,xold,yold,zold)
-   for (int i = 0; i < n; ++i) {
-      real xi = x[i];
-      real yi = y[i];
-      real zi = z[i];
-      real xr = xi - xold[i];
-      real yr = yi - yold[i];
-      real zr = zi - zold[i];
-      real r2 = imagen2(xr, yr, zr);
-      update[i] = 0;
-      if (r2 >= lbuf2) {
-         update[i] = 1;
-         xold[i] = xi;
-         yold[i] = yi;
-         zold[i] = zi;
-      }
-   }
-}
-
-int check_spatial(int n, real lbuf, int* restrict update, const real* restrict x,
-   const real* restrict y, const real* restrict z, real* restrict xold, real* restrict yold,
-   real* restrict zold)
-{
-   if (lbuf == 0)
-      return 1;
-
-   // 0: do not rebuild; 1: rebuild
-   const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
-   #pragma acc parallel loop independent async\
-               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(update,x,y,z,xold,yold,zold)
-   for (int i = 0; i < n; ++i) {
-      real xr = x[i] - xold[i];
-      real yr = y[i] - yold[i];
-      real zr = z[i] - zold[i];
-      real r2 = imagen2(xr, yr, zr);
-      int rebuild = (r2 >= lbuf2 ? 1 : 0);
-      update[i] = rebuild;
-      if (rebuild) {
-         update[0] = 1;
-      }
-   }
-   int ans;
-   darray::copyout(g::q0, 1, &ans, &update[0]);
-   waitFor(g::q0);
-   return ans;
-}
-
-//====================================================================//
 // double loop
-
-inline void build_double_loop_(NBListUnit nu)
+static void nblistBuildDoubleLoop_acc(NBListUnit nu)
 {
    auto* lst = nu.deviceptr();
    #pragma acc parallel loop independent async deviceptr(lst)
@@ -123,13 +66,11 @@ inline void build_double_loop_(NBListUnit nu)
    }
 }
 
-// inline void update_double_loop_() {}
+// static void nblistUpdateDoubleLoop_acc() {}
 
-//====================================================================//
 // version 1
 // see also nblist.f
-
-inline void build_v1_(NBListUnit nu)
+static void nblistBuild_acc1(NBListUnit nu)
 {
    auto& st = *nu;
    const int maxnlst = st.maxnlst;
@@ -178,13 +119,38 @@ inline void build_v1_(NBListUnit nu)
    }
 }
 
-inline void update_v1_(NBListUnit nu)
+static void nblistCheck_acc(int n, real lbuf, int* restrict update, const real* restrict x,
+   const real* restrict y, const real* restrict z, real* restrict xold, real* restrict yold,
+   real* restrict zold)
 {
+   const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
+   #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
+               deviceptr(update,x,y,z,xold,yold,zold)
+   for (int i = 0; i < n; ++i) {
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
+      real xr = xi - xold[i];
+      real yr = yi - yold[i];
+      real zr = zi - zold[i];
+      real r2 = imagen2(xr, yr, zr);
+      update[i] = 0;
+      if (r2 >= lbuf2) {
+         update[i] = 1;
+         xold[i] = xi;
+         yold[i] = yi;
+         zold[i] = zi;
+      }
+   }
+}
 
+static void nblistUpdate_acc1(NBListUnit nu)
+{
    // test sites for displacement exceeding half the buffer
 
    auto& st = *nu;
-   check_nblist(n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold, st.zold);
+   nblistCheck_acc(n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold, st.zold);
 
    // rebuild the higher numbered neighbors for updated sites
 
@@ -193,9 +159,7 @@ inline void update_v1_(NBListUnit nu)
    const real buf2 = (st.cutoff + st.buffer) * (st.cutoff + st.buffer);
    const real bufx = (st.cutoff + 2 * st.buffer) * (st.cutoff + 2 * st.buffer);
 
-   #pragma acc kernels async\
-               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(lst)
+   #pragma acc kernels async present(lvec1,lvec2,lvec3,recipa,recipb,recipc) deviceptr(lst)
    {
       #pragma acc loop independent
       for (int i = 0; i < n; ++i) {
@@ -252,31 +216,59 @@ inline void update_v1_(NBListUnit nu)
                   }
                }
             }
-            sort_v1_(&lst->lst[i * maxnlst], lst->nlst[i]);
+            nblistSort_acc1(&lst->lst[i * maxnlst], lst->nlst[i]);
          }
       }
    }
 }
+}
 
-//====================================================================//
-
-void nblist_build_acc(NBListUnit nu)
+namespace tinker {
+void nblistBuild_acc(NBListUnit nu)
 {
    if (nu->maxnlst == 1) {
-      build_double_loop_(nu);
+      nblistBuildDoubleLoop_acc(nu);
    } else {
-      build_v1_(nu);
+      nblistBuild_acc1(nu);
    }
 }
 
-// #define TINKER_DEFAULT_NBLIST_UPDATE_(nu) build_v1_(nu)
-#define TINKER_DEFAULT_NBLIST_UPDATE_(nu) update_v1_(nu)
-void nblist_update_acc(NBListUnit nu)
+void nblistUpdate_acc(NBListUnit nu)
 {
    if (nu->maxnlst == 1) {
-      // update_double_loop_();
+      // nblistUpdateDoubleLoop_acc();
    } else {
-      TINKER_DEFAULT_NBLIST_UPDATE_(nu);
+      // nblistBuild_acc1(nu);
+      nblistUpdate_acc1(nu);
    }
+}
+
+int spatialCheck_acc(int n, real lbuf, int* restrict update, const real* restrict x,
+   const real* restrict y, const real* restrict z, real* restrict xold, real* restrict yold,
+   real* restrict zold)
+{
+   if (lbuf == 0)
+      return 1;
+
+   // 0: do not rebuild; 1: rebuild
+   const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
+   #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
+               deviceptr(update,x,y,z,xold,yold,zold)
+   for (int i = 0; i < n; ++i) {
+      real xr = x[i] - xold[i];
+      real yr = y[i] - yold[i];
+      real zr = z[i] - zold[i];
+      real r2 = imagen2(xr, yr, zr);
+      int rebuild = (r2 >= lbuf2 ? 1 : 0);
+      update[i] = rebuild;
+      if (rebuild) {
+         update[0] = 1;
+      }
+   }
+   int ans;
+   darray::copyout(g::q0, 1, &ans, &update[0]);
+   waitFor(g::q0);
+   return ans;
 }
 }

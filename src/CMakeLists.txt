@@ -39,6 +39,7 @@ ff/atom.cpp
 ff/box.cpp
 ff/elec.cpp
 ff/molecule.cpp
+ff/nblist.cpp
 ff/potent.cpp
 ff/pme.cpp
 ff/switch.cpp
@@ -83,7 +84,6 @@ mechanic2.cpp
 minimize_x.cpp
 mod.cpp
 moments.cpp
-nblist.cpp
 nhc.cpp
 nose.cpp
 osrw.cpp

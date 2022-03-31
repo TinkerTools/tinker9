@@ -1,6 +1,5 @@
 #include "ff/nblist.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
 #include "ff/atom.h"
 #include "ff/elec.h"
 #include "ff/hippo/edisp.h"
@@ -12,28 +11,24 @@
 #include "ff/potent.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
-#include "platform.h"
-#include "tool/darray.h"
 #include "tool/thrustcache.h"
 #include <tinker/detail/bound.hh>
-#include <tinker/detail/chgpot.hh>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/neigh.hh>
-#include <tinker/detail/vdwpot.hh>
 
 namespace tinker {
 NBList::~NBList()
 {
    darray::deallocate(nlst, lst, update, xold, yold, zold);
 }
+}
 
-//====================================================================//
-
+namespace tinker {
 Nbl vlistVersion()
 {
    Nbl u;
-   if (!usePotent(Potent::VDW)) {
+   if (not usePotent(Potent::VDW)) {
       u = Nbl::UNDEFINED;
    } else if (vdwtyp != evdw_t::hal) {
       u = Nbl::UNDEFINED;
@@ -52,16 +47,11 @@ Nbl vlistVersion()
    return u;
 }
 
-Nbl dlistVersion()
-{
-   return Nbl::UNDEFINED;
-}
-
 Nbl clistVersion()
 {
    Nbl u;
    // First, forget about VDW, only check partial charge models.
-   if (!usePotent(Potent::CHARGE) /* and !usePotent(Potent::SOLV) */) {
+   if (not usePotent(Potent::CHARGE) /* and not usePotent(Potent::SOLV) */) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_clist) {
       u = Nbl::DOUBLE_LOOP;
@@ -78,7 +68,7 @@ Nbl clistVersion()
    if (u != Nbl::UNDEFINED)
       return u;
    // Then, check VDW if no partial charge term is in use.
-   if (!usePotent(Potent::VDW)) {
+   if (not usePotent(Potent::VDW)) {
       u = Nbl::UNDEFINED;
    } else if (vdwtyp == evdw_t::hal) {
       u = Nbl::UNDEFINED;
@@ -100,8 +90,9 @@ Nbl clistVersion()
 Nbl mlistVersion()
 {
    Nbl u;
-   if (!usePotent(Potent::MPOLE) and !usePotent(Potent::POLAR) and !usePotent(Potent::CHGTRN) and
-      !usePotent(Potent::REPULS) /* and !usePotent(Potent::SOLV) */) {
+   if (not usePotent(Potent::MPOLE) and not usePotent(Potent::POLAR) and
+      not usePotent(Potent::CHGTRN) and
+      not usePotent(Potent::REPULS) /* and not usePotent(Potent::SOLV) */) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_mlist) {
       u = Nbl::DOUBLE_LOOP;
@@ -121,7 +112,7 @@ Nbl mlistVersion()
 Nbl ulistVersion()
 {
    Nbl u;
-   if (!usePotent(Potent::POLAR)) {
+   if (not usePotent(Potent::POLAR)) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_ulist) {
       u = Nbl::DOUBLE_LOOP;
@@ -141,7 +132,7 @@ Nbl ulistVersion()
 Nbl dsplistVersion()
 {
    Nbl u;
-   if (!usePotent(Potent::DISP)) {
+   if (not usePotent(Potent::DISP)) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_dlist) {
       u = Nbl::DOUBLE_LOOP;
@@ -157,16 +148,18 @@ Nbl dsplistVersion()
    }
    return u;
 }
+}
 
-//====================================================================//
+namespace tinker {
+#if TINKER_CUDART
+static bool alloc_thrust_cache;
+#endif
 
-/**
- * In the gas phase calculation where neighbor list is not used, we should
- * always first check the value of `maxn`. If `maxn` is equal to 1, it means
- * the value of cutoff can even be `INF`.
- * \see cutoffs.f
- */
-static int nblist_maxlst(int maxn, double cutoff, double buffer)
+// In the gas phase calculation where neighbor list is not used, we should
+// always first check the value of `maxn`. If `maxn` is equal to 1, it means
+// the value of cutoff can even be `INF`.
+// \see cutoffs.f
+static int nblistMaxlst(int maxn, double cutoff, double buffer)
 {
    if (maxn > 1) {
       double buf = (cutoff + buffer);
@@ -191,7 +184,7 @@ static int nblist_maxlst(int maxn, double cutoff, double buffer)
 }
 
 // RcOp::ALLOC
-static void nblist_alloc(Nbl version, NBListUnit& nblu, int maxn, real cutoff, real buffer,
+static void nblistAlloc(Nbl version, NBListUnit& nblu, int maxn, real cutoff, real buffer,
    const real* x, const real* y, const real* z)
 {
    if (version & Nbl::DOUBLE_LOOP)
@@ -202,7 +195,7 @@ static void nblist_alloc(Nbl version, NBListUnit& nblu, int maxn, real cutoff, r
 
    darray::allocate(n, &st.nlst);
 
-   int maxlst = nblist_maxlst(maxn, cutoff, buffer);
+   int maxlst = nblistMaxlst(maxn, cutoff, buffer);
    darray::allocate(maxlst * n, &st.lst);
 
    if (maxlst == 1) {
@@ -226,13 +219,8 @@ static void nblist_alloc(Nbl version, NBListUnit& nblu, int maxn, real cutoff, r
    waitFor(g::q0);
 }
 
-#if TINKER_CUDART
-static bool alloc_thrust_cache;
-#else
-#endif
-
 // RcOp::ALLOC
-static void spatial_alloc( //
+static void spatialAlloc( //
    SpatialUnit& unt, int n, real cut, real buf, const real* x, const real* y, const real* z,
    int nstype,                           //
    int ns1 = 0, int (*js1)[2] = nullptr, //
@@ -249,7 +237,14 @@ static void spatial_alloc( //
 }
 
 // RcOp::INIT
-static void spatial_build(SpatialUnit unt)
+extern void nblistBuild_acc(NBListUnit);
+static void nblistBuild(NBListUnit u)
+{
+   nblistBuild_acc(u);
+}
+
+// RcOp::INIT
+static void spatialBuild(SpatialUnit unt)
 {
 #if TINKER_CUDART
    spatialDataInit_cu(unt);
@@ -257,27 +252,6 @@ static void spatial_build(SpatialUnit unt)
 #endif
 }
 
-static void spatial_update(SpatialUnit unt)
-{
-#if TINKER_CUDART
-   extern int check_spatial(
-      int, real, int*, const real*, const real*, const real*, real*, real*, real*);
-   auto& st = *unt;
-   int answer =
-      check_spatial(st.n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold, st.zold);
-   if (answer) {
-      spatialDataInit_cu(unt);
-   } else {
-      spatialDataUpdateSorted_cu(unt);
-   }
-#else
-#endif
-}
-
-//====================================================================//
-
-void nblist_build_acc(NBListUnit); // RcOp::INIT
-void nblist_update_acc(NBListUnit);
 void nblistData(RcOp op)
 {
    if (op & RcOp::DEALLOC) {
@@ -319,21 +293,21 @@ void nblistData(RcOp op)
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = vlist_unit;
       if (op & RcOp::ALLOC) {
-         nblist_alloc(u, unt, 2500, cut, buf, xred, yred, zred);
+         nblistAlloc(u, unt, 2500, cut, buf, xred, yred, zred);
       }
       if (op & RcOp::INIT) {
          ehal_reduce_xyz();
-         nblist_build_acc(unt);
+         nblistBuild(unt);
       }
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = vspatial_v2_unit;
       if (op & RcOp::ALLOC) {
-         spatial_alloc(un2, n, cut, buf, xred, yred, zred, 1, nvexclude, vexclude);
+         spatialAlloc(un2, n, cut, buf, xred, yred, zred, 1, nvexclude, vexclude);
       }
       if (op & RcOp::INIT) {
          ehal_reduce_xyz();
-         spatial_build(un2);
+         spatialBuild(un2);
       }
    }
 
@@ -352,20 +326,20 @@ void nblistData(RcOp op)
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = clist_unit;
       if (op & RcOp::ALLOC) {
-         nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
+         nblistAlloc(u, unt, 2500, cut, buf, x, y, z);
       }
       if (op & RcOp::INIT) {
-         nblist_build_acc(unt);
+         nblistBuild(unt);
       }
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = cspatial_v2_unit;
       if (op & RcOp::ALLOC) {
-         spatial_alloc(un2, n, cut, buf, x, y, z, 3, //
+         spatialAlloc(un2, n, cut, buf, x, y, z, 3, //
             ncexclude, cexclude, nvexclude, vexclude, ncvexclude, cvexclude);
       }
       if (op & RcOp::INIT) {
-         spatial_build(un2);
+         spatialBuild(un2);
       }
    }
 
@@ -376,25 +350,25 @@ void nblistData(RcOp op)
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = mlist_unit;
       if (op & RcOp::ALLOC) {
-         nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
+         nblistAlloc(u, unt, 2500, cut, buf, x, y, z);
       }
       if (op & RcOp::INIT) {
-         nblist_build_acc(unt);
+         nblistBuild(unt);
       }
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = mspatial_v2_unit;
       if (op & RcOp::ALLOC) {
          if (mplpot::use_chgpen) {
-            spatial_alloc(
+            spatialAlloc(
                un2, n, cut, buf, x, y, z, 2, nmdwexclude, mdwexclude, nrepexclude, repexclude);
          } else {
-            spatial_alloc(un2, n, cut, buf, x, y, z, 4, nmdpuexclude, mdpuexclude, nmexclude,
+            spatialAlloc(un2, n, cut, buf, x, y, z, 4, nmdpuexclude, mdpuexclude, nmexclude,
                mexclude, ndpexclude, dpexclude, nuexclude, uexclude);
          }
       }
       if (op & RcOp::INIT) {
-         spatial_build(un2);
+         spatialBuild(un2);
       }
    }
 
@@ -406,23 +380,23 @@ void nblistData(RcOp op)
       auto& unt = ulist_unit;
       if (op & RcOp::ALLOC) {
          const int maxnlst = 500;
-         nblist_alloc(u, unt, maxnlst, cut, buf, x, y, z);
+         nblistAlloc(u, unt, maxnlst, cut, buf, x, y, z);
       }
       if (op & RcOp::INIT) {
-         nblist_build_acc(unt);
+         nblistBuild(unt);
       }
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = uspatial_v2_unit;
       if (op & RcOp::ALLOC) {
          if (mplpot::use_chgpen) {
-            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nwexclude, wexclude);
+            spatialAlloc(un2, n, cut, buf, x, y, z, 1, nwexclude, wexclude);
          } else {
-            spatial_alloc(un2, n, cut, buf, x, y, z, 1, nuexclude, uexclude);
+            spatialAlloc(un2, n, cut, buf, x, y, z, 1, nuexclude, uexclude);
          }
       }
       if (op & RcOp::INIT) {
-         spatial_build(un2);
+         spatialBuild(un2);
       }
    }
 
@@ -433,25 +407,49 @@ void nblistData(RcOp op)
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = dsplist_unit;
       if (op & RcOp::ALLOC) {
-         nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
+         nblistAlloc(u, unt, 2500, cut, buf, x, y, z);
       }
       if (op & RcOp::INIT) {
-         nblist_build_acc(unt);
+         nblistBuild(unt);
       }
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = dspspatial_v2_unit;
       if (op & RcOp::ALLOC) {
-         spatial_alloc(un2, n, cut, buf, x, y, z, 1, ndspexclude, dspexclude);
+         spatialAlloc(un2, n, cut, buf, x, y, z, 1, ndspexclude, dspexclude);
       }
       if (op & RcOp::INIT) {
-         spatial_build(un2);
+         spatialBuild(un2);
       }
    }
 
 #if TINKER_CUDART
    if (alloc_thrust_cache)
       ThrustCache::allocate();
+#endif
+}
+}
+
+namespace tinker {
+extern void nblistUpdate_acc(NBListUnit);
+static void nblistUpdate(NBListUnit u)
+{
+   nblistUpdate_acc(u);
+}
+
+extern int spatialCheck_acc(
+   int, real, int*, const real*, const real*, const real*, real*, real*, real*);
+static void spatialUpdate(SpatialUnit unt)
+{
+#if TINKER_CUDART
+   auto& st = *unt;
+   int answer =
+      spatialCheck_acc(st.n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold, st.zold);
+   if (answer) {
+      spatialDataInit_cu(unt);
+   } else {
+      spatialDataUpdateSorted_cu(unt);
+   }
 #endif
 }
 
@@ -464,12 +462,12 @@ void nblistRefresh()
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = vlist_unit;
       ehal_reduce_xyz();
-      nblist_update_acc(unt);
+      nblistUpdate(unt);
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = vspatial_v2_unit;
       ehal_reduce_xyz();
-      spatial_update(un2);
+      spatialUpdate(un2);
    }
 
    // clist
@@ -482,7 +480,7 @@ void nblistRefresh()
          unt->z = z;
          unt.deviceptrUpdate(*unt, g::q0);
       }
-      nblist_update_acc(unt);
+      nblistUpdate(unt);
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = cspatial_v2_unit;
@@ -491,7 +489,7 @@ void nblistRefresh()
          un2->y = y;
          un2->z = z;
       }
-      spatial_update(un2);
+      spatialUpdate(un2);
    }
 
    // mlist
@@ -504,7 +502,7 @@ void nblistRefresh()
          unt->z = z;
          unt.deviceptrUpdate(*unt, g::q0);
       }
-      nblist_update_acc(unt);
+      nblistUpdate(unt);
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = mspatial_v2_unit;
@@ -513,7 +511,7 @@ void nblistRefresh()
          un2->y = y;
          un2->z = z;
       }
-      spatial_update(un2);
+      spatialUpdate(un2);
    }
 
    // ulist
@@ -526,7 +524,7 @@ void nblistRefresh()
          unt->z = z;
          unt.deviceptrUpdate(*unt, g::q0);
       }
-      nblist_update_acc(unt);
+      nblistUpdate(unt);
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = uspatial_v2_unit;
@@ -535,7 +533,7 @@ void nblistRefresh()
          un2->y = y;
          un2->z = z;
       }
-      spatial_update(un2);
+      spatialUpdate(un2);
    }
 
    // dsplist
@@ -548,7 +546,7 @@ void nblistRefresh()
          unt->z = z;
          unt.deviceptrUpdate(*unt, g::q0);
       }
-      nblist_update_acc(unt);
+      nblistUpdate(unt);
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = dspspatial_v2_unit;
@@ -557,7 +555,7 @@ void nblistRefresh()
          un2->y = y;
          un2->z = z;
       }
-      spatial_update(un2);
+      spatialUpdate(un2);
    }
 }
 }
