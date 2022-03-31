@@ -37,6 +37,7 @@ evalence.cpp
 evdw.cpp
 ff/atom.cpp
 ff/box.cpp
+ff/elec.cpp
 ff/molecule.cpp
 ff/potent.cpp
 ff/switch.cpp

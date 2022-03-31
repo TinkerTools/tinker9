@@ -2,14 +2,8 @@
 #include "precision.h"
 #include "tool/rcman.h"
 
-namespace tinker {
-bool useEwald();
-void elecData(RcOp);
-}
-
 extern "C"
 {
-   // PME grids.
    struct PCHG
    {
       int foo;
@@ -35,7 +29,6 @@ extern "C"
       int foo;
    };
 
-   // Ewald vs. Non-Ewald
    struct EWALD
    {
       int foo;
@@ -44,7 +37,7 @@ extern "C"
    struct DEWALD
    {
       int foo;
-   }; // Dispersion PME
+   };
 
    struct NON_EWALD
    {
@@ -54,9 +47,8 @@ extern "C"
    struct NON_EWALD_TAPER
    {
       int foo;
-   }; // Non-EWALD partial charge also uses switching functions.
+   };
 
-   // GORDON1 vs. GORDON2 damping functions
    struct GORDON1
    {
       int foo;
@@ -68,6 +60,13 @@ extern "C"
    };
 }
 
+namespace tinker {
+/// \ingroup ff
+bool useEwald();
+/// \ingroup ff
+void elecData(RcOp);
+}
+
 //====================================================================//
 //                                                                    //
 //                          Global Variables                          //
@@ -75,6 +74,8 @@ extern "C"
 //====================================================================//
 
 namespace tinker {
+/// \ingroup ff
 TINKER_EXTERN real electric;
+/// \ingroup ff
 TINKER_EXTERN real dielec;
 }

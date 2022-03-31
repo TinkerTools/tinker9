@@ -14,8 +14,6 @@
 #include <tinker/detail/usage.hh>
 
 namespace tinker {
-
-
 void mdPos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,
    const vel_prec* vly, const vel_prec* vlz)
 {
