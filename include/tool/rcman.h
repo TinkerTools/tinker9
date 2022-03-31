@@ -42,26 +42,14 @@ constexpr bool operator&(E lhs, E rhs)
 /// \ingroup rc
 enum class ResourceOperation
 {
-   DEALLOC = 0x001,
-   ALLOC = 0x002,
-   INIT = 0x004
+   DEALLOC = 0x001, ///< Deallocates resource.
+   ALLOC = 0x002,   ///< Allocates resource.
+   INIT = 0x004     ///< Initializes resource.
 };
 TINKER_ENABLE_ENUM_BITMASK(ResourceOperation);
 /// \ingroup rc
 /// Type alias.
 using RcOp = ResourceOperation;
-
-/// \ingroup rc
-/// \brief Deallocates resource.
-constexpr RcOp rc_dealloc = RcOp::DEALLOC;
-
-/// \ingroup rc
-/// \brief Allocates resource.
-constexpr RcOp rc_alloc = RcOp::ALLOC;
-
-/// \ingroup rc
-/// \brief Initializes resource.
-constexpr RcOp rc_init = RcOp::INIT;
 
 /// \ingroup rc
 /// \brief Resource management. Allocates resources in the object constructor and

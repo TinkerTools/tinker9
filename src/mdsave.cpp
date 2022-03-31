@@ -186,7 +186,7 @@ void mdsaveSynchronize()
 
 void mdsaveData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       dup_stream.deallocate();
 
       if (mdsave_use_uind()) {
@@ -198,7 +198,7 @@ void mdsaveData(RcOp op)
       darray::deallocate(dup_buf_gx, dup_buf_gy, dup_buf_gz);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       dup_stream.allocate();
 
       if (mdsave_use_uind()) {
@@ -212,7 +212,7 @@ void mdsaveData(RcOp op)
       darray::allocate(n, &dup_buf_gx, &dup_buf_gy, &dup_buf_gz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       idle_dup = false;
       idle_write = true;
    }

@@ -45,7 +45,7 @@ void epolarData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       nuexclude = 0;
       darray::deallocate(uexclude, uexclude_scale);
       ndpexclude = 0;
@@ -89,7 +89,7 @@ void epolarData(RcOp op)
       nualt = 0;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       // see also attach.f
       const int maxn13 = 3 * sizes::maxval;
       const int maxn14 = 9 * sizes::maxval;
@@ -472,7 +472,7 @@ void epolarData(RcOp op)
       }
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       // TODO: rename udiag to uaccel
       udiag = polpot::uaccel;
 

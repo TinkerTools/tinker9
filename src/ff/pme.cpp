@@ -121,7 +121,7 @@ void pmeData(RcOp op)
    if (!useEwald() && !useDEwald())
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       PMEUnit::clear();
       epme_unit.close();
       ppme_unit.close();
@@ -129,7 +129,7 @@ void pmeData(RcOp op)
       dpme_unit.close();
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       if (!bound::use_bounds) {
          double ecut = switchOff(Switch::EWALD);
          double dcut = switchOff(Switch::DEWALD);
@@ -141,19 +141,19 @@ void pmeData(RcOp op)
    }
 
    if (usePotent(Potent::CHARGE) && useEwald()) {
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          epme_unit.close();
          PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bseorder);
          pmeOpAlloc(epme_unit, p, false);
       }
 
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          pmeOpCopyin(epme_unit);
       }
    }
 
    if ((usePotent(Potent::MPOLE) || usePotent(Potent::POLAR)) && useEwald()) {
-      if (op & rc_dealloc) {
+      if (op & RcOp::DEALLOC) {
          darray::deallocate(cmp, fmp, cphi, fphi);
          if (usePotent(Potent::POLAR)) {
             darray::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp, fphidp);
@@ -161,7 +161,7 @@ void pmeData(RcOp op)
          }
       }
 
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          darray::allocate(n, &cmp, &fmp, &cphi, &fphi);
          if (usePotent(Potent::POLAR)) {
             darray::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp, &fphidp);
@@ -196,7 +196,7 @@ void pmeData(RcOp op)
          }
       }
 
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          pmeOpCopyin(epme_unit);
          pmeOpCopyin(ppme_unit);
          pmeOpCopyin(pvpme_unit);
@@ -204,13 +204,13 @@ void pmeData(RcOp op)
    }
 
    if (usePotent(Potent::DISP) && useDEwald()) {
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          dpme_unit.close();
          PME::Params p(ewald::adewald, pme::ndfft1, pme::ndfft2, pme::ndfft3, pme::bsdorder);
          pmeOpAlloc(dpme_unit, p, false);
       }
 
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          pmeOpCopyin(dpme_unit);
       }
    }

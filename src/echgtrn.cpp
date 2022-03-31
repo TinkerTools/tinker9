@@ -17,7 +17,7 @@ void echgtrnData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(chgct, dmpct);
 
       if (rc_a) {
@@ -32,7 +32,7 @@ void echgtrnData(RcOp op)
       dectz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       darray::allocate(n, &chgct, &dmpct);
 
       nct = nullptr;
@@ -47,7 +47,7 @@ void echgtrnData(RcOp op)
       }
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       darray::copyin(g::q0, n, chgct, chgtrn::chgct);
       std::vector<real> dmpctvec(n);
       for (int i = 0; i < n; ++i) {

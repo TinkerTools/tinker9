@@ -18,7 +18,7 @@ void echargeData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       ncexclude = 0;
       darray::deallocate(cexclude, cexclude_scale);
 
@@ -34,7 +34,7 @@ void echargeData(RcOp op)
       decz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       ebuffer = chgpot::ebuffer;
 
       c2scale = chgpot::c2scale;
@@ -121,7 +121,7 @@ void echargeData(RcOp op)
       }
    }
 
-   if (op & rc_init) {}
+   if (op & RcOp::INIT) {}
 }
 
 void echarge(int vers)

@@ -13,7 +13,7 @@ void egeomData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       npfix = 0;
       darray::deallocate(ipfix, kpfix, xpfix, ypfix, zpfix, pfix);
       ngfix = 0;
@@ -34,7 +34,7 @@ void egeomData(RcOp op)
       degz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       npfix = restrn::npfix;
       darray::allocate(npfix, &ipfix, &kpfix, &xpfix, &ypfix, &zpfix, &pfix);
       ngfix = restrn::ngfix;
@@ -55,7 +55,7 @@ void egeomData(RcOp op)
          bufferAllocate(rc_flag, &eg, &vir_eg, &degx, &degy, &degz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<int> ipfixbuf(npfix);
       for (int i = 0; i < npfix; ++i) {
          ipfixbuf[i] = restrn::ipfix[i] - 1;

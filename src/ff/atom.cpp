@@ -12,14 +12,14 @@
 namespace tinker {
 void nData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       trajn = -1;
       n = 0;
       padded_n = 0;
       nelem_buffer = 0;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       n = atoms::n;
       padded_n = (n + WARP_SIZE - 1) / WARP_SIZE;
       padded_n *= WARP_SIZE;
@@ -47,15 +47,15 @@ void massData(RcOp op)
    if ((calc::mass & rc_flag) == 0)
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(mass, massinv);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       darray::allocate(n, &mass, &massinv);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<double> mbuf(n);
       for (int i = 0; i < n; ++i)
          mbuf[i] = 1 / atomid::mass[i];
@@ -70,7 +70,7 @@ void xyzData(RcOp op)
    if ((calc::xyz & rc_flag) == 0)
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       if (calc::traj & rc_flag) {
          darray::deallocate(trajx, trajy, trajz);
          x = nullptr;
@@ -91,7 +91,7 @@ void xyzData(RcOp op)
       }
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       if (calc::traj & rc_flag) {
          darray::allocate(n * trajn, &trajx, &trajy, &trajz);
          x = trajx;
@@ -109,7 +109,7 @@ void xyzData(RcOp op)
       }
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       if (calc::traj & rc_flag) {
          darray::copyin(g::q0, n, x, atoms::x);
          darray::copyin(g::q0, n, y, atoms::y);

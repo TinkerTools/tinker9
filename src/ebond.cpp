@@ -16,7 +16,7 @@ void ebondData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(ibnd, bl, bk);
 
       if (rc_a)
@@ -28,7 +28,7 @@ void ebondData(RcOp op)
       debz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       nbond = countBondedTerm(Potent::BOND);
       darray::allocate(nbond, &ibnd, &bl, &bk);
 
@@ -41,7 +41,7 @@ void ebondData(RcOp op)
          bufferAllocate(rc_flag, &eb, &vir_eb, &debx, &deby, &debz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       FstrView btyp = bndpot::bndtyp;
       if (btyp == "HARMONIC")
          bndtyp = ebond_t::harmonic;

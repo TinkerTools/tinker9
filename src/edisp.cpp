@@ -27,7 +27,7 @@ void edispData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(csix, adisp);
       darray::deallocate(dspexclude, dspexclude_scale);
 
@@ -46,7 +46,7 @@ void edispData(RcOp op)
       vlrc_vol_dsp = 0;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       darray::allocate(n, &csix, &adisp);
 
       ndisp = nullptr;
@@ -145,7 +145,7 @@ void edispData(RcOp op)
       waitFor(g::q0);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       csixpr = disp::csixpr;
       darray::copyin(g::q0, n, csix, disp::csix);
       darray::copyin(g::q0, n, adisp, disp::adisp);

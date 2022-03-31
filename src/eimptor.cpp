@@ -13,7 +13,7 @@ void eimptorData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(iitors, itors1, itors2, itors3);
       if (rc_a)
          bufferDeallocate(rc_flag, eit, vir_eit, deitx, deity, deitz);
@@ -24,7 +24,7 @@ void eimptorData(RcOp op)
       deitz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       nitors = imptor::nitors;
       darray::allocate(nitors, &iitors, &itors1, &itors2, &itors3);
       eit = eng_buf;
@@ -36,7 +36,7 @@ void eimptorData(RcOp op)
          bufferAllocate(rc_flag, &eit, &vir_eit, &deitx, &deity, &deitz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<int> ibuf(4 * nitors);
       for (int i = 0; i < 4 * nitors; ++i) {
          ibuf[i] = imptor::iitors[i] - 1;

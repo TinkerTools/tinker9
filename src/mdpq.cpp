@@ -79,7 +79,7 @@ void mdReadFrameCopyinToXyz(std::istream& ipt, int& done)
          atoms::z[index] = zr;
       }
 
-      xyzData(rc_init);
+      xyzData(RcOp::INIT);
    }
 
    if (ipt.peek() == EOF)
@@ -111,15 +111,15 @@ void mdVelData(RcOp op)
    if ((calc::vel & rc_flag) == 0)
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(vx, vy, vz);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       darray::allocate(n, &vx, &vy, &vz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<vel_prec> vvx(n), vvy(n), vvz(n);
       for (int i = 0; i < n; ++i) {
          vvx[i] = moldyn::v[3 * i + 0];

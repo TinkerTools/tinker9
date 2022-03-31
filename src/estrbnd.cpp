@@ -13,7 +13,7 @@ void estrbndData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(isb, sbk);
 
       if (rc_a)
@@ -25,7 +25,7 @@ void estrbndData(RcOp op)
       debaz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       int nangle = countBondedTerm(Potent::ANGLE);
       darray::allocate(nangle, &isb, &sbk);
       nstrbnd = countBondedTerm(Potent::STRBND);
@@ -39,7 +39,7 @@ void estrbndData(RcOp op)
          bufferAllocate(rc_flag, &eba, &vir_eba, &debax, &debay, &debaz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       int nangle = countBondedTerm(Potent::ANGLE);
       std::vector<int> ibuf(3 * nangle);
       for (int i = 0; i < 3 * nangle; ++i) {

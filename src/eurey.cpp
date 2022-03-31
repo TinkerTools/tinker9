@@ -13,7 +13,7 @@ void eureyData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(iury, uk, ul);
 
       if (rc_a)
@@ -25,7 +25,7 @@ void eureyData(RcOp op)
       deubz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       int nangle = countBondedTerm(Potent::ANGLE);
       darray::allocate(nangle, &iury, &uk, &ul);
 
@@ -40,7 +40,7 @@ void eureyData(RcOp op)
          bufferAllocate(rc_flag, &eub, &vir_eub, &deubx, &deuby, &deubz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       int nangle = countBondedTerm(Potent::ANGLE);
       std::vector<int> ibuf(3 * nangle);
       for (int i = 0; i < 3 * nangle; ++i)

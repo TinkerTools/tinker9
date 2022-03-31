@@ -184,7 +184,7 @@ void rattleData(RcOp op)
    if (not useRattle())
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       rattle_dmol.nmol = 0;
       rattle_dmol.totmass = 0;
       darray::deallocate(
@@ -216,7 +216,7 @@ void rattleData(RcOp op)
       darray::deallocate(rattle_xold, rattle_yold, rattle_zold);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       // save data from Fortran library
       for (int ir = 0; ir < freeze::nrat; ++ir) {
          int i0 = freeze::irat[ir * 2 + 0] - 1;

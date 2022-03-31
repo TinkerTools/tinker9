@@ -15,7 +15,7 @@ void eopbendData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(iopb, opbk);
 
       if (rc_a)
@@ -27,7 +27,7 @@ void eopbendData(RcOp op)
       deopbz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       int nangle = countBondedTerm(Potent::ANGLE);
       darray::allocate(nangle, &iopb, &opbk);
       nopbend = countBondedTerm(Potent::OPBEND);
@@ -41,7 +41,7 @@ void eopbendData(RcOp op)
          bufferAllocate(rc_flag, &eopb, &vir_eopb, &deopbx, &deopby, &deopbz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       FstrView otyp = angpot::opbtyp;
       if (otyp == "W-D-C")
          opbtyp = eopbend_t::w_d_c;

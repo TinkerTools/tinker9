@@ -43,7 +43,7 @@ void epolarChgpenData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(polarity, polarity_inv);
 
       if (rc_a) {
@@ -75,7 +75,7 @@ void epolarChgpenData(RcOp op)
       nualt = 0;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       darray::allocate(n, &polarity, &polarity_inv);
 
       nep = nullptr;
@@ -137,7 +137,7 @@ void epolarChgpenData(RcOp op)
       }
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       udiag = polpot::uaccel;
 
       const double polmin = 1.0e-16;

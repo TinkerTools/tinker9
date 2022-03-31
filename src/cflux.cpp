@@ -24,14 +24,14 @@ void cfluxData(RcOp op)
    if (!potent::use_chgflx)
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(bflx, aflx, abflx);
       darray::deallocate(pdelta, atomic, balist);
       darray::deallocate(mono0);
       darray::deallocate(decfx, decfy, decfz, pot);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       darray::allocate(n, &pdelta, &atomic);
       darray::allocate(n, &mono0);
       darray::allocate(nbond, &bflx);
@@ -47,7 +47,7 @@ void cfluxData(RcOp op)
       }
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       darray::copyin(g::q0, nbond, bflx, cflux::bflx);
       darray::copyin(g::q0, nangle, aflx, cflux::aflx);
       darray::copyin(g::q0, nangle, abflx, cflux::abflx);

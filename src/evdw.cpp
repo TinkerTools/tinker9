@@ -32,7 +32,7 @@ void evdwData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       // local static variables
       jmap.clear();
       jvec.clear();
@@ -67,7 +67,7 @@ void evdwData(RcOp op)
       vlrc_vol = 0;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       FstrView str = vdwpot::vdwtyp;
       if (str == "LENNARD-JONES")
          vdwtyp = evdw_t::lj;
@@ -315,7 +315,7 @@ void evdwData(RcOp op)
       }
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       // Halgren
       if (vdwtyp == evdw_t::hal) {
          ghal = vdwpot::ghal;

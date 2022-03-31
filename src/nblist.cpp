@@ -190,7 +190,7 @@ static int nblist_maxlst(int maxn, double cutoff, double buffer)
    }
 }
 
-// rc_alloc
+// RcOp::ALLOC
 static void nblist_alloc(Nbl version, NBListUnit& nblu, int maxn, real cutoff, real buffer,
    const real* x, const real* y, const real* z)
 {
@@ -231,7 +231,7 @@ static bool alloc_thrust_cache;
 #else
 #endif
 
-// rc_alloc
+// RcOp::ALLOC
 static void spatial_alloc( //
    SpatialUnit& unt, int n, real cut, real buf, const real* x, const real* y, const real* z,
    int nstype,                           //
@@ -248,7 +248,7 @@ static void spatial_alloc( //
 #endif
 }
 
-// rc_init
+// RcOp::INIT
 static void spatial_build(SpatialUnit unt)
 {
 #if TINKER_CUDART
@@ -276,11 +276,11 @@ static void spatial_update(SpatialUnit unt)
 
 //====================================================================//
 
-void nblist_build_acc(NBListUnit); // rc_init
+void nblist_build_acc(NBListUnit); // RcOp::INIT
 void nblist_update_acc(NBListUnit);
 void nblistData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       NBListUnit::clear();
       vlist_unit.close();
       clist_unit.close();
@@ -300,7 +300,7 @@ void nblistData(RcOp op)
 #endif
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       assert(NBListUnit::size() == 0);
       assert(SpatialUnit::size() == 0);
    }
@@ -318,20 +318,20 @@ void nblistData(RcOp op)
    buf = neigh::lbuffer;
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = vlist_unit;
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          nblist_alloc(u, unt, 2500, cut, buf, xred, yred, zred);
       }
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          ehal_reduce_xyz();
          nblist_build_acc(unt);
       }
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = vspatial_v2_unit;
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          spatial_alloc(un2, n, cut, buf, xred, yred, zred, 1, nvexclude, vexclude);
       }
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          ehal_reduce_xyz();
          spatial_build(un2);
       }
@@ -351,20 +351,20 @@ void nblistData(RcOp op)
    buf = neigh::lbuffer;
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = clist_unit;
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
       }
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          nblist_build_acc(unt);
       }
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = cspatial_v2_unit;
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          spatial_alloc(un2, n, cut, buf, x, y, z, 3, //
             ncexclude, cexclude, nvexclude, vexclude, ncvexclude, cvexclude);
       }
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          spatial_build(un2);
       }
    }
@@ -375,16 +375,16 @@ void nblistData(RcOp op)
    buf = neigh::lbuffer;
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = mlist_unit;
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
       }
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          nblist_build_acc(unt);
       }
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = mspatial_v2_unit;
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          if (mplpot::use_chgpen) {
             spatial_alloc(
                un2, n, cut, buf, x, y, z, 2, nmdwexclude, mdwexclude, nrepexclude, repexclude);
@@ -393,7 +393,7 @@ void nblistData(RcOp op)
                mexclude, ndpexclude, dpexclude, nuexclude, uexclude);
          }
       }
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          spatial_build(un2);
       }
    }
@@ -404,24 +404,24 @@ void nblistData(RcOp op)
    buf = neigh::pbuffer;
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = ulist_unit;
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          const int maxnlst = 500;
          nblist_alloc(u, unt, maxnlst, cut, buf, x, y, z);
       }
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          nblist_build_acc(unt);
       }
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = uspatial_v2_unit;
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          if (mplpot::use_chgpen) {
             spatial_alloc(un2, n, cut, buf, x, y, z, 1, nwexclude, wexclude);
          } else {
             spatial_alloc(un2, n, cut, buf, x, y, z, 1, nuexclude, uexclude);
          }
       }
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          spatial_build(un2);
       }
    }
@@ -432,19 +432,19 @@ void nblistData(RcOp op)
    buf = neigh::lbuffer;
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = dsplist_unit;
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          nblist_alloc(u, unt, 2500, cut, buf, x, y, z);
       }
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          nblist_build_acc(unt);
       }
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = dspspatial_v2_unit;
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          spatial_alloc(un2, n, cut, buf, x, y, z, 1, ndspexclude, dspexclude);
       }
-      if (op & rc_init) {
+      if (op & RcOp::INIT) {
          spatial_build(un2);
       }
    }

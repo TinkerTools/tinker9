@@ -65,11 +65,11 @@ extern "C"
 namespace tinker {
 void echglj_data_cu(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       use_pme_stream = false;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       use_pme_stream = true;
    }
 }

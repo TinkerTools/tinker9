@@ -21,7 +21,7 @@ void erepelData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(sizpr, dmppr, elepr);
       nrepexclude = 0;
       darray::deallocate(repexclude, repexclude_scale);
@@ -38,7 +38,7 @@ void erepelData(RcOp op)
       derz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       darray::allocate(n, &sizpr, &dmppr, &elepr);
 
       nrep = nullptr;
@@ -128,7 +128,7 @@ void erepelData(RcOp op)
       waitFor(g::q0);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       darray::copyin(g::q0, n, sizpr, repel::sizpr);
       darray::copyin(g::q0, n, dmppr, repel::dmppr);
       darray::copyin(g::q0, n, elepr, repel::elepr);

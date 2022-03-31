@@ -13,7 +13,7 @@ void estrtorData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       nstrtor = 0;
       darray::deallocate(ist, kst);
       if (rc_a)
@@ -25,7 +25,7 @@ void estrtorData(RcOp op)
       debtz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       nstrtor = countBondedTerm(Potent::STRTOR);
       darray::allocate(nstrtor, &ist, &kst);
 
@@ -38,7 +38,7 @@ void estrtorData(RcOp op)
          bufferAllocate(rc_flag, &ebt, &vir_ebt, &debtx, &debty, &debtz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<int> ibuf;
       ibuf.resize(4 * nstrtor);
       for (int i = 0; i < 4 * nstrtor; ++i)

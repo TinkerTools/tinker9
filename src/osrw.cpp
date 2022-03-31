@@ -96,7 +96,7 @@ void osrwData(RcOp op)
    if (!use_osrw)
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       if (rc_flag & calc::grad) {
          darray::deallocate(osrw_dgx, osrw_dgy, osrw_dgz);
          darray::deallocate(osrw_gx, osrw_gy, osrw_gz);
@@ -122,7 +122,7 @@ void osrwData(RcOp op)
       }
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       if (rc_flag & calc::grad) {
          darray::allocate(n, &osrw_dgx, &osrw_dgy, &osrw_dgz);
          darray::allocate(n, &osrw_gx, &osrw_gy, &osrw_gz);
@@ -166,7 +166,7 @@ void osrwData(RcOp op)
       }
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       if (usePotent(Potent::CHARGE)) {
          darray::copy(g::q0, n, osrw_pchg, pchg);
       }

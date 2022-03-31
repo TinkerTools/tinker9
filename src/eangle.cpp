@@ -20,7 +20,7 @@ void eangleData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(iang, ak, anat, afld, angtyp);
 
       if (rc_a)
@@ -32,7 +32,7 @@ void eangleData(RcOp op)
       deaz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       nangle = countBondedTerm(Potent::ANGLE);
       darray::allocate(nangle, &iang, &ak, &anat, &afld, &angtyp);
 
@@ -45,7 +45,7 @@ void eangleData(RcOp op)
          bufferAllocate(rc_flag, &ea, &vir_ea, &deax, &deay, &deaz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<int> iangvec(nangle * 4);
       for (size_t i = 0; i < iangvec.size(); ++i) {
          iangvec[i] = angbnd::iang[i] - 1;

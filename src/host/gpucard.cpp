@@ -3,12 +3,12 @@
 namespace tinker {
 void gpuData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       ndevice = 0;
       idevice = -1;
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       ndevice = 1;
       idevice = 0;
    }

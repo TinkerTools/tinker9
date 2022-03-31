@@ -12,7 +12,7 @@ namespace tinker {
 void cudalibData(RcOp op)
 {
 #if TINKER_CUDART
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       check_rt(cudaProfilerStop());
 
       g::q0 = -42;
@@ -31,7 +31,7 @@ void cudalibData(RcOp op)
       check_rt(cudaEventDestroy(pme_event_finish));
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       g::q0 = acc_get_default_async();
       g::q1 = acc_async_sync;
       g::s0 = (cudaStream_t)acc_get_cuda_stream(g::q0);
@@ -63,7 +63,7 @@ void cudalibData(RcOp op)
       check_rt(cudaProfilerStart());
    }
 #else
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       use_pme_stream = false;
    }
 #endif

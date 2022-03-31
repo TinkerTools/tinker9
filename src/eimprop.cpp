@@ -13,9 +13,9 @@ void eimpropData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {}
+   if (op & RcOp::DEALLOC) {}
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       niprop = improp::niprop;
       darray::allocate(niprop, &iiprop, &kprop, &vprop);
       eid = eng_buf;
@@ -27,7 +27,7 @@ void eimpropData(RcOp op)
          bufferAllocate(rc_flag, &eid, &vir_eid, &deidx, &deidy, &deidz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<int> ibuf(4 * niprop);
       for (int i = 0; i < 4 * niprop; ++i) {
          ibuf[i] = improp::iiprop[i] - 1;

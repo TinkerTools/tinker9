@@ -17,7 +17,7 @@ void etortorData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy, chkttor_ia_);
 
       if (rc_a)
@@ -29,7 +29,7 @@ void etortorData(RcOp op)
       dettz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       nbitor = bitor_::nbitor;
       darray::allocate(nbitor, &ibitor, &itt);
 
@@ -47,7 +47,7 @@ void etortorData(RcOp op)
          bufferAllocate(rc_flag, &ett, &vir_ett, &dettx, &detty, &dettz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<int> ibuf;
 
       ibuf.resize(5 * nbitor);

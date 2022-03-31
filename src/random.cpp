@@ -75,7 +75,7 @@ template double chiSquared<double>(int);
 
 void randomData(RcOp op)
 {
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       int seed;
       get_kv("RANDOMSEED", seed, 0);
       seed = std::max(1, seed);

@@ -144,7 +144,7 @@ void boxData(RcOp op)
 {
    boxData_acc(op);
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       if (calc::traj & rc_flag) {
          std::free(trajbox);
       } else {
@@ -153,13 +153,13 @@ void boxData(RcOp op)
       box_shape = BoxShape::UNBOUND;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       if (calc::traj & rc_flag) {
          trajbox = (Box*)std::malloc(sizeof(Box) * trajn);
       }
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       Box p;
       boxGetTinkerModule(p);
       boxSetCurrent(p);

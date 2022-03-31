@@ -54,12 +54,12 @@ void mdPropagate(int nsteps, time_prec dt_ps)
 
 void mdIntegrateData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       delete intg;
       intg = nullptr;
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       ThermostatEnum thermostat = ThermostatEnum::Null;
       if (bath::isothermal) {
          FstrView th = bath::thermostat;

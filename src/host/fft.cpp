@@ -24,7 +24,7 @@ void fftData(RcOp op)
    if (!useEwald() && !useDEwald())
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       int idx = 0;
       while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit u = idx;
@@ -43,14 +43,14 @@ void fftData(RcOp op)
       FFTPlanUnit::clear();
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       assert(FFTPlanUnit::size() == 0);
 
       const size_t size = PMEUnit::size();
       FFTPlanUnit::resize<FFTPlanFFTW>(size);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       int idx = 0;
       while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit plan_u = idx;

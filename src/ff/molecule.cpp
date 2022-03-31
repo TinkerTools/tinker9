@@ -12,15 +12,15 @@ static_assert(couple_maxn12 >= sizes::maxval, "");
 
 void coupleData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(couple_i12, couple_n12);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       darray::allocate(n, &couple_i12, &couple_n12);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<int> ibuf;
       ibuf.resize(couple_maxn12 * n);
       for (int i = 0; i < n; ++i) {
@@ -42,17 +42,17 @@ void coupleData(RcOp op)
 
 void moleculeData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       auto& st = molecule;
       darray::deallocate(st.imol, st.kmol, st.molecule, st.molmass);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       auto& st = molecule;
       darray::allocate(n, &st.imol, &st.kmol, &st.molecule, &st.molmass);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       auto& st = molecule;
 
       std::vector<int> buf(2 * n);
@@ -82,12 +82,12 @@ void moleculeData(RcOp op)
 
 void groupData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       auto& st = grp;
       darray::deallocate(st.kgrp, st.grplist, st.igrp, st.grpmass, st.wgrp);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       auto& st = grp;
       st.ngrp = group::ngrp;
       // see cluster.f
@@ -101,7 +101,7 @@ void groupData(RcOp op)
       darray::allocate((1 + st.ngrp) * (1 + st.ngrp), &st.wgrp);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       // at most (n + 1) groups, e.g. NaCl ion pair
       // group 0: (NULL), igrp (fortran) 1,0, igrp (here) 0,0
       // group 1: Na+,    igrp (fortran) 1,1, igrp (here) 0,1

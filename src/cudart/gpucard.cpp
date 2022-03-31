@@ -242,7 +242,7 @@ static unsigned int cuda_device_flags = 0;
 
 void gpuData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       /*
       // should not reset these variables for the unit tests, if there are
       // multiple GPUs available
@@ -254,7 +254,7 @@ void gpuData(RcOp op)
       */
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       if (cuda_device_flags) {
          return;
       }

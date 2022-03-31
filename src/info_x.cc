@@ -46,8 +46,8 @@ void xInfo(int, char**)
    auto fmt = "    %-36s %s\n";
    auto fmz = "    %-36s %zu\n";
 
-   platformData(rc_init);
-   gpuData(rc_init);
+   platformData(RcOp::INIT);
+   gpuData(RcOp::INIT);
 
    print(out, "\n\n Program Information\n\n");
    print(out, fmt, "Version:", get_version_string());
@@ -106,7 +106,7 @@ void xInfo(int, char**)
    }
 #endif
 
-   gpuData(rc_dealloc);
-   platformData(rc_dealloc);
+   gpuData(RcOp::DEALLOC);
+   platformData(RcOp::DEALLOC);
 }
 }

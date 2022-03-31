@@ -5,11 +5,11 @@
 namespace tinker {
 void platformData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       pltfm_config = Platform::UNSET;
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
 #if TINKER_HOST
       pltfm_config = Platform::ACC;
 #endif

@@ -15,7 +15,7 @@ void etorsData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(itors, tors1, tors2, tors3, tors4, tors5, tors6);
 
       if (rc_a)
@@ -27,7 +27,7 @@ void etorsData(RcOp op)
       detz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       ntors = countBondedTerm(Potent::TORSION);
       darray::allocate(ntors, &itors, &tors1, &tors2, &tors3, &tors4, &tors5, &tors6);
 
@@ -40,7 +40,7 @@ void etorsData(RcOp op)
          bufferAllocate(rc_flag, &et, &vir_et, &detx, &dety, &detz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<int> ibuf(4 * ntors);
       for (int i = 0; i < 4 * ntors; ++i) {
          ibuf[i] = tors::itors[i] - 1;

@@ -13,7 +13,7 @@ void eangtorData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       nangtor = 0;
       darray::deallocate(iat, kant);
       if (rc_a)
@@ -25,7 +25,7 @@ void eangtorData(RcOp op)
       deatz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       nangtor = countBondedTerm(Potent::ANGTOR);
       darray::allocate(nangtor, &iat, &kant);
 
@@ -38,7 +38,7 @@ void eangtorData(RcOp op)
          bufferAllocate(rc_flag, &eat, &vir_eat, &deatx, &deaty, &deatz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<int> ibuf;
       ibuf.resize(4 * nangtor);
       for (int i = 0; i < 3 * nangtor; ++i)

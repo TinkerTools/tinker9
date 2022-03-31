@@ -52,8 +52,8 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
 
    tinkerFortranRuntimeBegin(argc, (char**)argv);
    initial();
-   gpuData(rc_alloc | rc_init);
-   boxData_acc(rc_alloc);
+   gpuData(RcOp::ALLOC | RcOp::INIT);
+   boxData_acc(RcOp::ALLOC);
 
    double eps = 1.0e-6;
    double p[] = {16, 16, 16, 90, 90, 90};
@@ -98,8 +98,8 @@ TEST_CASE("Box-1", "[ff][box][orthogonal]")
       compare_in();
    }
 
-   boxData_acc(rc_dealloc);
-   gpuData(rc_dealloc);
+   boxData_acc(RcOp::DEALLOC);
+   gpuData(RcOp::DEALLOC);
    tinker_f_final();
    tinkerFortranRuntimeEnd();
 }
@@ -112,8 +112,8 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
 
    tinkerFortranRuntimeBegin(argc, (char**)argv);
    initial();
-   gpuData(rc_alloc | rc_init);
-   boxData_acc(rc_alloc);
+   gpuData(RcOp::ALLOC | RcOp::INIT);
+   boxData_acc(RcOp::ALLOC);
 
    double eps = 1.0e-6;
    double p[] = {32, 24, 20, 90, 30, 90};
@@ -182,8 +182,8 @@ TEST_CASE("Box-2", "[ff][box][monoclinic]")
       compare_in();
    }
 
-   boxData_acc(rc_dealloc);
-   gpuData(rc_dealloc);
+   boxData_acc(RcOp::DEALLOC);
+   gpuData(RcOp::DEALLOC);
    tinker_f_final();
    tinkerFortranRuntimeEnd();
 }
@@ -197,8 +197,8 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
 
    tinkerFortranRuntimeBegin(argc, (char**)argv);
    initial();
-   gpuData(rc_alloc | rc_init);
-   boxData_acc(rc_alloc);
+   gpuData(RcOp::ALLOC | RcOp::INIT);
+   boxData_acc(RcOp::ALLOC);
 
    double eps = 1.0e-6;
    double p[] = {32, 24, 20, 75, 60, 45};
@@ -246,8 +246,8 @@ TEST_CASE("Box-3", "[ff][box][triclinic]")
       compare_in();
    }
 
-   boxData_acc(rc_dealloc);
-   gpuData(rc_dealloc);
+   boxData_acc(RcOp::DEALLOC);
+   gpuData(RcOp::DEALLOC);
    tinker_f_final();
    tinkerFortranRuntimeEnd();
 }

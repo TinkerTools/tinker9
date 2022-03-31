@@ -492,17 +492,17 @@ void egvData(RcOp op)
 {
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       deviceMemoryDeallocate(ev_dptr);
       ev_dptr = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       deviceMemoryAllocateBytes((void**)(&ev_dptr), sizeof(DHFlow));
    }
 
    if (rc_flag & calc::energy) {
-      if (op & rc_dealloc) {
+      if (op & RcOp::DEALLOC) {
          if (!rc_a) {
             darray::deallocate(eng_buf);
             if (useEnergyVdw())
@@ -512,7 +512,7 @@ void egvData(RcOp op)
          }
       }
 
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          zeroOnHost(eng_buf, eng_buf_vdw, eng_buf_elec);
          if (!rc_a) {
             auto sz = bufferSize();
@@ -526,7 +526,7 @@ void egvData(RcOp op)
    }
 
    if (rc_flag & calc::virial) {
-      if (op & rc_dealloc) {
+      if (op & RcOp::DEALLOC) {
          if (!rc_a) {
             darray::deallocate(vir_buf);
             if (useEnergyVdw())
@@ -536,7 +536,7 @@ void egvData(RcOp op)
          }
       }
 
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          zeroOnHost(vir_buf, vir_buf_vdw, vir_buf_elec);
          if (!rc_a) {
             auto sz = bufferSize();
@@ -550,7 +550,7 @@ void egvData(RcOp op)
    }
 
    if (rc_flag & calc::grad) {
-      if (op & rc_dealloc) {
+      if (op & RcOp::DEALLOC) {
          darray::deallocate(gx, gy, gz);
          if (useEnergyVdw())
             darray::deallocate(gx_vdw, gy_vdw, gz_vdw);
@@ -558,7 +558,7 @@ void egvData(RcOp op)
             darray::deallocate(gx_elec, gy_elec, gz_elec);
       }
 
-      if (op & rc_alloc) {
+      if (op & RcOp::ALLOC) {
          zeroOnHost(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
          darray::allocate(n, &gx, &gy, &gz);
          if (useEnergyVdw())

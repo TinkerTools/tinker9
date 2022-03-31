@@ -5,27 +5,27 @@ ResourceManagement::ResourceManagement(void (*f)(RcOp), RcOp op)
    : m_f(f)
    , m_op(op)
 {
-   if (not(m_op & rc_dealloc)) {
+   if (not(m_op & RcOp::DEALLOC)) {
       m_f(m_op);
    }
 }
 
 ResourceManagement::~ResourceManagement()
 {
-   if (m_op == rc_dealloc) {
+   if (m_op == RcOp::DEALLOC) {
       m_f(m_op);
    }
 }
 
 void initialize()
 {
-   RcOp op = rc_alloc | rc_init;
+   RcOp op = RcOp::ALLOC | RcOp::INIT;
    deviceData(op);
 }
 
 void finish()
 {
-   RcOp op = rc_dealloc;
+   RcOp op = RcOp::DEALLOC;
    deviceData(op);
 }
 }

@@ -31,7 +31,7 @@ void empoleData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       if (rc_a) {
          bufferDeallocate(rc_flag, nem);
          bufferDeallocate(rc_flag, em, vir_em, demx, demy, demz);
@@ -44,7 +44,7 @@ void empoleData(RcOp op)
       demz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       nem = nullptr;
       em = eng_buf_elec;
       vir_em = vir_buf_elec;
@@ -57,7 +57,7 @@ void empoleData(RcOp op)
       }
    }
 
-   if (op & rc_init) {}
+   if (op & RcOp::INIT) {}
 }
 
 void empole(int vers)

@@ -28,7 +28,7 @@ void echgljData(RcOp op)
    if (!usePotent(Potent::CHARGE) || !usePotent(Potent::VDW))
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       ncvexclude = 0;
       vdwpr_in_use = false;
       darray::deallocate(cvexclude, cvexclude_scale);
@@ -36,7 +36,7 @@ void echgljData(RcOp op)
       darray::deallocate(mut_coalesced, chg_coalesced, radeps_coalesced);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       // check "VDWPR" keyword
       if (!vdwpr_in_use) {
          auto parse_vdwpr = [](std::string line, int& i, int& k, double& rad, double& eps) {
@@ -245,7 +245,7 @@ void echgljData(RcOp op)
       darray::allocate(2 * n, &radeps_coalesced);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<real> vrad(n), veps(n);
       if (vdwindex == evdw_t::atom_type) {
          for (int i = 0; i < n; ++i) {

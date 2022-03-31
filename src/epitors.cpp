@@ -13,7 +13,7 @@ void epitorsData(RcOp op)
 
    bool rc_a = rc_flag & calc::analyz;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(ipit, kpit);
 
       if (rc_a)
@@ -25,7 +25,7 @@ void epitorsData(RcOp op)
       deptz = nullptr;
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       int ntors = countBondedTerm(Potent::TORSION);
       darray::allocate(ntors, &ipit, &kpit);
       npitors = countBondedTerm(Potent::PITORS);
@@ -39,7 +39,7 @@ void epitorsData(RcOp op)
          bufferAllocate(rc_flag, &ept, &vir_ept, &deptx, &depty, &deptz);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       int ntors = countBondedTerm(Potent::TORSION);
       std::vector<int> ibuf(6 * ntors);
       for (int i = 0; i < 6 * ntors; ++i)

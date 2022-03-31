@@ -23,15 +23,15 @@ static void pchgData(RcOp op)
    if (not usePotent(Potent::CHARGE))
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(pchg);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       darray::allocate(n, &pchg);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       std::vector<real> pchgbuf(n);
       for (int i = 0; i < n; ++i) {
          int itype = atoms::type[i] - 1;
@@ -54,12 +54,12 @@ static void mpoleData(RcOp op)
       not usePotent(Potent::REPULS))
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       darray::deallocate(zaxis, pole, rpole, udir, udirp, uind, uinp);
       darray::deallocate(trqx, trqy, trqz, vir_trq);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       darray::allocate(n, &zaxis, &pole, &rpole);
 
       if (usePotent(Potent::POLAR)) {
@@ -85,7 +85,7 @@ static void mpoleData(RcOp op)
       }
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       // Regarding chkpole routine:
       // 1. The chiralities of the atoms are unlikely to change in MD; but
       // still possible in Monte Carlo;
@@ -145,14 +145,14 @@ static void mdpuscaleData(RcOp op)
    if (not usePotent(Potent::MPOLE) and not usePotent(Potent::POLAR))
       return;
 
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       nmexclude = 0;
       darray::deallocate(mexclude, mexclude_scale);
       nmdpuexclude = 0;
       darray::deallocate(mdpuexclude, mdpuexclude_scale);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       using key_t = std::pair<int, int>;
       struct m
       {
@@ -495,12 +495,12 @@ static void mdpuscaleData(RcOp op)
       waitFor(g::q0);
    }
 
-   if (op & rc_init) {}
+   if (op & RcOp::INIT) {}
 }
 
 static void chgpenData(RcOp op)
 {
-   if (op & rc_dealloc) {
+   if (op & RcOp::DEALLOC) {
       nmdwexclude = 0;
       darray::deallocate(mdwexclude, mdwexclude_scale);
       nwexclude = 0;
@@ -508,7 +508,7 @@ static void chgpenData(RcOp op)
       darray::deallocate(pval0, pval, palpha, pcore);
    }
 
-   if (op & rc_alloc) {
+   if (op & RcOp::ALLOC) {
       // see also attach.h
       const int maxn12 = sizes::maxval;
       const int maxn13 = 3 * sizes::maxval;
@@ -774,7 +774,7 @@ static void chgpenData(RcOp op)
       darray::allocate(n, &pcore, &pval0, &pval, &palpha);
    }
 
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       darray::copyin(g::q0, n, pcore, chgpen::pcore);
       darray::copyin(g::q0, n, pval0, chgpen::pval0);
       darray::copyin(g::q0, n, pval, chgpen::pval);
@@ -793,7 +793,7 @@ bool useEwald()
 
 void elecData(RcOp op)
 {
-   if (op & rc_init) {
+   if (op & RcOp::INIT) {
       electric = chgpot::electric;
       dielec = chgpot::dielec;
    }
