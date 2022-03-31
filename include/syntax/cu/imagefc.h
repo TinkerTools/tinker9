@@ -1,7 +1,8 @@
 #pragma once
-#include "math/libfunc.h"
+#include "math/realn.h"
 
 namespace tinker {
+/// \ingroup box
 __device__
 inline real3 ftoc_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -11,6 +12,7 @@ inline real3 ftoc_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
    return f;
 }
 
+/// \ingroup box
 __device__
 inline real3 ftoc_monoclinic(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -20,6 +22,7 @@ inline real3 ftoc_monoclinic(real3 f, real3 l1, real3 l2, real3 l3)
    return f;
 }
 
+/// \ingroup box
 __device__
 inline real3 ftoc_orthogonal(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -29,6 +32,7 @@ inline real3 ftoc_orthogonal(real3 f, real3 l1, real3 l2, real3 l3)
    return f;
 }
 
+/// \ingroup box
 __device__
 inline real3 ftoc_general(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -41,14 +45,9 @@ inline real3 ftoc_general(real3 f, real3 l1, real3 l2, real3 l3)
    }
 }
 
-#ifndef ftoc
-#   define ftoc(f) ftoc_general(f, lvec1, lvec2, lvec3)
-#endif
-
-//====================================================================//
-
+/// \ingroup box
 __device__
-inline real3 imagef(real3 f)
+inline real3 imageFrac(real3 f)
 {
    f.x -= REAL_FLOOR(0.5f + f.x);
    f.y -= REAL_FLOOR(0.5f + f.y);
@@ -56,8 +55,7 @@ inline real3 imagef(real3 f)
    return f;
 }
 
-//====================================================================//
-
+/// \ingroup box
 __device__
 inline real3 ctof_triclinic(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
@@ -68,6 +66,7 @@ inline real3 ctof_triclinic(real xr, real yr, real zr, real3 ra, real3 rb, real3
    return f;
 }
 
+/// \ingroup box
 __device__
 inline real3 ctof_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
@@ -78,6 +77,7 @@ inline real3 ctof_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb, real
    return f;
 }
 
+/// \ingroup box
 __device__
 inline real3 ctof_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
@@ -88,19 +88,22 @@ inline real3 ctof_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb, real
    return f;
 }
 
+/// \ingroup box
 __device__
 inline real3 imagectof_general(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
    if (ra.z == 0) {
-      return imagef(ctof_orthogonal(xr, yr, zr, ra, rb, rc));
+      return imageFrac(ctof_orthogonal(xr, yr, zr, ra, rb, rc));
    } else if (ra.y == 0) {
-      return imagef(ctof_monoclinic(xr, yr, zr, ra, rb, rc));
+      return imageFrac(ctof_monoclinic(xr, yr, zr, ra, rb, rc));
    } else {
-      return imagef(ctof_triclinic(xr, yr, zr, ra, rb, rc));
+      return imageFrac(ctof_triclinic(xr, yr, zr, ra, rb, rc));
    }
 }
 
 #ifndef imagectof
+/// \def imagectof
+/// \ingroup box
 #   define imagectof(xr, yr, zr) imagectof_general(xr, yr, zr, recipa, recipb, recipc)
 #endif
 }

@@ -3,6 +3,7 @@
 #include "tool/genunit.h"
 
 namespace tinker {
+/// \ingroup nblist
 struct Spatial
 {
    static constexpr int BLOCK = 32;
@@ -72,14 +73,18 @@ struct Spatial
 
    ~Spatial();
 };
+/// \ingroup nblist
 using SpatialUnit = GenericUnit<Spatial, GenericUnitVersion::DISABLE_ON_DEVICE>;
 
+/// \ingroup nblist
 void spatialDataAlloc(SpatialUnit& u, int n, double cutoff, double buffer, //
    const real* x, const real* y, const real* z, int nstype,                //
    int ns1, int (*js1)[2], int ns2, int (*js2)[2],                         //
    int ns3, int (*js3)[2], int ns4, int (*js4)[2]);
-void spatialDataInit_cu(SpatialUnit);
-void spatialDataUpdateSorted_cu(SpatialUnit);
+/// \ingroup nblist
+void spatialDataInit(SpatialUnit);
+/// \ingroup nblist
+void spatialDataUpdateSorted(SpatialUnit);
 }
 
 //====================================================================//
@@ -89,6 +94,8 @@ void spatialDataUpdateSorted_cu(SpatialUnit);
 //====================================================================//
 
 namespace tinker {
+/// \ingroup nblist
+/// \{
 TINKER_EXTERN SpatialUnit cspatial_v2_unit;
 TINKER_EXTERN SpatialUnit vspatial_v2_unit;
 TINKER_EXTERN SpatialUnit uspatial_v2_unit;
@@ -96,4 +103,5 @@ TINKER_EXTERN SpatialUnit mspatial_v2_unit;
 TINKER_EXTERN SpatialUnit dspspatial_v2_unit;
 
 constexpr int cspatial_fresh_mask_echglj = 0x00000001;
+/// \}
 }

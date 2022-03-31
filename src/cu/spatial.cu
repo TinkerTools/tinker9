@@ -1,74 +1,21 @@
-// Eventually thrust will drop c++11 support.
-#define THRUST_IGNORE_DEPRECATED_CPP_DIALECT
-
 #include "copysign.h"
 #include "ff/box.h"
 #include "ff/image.h"
-#include "ff/nblist.h"
 #include "ff/spatial.h"
-#include "ffsn.h"
 #include "imagefc.h"
 #include "launch.h"
+#include "seq/triangle.h"
 #include "tool/thrustcache.h"
+// Eventually thrust will drop c++11 support.
+#define THRUST_IGNORE_DEPRECATED_CPP_DIALECT
 #include <thrust/sort.h>
 
+// step 1 2
 namespace tinker {
-struct POPC
-{
-   __device__
-   int operator()(int flag)
-   {
-      return __popc(flag);
-   }
-};
-
-struct Int32
-{
-   long4 lx, ly, lz, lw;
-
-   __device__
-   static bool is_long4_zero(const long4& l)
-   {
-      return l.x == 0 && l.y == 0 && l.z == 0 && l.w == 0;
-   }
-
-   __device__
-   static bool is_zero(const Int32& i32)
-   {
-      return is_long4_zero(i32.lx) && is_long4_zero(i32.ly) && is_long4_zero(i32.lz) &&
-         is_long4_zero(i32.lw);
-   }
-};
-
-struct IntInt32Pair
-{
-   struct Int32IsZero
-   {
-      __device__
-      bool operator()(const thrust::tuple<int, Int32>& t)
-      {
-         return Int32::is_zero(thrust::get<1>(t));
-      }
-   };
-};
-
-/**
- * \return
- * The original integer which has the smaller absolute value.
- */
+// \note Fractional coordinates have to be taken care of by the image routine first.
 __device__
-inline int min_by_abs(int a, int b)
-{
-   return (abs(b) < abs(a)) ? b : a;
-}
-
-/**
- * \note
- * Fractional coordinates have to be taken care of by the image routine first.
- */
-__device__
-inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz, int px, int py,
-   int pz, real fx, real fy, real fz)
+inline void fracToIxyz(int& restrict ix, int& restrict iy, int& restrict iz, int px, int py, int pz,
+   real fx, real fy, real fz)
 {
    // cannot use iw = fw * (1 << pw) + (1 << pw) / 2;
    // with the implicit cast rules of C,
@@ -88,18 +35,22 @@ inline void frac_to_ixyz(int& restrict ix, int& restrict iy, int& restrict iz, i
    iz = ((double)fz) * (1 << pz) + (1 << pz) / 2;
 }
 
-/**
- * \brief
- * Check the `ix, iy, iz` parameters of a given spatial box used for truncated
- * octahedron periodic boundaries. Update them with `ix', iy', iz'` of the box
- * image that is (at least partially) inside the truncated octahedron.
- *
- * The predicate is, if the fractional coordinate (from -0.5 to 0.5) of its
- * innear-most vertex is outside of the space defined by surfaces
- * `|x| + |y| + |z| = 3/4`, it is considered to be outside and needs updating.
- */
+// \return The integer whose absolute value is smaller.
 __device__
-inline void ixyz_octahedron(
+inline int minByAbs(int a, int b)
+{
+   return (abs(b) < abs(a)) ? b : a;
+}
+
+// Check the `ix, iy, iz` parameters of a given spatial box used for truncated
+// octahedron periodic boundaries. Update them with `ix', iy', iz'` of the box
+// image that is (at least partially) inside the truncated octahedron.
+//
+// The predicate is, if the fractional coordinate (from -0.5 to 0.5) of its
+// innear-most vertex is outside of the space defined by surfaces
+// `|x| + |y| + |z| = 3/4`, it is considered to be outside and needs updating.
+__device__
+inline void ixyzOctahedron(
    int& restrict ix, int& restrict iy, int& restrict iz, int px, int py, int pz)
 {
    int qx = (1 << px);
@@ -115,9 +66,9 @@ inline void ixyz_octahedron(
    int iz1 = iz - qz2;
 
    // The innear-most vertex.
-   int ix2 = min_by_abs(ix1, ix1 + 1);
-   int iy2 = min_by_abs(iy1, iy1 + 1);
-   int iz2 = min_by_abs(iz1, iz1 + 1);
+   int ix2 = minByAbs(ix1, ix1 + 1);
+   int iy2 = minByAbs(iy1, iy1 + 1);
+   int iz2 = minByAbs(iz1, iz1 + 1);
    // Fractional coordinate of the inner-most vertex; Range: [-0.5 to 0.5).
    real hx = (real)ix2 / qx;
    real hy = (real)iy2 / qy;
@@ -142,18 +93,7 @@ inline void ixyz_octahedron(
    iz = iz1 + qz2;
 }
 
-}
-
-//====================================================================//
-
-#include "ff/spatial.h"
-#include "seq/triangle.h"
-
-namespace tinker {
-namespace {
-using coord_t = int;
-
-template <size_t n>
+template <size_t n, class coord_t>
 __device__
 inline void AxesToTranspose(coord_t (&x)[n], int b)
 {
@@ -186,7 +126,7 @@ inline void AxesToTranspose(coord_t (&x)[n], int b)
       x[i] ^= t;
 }
 
-template <size_t n>
+template <size_t n, class coord_t>
 __device__
 inline int TransposeToIndex(coord_t (&x)[n], int b)
 {
@@ -200,10 +140,9 @@ inline int TransposeToIndex(coord_t (&x)[n], int b)
    }
    return val;
 }
-}
 
 __global__
-void spatial2_step1(int n, int pz, int2* restrict b2num, //
+void spatialStep1(int n, int pz, int2* restrict b2num, //
    const real* restrict x, const real* restrict y, const real* restrict z, TINKER_IMAGE_PARAMS,
    int nakpk, int* restrict akpf)
 {
@@ -216,7 +155,7 @@ void spatial2_step1(int n, int pz, int2* restrict b2num, //
       real3 f = imagectof(xr, yr, zr);
 
       int ix, iy, iz;
-      frac_to_ixyz(ix, iy, iz, pz, pz, pz, f.x, f.y, f.z);
+      fracToIxyz(ix, iy, iz, pz, pz, pz, f.x, f.y, f.z);
       // Due to the limited precision, f.z (and f.x, f.y) may turn out to be
       // +0.5, which should have been in the range of [-0.5, +0.5). Thus iz may
       // be (2**pz)/2, which is also out of range. However, the Hilbert curve
@@ -229,8 +168,8 @@ void spatial2_step1(int n, int pz, int2* restrict b2num, //
       iy &= ((1 << py) - 1);
       iz &= ((1 << pz) - 1);
       if (box_shape == BoxShape::OCT)
-         ixyz_octahedron(ix, iy, iz, pz, pz, pz);
-      coord_t ixyz[3] = {ix, iy, iz};
+         ixyzOctahedron(ix, iy, iz, pz, pz, pz);
+      int ixyz[3] = {ix, iy, iz};
       AxesToTranspose(ixyz, pz);
       int id = TransposeToIndex(ixyz, pz);
       b2num[i] = make_int2(id, i); // B.1
@@ -245,96 +184,7 @@ void spatial2_step1(int n, int pz, int2* restrict b2num, //
 }
 
 __global__
-void spatial2_update_sorted(int n, Spatial::SortedAtom* restrict sorted,   //
-   const real* restrict x, const real* restrict y, const real* restrict z, //
-   TINKER_IMAGE_PARAMS, real cut, Spatial::Center* restrict akc, Spatial::Center* restrict half)
-{
-   real xbox, ybox, zbox;
-   xbox = lvec1.x * lvec1.x + lvec2.x * lvec2.x + lvec3.x * lvec3.x;
-   ybox = lvec1.y * lvec1.y + lvec2.y * lvec2.y + lvec3.y * lvec3.y;
-   zbox = lvec1.z * lvec1.z + lvec2.z * lvec2.z + lvec3.z * lvec3.z;
-   xbox = REAL_SQRT(xbox);
-   ybox = REAL_SQRT(ybox);
-   zbox = REAL_SQRT(zbox);
-
-   real xr, yr, zr, r, r2;
-
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
-      int atomi = sorted[i].unsorted;
-      xr = x[atomi];
-      yr = y[atomi];
-      zr = z[atomi];
-      sorted[i].x = xr;
-      sorted[i].y = yr;
-      sorted[i].z = zr;
-
-      // C.4 mid point
-      int tmask = __activemask();
-      real x0 = __shfl_sync(tmask, xr, 0);
-      real y0 = __shfl_sync(tmask, yr, 0);
-      real z0 = __shfl_sync(tmask, zr, 0);
-      // vector r(i)-r(0)
-      xr -= x0;
-      yr -= y0;
-      zr -= z0;
-      image2(xr, yr, zr);
-      real xmin = xr;
-      real ymin = yr;
-      real zmin = zr;
-      real xmax = xr;
-      real ymax = yr;
-      real zmax = zr;
-      #pragma unroll
-      for (int ii = 1; ii < WARP_SIZE; ii *= 2) {
-         xmin = REAL_MIN(xmin, __shfl_xor_sync(tmask, xmin, ii));
-         ymin = REAL_MIN(ymin, __shfl_xor_sync(tmask, ymin, ii));
-         zmin = REAL_MIN(zmin, __shfl_xor_sync(tmask, zmin, ii));
-         xmax = REAL_MAX(xmax, __shfl_xor_sync(tmask, xmax, ii));
-         ymax = REAL_MAX(ymax, __shfl_xor_sync(tmask, ymax, ii));
-         zmax = REAL_MAX(zmax, __shfl_xor_sync(tmask, zmax, ii));
-      }
-      real xc = (xmin + xmax) / 2;
-      real yc = (ymin + ymax) / 2;
-      real zc = (zmin + zmax) / 2;
-      // C.4 radius
-      r2 = (xr - xc) * (xr - xc);
-      r2 += (yr - yc) * (yr - yc);
-      r2 += (zr - zc) * (zr - zc);
-      r = REAL_SQRT(r2);
-      #pragma unroll
-      for (int ii = 1; ii < WARP_SIZE; ii *= 2) {
-         r = REAL_MAX(r, __shfl_xor_sync(tmask, r, ii));
-      }
-      // C.4 half size
-      real xh = (xmax - xmin) / 2;
-      real yh = (ymax - ymin) / 2;
-      real zh = (zmax - zmin) / 2;
-      // C.4 local flag
-      // Different from list construction: instead of `cutoff+buffer`,
-      // only `cutoff` is needed.
-      // if i-block has a small distribution in space:
-      // xbox / 2 - xhalf > cut ==> xbox > 2*(xhalf+cut)
-      bool ilocal = xbox > 2 * (xh + cut) //
-         and ybox > 2 * (yh + cut)        //
-         and zbox > 2 * (zh + cut);
-
-      int iblock = i / WARP_SIZE;
-      int ilane = threadIdx.x & (WARP_SIZE - 1);
-      if (ilane == 0) {
-         akc[iblock].x = xc + x0;
-         akc[iblock].y = yc + y0;
-         akc[iblock].z = zc + z0;
-         akc[iblock].w = ilocal;
-         half[iblock].x = xh;
-         half[iblock].y = yh;
-         half[iblock].z = zh;
-         half[iblock].w = r;
-      }
-   }
-}
-
-__global__
-void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted, int* restrict bnum,
+void spatialStep2(int n, Spatial::SortedAtom* restrict sorted, int* restrict bnum,
    int2* restrict b2num, const real* restrict x, const real* restrict y, const real* restrict z,
    int ZERO_LBUF, real* restrict xold, real* restrict yold, real* restrict zold, //
    TINKER_IMAGE_PARAMS, real cutbuf, Spatial::Center* restrict akc, Spatial::Center* restrict half)
@@ -431,9 +281,12 @@ void spatial2_step2(int n, Spatial::SortedAtom* restrict sorted, int* restrict b
       }
    }
 }
+}
 
+// step 3 4
+namespace tinker {
 __device__
-inline void spatial2_step3_atomicOr(int x0, int y0, int* akpf, int* sum_nakpl)
+inline void spatialStep3AtomicOr(int x0, int y0, int* akpf, int* sum_nakpl)
 {
    int x = max(x0, y0);
    int y = min(x0, y0);
@@ -449,16 +302,16 @@ inline void spatial2_step3_atomicOr(int x0, int y0, int* akpf, int* sum_nakpl)
 }
 
 __global__
-void spatial2_step3(int nak, int* restrict akpf, int* nakpl_ptr0, //
-   const int* restrict bnum, int nstype,                          //
-   int ns1, int (*restrict js1)[2],                               //
-   int ns2, int (*restrict js2)[2],                               //
-   int ns3, int (*restrict js3)[2],                               //
+void spatialStep3(int nak, int* restrict akpf, int* nakpl_ptr0, //
+   const int* restrict bnum, int nstype,                        //
+   int ns1, int (*restrict js1)[2],                             //
+   int ns2, int (*restrict js2)[2],                             //
+   int ns3, int (*restrict js3)[2],                             //
    int ns4, int (*restrict js4)[2])
 {
    // D.1 Pairwise flag for (block i - block i) is always set.
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nak; i += blockDim.x * gridDim.x) {
-      spatial2_step3_atomicOr(i, i, akpf, nakpl_ptr0);
+      spatialStep3AtomicOr(i, i, akpf, nakpl_ptr0);
    }
 
    // pairwise flag
@@ -472,28 +325,28 @@ void spatial2_step3(int nak, int* restrict akpf, int* nakpl_ptr0, //
       if (nstype >= 1 and i < ns1) {
          x0 = bnum[js1[i][0]] / WARP_SIZE;
          y0 = bnum[js1[i][1]] / WARP_SIZE;
-         spatial2_step3_atomicOr(x0, y0, akpf, nakpl_ptr0);
+         spatialStep3AtomicOr(x0, y0, akpf, nakpl_ptr0);
       }
       if (nstype >= 2 and i < ns2) {
          x0 = bnum[js2[i][0]] / WARP_SIZE;
          y0 = bnum[js2[i][1]] / WARP_SIZE;
-         spatial2_step3_atomicOr(x0, y0, akpf, nakpl_ptr0);
+         spatialStep3AtomicOr(x0, y0, akpf, nakpl_ptr0);
       }
       if (nstype >= 3 and i < ns3) {
          x0 = bnum[js3[i][0]] / WARP_SIZE;
          y0 = bnum[js3[i][1]] / WARP_SIZE;
-         spatial2_step3_atomicOr(x0, y0, akpf, nakpl_ptr0);
+         spatialStep3AtomicOr(x0, y0, akpf, nakpl_ptr0);
       }
       if (nstype >= 4 and i < ns4) {
          x0 = bnum[js4[i][0]] / WARP_SIZE;
          y0 = bnum[js4[i][1]] / WARP_SIZE;
-         spatial2_step3_atomicOr(x0, y0, akpf, nakpl_ptr0);
+         spatialStep3AtomicOr(x0, y0, akpf, nakpl_ptr0);
       }
    }
 }
 
 __global__
-void spatial2_step4(int nakpk, int* restrict nakpl_ptr1, const int* restrict akpf,
+void spatialStep4(int nakpk, int* restrict nakpl_ptr1, const int* restrict akpf,
    int* restrict iakpl,
    int* restrict iakpl_rev,   //
    int cap_nakpl, int nstype, //
@@ -532,9 +385,21 @@ void spatial2_step4(int nakpk, int* restrict nakpl_ptr1, const int* restrict akp
       }
    }
 }
+}
+
+// step 5
+namespace tinker {
+struct spatialInt2Less
+{
+   __device__
+   bool operator()(int2 a, int2 b)
+   {
+      return a.x < b.x;
+   }
+};
 
 __device__
-void spatial2_step5_bits(int x0, int y0, unsigned int* bit0, const int* iakpl_rev)
+void spatialStep5Bits(int x0, int y0, unsigned int* bit0, const int* iakpl_rev)
 {
    int x, y;
    int bx, by, ax, ay;
@@ -557,7 +422,7 @@ void spatial2_step5_bits(int x0, int y0, unsigned int* bit0, const int* iakpl_re
 
 template <class IMG>
 __global__
-void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
+void spatialStep5(const int* restrict bnum, const int* iakpl_rev, int nstype,
    Spatial::ScaleInfo si1, Spatial::ScaleInfo si2, Spatial::ScaleInfo si3,
    Spatial::ScaleInfo si4, //
    int* restrict dev_niak, int* restrict iak,
@@ -577,25 +442,25 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
          auto& si = si1;
          x0 = bnum[si.js[i][0]];
          y0 = bnum[si.js[i][1]];
-         spatial2_step5_bits(x0, y0, si.bit0, iakpl_rev);
+         spatialStep5Bits(x0, y0, si.bit0, iakpl_rev);
       }
       if (nstype >= 2 and i < si2.ns) {
          auto& si = si2;
          x0 = bnum[si.js[i][0]];
          y0 = bnum[si.js[i][1]];
-         spatial2_step5_bits(x0, y0, si.bit0, iakpl_rev);
+         spatialStep5Bits(x0, y0, si.bit0, iakpl_rev);
       }
       if (nstype >= 3 and i < si3.ns) {
          auto& si = si3;
          x0 = bnum[si.js[i][0]];
          y0 = bnum[si.js[i][1]];
-         spatial2_step5_bits(x0, y0, si.bit0, iakpl_rev);
+         spatialStep5Bits(x0, y0, si.bit0, iakpl_rev);
       }
       if (nstype >= 4 and i < si4.ns) {
          auto& si = si4;
          x0 = bnum[si.js[i][0]];
          y0 = bnum[si.js[i][1]];
-         spatial2_step5_bits(x0, y0, si.bit0, iakpl_rev);
+         spatialStep5Bits(x0, y0, si.bit0, iakpl_rev);
       }
    }
 
@@ -803,22 +668,13 @@ void spatial2_step5(const int* restrict bnum, const int* iakpl_rev, int nstype,
    }
 }
 
-struct spatial2_less
-{
-   __device__
-   bool operator()(int2 a, int2 b)
-   {
-      return a.x < b.x;
-   }
-};
-
 template <class IMG>
-void run_spatial2_step5(SpatialUnit u)
+static void spatialRunStep5(SpatialUnit u)
 {
    u->niak = 0;
    int* dev_niak = &u->update[2];
    real cutbuf = u->cutoff + u->buffer;
-   launch_k1s(g::s0, u->nakp, spatial2_step5<IMG>, //
+   launch_k1s(g::s0, u->nakp, spatialStep5<IMG>, //
       u->bnum, u->iakpl_rev, u->nstype, u->si1, u->si2, u->si3,
       u->si4,                               //
       dev_niak, u->iak, u->lst,             //
@@ -836,7 +692,9 @@ void run_spatial2_step5(SpatialUnit u)
          u->niak, u->nak, cap, cap * u->nak));
    }
 }
+}
 
+namespace tinker {
 void spatialDataInit_cu(SpatialUnit u)
 {
    u->fresh = -1; // 0xFFFFFFFF;
@@ -851,11 +709,11 @@ void spatialDataInit_cu(SpatialUnit u)
    int ZERO_LBUF = (lbuf <= 0 ? 1 : 0);
    real cutbuf = (u->cutoff + lbuf);
    int2* b2num = (int2*)u->update;
-   launch_k1s(g::s0, n, spatial2_step1, //
+   launch_k1s(g::s0, n, spatialStep1, //
       n, u->pz, b2num, lx, ly, lz, TINKER_IMAGE_ARGS, u->nakpk, u->akpf);
-   // thrust::sort(policy, b2num, b2num + n, spatial2_less());
-   thrust::stable_sort(policy, b2num, b2num + n, spatial2_less());
-   launch_k1s(g::s0, n, spatial2_step2,                                               //
+   // thrust::sort(policy, b2num, b2num + n, spatialInt2Less());
+   thrust::stable_sort(policy, b2num, b2num + n, spatialInt2Less());
+   launch_k1s(g::s0, n, spatialStep2,                                                 //
       n, u->sorted, u->bnum, b2num, lx, ly, lz, ZERO_LBUF, u->xold, u->yold, u->zold, //
       TINKER_IMAGE_ARGS, cutbuf, u->akc, u->half);
 
@@ -864,10 +722,10 @@ void spatialDataInit_cu(SpatialUnit u)
    auto& si3 = u->si3;
    auto& si4 = u->si4;
    int* nakpl_ptr0 = &u->update[0];
-   launch_k1s(g::s0, n, spatial2_step3, //
-      u->nak, u->akpf, nakpl_ptr0,      //
-      u->bnum, u->nstype,               //
-      si1.ns, si1.js, si2.ns, si2.js,   //
+   launch_k1s(g::s0, n, spatialStep3, //
+      u->nak, u->akpf, nakpl_ptr0,    //
+      u->bnum, u->nstype,             //
+      si1.ns, si1.js, si2.ns, si2.js, //
       si3.ns, si3.js, si4.ns, si4.js);
    darray::copyout(g::q0, 1, &u->nakpl, nakpl_ptr0);
    waitFor(g::q0);
@@ -898,28 +756,117 @@ void spatialDataInit_cu(SpatialUnit u)
    }
 
    int* nakpl_ptr1 = &u->update[1];
-   launch_k1s(g::s0, u->nakp, spatial2_step4,                //
+   launch_k1s(g::s0, u->nakp, spatialStep4,                  //
       u->nakpk, nakpl_ptr1, u->akpf, u->iakpl, u->iakpl_rev, //
       u->cap_nakpl, u->nstype,                               //
       si1.bit0, si2.bit0, si3.bit0, si4.bit0);
 
    if (box_shape == BoxShape::ORTHO) {
-      run_spatial2_step5<PbcOrtho>(u);
+      spatialRunStep5<PbcOrtho>(u);
    } else if (box_shape == BoxShape::MONO) {
-      run_spatial2_step5<PbcMono>(u);
+      spatialRunStep5<PbcMono>(u);
    } else if (box_shape == BoxShape::TRI) {
-      run_spatial2_step5<PbcTri>(u);
+      spatialRunStep5<PbcTri>(u);
    } else if (box_shape == BoxShape::OCT) {
-      run_spatial2_step5<PbcOct>(u);
+      spatialRunStep5<PbcOct>(u);
    } else {
       assert(false);
    }
 }
 
+__global__
+void spatialUpdateSorted_cu1(int n, Spatial::SortedAtom* restrict sorted,  //
+   const real* restrict x, const real* restrict y, const real* restrict z, //
+   TINKER_IMAGE_PARAMS, real cut, Spatial::Center* restrict akc, Spatial::Center* restrict half)
+{
+   real xbox, ybox, zbox;
+   xbox = lvec1.x * lvec1.x + lvec2.x * lvec2.x + lvec3.x * lvec3.x;
+   ybox = lvec1.y * lvec1.y + lvec2.y * lvec2.y + lvec3.y * lvec3.y;
+   zbox = lvec1.z * lvec1.z + lvec2.z * lvec2.z + lvec3.z * lvec3.z;
+   xbox = REAL_SQRT(xbox);
+   ybox = REAL_SQRT(ybox);
+   zbox = REAL_SQRT(zbox);
+
+   real xr, yr, zr, r, r2;
+
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
+      int atomi = sorted[i].unsorted;
+      xr = x[atomi];
+      yr = y[atomi];
+      zr = z[atomi];
+      sorted[i].x = xr;
+      sorted[i].y = yr;
+      sorted[i].z = zr;
+
+      // C.4 mid point
+      int tmask = __activemask();
+      real x0 = __shfl_sync(tmask, xr, 0);
+      real y0 = __shfl_sync(tmask, yr, 0);
+      real z0 = __shfl_sync(tmask, zr, 0);
+      // vector r(i)-r(0)
+      xr -= x0;
+      yr -= y0;
+      zr -= z0;
+      image2(xr, yr, zr);
+      real xmin = xr;
+      real ymin = yr;
+      real zmin = zr;
+      real xmax = xr;
+      real ymax = yr;
+      real zmax = zr;
+      #pragma unroll
+      for (int ii = 1; ii < WARP_SIZE; ii *= 2) {
+         xmin = REAL_MIN(xmin, __shfl_xor_sync(tmask, xmin, ii));
+         ymin = REAL_MIN(ymin, __shfl_xor_sync(tmask, ymin, ii));
+         zmin = REAL_MIN(zmin, __shfl_xor_sync(tmask, zmin, ii));
+         xmax = REAL_MAX(xmax, __shfl_xor_sync(tmask, xmax, ii));
+         ymax = REAL_MAX(ymax, __shfl_xor_sync(tmask, ymax, ii));
+         zmax = REAL_MAX(zmax, __shfl_xor_sync(tmask, zmax, ii));
+      }
+      real xc = (xmin + xmax) / 2;
+      real yc = (ymin + ymax) / 2;
+      real zc = (zmin + zmax) / 2;
+      // C.4 radius
+      r2 = (xr - xc) * (xr - xc);
+      r2 += (yr - yc) * (yr - yc);
+      r2 += (zr - zc) * (zr - zc);
+      r = REAL_SQRT(r2);
+      #pragma unroll
+      for (int ii = 1; ii < WARP_SIZE; ii *= 2) {
+         r = REAL_MAX(r, __shfl_xor_sync(tmask, r, ii));
+      }
+      // C.4 half size
+      real xh = (xmax - xmin) / 2;
+      real yh = (ymax - ymin) / 2;
+      real zh = (zmax - zmin) / 2;
+      // C.4 local flag
+      // Different from list construction: instead of `cutoff+buffer`,
+      // only `cutoff` is needed.
+      // if i-block has a small distribution in space:
+      // xbox / 2 - xhalf > cut ==> xbox > 2*(xhalf+cut)
+      bool ilocal = xbox > 2 * (xh + cut) //
+         and ybox > 2 * (yh + cut)        //
+         and zbox > 2 * (zh + cut);
+
+      int iblock = i / WARP_SIZE;
+      int ilane = threadIdx.x & (WARP_SIZE - 1);
+      if (ilane == 0) {
+         akc[iblock].x = xc + x0;
+         akc[iblock].y = yc + y0;
+         akc[iblock].z = zc + z0;
+         akc[iblock].w = ilocal;
+         half[iblock].x = xh;
+         half[iblock].y = yh;
+         half[iblock].z = zh;
+         half[iblock].w = r;
+      }
+   }
+}
+
 void spatialDataUpdateSorted_cu(SpatialUnit u)
 {
-   launch_k1s(g::s0, u->n, spatial2_update_sorted, //
-      u->n, u->sorted, u->x, u->y, u->z,           //
+   launch_k1s(g::s0, u->n, spatialUpdateSorted_cu1, //
+      u->n, u->sorted, u->x, u->y, u->z,            //
       TINKER_IMAGE_ARGS, u->cutoff, u->akc, u->half);
 }
 }

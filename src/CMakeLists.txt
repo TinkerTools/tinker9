@@ -42,6 +42,7 @@ ff/molecule.cpp
 ff/nblist.cpp
 ff/potent.cpp
 ff/pme.cpp
+ff/spatial.cpp
 ff/switch.cpp
 field.cpp
 field_chgpen.cpp
@@ -90,8 +91,6 @@ osrw.cpp
 platform.cpp
 random.cpp
 rc_man.cpp
-spatial.cpp
-spatial2.cpp
 testgrad_x.cpp
 testrt.cpp
 tinker_rt.cpp

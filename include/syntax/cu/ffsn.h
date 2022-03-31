@@ -1,21 +1,18 @@
 #pragma once
-#include "macro.h"
 
 namespace tinker {
-/**
- * \ingroup cuda_syntax
- * Find the position of the n-th least significant bit set in a 32-bit integer.
- * Returns a value from 0 to 32.
- *    - If `c1` equals 0, always returns 0.
- *    - If `n` equals 0, always returns 0.
- *    - If `n` is greater than `POPC`, which is the number of bits that are set
- *      to 1 in `c1`, returns an undefined value.
- *
- * \param c1  A 32-bit integer.
- * \param n   Ranges from 1 to 32.
- */
+/// \ingroup cuda_syntax
+/// \brief Find the position of the n-th least significant bit set in a 32-bit integer.
+/// Returns a value from 0 to 32.
+///    - If `c1` equals 0, always returns 0.
+///    - If `n` equals 0, always returns 0.
+///    - If `n` is greater than `POPC`, which is the number of bits that are set
+///      to 1 in `c1`, returns an undefined value.
+///
+/// \param c1  A 32-bit integer.
+/// \param n   Ranges from 1 to 32.
 __device__
-inline int ffsn(int c1, int n)
+inline int ffsnShift(int c1, int n)
 {
    int c2 = c1 - ((c1 >> 1) & 0x55555555);
    int c4 = ((c2 >> 2) & 0x33333333) + (c2 & 0x33333333);
@@ -35,12 +32,10 @@ inline int ffsn(int c1, int n)
    return r + 1;
 }
 
-/**
- * \ingroup cuda_syntax
- * An alternative implementation of #ffsn using loop.
- */
+/// \ingroup cuda_syntax
+/// \brief An alternative implementation of ffsn using loop.
 __device__
-inline int ffsn_loop(int c1, int n)
+inline int ffsnLoop(int c1, int n)
 {
    int ans = 0;
    int i = 0;

@@ -15,7 +15,9 @@
 /// \defgroup prec  Precisions
 
 /// \defgroup ff  Force Fields
-/// \defgroup nblist  Neighbor List
+/// \defgroup box  Periodic Boundary Box
+/// \ingroup ff
+/// \defgroup nblist  Neighbor List and Spatial Decomposition
 /// \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
@@ -44,7 +46,6 @@
 /// \defgroup math_parallel  Parallel Algorithms
 /// \ingroup math
 
-/// \defgroup box  Periodic Boundary Box
 /// \defgroup mdegv  Energy, Gradient, and Virial Tensor
 /// \defgroup fft  Fast Fourier Transform
 

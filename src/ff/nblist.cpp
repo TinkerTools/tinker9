@@ -247,7 +247,7 @@ static void nblistBuild(NBListUnit u)
 static void spatialBuild(SpatialUnit unt)
 {
 #if TINKER_CUDART
-   spatialDataInit_cu(unt);
+   spatialDataInit(unt);
 #else
 #endif
 }
@@ -446,9 +446,9 @@ static void spatialUpdate(SpatialUnit unt)
    int answer =
       spatialCheck_acc(st.n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold, st.zold);
    if (answer) {
-      spatialDataInit_cu(unt);
+      spatialDataInit(unt);
    } else {
-      spatialDataUpdateSorted_cu(unt);
+      spatialDataUpdateSorted(unt);
    }
 #endif
 }
