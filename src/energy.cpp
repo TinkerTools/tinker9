@@ -1,133 +1,7 @@
 #include "ff/energy.h"
-#include "ff/hippo/cflux.h"
-#include "ff/nblist.h"
-#include "ff/potent.h"
-#include "math/zero.h"
-#include "tool/cudalib.h"
 #include "tool/error.h"
 
-#include "ff/amoeba/emplar.h"
-#include "ff/amoeba/empole.h"
-#include "ff/amoeba/epolar.h"
-#include "ff/elec.h"
-#include "ff/pchg/echarge.h"
-#include "ff/pchg/echglj.h"
-#include "ff/pchg/evalence.h"
-#include "ff/pchg/evdw.h"
-#include "ff/pme.h"
-
-#include "ff/hippo/echgtrn.h"
-#include "ff/hippo/edisp.h"
-#include "ff/hippo/empolechgpen.h"
-#include "ff/hippo/epolarchgpen.h"
-#include "ff/hippo/erepel.h"
-
-#include <tinker/detail/mplpot.hh>
-
 namespace tinker {
-struct DHFlow
-{
-   EnergyBufferTraits::type e_val;
-   EnergyBufferTraits::type e_vdw;
-   EnergyBufferTraits::type e_ele;
-   VirialBufferTraits::type v_val[VirialBufferTraits::N];
-   VirialBufferTraits::type v_vdw[VirialBufferTraits::N];
-   VirialBufferTraits::type v_ele[VirialBufferTraits::N];
-};
-
-static DHFlow ev_hobj;
-static DHFlow* ev_dptr;
-}
-
-namespace tinker {
-static bool ecore_val;
-static bool ecore_vdw;
-static bool ecore_ele;
-
-void energyData(RcOp op)
-{
-   if ((rc_flag & calc::vmask) == 0)
-      return;
-
-   RcMan egv42{egvData, op};
-
-   // bonded terms
-
-   RcMan ebond42{ebondData, op};
-   RcMan eangle42{eangleData, op};
-   RcMan estrbnd42{estrbndData, op};
-   RcMan eurey42{eureyData, op};
-   RcMan eopbend42{eopbendData, op};
-   RcMan eimprop42{eimpropData, op};
-   RcMan eimptor42{eimptorData, op};
-   RcMan etors42{etorsData, op};
-   RcMan epitors42{epitorsData, op};
-   RcMan estrtor42{estrtorData, op};
-   RcMan eangtor42{eangtorData, op};
-   RcMan etortor42{etortorData, op};
-
-   // misc. terms
-
-   RcMan egeom42{egeomData, op};
-
-   // non-bonded terms
-
-   RcMan evdw42{evdwData, op};
-
-   // Must call elecData() before any electrostatics routine.
-
-   RcMan elec42{elecData, op};
-   RcMan pme42{pmeData, op};
-
-   RcMan echarge42{echargeData, op};
-   // Must follow evdw_data() and echarge_data().
-   RcMan echglj42{echgljData, op};
-
-   // empoleData() must be in front of epolarData().
-   RcMan empole42{empoleData, op};
-   RcMan epolar42{epolarData, op};
-
-   // HIPPO
-   RcMan cflux43{cfluxData, op};
-   RcMan empole43{empoleChgpenData, op};
-   RcMan epolar43{epolarChgpenData, op};
-   RcMan echgtrn42{echgtrnData, op};
-   RcMan erepel42{erepelData, op};
-   RcMan edisp42{edispData, op};
-
-   // Must call fftData() after all of the electrostatics routines.
-   RcMan fft42{fftData, op};
-}
-
-bool useEnergyVdw()
-{
-   bool ans = false;
-
-   // AMOEBA
-   ans = ans || usePotent(Potent::VDW);
-
-   // HIPPO
-   ans = ans || usePotent(Potent::DISP);
-   ans = ans || usePotent(Potent::REPULS);
-
-   return ans;
-}
-
-bool useEnergyElec()
-{
-   bool ans = false;
-
-   // AMOEBA
-   ans = ans || usePotent(Potent::CHARGE);
-   ans = ans || usePotent(Potent::MPOLE);
-   ans = ans || usePotent(Potent::POLAR);
-
-   // HIPPO
-   ans = ans || usePotent(Potent::CHGTRN);
-
-   return ans;
-}
-
 const TimeScaleConfig& defaultTSConfig()
 {
    static TimeScaleConfig tsconfig{
@@ -156,8 +30,8 @@ const TimeScaleConfig& defaultTSConfig()
       {"empole", 0},
       {"epolar", 0},
 
-      {"empole_chgpen", 0},
-      {"epolar_chgpen", 0},
+      {"empoleChgpen", 0},
+      {"epolarChgpen", 0},
 
       {"echgtrn", 0},
       {"edisp", 0},
@@ -167,9 +41,8 @@ const TimeScaleConfig& defaultTSConfig()
    return tsconfig;
 }
 
-namespace {
-auto tscfg__ = [](std::string eng, bool& use_flag, unsigned tsflag,
-                  const TimeScaleConfig& tsconfig) {
+static bool fts(std::string eng, bool& use_flag, unsigned tsflag, const TimeScaleConfig& tsconfig)
+{
    auto local_flag = tsflag;
    const auto& local_cfg = tsconfig;
    try {
@@ -180,8 +53,28 @@ auto tscfg__ = [](std::string eng, bool& use_flag, unsigned tsflag,
       TINKER_THROW(format("Time scale of the %s term is unknown.\n", eng));
    }
 };
-#define tscfg(x, f) tscfg__(x, f, tsflag, tsconfig)
 }
+
+#include "ff/amoeba/emplar.h"
+#include "ff/amoeba/empole.h"
+#include "ff/amoeba/epolar.h"
+#include "ff/hippo/echgtrn.h"
+#include "ff/hippo/edisp.h"
+#include "ff/hippo/empolechgpen.h"
+#include "ff/hippo/epolarchgpen.h"
+#include "ff/hippo/erepel.h"
+#include "ff/nblist.h"
+#include "ff/pchg/echarge.h"
+#include "ff/pchg/echglj.h"
+#include "ff/pchg/evalence.h"
+#include "ff/pchg/evdw.h"
+#include "ff/potent.h"
+#include <tinker/detail/mplpot.hh>
+
+namespace tinker {
+static bool ecore_val;
+static bool ecore_vdw;
+static bool ecore_ele;
 
 static bool amoeba_emplar(int vers)
 {
@@ -268,6 +161,8 @@ static bool hippo_epolar(int vers)
 
 void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
+#define tscfg(x, f) fts(x, f, tsflag, tsconfig)
+
    pme_stream_start_record(use_pme_stream);
 
    vers = vers & calc::vmask;
@@ -357,10 +252,10 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          emplar(vers);
 
    if (hippo_empole(vers))
-      if (tscfg("empole_chgpen", ecore_ele))
+      if (tscfg("empoleChgpen", ecore_ele))
          empoleChgpen(vers);
    if (hippo_epolar(vers))
-      if (tscfg("epolar_chgpen", ecore_ele))
+      if (tscfg("epolarChgpen", ecore_ele))
          epolarChgpen(vers);
    if (usePotent(Potent::CHGTRN))
       if (tscfg("echgtrn", ecore_ele))
@@ -373,6 +268,28 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          erepel(vers);
 
    pme_stream_finish_wait(use_pme_stream and not(vers & calc::analyz));
+}
+}
+
+#include "ff/hippo/cflux.h"
+#include "ff/pme.h"
+#include "math/zero.h"
+
+namespace tinker {
+inline namespace v1 {
+// device and host resources
+struct DHRc
+{
+   EnergyBufferTraits::type e_val;
+   EnergyBufferTraits::type e_vdw;
+   EnergyBufferTraits::type e_ele;
+   VirialBufferTraits::type v_val[VirialBufferTraits::N];
+   VirialBufferTraits::type v_vdw[VirialBufferTraits::N];
+   VirialBufferTraits::type v_ele[VirialBufferTraits::N];
+};
+
+static DHRc ev_hobj;
+static DHRc* ev_dptr;
 }
 
 void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
@@ -428,7 +345,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       }
    }
    if (must_wait) {
-      deviceMemoryCopyoutBytesAsync(&ev_hobj, ev_dptr, sizeof(DHFlow), g::q0);
+      deviceMemoryCopyoutBytesAsync(&ev_hobj, ev_dptr, sizeof(DHRc), g::q0);
       waitFor(g::q0);
    }
    if (do_e) {
@@ -487,7 +404,95 @@ void energy(int vers)
 {
    energy(vers, 1, defaultTSConfig());
 }
+}
 
+namespace tinker {
+void energyData(RcOp op)
+{
+   if ((rc_flag & calc::vmask) == 0)
+      return;
+
+   RcMan egv42{egvData, op};
+
+   // bonded terms
+
+   RcMan ebond42{ebondData, op};
+   RcMan eangle42{eangleData, op};
+   RcMan estrbnd42{estrbndData, op};
+   RcMan eurey42{eureyData, op};
+   RcMan eopbend42{eopbendData, op};
+   RcMan eimprop42{eimpropData, op};
+   RcMan eimptor42{eimptorData, op};
+   RcMan etors42{etorsData, op};
+   RcMan epitors42{epitorsData, op};
+   RcMan estrtor42{estrtorData, op};
+   RcMan eangtor42{eangtorData, op};
+   RcMan etortor42{etortorData, op};
+
+   // misc. terms
+
+   RcMan egeom42{egeomData, op};
+
+   // non-bonded terms
+
+   RcMan evdw42{evdwData, op};
+
+   // Must call elecData() before any electrostatics routine.
+
+   RcMan elec42{elecData, op};
+   RcMan pme42{pmeData, op};
+
+   RcMan echarge42{echargeData, op};
+   // Must follow evdw_data() and echarge_data().
+   RcMan echglj42{echgljData, op};
+
+   // empoleData() must be in front of epolarData().
+   RcMan empole42{empoleData, op};
+   RcMan epolar42{epolarData, op};
+
+   // HIPPO
+   RcMan cflux43{cfluxData, op};
+   RcMan empole43{empoleChgpenData, op};
+   RcMan epolar43{epolarChgpenData, op};
+   RcMan echgtrn42{echgtrnData, op};
+   RcMan erepel42{erepelData, op};
+   RcMan edisp42{edispData, op};
+
+   // Must call fftData() after all of the electrostatics routines.
+   RcMan fft42{fftData, op};
+}
+
+bool useEnergyVdw()
+{
+   bool ans = false;
+
+   // AMOEBA
+   ans = ans || usePotent(Potent::VDW);
+
+   // HIPPO
+   ans = ans || usePotent(Potent::DISP);
+   ans = ans || usePotent(Potent::REPULS);
+
+   return ans;
+}
+
+bool useEnergyElec()
+{
+   bool ans = false;
+
+   // AMOEBA
+   ans = ans || usePotent(Potent::CHARGE);
+   ans = ans || usePotent(Potent::MPOLE);
+   ans = ans || usePotent(Potent::POLAR);
+
+   // HIPPO
+   ans = ans || usePotent(Potent::CHGTRN);
+
+   return ans;
+}
+}
+
+namespace tinker {
 void egvData(RcOp op)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -498,7 +503,7 @@ void egvData(RcOp op)
    }
 
    if (op & RcOp::ALLOC) {
-      deviceMemoryAllocateBytes((void**)(&ev_dptr), sizeof(DHFlow));
+      deviceMemoryAllocateBytes((void**)(&ev_dptr), sizeof(DHRc));
    }
 
    if (rc_flag & calc::energy) {

@@ -183,8 +183,8 @@ const TimeScaleConfig& respaTSConfig()
       {"empole", slow},
       {"epolar", slow},
 
-      {"empole_chgpen", slow},
-      {"epolar_chgpen", slow},
+      {"empoleChgpen", slow},
+      {"epolarChgpen", slow},
 
       {"echgtrn", slow},
       {"edisp", slow},
