@@ -7,7 +7,6 @@ analyze_x.cpp
 bar_x.cpp
 cflux.cpp
 compilers.cpp
-couple.cpp
 dynamic_x.cpp
 eangle.cpp
 eangtor.cpp
@@ -38,9 +37,11 @@ evalence.cpp
 evdw.cpp
 ff/atom.cpp
 ff/box.cpp
+ff/molecule.cpp
+ff/potent.cpp
+ff/switch.cpp
 field.cpp
 field_chgpen.cpp
-group.cpp
 induce.cpp
 induce_donly.cpp
 initial.cpp
@@ -78,7 +79,6 @@ mdsave.cpp
 mechanic2.cpp
 minimize_x.cpp
 mod.cpp
-molecule.cpp
 moments.cpp
 nblist.cpp
 nhc.cpp
@@ -87,13 +87,11 @@ osrw.cpp
 platform.cpp
 pme.cpp
 pmestuf.cpp
-potent.cpp
 random.cpp
 rattle.cpp
 rc_man.cpp
 spatial.cpp
 spatial2.cpp
-switch.cpp
 testgrad_x.cpp
 testrt.cpp
 tinker_rt.cpp

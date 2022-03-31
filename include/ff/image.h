@@ -70,6 +70,7 @@ public:
    }
 };
 
+inline namespace v1 {
 class PbcMono
 {
    SEQ_ROUTINE
@@ -127,8 +128,6 @@ public:
    }
 };
 
-//====================================================================//
-
 SEQ_ROUTINE
 inline void imageGeneral(real& restrict xr, real& restrict yr, real& restrict zr, BoxShape sh,
    real3 l1, real3 l2, real3 l3, real3 ra, real3 rb, real3 rc)
@@ -172,11 +171,12 @@ inline real imagen2General(real& xr, real& yr, real& zr, BoxShape sh, real3 l1, 
    return xr * xr + yr * yr + zr * zr;
 }
 }
+}
 
 /// \def image
 /// \ingroup box
-/// Apply periodic boundary conditions to displacement (`xr, yr, zr`) and
-/// preserve the correct signs.
+/// \brief Applies periodic boundary conditions to displacement (`xr, yr, zr`) and
+/// preserves the correct signs.
 ///
 /// For testing purpose, defining it in the source code before including this
 /// header file will overwrite the default macro definition. Otherwise, it needs
@@ -185,10 +185,18 @@ inline real imagen2General(real& xr, real& yr, real& zr, BoxShape sh, real3 l1, 
 #   define image(x, y, z) imageGeneral(x, y, z, TINKER_IMAGE_ARGS)
 #endif
 
+/// \def image2
+/// \ingroup box
+/// \brief Applies periodic boundary conditions to displacement (`xr, yr, zr`) and
+/// preserves the correct signs. Returns the displacement squared.
 #ifndef image2
 #   define image2(x, y, z) image2General(x, y, z, TINKER_IMAGE_ARGS)
 #endif
 
+/// \def imagen2
+/// \ingroup box
+/// \brief Applies periodic boundary conditions to displacement (`xr, yr, zr`).
+/// Correct signs may not be preserved. Returns the displacement squared.
 #ifndef imagen2
 #   define imagen2(x, y, z) imagen2General(x, y, z, TINKER_IMAGE_ARGS)
 #endif

@@ -1,10 +1,85 @@
+#include "ff/molecule.h"
 #include "ff/atom.h"
 #include "ff/molecule.h"
 #include "tool/darray.h"
+#include <tinker/detail/couple.hh>
 #include <tinker/detail/group.hh>
+#include <tinker/detail/molcul.hh>
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
+static_assert(couple_maxn12 >= sizes::maxval, "");
+
+void coupleData(RcOp op)
+{
+   if (op & rc_dealloc) {
+      darray::deallocate(couple_i12, couple_n12);
+   }
+
+   if (op & rc_alloc) {
+      darray::allocate(n, &couple_i12, &couple_n12);
+   }
+
+   if (op & rc_init) {
+      std::vector<int> ibuf;
+      ibuf.resize(couple_maxn12 * n);
+      for (int i = 0; i < n; ++i) {
+         int nn = couple::n12[i];
+         int base = i * couple_maxn12;
+         for (int j = 0; j < nn; ++j) {
+            int k = couple::i12[i][j];
+            ibuf[base + j] = k - 1;
+         }
+         for (int j = nn; j < couple_maxn12; ++j) {
+            ibuf[base + j] = -1;
+         }
+      }
+      darray::copyin(g::q0, n, couple_i12, ibuf.data());
+      darray::copyin(g::q0, n, couple_n12, couple::n12);
+      waitFor(g::q0);
+   }
+}
+
+void moleculeData(RcOp op)
+{
+   if (op & rc_dealloc) {
+      auto& st = molecule;
+      darray::deallocate(st.imol, st.kmol, st.molecule, st.molmass);
+   }
+
+   if (op & rc_alloc) {
+      auto& st = molecule;
+      darray::allocate(n, &st.imol, &st.kmol, &st.molecule, &st.molmass);
+   }
+
+   if (op & rc_init) {
+      auto& st = molecule;
+
+      std::vector<int> buf(2 * n);
+      st.nmol = molcul::nmol;
+      for (int i = 0; i < st.nmol; ++i) {
+         int j = 2 * i;
+         buf[j] = molcul::imol[j] - 1;
+         buf[j + 1] = molcul::imol[j + 1];
+      }
+      darray::copyin(g::q0, st.nmol, st.imol, buf.data());
+      waitFor(g::q0);
+      for (int i = 0; i < n; ++i) {
+         buf[i] = molcul::kmol[i] - 1;
+      }
+      darray::copyin(g::q0, n, st.kmol, buf.data());
+      waitFor(g::q0);
+      for (int i = 0; i < n; ++i) {
+         buf[i] = molcul::molcule[i] - 1;
+      }
+      darray::copyin(g::q0, n, st.molecule, buf.data());
+      waitFor(g::q0);
+      st.totmass = molcul::totmass;
+      darray::copyin(g::q0, st.nmol, st.molmass, molcul::molmass);
+      waitFor(g::q0);
+   }
+}
+
 void groupData(RcOp op)
 {
    if (op & rc_dealloc) {

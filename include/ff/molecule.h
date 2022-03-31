@@ -3,6 +3,7 @@
 #include "tool/rcman.h"
 
 namespace tinker {
+/// \ingroup ff
 /// \brief Individual molecules in current system.
 struct Molecule
 {
@@ -20,6 +21,7 @@ struct Molecule
    double* molmass;
 };
 
+/// \ingroup ff
 /// \brief Partitioning of system into atom groups.
 struct Group
 {
@@ -39,8 +41,11 @@ struct Group
 }
 
 namespace tinker {
+/// \ingroup ff
 void coupleData(RcOp);
+/// \ingroup ff
 void moleculeData(RcOp);
+/// \ingroup ff
 void groupData(RcOp);
 }
 
@@ -51,11 +56,16 @@ void groupData(RcOp);
 //====================================================================//
 
 namespace tinker {
+/// \ingroup ff
 const int couple_maxn12 = 8;
+/// \ingroup ff
 TINKER_EXTERN int (*couple_i12)[couple_maxn12];
+/// \ingroup ff
 TINKER_EXTERN int* couple_n12;
 
+/// \ingroup ff
 TINKER_EXTERN Molecule molecule;
 
+/// \ingroup ff
 TINKER_EXTERN Group grp;
 }
