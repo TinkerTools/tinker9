@@ -81,4 +81,12 @@ inline T fixedTo(fixed val)
 {
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
 }
+
+/// \ingroup acc_syntax
+/// \brief Used as `eq<T1,T2>()` for two type identifiers.
+template <class T, class U>
+constexpr bool eq()
+{
+   return std::is_same<T, U>::value;
+}
 }

@@ -1,5 +1,4 @@
 #include "add.h"
-#include "comparetypes.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/atom.h"
 #include "ff/box.h"

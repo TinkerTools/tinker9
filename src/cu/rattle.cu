@@ -1,5 +1,4 @@
 #include "add.h"
-#include "comparetypes.h"
 #include "launch.h"
 #include "md/pq.h"
 #include "md/rattle.h"

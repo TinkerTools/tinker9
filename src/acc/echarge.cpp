@@ -1,6 +1,5 @@
 #include "ff/pchg/echarge.h"
 #include "add.h"
-#include "comparetypes.h"
 #include "ff/energy.h"
 #include "ff/image.h"
 #include "ff/nblist.h"

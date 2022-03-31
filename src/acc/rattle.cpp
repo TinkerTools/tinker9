@@ -1,6 +1,5 @@
 #include "md/rattle.h"
 #include "add.h"
-#include "comparetypes.h"
 #include "ff/energy.h"
 #include "math/libfunc.h"
 #include "md/pq.h"

@@ -1,5 +1,4 @@
 #include "add.h"
-#include "comparetypes.h"
 #include "empole_self.h"
 #include "epolar_trq.h"
 #include "ff/amoeba/elecamoeba.h"
