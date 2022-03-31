@@ -124,7 +124,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 
    {
       std::vector<double> arrx(n), arry(n), arrz(n);
-      copy_gradient(calc::grad, arrx.data(), arry.data(), arrz.data(), dup_buf_gx, dup_buf_gy,
+      copyGradient(calc::grad, arrx.data(), arry.data(), arrz.data(), dup_buf_gx, dup_buf_gy,
          dup_buf_gz, false);
       // convert gradient to acceleration
       const double ekcal = units::ekcal;

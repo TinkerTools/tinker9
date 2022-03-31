@@ -108,7 +108,7 @@ void echgtrn(int vers)
          }
       }
       if (do_g)
-         sum_gradient(gx_elec, gy_elec, gz_elec, dectx, decty, dectz);
+         sumGradient(gx_elec, gy_elec, gz_elec, dectx, decty, dectz);
    }
 }
 }

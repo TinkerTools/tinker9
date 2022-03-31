@@ -37,6 +37,7 @@ evalence.cpp
 evdw.cpp
 ff/atom.cpp
 ff/box.cpp
+ff/egvop.cpp
 ff/elec.cpp
 ff/molecule.cpp
 ff/nblist.cpp
@@ -75,7 +76,6 @@ lf_lpiston.cpp
 lpiston.cpp
 math/lu.cpp
 md/rattle.cpp
-mdegv.cpp
 mdintg.cpp
 mdppg.cpp
 mdpq.cpp

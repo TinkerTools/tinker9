@@ -59,7 +59,7 @@ TEST_CASE("K-Water", "[ff][osrw]")
 
    osrw_energy(calc::v6);
    double gdx[4], gdy[4], gdz[4];
-   copy_gradient(calc::v6, gdx, gdy, gdz);
+   copyGradient(calc::v6, gdx, gdy, gdz);
 
    for (int i = 0; i < 4; ++i) {
       double refgx = s1 * refg_1[i][0] + s0 * refg_0[i][0];
@@ -70,7 +70,7 @@ TEST_CASE("K-Water", "[ff][osrw]")
       REQUIRE(gdz[i] == Approx(refgz).margin(geps));
    }
    double d1x[4], d1y[4], d1z[4];
-   copy_gradient(calc::v6, d1x, d1y, d1z, osrw_dgx, osrw_dgy, osrw_dgz);
+   copyGradient(calc::v6, d1x, d1y, d1z, osrw_dgx, osrw_dgy, osrw_dgz);
    for (int i = 0; i < 4; ++i) {
       double refgx1 = refg_1[i][0] - refg_0[i][0];
       double refgy1 = refg_1[i][1] - refg_0[i][1];
@@ -120,7 +120,7 @@ TEST_CASE("K-Water-Analyze", "[ff][osrw]")
 
    osrw_energy(calc::v6);
    double gdx[4], gdy[4], gdz[4];
-   copy_gradient(calc::v6, gdx, gdy, gdz);
+   copyGradient(calc::v6, gdx, gdy, gdz);
    for (int i = 0; i < 4; ++i) {
       double refgx = s1 * refg_1[i][0] + s0 * refg_0[i][0];
       double refgy = s1 * refg_1[i][1] + s0 * refg_0[i][1];
@@ -130,7 +130,7 @@ TEST_CASE("K-Water-Analyze", "[ff][osrw]")
       REQUIRE(gdz[i] == Approx(refgz).margin(geps));
    }
    double d1x[4], d1y[4], d1z[4];
-   copy_gradient(calc::v6, d1x, d1y, d1z, osrw_dgx, osrw_dgy, osrw_dgz);
+   copyGradient(calc::v6, d1x, d1y, d1z, osrw_dgx, osrw_dgy, osrw_dgz);
    for (int i = 0; i < 4; ++i) {
       double refgx1 = refg_1[i][0] - refg_0[i][0];
       double refgy1 = refg_1[i][1] - refg_0[i][1];

@@ -87,7 +87,7 @@ void eurey(int vers)
             virial_valence[iv] += virial_eub[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deubx, deuby, deubz);
+         sumGradient(gx, gy, gz, deubx, deuby, deubz);
    }
 }
 }

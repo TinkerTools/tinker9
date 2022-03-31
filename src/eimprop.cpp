@@ -71,7 +71,7 @@ void eimprop(int vers)
             virial_valence[iv] += virial_eid[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deidx, deidy, deidz);
+         sumGradient(gx, gy, gz, deidx, deidy, deidz);
    }
 }
 }

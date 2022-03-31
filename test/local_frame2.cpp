@@ -59,7 +59,7 @@ TEST_CASE("Local-Frame2-1", "[ff][triclinic][evdw][hal][local-frame2]")
       const double ref_eng = 206.5670;
       const int ref_count = 129;
 
-      zero_egv();
+      zeroEGV();
       energy(calc::v3);
       COMPARE_REALS(energy_ev, ref_eng, eps_e);
       COMPARE_COUNT(nev, ref_count);
@@ -88,7 +88,7 @@ TEST_CASE("Local-Frame2-2", "[ff][monoclinic][evdw][hal][local-frame2]")
       const double ref_eng = 182.5400;
       const int ref_count = 125;
 
-      zero_egv();
+      zeroEGV();
       energy(calc::v3);
       COMPARE_REALS(energy_ev, ref_eng, eps_e);
       COMPARE_COUNT(nev, ref_count);

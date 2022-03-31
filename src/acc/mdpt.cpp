@@ -268,7 +268,7 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
    nblistRefresh();
    energy(calc::energy);
    energy_prec enew;
-   copy_energy(calc::energy, &enew);
+   copyEnergy(calc::energy, &enew);
    double dpot = enew - eold;
    double dpv = bath::atmsph * (volnew - volold) / units::prescon;
 

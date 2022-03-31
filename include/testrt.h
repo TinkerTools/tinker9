@@ -180,7 +180,7 @@ void testMdInit(double t = 0, double atm = 0);
 #define COMPARE_GRADIENT2(ref_grad, eps, check_ij)                                                 \
    {                                                                                               \
       std::vector<double> gradx(n), grady(n), gradz(n);                                            \
-      copy_gradient(calc::grad, gradx.data(), grady.data(), gradz.data());                         \
+      copyGradient(calc::grad, gradx.data(), grady.data(), gradz.data());                          \
       for (int i = 0; i < n; ++i) {                                                                \
          if (check_ij(i, 0))                                                                       \
             REQUIRE(gradx[i] == Approx(ref_grad[i][0]).margin(eps));                               \

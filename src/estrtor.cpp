@@ -81,7 +81,7 @@ void estrtor(int vers)
             virial_valence[iv] += virial_ebt[iv];
       }
       if (do_g) {
-         sum_gradient(gx, gy, gz, debtx, debty, debtz);
+         sumGradient(gx, gy, gz, debtx, debty, debtz);
       }
    }
 }

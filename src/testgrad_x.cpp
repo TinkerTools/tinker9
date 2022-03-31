@@ -29,7 +29,7 @@ void xTestgrad(int, char**)
    energy(rc_flag);
 
    std::vector<double> gdx(n), gdy(n), gdz(n);
-   copy_gradient(calc::grad, gdx.data(), gdy.data(), gdz.data());
+   copyGradient(calc::grad, gdx.data(), gdy.data(), gdz.data());
 
    const int len_e = 20 + digits;
    const char* fmt_e = "\n Total Potential Energy :%1$*2$.*3$f Kcal/mole\n\n";

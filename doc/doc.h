@@ -19,6 +19,8 @@
 /// \ingroup ff
 /// \defgroup nblist  Neighbor List and Spatial Decomposition
 /// \ingroup ff
+/// \defgroup egv  Energy, Gradient, and Virial Tensor
+/// \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
@@ -46,7 +48,6 @@
 /// \defgroup math_parallel  Parallel Algorithms
 /// \ingroup math
 
-/// \defgroup mdegv  Energy, Gradient, and Virial Tensor
 /// \defgroup fft  Fast Fourier Transform
 
 /*

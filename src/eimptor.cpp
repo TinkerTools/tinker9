@@ -81,7 +81,7 @@ void eimptor(int vers)
             virial_valence[iv] += virial_eit[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deitx, deity, deitz);
+         sumGradient(gx, gy, gz, deitx, deity, deitz);
    }
 }
 }

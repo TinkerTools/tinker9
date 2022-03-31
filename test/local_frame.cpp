@@ -234,7 +234,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
          {0.0030, -0.0984, 0.1580}, {0.0209, -0.1631, -0.0351}, {0.0056, -0.0713, -0.0274},
          {0.1466, -0.1529, 0.0013}, {-0.1215, -0.1945, -0.0897}};
 
-      zero_egv();
+      zeroEGV();
       mpoleInit(calc::v0);
       dfieldNonEwald(udir, udirp);
       std::vector<std::array<double, 3>> fieldd, fieldp;
@@ -270,7 +270,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
          {-0.8943, -1.0352, 0.5990}, {-1.8822, -2.1268, -2.2442}, {-0.0331, 0.4012, -1.5516},
          {0.7016, -1.3551, -0.9421}, {-1.4662, -0.8545, -1.3742}};
 
-      zero_egv();
+      zeroEGV();
       mpoleInit(calc::v0);
       std::vector<std::array<double, 3>> ud, up;
       ud.resize(n);
@@ -317,7 +317,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
          {0.0018, -0.1711, 0.4538}, {0.2329, -0.6094, -0.0903}, {0.0180, -0.1162, -0.0128},
          {0.3620, -0.1921, 0.0590}, {-0.2126, -0.4665, -0.1829}};
 
-      zero_egv();
+      zeroEGV();
       mpoleInit(calc::v0);
       induce(uind, uinp);
       std::vector<std::array<double, 3>> ud, up;
@@ -338,7 +338,7 @@ TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
    {
       const double ref_eng = -37.7476;
 
-      zero_egv();
+      zeroEGV();
       epolar(calc::v0);
       COMPARE_ENERGY(ep, ref_eng, eps_f);
    }
@@ -418,7 +418,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
          {-0.0002, -0.0971, 0.1573}, {0.0176, -0.1618, -0.0356}, {0.0020, -0.0699, -0.0279},
          {0.1436, -0.1515, 0.0008}, {-0.1249, -0.1932, -0.0900}};
 
-      zero_egv();
+      zeroEGV();
       mpoleInit(calc::v0);
       dfieldEwald(udir, udirp);
       std::vector<std::array<double, 3>> fieldd, fieldp;
@@ -454,7 +454,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
          {-0.8772, -1.0243, 0.6095}, {-1.8666, -2.1138, -2.2301}, {-0.0191, 0.4125, -1.5382},
          {0.7158, -1.3417, -0.9288}, {-1.4493, -0.8422, -1.3602}};
 
-      zero_egv();
+      zeroEGV();
       mpoleInit(calc::v0);
       std::vector<std::array<double, 3>> ud, up;
       ud.resize(n);
@@ -502,7 +502,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
          {-0.0008, -0.1699, 0.4506}, {0.2227, -0.6054, -0.0918}, {0.0119, -0.1147, -0.0138},
          {0.3551, -0.1907, 0.0577}, {-0.2191, -0.4626, -0.1832}};
 
-      zero_egv();
+      zeroEGV();
       mpoleInit(calc::v0);
       induce(uind, uinp);
       std::vector<std::array<double, 3>> ud, up;
@@ -523,7 +523,7 @@ TEST_CASE("Local-Frame-4", "[ff][epolar][ewald][local-frame]")
    {
       const double ref_eng = -36.5477;
 
-      zero_egv();
+      zeroEGV();
       epolar(calc::v0);
       COMPARE_ENERGY(ep, ref_eng, eps_f);
    }

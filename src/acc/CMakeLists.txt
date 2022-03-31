@@ -16,6 +16,7 @@ echarge.cpp
 echgtrn.cpp
 edisp.cpp
 egeom.cpp
+egvop.cpp
 ehal.cpp
 eimprop.cpp
 eimptor.cpp
@@ -47,7 +48,6 @@ mathfunc_parallel.cpp
 mathlu.cpp
 mathzero.cpp
 mddebug.cpp
-mdegv.cpp
 mdintg.cpp
 mdpq.cpp
 mdpt.cpp

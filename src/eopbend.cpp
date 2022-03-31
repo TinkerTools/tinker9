@@ -95,7 +95,7 @@ void eopbend(int vers)
             virial_valence[iv] += virial_eopb[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deopbx, deopby, deopbz);
+         sumGradient(gx, gy, gz, deopbx, deopby, deopbz);
    }
 }
 }

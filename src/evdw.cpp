@@ -515,7 +515,7 @@ void evdw(int vers)
          }
       }
       if (do_g)
-         sum_gradient(gx_vdw, gy_vdw, gz_vdw, devx, devy, devz);
+         sumGradient(gx_vdw, gy_vdw, gz_vdw, devx, devy, devz);
    }
 }
 }

@@ -166,7 +166,7 @@ void etortor(int vers)
             virial_valence[iv] += virial_ett[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, dettx, detty, dettz);
+         sumGradient(gx, gy, gz, dettx, detty, dettz);
    }
 }
 }

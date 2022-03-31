@@ -88,7 +88,7 @@ void etors(int vers)
             virial_valence[iv] += virial_et[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, detx, dety, detz);
+         sumGradient(gx, gy, gz, detx, dety, detz);
    }
 }
 }

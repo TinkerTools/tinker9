@@ -377,7 +377,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
-   zero_egv(vers);
+   zeroEGV(vers);
    energy_core(vers, tsflag, tsconfig);
 
    bool rc_a = rc_flag & calc::analyz;
@@ -477,9 +477,9 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    }
    if (do_g) {
       if (ecore_vdw && gx_vdw)
-         sum_gradient(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
+         sumGradient(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
       if (ecore_ele && gx_elec)
-         sum_gradient(gx, gy, gz, gx_elec, gy_elec, gz_elec);
+         sumGradient(gx, gy, gz, gx_elec, gy_elec, gz_elec);
    }
 }
 

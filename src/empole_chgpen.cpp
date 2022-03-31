@@ -128,7 +128,7 @@ void empoleChgpen(int vers)
          }
       }
       if (do_g)
-         sum_gradient(gx_elec, gy_elec, gz_elec, demx, demy, demz);
+         sumGradient(gx_elec, gy_elec, gz_elec, demx, demy, demz);
    }
 }
 

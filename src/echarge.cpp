@@ -174,7 +174,7 @@ void echarge(int vers)
          }
       }
       if (do_g)
-         sum_gradient(gx_elec, gy_elec, gz_elec, decx, decy, decz);
+         sumGradient(gx_elec, gy_elec, gz_elec, decx, decy, decz);
    }
 }
 

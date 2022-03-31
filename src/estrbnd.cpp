@@ -84,7 +84,7 @@ void estrbnd(int vers)
             virial_valence[iv] += virial_eba[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, debax, debay, debaz);
+         sumGradient(gx, gy, gz, debax, debay, debaz);
    }
 }
 }

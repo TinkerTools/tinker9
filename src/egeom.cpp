@@ -121,7 +121,7 @@ void egeom(int vers)
             virial_valence[iv] += virial_eg[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, degx, degy, degz);
+         sumGradient(gx, gy, gz, degx, degy, degz);
    }
 }
 }

@@ -1,8 +1,8 @@
 #include "add.h"
-#include "md/pq.h"
+#include "ff/atom.h"
 
 namespace tinker {
-void scale_gradient_acc(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z)
+void scaleGradient_acc(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z)
 {
    real s = scale;
 #if TINKER_DETERMINISTIC_FORCE
@@ -27,7 +27,7 @@ void scale_gradient_acc(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec*
 #endif
 }
 
-void sum_gradient_acc(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
+void sumGradient_acc(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
    const grad_prec* g1y, const grad_prec* g1z)
 {
    #pragma acc parallel loop independent async\
@@ -39,7 +39,7 @@ void sum_gradient_acc(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad
    }
 }
 
-void sum_gradient_acc(double ss, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
+void sumGradient_acc(double ss, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
    const grad_prec* g1x, const grad_prec* g1y, const grad_prec* g1z)
 {
    real s = ss;

@@ -93,8 +93,8 @@ void xMinimize(int, char**)
    // compute the final function and RMS gradient values
    double minimum;
    energy(calc::energy + calc::grad);
-   copy_energy(calc::energy, &minimum);
-   copy_gradient(calc::grad, grx.data(), gry.data(), grz.data());
+   copyEnergy(calc::energy, &minimum);
+   copyGradient(calc::grad, grx.data(), gry.data(), grz.data());
    double gnorm = 0;
    for (int i = 0; i < n; ++i) {
       gnorm += grx[i] * grx[i] + gry[i] * gry[i] + grz[i] * grz[i];
@@ -141,8 +141,8 @@ double minimiz1(double* xx, double* g)
    // compute and store the energy and gradient
    energy(calc::energy + calc::grad);
    energy_prec eout;
-   copy_energy(calc::energy, &eout);
-   copy_gradient(calc::grad, grx.data(), gry.data(), grz.data());
+   copyEnergy(calc::energy, &eout);
+   copyGradient(calc::grad, grx.data(), gry.data(), grz.data());
 
    // convert coordinates and gradient to optimization parameters
 

@@ -82,7 +82,7 @@ void epitors(int vers)
             virial_valence[iv] += virial_ept[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deptx, depty, deptz);
+         sumGradient(gx, gy, gz, deptx, depty, deptz);
    }
 }
 }

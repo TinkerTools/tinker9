@@ -1,9 +1,9 @@
+#include "ff/pme.h"
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/atom.h"
 #include "ff/box.h"
 #include "ff/elec.h"
-#include "ff/pme.h"
 #include "seq/bsplgen.h"
 
 namespace tinker {

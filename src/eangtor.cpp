@@ -81,7 +81,7 @@ void eangtor(int vers)
             virial_valence[iv] += virial_eat[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deatx, deaty, deatz);
+         sumGradient(gx, gy, gz, deatx, deaty, deatz);
    }
 }
 }

@@ -94,7 +94,7 @@ void ebond(int vers)
             virial_valence[iv] += virial_eb[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, debx, deby, debz);
+         sumGradient(gx, gy, gz, debx, deby, debz);
    }
 }
 }

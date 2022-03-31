@@ -2,7 +2,7 @@
 #include "math/zero.h"
 
 namespace tinker {
-void zero_egv(int vers)
+void zeroEGV(int vers)
 {
    size_t bsize = bufferSize();
    if (vers & calc::energy) {
@@ -20,46 +20,44 @@ void zero_egv(int vers)
    }
 }
 
-void zero_egv()
+void zeroEGV()
 {
-   zero_egv(rc_flag);
+   zeroEGV(rc_flag);
+}
 }
 
-//====================================================================//
-
-void scale_gradient(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z)
+namespace tinker {
+extern void scaleGradient_acc(double, grad_prec*, grad_prec*, grad_prec*);
+void scaleGradient(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z)
 {
    if (scale == 1)
       return;
    else if (scale == 0) {
       darray::zero(g::q0, n, g0x, g0y, g0z);
    } else
-      scale_gradient_acc(scale, g0x, g0y, g0z);
+      scaleGradient_acc(scale, g0x, g0y, g0z);
 }
 
-void sum_gradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
+extern void sumGradient_acc(grad_prec*, grad_prec*, grad_prec*, //
+   const grad_prec*, const grad_prec*, const grad_prec*);
+void sumGradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
    const grad_prec* g1y, const grad_prec* g1z)
 {
-   sum_gradient_acc(g0x, g0y, g0z, g1x, g1y, g1z);
+   sumGradient_acc(g0x, g0y, g0z, g1x, g1y, g1z);
 }
 
-void sum_gradient(double s, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
+extern void sumGradient_acc(double, grad_prec*, grad_prec*, grad_prec*, //
+   const grad_prec*, const grad_prec*, const grad_prec*);
+void sumGradient(double s, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
    const grad_prec* g1y, const grad_prec* g1z)
 {
-   sum_gradient_acc(s, g0x, g0y, g0z, g1x, g1y, g1z);
+   sumGradient_acc(s, g0x, g0y, g0z, g1x, g1y, g1z);
+}
 }
 
-//====================================================================//
-
-void copy_energy(int vers, energy_prec* eng)
-{
-   if (eng && vers & calc::energy && eng != &esum) {
-      eng[0] = esum;
-   }
-}
-
-void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const grad_prec* gx_src,
-   const grad_prec* gy_src, const grad_prec* gz_src, int queue)
+namespace tinker {
+void copyGradient(int vers, double* grdx, double* grdy, double* grdz, //
+   const grad_prec* gx_src, const grad_prec* gy_src, const grad_prec* gz_src, int queue)
 {
    if (vers & calc::grad) {
       if (grdx && grdy && grdz) {
@@ -97,14 +95,21 @@ void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const gra
    }
 }
 
-void copy_gradient(int vers, double* grdx, double* grdy, double* grdz, const grad_prec* gx_src,
-   const grad_prec* gy_src, const grad_prec* gz_src)
+void copyGradient(int vers, double* grdx, double* grdy, double* grdz, //
+   const grad_prec* gx_src, const grad_prec* gy_src, const grad_prec* gz_src)
 {
-   copy_gradient(vers, grdx, grdy, grdz, gx_src, gy_src, gz_src, g::q0);
+   copyGradient(vers, grdx, grdy, grdz, gx_src, gy_src, gz_src, g::q0);
 }
 
-void copy_gradient(int vers, double* grdx, double* grdy, double* grdz)
+void copyGradient(int vers, double* grdx, double* grdy, double* grdz)
 {
-   copy_gradient(vers, grdx, grdy, grdz, gx, gy, gz);
+   copyGradient(vers, grdx, grdy, grdz, gx, gy, gz);
+}
+
+void copyEnergy(int vers, energy_prec* eng)
+{
+   if (eng && vers & calc::energy && eng != &esum) {
+      eng[0] = esum;
+   }
 }
 }

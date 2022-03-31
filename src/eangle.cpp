@@ -112,7 +112,7 @@ void eangle(int vers)
             virial_valence[iv] += virial_ea[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deax, deay, deaz);
+         sumGradient(gx, gy, gz, deax, deay, deaz);
    }
 }
 }

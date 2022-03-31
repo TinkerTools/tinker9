@@ -974,7 +974,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_eb[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, debx, deby, debz);
+         sumGradient(gx, gy, gz, debx, deby, debz);
    }
    if (rc_a and flag_angle) {
       if (do_e) {
@@ -987,7 +987,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_ea[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deax, deay, deaz);
+         sumGradient(gx, gy, gz, deax, deay, deaz);
    }
    if (rc_a and flag_strbnd) {
       if (do_e) {
@@ -1000,7 +1000,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_eba[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, debax, debay, debaz);
+         sumGradient(gx, gy, gz, debax, debay, debaz);
    }
    if (rc_a and flag_urey) {
       if (do_e) {
@@ -1013,7 +1013,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_eub[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deubx, deuby, deubz);
+         sumGradient(gx, gy, gz, deubx, deuby, deubz);
    }
    if (rc_a and flag_opb) {
       if (do_e) {
@@ -1026,7 +1026,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_eopb[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deopbx, deopby, deopbz);
+         sumGradient(gx, gy, gz, deopbx, deopby, deopbz);
    }
    if (rc_a and flag_improp) {
       if (do_e) {
@@ -1039,7 +1039,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_eid[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deidx, deidy, deidz);
+         sumGradient(gx, gy, gz, deidx, deidy, deidz);
    }
    if (rc_a and flag_imptor) {
       if (do_e) {
@@ -1052,7 +1052,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_eit[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deitx, deity, deitz);
+         sumGradient(gx, gy, gz, deitx, deity, deitz);
    }
    if (rc_a and flag_tors) {
       if (do_e) {
@@ -1065,7 +1065,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_et[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, detx, dety, detz);
+         sumGradient(gx, gy, gz, detx, dety, detz);
    }
    if (rc_a and flag_pitors) {
       if (do_e) {
@@ -1078,7 +1078,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_ept[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deptx, depty, deptz);
+         sumGradient(gx, gy, gz, deptx, depty, deptz);
    }
    if (rc_a and flag_strtor) {
       if (do_e) {
@@ -1091,7 +1091,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_ebt[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, debtx, debty, debtz);
+         sumGradient(gx, gy, gz, debtx, debty, debtz);
    }
    if (rc_a and flag_angtor) {
       if (do_e) {
@@ -1104,7 +1104,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_eat[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, deatx, deaty, deatz);
+         sumGradient(gx, gy, gz, deatx, deaty, deatz);
    }
    if (rc_a and flag_tortor) {
       if (do_e) {
@@ -1117,7 +1117,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_ett[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, dettx, detty, dettz);
+         sumGradient(gx, gy, gz, dettx, detty, dettz);
    }
    if (rc_a and flag_geom) {
       if (do_e) {
@@ -1130,7 +1130,7 @@ void evalence_cu(int vers)
             virial_valence[iv] += virial_eg[iv];
       }
       if (do_g)
-         sum_gradient(gx, gy, gz, degx, degy, degz);
+         sumGradient(gx, gy, gz, degx, degy, degz);
    }
 }
 }

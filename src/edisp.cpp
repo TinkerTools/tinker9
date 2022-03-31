@@ -224,7 +224,7 @@ void edisp(int vers)
          }
       }
       if (do_g)
-         sum_gradient(gx_vdw, gy_vdw, gz_vdw, dedspx, dedspy, dedspz);
+         sumGradient(gx_vdw, gy_vdw, gz_vdw, dedspx, dedspy, dedspz);
    }
 }
 

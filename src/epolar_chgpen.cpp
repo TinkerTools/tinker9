@@ -214,7 +214,7 @@ void epolarChgpen(int vers)
          }
       }
       if (do_g)
-         sum_gradient(gx_elec, gy_elec, gz_elec, depx, depy, depz);
+         sumGradient(gx_elec, gy_elec, gz_elec, depx, depy, depz);
    }
 }
 

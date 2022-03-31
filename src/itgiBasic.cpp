@@ -114,7 +114,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       darray::copy(g::q0, n, gx1, gx);
       darray::copy(g::q0, n, gy1, gy);
       darray::copy(g::q0, n, gz1, gz);
-      copy_energy(vers1, &esum_f);
+      copyEnergy(vers1, &esum_f);
       if (vers1 & calc::virial) {
          if (atomic) {
             for (int iv = 0; iv < 9; ++iv)

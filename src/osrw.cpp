@@ -277,7 +277,7 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    osrw_altvdw(0);
    osrw_altele(0);
 
-   zero_egv(vers);
+   zeroEGV(vers);
    energy_core(vers, tsflag, tsconfig);
    if (do_e) {
       if (!rc_a) {
@@ -329,15 +329,15 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       }
    }
    if (do_g) {
-      sum_gradient(-stor1, osrw_dgx, osrw_dgy, osrw_dgz, gx, gy, gz);
-      scale_gradient(stor0, gx, gy, gz);
+      sumGradient(-stor1, osrw_dgx, osrw_dgy, osrw_dgz, gx, gy, gz);
+      scaleGradient(stor0, gx, gy, gz);
       if (gx_vdw) {
-         sum_gradient(-svdw1, osrw_dgx, osrw_dgy, osrw_dgz, gx_vdw, gy_vdw, gz_vdw);
-         sum_gradient(svdw0, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
+         sumGradient(-svdw1, osrw_dgx, osrw_dgy, osrw_dgz, gx_vdw, gy_vdw, gz_vdw);
+         sumGradient(svdw0, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
       }
       if (gx_elec) {
-         sum_gradient(-sele1, osrw_dgx, osrw_dgy, osrw_dgz, gx_elec, gy_elec, gz_elec);
-         sum_gradient(sele0, gx, gy, gz, gx_elec, gy_elec, gz_elec);
+         sumGradient(-sele1, osrw_dgx, osrw_dgy, osrw_dgz, gx_elec, gy_elec, gz_elec);
+         sumGradient(sele0, gx, gy, gz, gx_elec, gy_elec, gz_elec);
       }
       darray::copy(g::q0, n, osrw_gx, gx);
       darray::copy(g::q0, n, osrw_gy, gy);
@@ -351,7 +351,7 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    osrw_altvdw(1);
    osrw_altele(1);
 
-   zero_egv(vers);
+   zeroEGV(vers);
    energy_core(vers, tsflag, tsconfig);
    if (do_e) {
       if (!rc_a) {
@@ -413,17 +413,17 @@ void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       }
    }
    if (do_g) {
-      sum_gradient(stor1, osrw_dgx, osrw_dgy, osrw_dgz, gx, gy, gz);
-      scale_gradient(stor0, gx, gy, gz);
+      sumGradient(stor1, osrw_dgx, osrw_dgy, osrw_dgz, gx, gy, gz);
+      scaleGradient(stor0, gx, gy, gz);
       if (gx_vdw) {
-         sum_gradient(svdw1, osrw_dgx, osrw_dgy, osrw_dgz, gx_vdw, gy_vdw, gz_vdw);
-         sum_gradient(svdw0, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
+         sumGradient(svdw1, osrw_dgx, osrw_dgy, osrw_dgz, gx_vdw, gy_vdw, gz_vdw);
+         sumGradient(svdw0, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
       }
       if (gx_elec) {
-         sum_gradient(sele1, osrw_dgx, osrw_dgy, osrw_dgz, gx_elec, gy_elec, gz_elec);
-         sum_gradient(sele0, gx, gy, gz, gx_elec, gy_elec, gz_elec);
+         sumGradient(sele1, osrw_dgx, osrw_dgy, osrw_dgz, gx_elec, gy_elec, gz_elec);
+         sumGradient(sele0, gx, gy, gz, gx_elec, gy_elec, gz_elec);
       }
-      sum_gradient(gx, gy, gz, osrw_gx, osrw_gy, osrw_gz);
+      sumGradient(gx, gy, gz, osrw_gx, osrw_gy, osrw_gz);
    }
 }
 

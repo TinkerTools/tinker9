@@ -195,7 +195,7 @@ void erepel(int vers)
          }
       }
       if (do_g)
-         sum_gradient(gx_vdw, gy_vdw, gz_vdw, derx, dery, derz);
+         sumGradient(gx_vdw, gy_vdw, gz_vdw, derx, dery, derz);
    }
 }
 }
