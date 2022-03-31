@@ -22,7 +22,6 @@ elec.cpp
 emplar.cpp
 empole.cpp
 empole_chgpen.cpp
-energy.cpp
 eopbend.cpp
 epitors.cpp
 epolar.cpp
@@ -39,6 +38,7 @@ ff/atom.cpp
 ff/box.cpp
 ff/egvop.cpp
 ff/elec.cpp
+ff/energy.cpp
 ff/molecule.cpp
 ff/nblist.cpp
 ff/potent.cpp
