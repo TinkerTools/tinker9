@@ -1,9 +1,7 @@
-#include "ff/rattle.h"
+#include "md/rattle.h"
 #include "ff/atom.h"
 #include "ff/energy.h"
 #include "tool/darray.h"
-#include "tool/energybuffer.h"
-#include "tool/io.h"
 #include <algorithm>
 #include <cassert>
 #include <map>
@@ -12,12 +10,7 @@
 #include <tinker/detail/freeze.hh>
 
 namespace tinker {
-bool useRattle()
-{
-   return freeze::use_rattle;
-}
-
-namespace {
+inline namespace v1 {
 // holonomic constraint information
 struct HCInfo
 {
@@ -47,14 +40,14 @@ struct HCInfo
 
 // HC-Molecule is a set of bonds.
 using HCMol = std::set<HCInfo>;
-bool operator<(const HCMol& h1, const HCMol& h2)
+
+static bool operator<(const HCMol& h1, const HCMol& h2)
 {
    return *h1.begin() < *h2.begin();
 }
 
-namespace {
-bool HCMol_is_water(
-   const HCMol& h, int& a, int& b, int& c, pos_prec& ab, pos_prec& ac, pos_prec& bc)
+static bool HCMolIsWater(const HCMol& h, int& a, int& b, int& c, //
+   pos_prec& ab, pos_prec& ac, pos_prec& bc)
 {
    if (h.size() != 3)
       return false;
@@ -75,7 +68,7 @@ bool HCMol_is_water(
 }
 
 // methine group, -S-H, etc.
-bool HCMol_is_ch(const HCMol& h, int& a, int& b, pos_prec& ab)
+static bool HCMolIsCH(const HCMol& h, int& a, int& b, pos_prec& ab)
 {
    if (h.size() != 1)
       return false;
@@ -87,7 +80,7 @@ bool HCMol_is_ch(const HCMol& h, int& a, int& b, pos_prec& ab)
 }
 
 // methylene group, -NH2, etc.
-bool HCMol_is_ch2(const HCMol& h, int& a, int& b, int& c, pos_prec& ab, pos_prec& ac)
+static bool HCMolIsCH2(const HCMol& h, int& a, int& b, int& c, pos_prec& ab, pos_prec& ac)
 {
    if (h.size() != 2)
       return false;
@@ -128,8 +121,8 @@ bool HCMol_is_ch2(const HCMol& h, int& a, int& b, int& c, pos_prec& ab, pos_prec
 }
 
 // methyl group
-bool HCMol_is_ch3(
-   const HCMol& h, int& a, int& b, int& c, int& d, pos_prec& ab, pos_prec& ac, pos_prec& ad)
+static bool HCMolIsCH3(const HCMol& h, int& a, int& b, int& c, int& d, //
+   pos_prec& ab, pos_prec& ac, pos_prec& ad)
 {
    if (h.size() != 3)
       return false;
@@ -171,12 +164,19 @@ bool HCMol_is_ch3(
    }
    return false;
 }
-}
 
 // all of the HC-Molecules
-std::vector<HCMol> hc_mols;
+static std::vector<HCMol> hc_mols;
+
 // hc_dict[i] gives where to find atom i
-std::map<int, size_t> hc_dict;
+static std::map<int, size_t> hc_dict;
+}
+}
+
+namespace tinker {
+bool useRattle()
+{
+   return freeze::use_rattle;
 }
 
 void rattleData(RcOp op)
@@ -374,7 +374,7 @@ void rattleData(RcOp op)
       for (auto& it : hc_mols) {
          int a, b, c, d;
          pos_prec ab, ac, bc, ad;
-         if (HCMol_is_water(it, a, b, c, ab, ac, bc)) {
+         if (HCMolIsWater(it, a, b, c, ab, ac, bc)) {
             veciwater.push_back(a);
             veciwater.push_back(b);
             veciwater.push_back(c);
@@ -382,12 +382,12 @@ void rattleData(RcOp op)
             veckwater.push_back(ac);
             veckwater.push_back(bc);
             it.clear();
-         } else if (HCMol_is_ch(it, a, b, ab)) {
+         } else if (HCMolIsCH(it, a, b, ab)) {
             vecich.push_back(a);
             vecich.push_back(b);
             veckch.push_back(ab);
             it.clear();
-         } else if (HCMol_is_ch2(it, a, b, c, ab, ac)) {
+         } else if (HCMolIsCH2(it, a, b, c, ab, ac)) {
             vecich2.push_back(a);
             vecich2.push_back(b);
             vecich2.push_back(c);
@@ -395,7 +395,7 @@ void rattleData(RcOp op)
             veckch2.push_back(ac);
             if (TINKER_CUDART and pltfm_config & Platform::CUDA)
                it.clear();
-         } else if (HCMol_is_ch3(it, a, b, c, d, ab, ac, ad)) {
+         } else if (HCMolIsCH3(it, a, b, c, d, ab, ac, ad)) {
             vecich3.push_back(a);
             vecich3.push_back(b);
             vecich3.push_back(c);
@@ -474,38 +474,52 @@ void rattleData(RcOp op)
       hc_dict.clear();
    }
 }
+}
 
-void rattle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-void rattle_settle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-void rattle_ch_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-// methylene and methyl groups
-void rattle_methyl_cu(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+namespace tinker {
+extern void rattle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+extern void rattleSettle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+extern void rattleCH_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+extern void rattleMethyl_cu(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+
+extern void rattle2_acc(time_prec, bool);
+extern void rattle2Settle_acc(time_prec, bool);
+extern void rattle2CH_acc(time_prec, bool);
+extern void rattle2Methyl_cu(time_prec, bool);
+
+extern void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+extern void shakeSettle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+extern void shakeCH_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+extern void shakeMethyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+}
+
+namespace tinker {
 void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
-   rattle_settle_acc(dt, xold, yold, zold);
-   rattle_ch_acc(dt, xold, yold, zold);
+   rattleSettle_acc(dt, xold, yold, zold);
+   rattleCH_acc(dt, xold, yold, zold);
 #if TINKER_CUDART
    if (pltfm_config & Platform::CUDA)
-      rattle_methyl_cu(dt, xold, yold, zold);
+      rattleMethyl_cu(dt, xold, yold, zold);
 #endif
    rattle_acc(dt, xold, yold, zold);
 }
 
-void rattle2_acc(time_prec, bool);
-void rattle2_settle_acc(time_prec, bool);
-void rattle2_ch_acc(time_prec, bool);
-void rattle2_methyl_cu(time_prec, bool);
 void rattle2(time_prec dt, bool do_v)
 {
    if (do_v) {
       darray::zero(g::q0, bufferSize(), vir_buf);
    }
 
-   rattle2_settle_acc(dt, do_v);
-   rattle2_ch_acc(dt, do_v);
+   rattle2Settle_acc(dt, do_v);
+   rattle2CH_acc(dt, do_v);
 #if TINKER_CUDART
    if (pltfm_config & Platform::CUDA)
-      rattle2_methyl_cu(dt, do_v);
+      rattle2Methyl_cu(dt, do_v);
 #endif
    rattle2_acc(dt, do_v);
 
@@ -518,22 +532,14 @@ void rattle2(time_prec dt, bool do_v)
    }
 }
 
-void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
-   const pos_prec* yold, const pos_prec* zold);
-void shake_settle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
-void shake_ch_acc(
-   time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*, const pos_prec*, const pos_prec*);
-void shake_methyl_cu(
-   time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*, const pos_prec*, const pos_prec*);
 void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
    const pos_prec* yold, const pos_prec* zold)
 {
-   shake_settle_acc(dt, xnew, ynew, znew, xold, yold, zold);
-   shake_ch_acc(dt, xnew, ynew, znew, xold, yold, zold);
+   shakeSettle_acc(dt, xnew, ynew, znew, xold, yold, zold);
+   shakeCH_acc(dt, xnew, ynew, znew, xold, yold, zold);
 #if TINKER_CUDART
    if (pltfm_config & Platform::CUDA)
-      shake_methyl_cu(dt, xnew, ynew, znew, xold, yold, zold);
+      shakeMethyl_cu(dt, xnew, ynew, znew, xold, yold, zold);
 #endif
    shake_acc(dt, xnew, ynew, znew, xold, yold, zold);
 }

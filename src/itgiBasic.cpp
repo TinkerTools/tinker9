@@ -1,8 +1,8 @@
 #include "ff/energy.h"
-#include "ff/rattle.h"
 #include "md/integrator.h"
 #include "md/intg.h"
 #include "md/pq.h"
+#include "md/rattle.h"
 #include "tool/io.h"
 
 namespace tinker {

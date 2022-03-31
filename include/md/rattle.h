@@ -2,26 +2,6 @@
 #include "ff/molecule.h"
 #include "tool/energybuffer.h"
 
-namespace tinker {
-bool useRattle();
-void rattleData(RcOp);
-void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
-void rattle2(time_prec dt, bool do_v);
-void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, //
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
-
-void hcKinetic();
-void hcVirial();
-
-void hcCenterOfMass(const pos_prec* atomx, const pos_prec* atomy, const pos_prec* atomz,
-   pos_prec* molx, pos_prec* moly, pos_prec* molz);
-
-// vi += s Vu
-void hcVelIso(vel_prec s);
-// vi += MatS Vu
-void hcVelAn(vel_prec s[3][3]);
-}
-
 extern "C"
 {
    struct RATTLE
@@ -35,6 +15,44 @@ extern "C"
    };
 }
 
+namespace tinker {
+/// \ingroup mdpq
+bool useRattle();
+
+/// \ingroup mdpq
+void rattleData(RcOp);
+
+/// \ingroup mdpq
+void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+
+/// \ingroup mdpq
+void rattle2(time_prec dt, bool do_v);
+
+/// \ingroup mdpq
+void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, //
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+
+/// \ingroup mdpt
+void hcKinetic();
+
+/// \ingroup ff
+void hcVirial();
+
+/// \ingroup mdpq
+void hcCenterOfMass(const pos_prec* atomx, const pos_prec* atomy, const pos_prec* atomz,
+   pos_prec* molx, pos_prec* moly, pos_prec* molz);
+
+/// \ingroup mdpq
+/// \brief Update velocities by
+/// \f$ \boldsymbol{v}_{ui}(t) = \boldsymbol{v}_{ui}(0) + s \boldsymbol{V}_{u}(0) \f$.
+void hcVelIso(vel_prec s);
+
+/// \ingroup mdpq
+/// \brief Update velocities by
+/// \f$ \boldsymbol{v}_{ui}(t) = \boldsymbol{v}_{ui}(0) + \boldsymbol{S} \boldsymbol{V}_{u}(0) \f$.
+void hcVelAn(vel_prec s[3][3]);
+}
+
 //====================================================================//
 //                                                                    //
 //                          Global Variables                          //
@@ -42,6 +60,8 @@ extern "C"
 //====================================================================//
 
 namespace tinker {
+/// \ingroup mdpq
+/// \{
 TINKER_EXTERN pos_prec rateps;
 
 TINKER_EXTERN int nratwt;            // rattle water
@@ -81,9 +101,14 @@ TINKER_EXTERN vel_prec* ratcom_vx;
 TINKER_EXTERN vel_prec* ratcom_vy;
 TINKER_EXTERN vel_prec* ratcom_vz;
 TINKER_EXTERN double* ratcom_massfrac;
+/// \}
 
+/// \ingroup mdpt
 TINKER_EXTERN energy_prec hc_eksum;
+/// \ingroup mdpt
 TINKER_EXTERN energy_prec hc_ekin[3][3];
+/// \ingroup ff
 TINKER_EXTERN virial_prec hc_vir[9];
+/// \ingroup ff
 TINKER_EXTERN VirialBuffer hc_vir_buf;
 }

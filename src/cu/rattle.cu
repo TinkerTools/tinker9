@@ -1,14 +1,14 @@
 #include "add.h"
 #include "comparetypes.h"
-#include "ff/rattle.h"
 #include "launch.h"
 #include "md/pq.h"
+#include "md/rattle.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {
 template <class HTYPE>
 __global__
-void constrain_methyl_cu1(double eps, int nratch2, const int (*restrict iratch2)[3],
+void constrainMethyl_cu1(double eps, int nratch2, const int (*restrict iratch2)[3],
    const pos_prec (*restrict kratch2)[2], int nratch3, const int (*restrict iratch3)[4],
    const pos_prec (*restrict kratch3)[3],
 
@@ -178,14 +178,13 @@ void constrain_methyl_cu1(double eps, int nratch2, const int (*restrict iratch2)
    }
 }
 
-void rattle_methyl_cu(
-   time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+void rattleMethyl_cu(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    int n23 = nratch2 + nratch3;
    if (n23 <= 0)
       return;
 
-   auto ker = constrain_methyl_cu1<RATTLE>;
+   auto ker = constrainMethyl_cu1<RATTLE>;
    launch_k2s(g::s0, 64, n23, ker,
 
       rateps, nratch2, iratch2, kratch2, nratch3, iratch3, kratch3,
@@ -193,14 +192,14 @@ void rattle_methyl_cu(
       dt, xpos, ypos, zpos, xold, yold, zold, massinv, vx, vy, vz);
 }
 
-void shake_methyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+void shakeMethyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
    const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    int n23 = nratch2 + nratch3;
    if (n23 <= 0)
       return;
 
-   auto ker = constrain_methyl_cu1<SHAKE>;
+   auto ker = constrainMethyl_cu1<SHAKE>;
    launch_k2s(g::s0, 64, n23, ker,
 
       rateps, nratch2, iratch2, kratch2, nratch3, iratch3, kratch3,
@@ -210,7 +209,7 @@ void shake_methyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* zne
 
 template <bool DO_V>
 __global__
-void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3], int nratch3,
+void constrain2Methyl_cu1(int nratch2, const int (*restrict iratch2)[3], int nratch3,
    const int (*restrict iratch3)[4],
 
    time_prec dt, vel_prec* restrict vx, vel_prec* restrict vy, vel_prec* restrict vz,
@@ -380,14 +379,14 @@ void constrain2_methyl_cu1(int nratch2, const int (*restrict iratch2)[3], int nr
    }
 }
 
-void rattle2_methyl_cu(time_prec dt, bool do_v)
+void rattle2Methyl_cu(time_prec dt, bool do_v)
 {
    int n23 = nratch2 + nratch3;
    if (n23 <= 0)
       return;
 
    if (do_v) {
-      auto ker = constrain2_methyl_cu1<true>;
+      auto ker = constrain2Methyl_cu1<true>;
       launch_k2b(g::s0, 64, n23, ker,
 
          nratch2, iratch2, nratch3, iratch3,
@@ -396,7 +395,7 @@ void rattle2_methyl_cu(time_prec dt, bool do_v)
 
          xpos, ypos, zpos, massinv);
    } else {
-      auto ker = constrain2_methyl_cu1<false>;
+      auto ker = constrain2Methyl_cu1<false>;
       launch_k2b(g::s0, 64, n23, ker,
 
          nratch2, iratch2, nratch3, iratch3,

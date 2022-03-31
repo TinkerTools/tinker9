@@ -1,6 +1,6 @@
 #include "add.h"
-#include "ff/rattle.h"
 #include "launch.h"
+#include "md/rattle.h"
 #include "tool/darray.h"
 #include <tinker/detail/units.hh>
 

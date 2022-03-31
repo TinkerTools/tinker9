@@ -1,5 +1,5 @@
-#include "ff/rattle.h"
 #include "md/integrator.h"
+#include "md/rattle.h"
 #include "tinker9.h"
 
 namespace tinker {

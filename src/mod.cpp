@@ -7,8 +7,8 @@
 #include "ff/molecule.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
-#include "ff/rattle.h"
 #include "ff/spatial.h"
+#include "md/rattle.h"
 
 #include "ff/amoeba/elecamoeba.h"
 

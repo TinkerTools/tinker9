@@ -1,10 +1,10 @@
-#include "ff/rattle.h"
 #include "math/sinhc.h"
 #include "math/trimatexp.h"
 #include "md/integrator.h"
 #include "md/intg.h"
 #include "md/pq.h"
 #include "md/pt.h"
+#include "md/rattle.h"
 #include <tinker/detail/mdstuf.hh>
 
 namespace tinker {

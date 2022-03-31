@@ -1,9 +1,9 @@
 #include "ff/box.h"
 #include "ff/energy.h"
-#include "ff/rattle.h"
 #include "md/integrator.h"
 #include "md/pq.h"
 #include "md/pt.h"
+#include "md/rattle.h"
 #include "tool/error.h"
 #include <cmath>
 #include <tinker/detail/inform.hh>

@@ -1,11 +1,9 @@
-#include "ff/rattle.h"
+#include "md/rattle.h"
 #include "add.h"
 #include "comparetypes.h"
 #include "ff/energy.h"
+#include "math/libfunc.h"
 #include "md/pq.h"
-#include "tool/darray.h"
-#include "tool/error.h"
-#include <tinker/detail/inform.hh>
 #include <tinker/detail/units.hh>
 
 namespace tinker {
@@ -13,7 +11,7 @@ static const int maxiter = 500;
 static const double sor = 1.25;
 
 template <class HTYPE>
-void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+static void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
    const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    if (nratmol <= 0)
@@ -76,8 +74,8 @@ void constrain_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
 }
 
 template <class HTYPE>
-void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
-   const pos_prec* yold, const pos_prec* zold)
+static void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    if (nratwt <= 0)
       return;
@@ -332,7 +330,7 @@ void settle_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, c
 }
 
 template <class HTYPE>
-void constrain_ch_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+static void constrainCH_acc1(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
    const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    if (nratch <= 0)
@@ -406,15 +404,15 @@ void rattle_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold, const 
    constrain_acc<RATTLE>(dt, xpos, ypos, zpos, xold, yold, zold);
 }
 
-void rattle_settle_acc(
+void rattleSettle_acc(
    time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    settle_acc1<RATTLE>(dt, xpos, ypos, zpos, xold, yold, zold);
 }
 
-void rattle_ch_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+void rattleCH_acc(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
-   constrain_ch_acc1<RATTLE>(dt, xpos, ypos, zpos, xold, yold, zold);
+   constrainCH_acc1<RATTLE>(dt, xpos, ypos, zpos, xold, yold, zold);
 }
 
 void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
@@ -423,22 +421,20 @@ void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, con
    constrain_acc<SHAKE>(dt, xnew, ynew, znew, xold, yold, zold);
 }
 
-void shake_settle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+void shakeSettle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
    const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    settle_acc1<SHAKE>(dt, xnew, ynew, znew, xold, yold, zold);
 }
 
-void shake_ch_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+void shakeCH_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
+   const pos_prec* yold, const pos_prec* zold)
 {
-   constrain_ch_acc1<SHAKE>(dt, xnew, ynew, znew, xold, yold, zold);
+   constrainCH_acc1<SHAKE>(dt, xnew, ynew, znew, xold, yold, zold);
 }
 
-//====================================================================//
-
 template <bool DO_V>
-void constrain2_acc(time_prec dt)
+static void constrain2_acc(time_prec dt)
 {
    if (nratmol <= 0)
       return;
@@ -507,7 +503,7 @@ void constrain2_acc(time_prec dt)
 }
 
 template <bool DO_V>
-void settle2_acc1(time_prec dt)
+static void settle2_acc1(time_prec dt)
 {
    if (nratwt <= 0)
       return;
@@ -673,7 +669,7 @@ void settle2_acc1(time_prec dt)
 }
 
 template <bool DO_V>
-void constrain2_ch_acc1(time_prec dt)
+void constrain2CH_acc1(time_prec dt)
 {
    if (nratch <= 0)
       return;
@@ -741,7 +737,7 @@ void rattle2_acc(time_prec dt, bool do_v)
    }
 }
 
-void rattle2_settle_acc(time_prec dt, bool do_v)
+void rattle2Settle_acc(time_prec dt, bool do_v)
 {
    if (do_v)
       settle2_acc1<true>(dt);
@@ -749,12 +745,12 @@ void rattle2_settle_acc(time_prec dt, bool do_v)
       settle2_acc1<false>(dt);
 }
 
-void rattle2_ch_acc(time_prec dt, bool do_v)
+void rattle2CH_acc(time_prec dt, bool do_v)
 {
    if (do_v) {
-      constrain2_ch_acc1<true>(dt);
+      constrain2CH_acc1<true>(dt);
    } else {
-      constrain2_ch_acc1<false>(dt);
+      constrain2CH_acc1<false>(dt);
    }
 }
 }
