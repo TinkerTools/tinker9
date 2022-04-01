@@ -1,65 +1,10 @@
-# LC_COLLATE=C ls -1a *.cpp
+# printf "set (__T9_ACC_SRC\n%s\n)\n" "$(LC_COLLATE=C ls -1a *.cpp)" > cmakesrc.txt
 cmake_minimum_required (VERSION 3.12)
 
 
 ## libtinker9_acc.a
-add_library (tinker9_acc OBJECT
-alterchg.cpp
-atom.cpp
-box.cpp
-compilers.cpp
-cudalib.cpp
-dcflux.cpp
-eangle.cpp
-eangtor.cpp
-ebond.cpp
-echarge.cpp
-echgtrn.cpp
-edisp.cpp
-egeom.cpp
-egvop.cpp
-ehal.cpp
-eimprop.cpp
-eimptor.cpp
-elj.cpp
-empole_chgpen.cpp
-empole_ewald.cpp
-empole_nonewald.cpp
-empole_opbend.cpp
-eopbend.cpp
-epitors.cpp
-epolar_chgpen.cpp
-epolar_dot.cpp
-epolar_ewald.cpp
-epolar_nonewald.cpp
-erepel.cpp
-estrbnd.cpp
-estrtor.cpp
-etors.cpp
-etortor.cpp
-eurey.cpp
-field_chgpen.cpp
-field_ewald.cpp
-field_nonewald.cpp
-induce.cpp
-induce_donly.cpp
-lf_lpiston.cpp
-lpiston.cpp
-mathfunc_parallel.cpp
-mathlu.cpp
-mathzero.cpp
-mddebug.cpp
-mdintg.cpp
-mdpq.cpp
-mdpt.cpp
-minimize.cpp
-nblist.cpp
-osrw.cpp
-pme.cpp
-rattle.cpp
-rotpole.cpp
-torque.cpp
-)
+include (cmakesrc.txt)
+add_library (tinker9_acc OBJECT "${__T9_ACC_SRC}")
 target_include_directories (tinker9_acc PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/acc")
 target_link_libraries (tinker9_acc PRIVATE tinker9_cpp)
 

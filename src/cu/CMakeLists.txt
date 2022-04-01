@@ -1,4 +1,4 @@
-# LC_COLLATE=C ls -1a *.cu
+# printf "set (__T9_CU_SRC\n%s\n)\n" "$(LC_COLLATE=C ls -1a *.cu)" > cmakesrc.txt
 cmake_minimum_required (VERSION 3.12)
 
 
@@ -8,35 +8,8 @@ set (CMAKE_CUDA_STANDARD_REQUIRED ON)
 set (CMAKE_CUDA_EXTENSIONS OFF)
 
 
-add_library (tinker9_cu OBJECT
-compilers.cu
-echarge.cu
-echglj.cu
-echgtrn.cu
-edisp.cu
-ehal.cu
-elj.cu
-emplar.cu
-empole.cu
-empole_chgpen.cu
-epolar.cu
-epolar_chgpen.cu
-erepel.cu
-evalence.cu
-field.cu
-field_chgpen.cu
-induce.cu
-induce_donly.cu
-lpiston.cu
-mathfunc_parallel.cu
-mdintg.cu
-mdpt.cu
-pcg.cu
-pcg_donly.cu
-pme.cu
-rattle.cu
-spatial.cu
-)
+include (cmakesrc.txt)
+add_library (tinker9_cu OBJECT "${__T9_CU_SRC}")
 target_include_directories (tinker9_cu PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/cu")
 target_link_libraries (tinker9_cu PRIVATE tinker9_cpp)
 
