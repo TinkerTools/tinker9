@@ -69,6 +69,7 @@ static bool fts(std::string eng, bool& use_flag, unsigned tsflag, const TimeScal
 #include "ff/pchg/evalence.h"
 #include "ff/pchg/evdw.h"
 #include "ff/potent.h"
+#include "tool/pmestream.h"
 #include <tinker/detail/mplpot.hh>
 
 namespace tinker {
@@ -160,7 +161,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
 #define tscfg(x, f) fts(x, f, tsflag, tsconfig)
 
-   pme_stream_start_record(use_pme_stream);
+   pmeStreamStartRecord(use_pme_stream);
 
    vers = vers & calc::vmask;
 
@@ -264,7 +265,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (tscfg("erepel", ecore_vdw))
          erepel(vers);
 
-   pme_stream_finish_wait(use_pme_stream and not(vers & calc::analyz));
+   pmeStreamFinishWait(use_pme_stream and not(vers & calc::analyz));
 
 #undef tscfg
 }

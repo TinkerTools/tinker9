@@ -1,13 +1,13 @@
 #include "ff/pchg/echglj.h"
+#include "ff/atom.h"
 #include "ff/box.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tool/io.h"
-#include <array>
-#include <map>
+#include "tool/iofortstr.h"
+#include "tool/iotext.h"
 #include <set>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
@@ -16,16 +16,16 @@
 #include <tinker/detail/keys.hh>
 #include <tinker/detail/kvdws.hh>
 #include <tinker/detail/params.hh>
-#include <tinker/detail/sizes.hh>
 #include <tinker/detail/vdwpot.hh>
 
 namespace tinker {
+extern void echgljData_cu(RcOp);
 void echgljData(RcOp op)
 {
-   if (!(clistVersion() & Nbl::SPATIAL))
+   if (not(clistVersion() & Nbl::SPATIAL))
       return;
 
-   if (!usePotent(Potent::CHARGE) || !usePotent(Potent::VDW))
+   if (not usePotent(Potent::CHARGE) or not usePotent(Potent::VDW))
       return;
 
    if (op & RcOp::DEALLOC) {
@@ -38,7 +38,7 @@ void echgljData(RcOp op)
 
    if (op & RcOp::ALLOC) {
       // check "VDWPR" keyword
-      if (!vdwpr_in_use) {
+      if (not vdwpr_in_use) {
          auto parse_vdwpr = [](std::string line, int& i, int& k, double& rad, double& eps) {
             try {
                auto vs = Text::split(line);
@@ -65,27 +65,27 @@ void echgljData(RcOp op)
          double rad, eps;
          std::string record;
          // first prm
-         for (int ii = 0; ii < params::nprm && !vdwpr_in_use; ++ii) {
+         for (int ii = 0; ii < params::nprm and !vdwpr_in_use; ++ii) {
             FstrView fsv = params::prmline[ii];
             record = fsv.trim();
             bool okay = parse_vdwpr(record, i, k, rad, eps);
             if (okay) {
                auto iit = all_tid.find(i);
                auto kit = all_tid.find(k);
-               if (iit != end && kit != end) {
+               if (iit != end and kit != end) {
                   vdwpr_in_use = true;
                }
             }
          }
          // then key
-         for (int ii = 0; ii < keys::nkey && !vdwpr_in_use; ++ii) {
+         for (int ii = 0; ii < keys::nkey and not vdwpr_in_use; ++ii) {
             FstrView fsv = keys::keyline[ii];
             record = fsv.trim();
             bool okay = parse_vdwpr(record, i, k, rad, eps);
             if (okay) {
                auto iit = all_tid.find(i);
                auto kit = all_tid.find(k);
-               if (iit != end && kit != end) {
+               if (iit != end and kit != end) {
                   vdwpr_in_use = true;
                }
             }
@@ -266,10 +266,12 @@ void echgljData(RcOp op)
    }
 
 #if TINKER_CUDART
-   echglj_data_cu(op);
+   echgljData_cu(op);
 #endif
 }
 
+extern void echgljRadArithEpsGeomNonEwald_cu(int);
+extern void echgljRadArithEpsGeomEwaldReal_cu(int);
 void echglj(int vers)
 {
 #if TINKER_CUDART
@@ -284,9 +286,9 @@ void echglj(int vers)
    assert(epsrule == Vdw::GEOMETRIC);
    if (useEwald()) {
       echargeEwaldRecipSelf(vers);
-      echglj_rad_arith_eps_geom_ewald_real_cu(vers);
+      echgljRadArithEpsGeomEwaldReal_cu(vers);
    } else {
-      echglj_rad_arith_eps_geom_nonewald_cu(vers);
+      echgljRadArithEpsGeomNonEwald_cu(vers);
    }
 
    if (do_e) {

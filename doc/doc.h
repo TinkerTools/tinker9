@@ -27,6 +27,10 @@
 ///    \ingroup ff
 ///    \defgroup charge  Partial Charge Electrostatics
 ///    \ingroup ff
+///    \defgroup chglj  Charge & LJ
+///    \ingroup ff
+///    \defgroup pme  Particle Mesh Ewald
+///    \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
@@ -60,7 +64,6 @@
 /// \defgroup charge  Partial Charge Electrostatics
 /// \defgroup mpole  Multipole Electrostatics
 /// \defgroup polar  AMOEBA Polarization Electrostatics
-/// \defgroup pme  Particle Mesh Ewald
 
 /// \defgroup mdsave  Saving MD Trajectory Snapshots
 /// \defgroup mdpt  Thermostats (T) and Barostats (P)

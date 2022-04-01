@@ -25,7 +25,7 @@ TINKER_EXTERN cudaStream_t s0;
 /// \ingroup async
 /// \brief CUDA stream for the default OpenACC sync queue.
 TINKER_EXTERN cudaStream_t s1;
-/// \ingroup async
+/// \ingroup pme
 /// \brief CUDA stream for the OpenACC async %PME queue.
 TINKER_EXTERN cudaStream_t spme;
 /// \ingroup async
@@ -42,9 +42,9 @@ TINKER_EXTERN void* pinned_buf;
 /// \ingroup cuda_syntax
 /// \brief Preallocated device memory.
 TINKER_EXTERN void* dptr_buf;
-/// \ingroup async
+/// \ingroup pme
 TINKER_EXTERN cudaEvent_t pme_event_start;
-/// \ingroup async
+/// \ingroup pme
 TINKER_EXTERN cudaEvent_t pme_event_finish;
 }
 #endif

@@ -1,6 +1,4 @@
 #include "add.h"
-#include "ff/box.h"
-#include "ff/energy.h"
 #include "ff/image.h"
 #include "ff/pchg/echglj.h"
 #include "ff/pme.h"
@@ -8,7 +6,6 @@
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
-#include "math/libfunc.h"
 #include "md/osrw.h"
 #include "seq/pair_charge.h"
 #include "seq/pair_lj.h"
@@ -63,7 +60,7 @@ extern "C"
 }
 
 namespace tinker {
-void echglj_data_cu(RcOp op)
+void echgljData_cu(RcOp op)
 {
    if (op & RcOp::DEALLOC) {
       use_pme_stream = false;
@@ -73,32 +70,9 @@ void echglj_data_cu(RcOp op)
       use_pme_stream = true;
    }
 }
-
-void pme_stream_start_record_cu(bool use_pmestream)
-{
-   if (use_pmestream) {
-      check_rt(cudaEventRecord(pme_event_start, g::s0));
-   }
-}
-void pme_stream_start_wait_cu(bool use_pmestream)
-{
-   if (use_pmestream) {
-      check_rt(cudaStreamWaitEvent(g::spme, pme_event_start, 0));
-   }
-}
-void pme_stream_finish_record_cu(bool use_pmestream)
-{
-   if (use_pmestream) {
-      check_rt(cudaEventRecord(pme_event_finish, g::spme));
-   }
-}
-void pme_stream_finish_wait_cu(bool use_pmestream)
-{
-   if (use_pmestream) {
-      check_rt(cudaStreamWaitEvent(g::s0, pme_event_finish, 0));
-   }
 }
 
+namespace tinker {
 template <class Ver, class IMG, class ETYP, class RADRULE, class EPSRULE, bool SOFTCORE, bool VOUT>
 __global__
 void echglj_cu5(EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf, grad_prec* restrict gx,
@@ -904,10 +878,9 @@ void echglj_cu5(EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf, grad_pre
 
 template <class RADRULE, class EPSRULE>
 __global__
-void echglj_coalesce(int n, int use_mutate, int* restrict smut, real* restrict schg,
-   real2* restrict svdw, //
-   const Spatial::SortedAtom* restrict sorted, const int* restrict mut, const real* restrict chg,
-   const real* restrict rad, const real* restrict eps)
+void echgljCoalesce(int n, int use_mutate, int* restrict smut, real* restrict schg,
+   real2* restrict svdw, const Spatial::SortedAtom* restrict sorted, const int* restrict mut,
+   const real* restrict chg, const real* restrict rad, const real* restrict eps)
 {
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
       int iold = sorted[i].unsorted;
@@ -926,13 +899,13 @@ void echglj_coalesce(int n, int use_mutate, int* restrict smut, real* restrict s
 }
 
 template <class Ver, class ETYP, class RADRULE, class EPSRULE, bool SOFTCORE, bool VOUT>
-void echglj_cu3()
+static void echglj_cu3()
 {
    auto& st = *cspatial_v2_unit;
 
    if (st.fresh & cspatial_fresh_mask_echglj) {
       int use_mutate = usePotent(Potent::MUTATE) ? 1 : 0;
-      auto ker = echglj_coalesce<RADRULE, EPSRULE>;
+      auto ker = echgljCoalesce<RADRULE, EPSRULE>;
       launch_k1s(g::s0, st.n, ker, //
          st.n, use_mutate, mut_coalesced, chg_coalesced,
          (real2*)radeps_coalesced, //
@@ -983,9 +956,7 @@ void echglj_cu3()
 #undef ECHGLJ_CU3_V2_ARGS
 }
 
-//====================================================================//
-
-void echglj_rad_arith_eps_geom_nonewald_cu(int vers)
+void echgljRadArithEpsGeomNonEwald_cu(int vers)
 {
    if (use_osrw) {
       constexpr bool VOUT = true;
@@ -1037,7 +1008,7 @@ void echglj_rad_arith_eps_geom_nonewald_cu(int vers)
    elj14(vers);
 }
 
-void echglj_rad_arith_eps_geom_ewald_real_cu(int vers)
+void echgljRadArithEpsGeomEwaldReal_cu(int vers)
 {
    if (use_osrw) {
       constexpr bool VOUT = true;

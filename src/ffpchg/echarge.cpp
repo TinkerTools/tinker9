@@ -2,10 +2,10 @@
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
-#include "ff/pchg/echglj.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/pmestream.h"
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/sizes.hh>
@@ -147,7 +147,7 @@ static void echargeNonEwald(int vers)
 namespace tinker {
 void echargeEwaldRecipSelf(int vers)
 {
-   pme_stream_start_wait(use_pme_stream);
+   pmeStreamStartWait(use_pme_stream);
 
    // ewald recip space, self term
    // ewald real space
@@ -181,7 +181,7 @@ void echargeEwaldRecipSelf(int vers)
 #endif
       echargeEwaldFphiSelf_acc(vers);
 
-   pme_stream_finish_record(use_pme_stream);
+   pmeStreamFinishRecord(use_pme_stream);
 }
 
 void echarge(int vers)
@@ -213,7 +213,7 @@ void echarge(int vers)
       else
 #endif
          echargeEwaldReal_acc(vers);
-      pme_stream_finish_wait(use_pme_stream and (vers & calc::analyz));
+      pmeStreamFinishWait(use_pme_stream and (vers & calc::analyz));
    } else
       echargeNonEwald(vers);
 
