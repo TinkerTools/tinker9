@@ -44,16 +44,16 @@ void empole_ewald_real_self_acc1()
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real ci = rpole[i][mpl_pme_0];
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
-      real qixx = rpole[i][mpl_pme_xx];
-      real qixy = rpole[i][mpl_pme_xy];
-      real qixz = rpole[i][mpl_pme_xz];
-      real qiyy = rpole[i][mpl_pme_yy];
-      real qiyz = rpole[i][mpl_pme_yz];
-      real qizz = rpole[i][mpl_pme_zz];
+      real ci = rpole[i][MPL_PME_0];
+      real dix = rpole[i][MPL_PME_X];
+      real diy = rpole[i][MPL_PME_Y];
+      real diz = rpole[i][MPL_PME_Z];
+      real qixx = rpole[i][MPL_PME_XX];
+      real qixy = rpole[i][MPL_PME_XY];
+      real qixz = rpole[i][MPL_PME_XZ];
+      real qiyy = rpole[i][MPL_PME_YY];
+      real qiyz = rpole[i][MPL_PME_YZ];
+      real qizz = rpole[i][MPL_PME_ZZ];
       MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
       MAYBE_UNUSED real txi = 0, tyi = 0, tzi = 0;
 
@@ -73,10 +73,10 @@ void empole_ewald_real_self_acc1()
             MAYBE_UNUSED real e;
             pair_mpole<do_e, do_g, EWALD>(r2, xr, yr, zr, 1,          //
                ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
-               rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
-               rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
-               rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz],
-               rpole[k][mpl_pme_zz], //
+               rpole[k][MPL_PME_0], rpole[k][MPL_PME_X], rpole[k][MPL_PME_Y], rpole[k][MPL_PME_Z],
+               rpole[k][MPL_PME_XX], rpole[k][MPL_PME_XY], rpole[k][MPL_PME_XZ],
+               rpole[k][MPL_PME_YY], rpole[k][MPL_PME_YZ],
+               rpole[k][MPL_PME_ZZ], //
                f, aewald, e, pgrad);
 
             if CONSTEXPR (do_a)
@@ -153,16 +153,16 @@ void empole_ewald_real_self_acc1()
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real ci = rpole[i][mpl_pme_0];
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
-      real qixx = rpole[i][mpl_pme_xx];
-      real qixy = rpole[i][mpl_pme_xy];
-      real qixz = rpole[i][mpl_pme_xz];
-      real qiyy = rpole[i][mpl_pme_yy];
-      real qiyz = rpole[i][mpl_pme_yz];
-      real qizz = rpole[i][mpl_pme_zz];
+      real ci = rpole[i][MPL_PME_0];
+      real dix = rpole[i][MPL_PME_X];
+      real diy = rpole[i][MPL_PME_Y];
+      real diz = rpole[i][MPL_PME_Z];
+      real qixx = rpole[i][MPL_PME_XX];
+      real qixy = rpole[i][MPL_PME_XY];
+      real qixz = rpole[i][MPL_PME_XZ];
+      real qiyy = rpole[i][MPL_PME_YY];
+      real qiyz = rpole[i][MPL_PME_YZ];
+      real qizz = rpole[i][MPL_PME_ZZ];
 
       real xr = x[k] - xi;
       real yr = y[k] - yi;
@@ -174,10 +174,10 @@ void empole_ewald_real_self_acc1()
          pair_mpole<do_e, do_g, NON_EWALD>(                        //
             r2, xr, yr, zr, mscale,                                //
             ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz, //
-            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
-            rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-            rpole[k][mpl_pme_yz],
-            rpole[k][mpl_pme_zz], //
+            rpole[k][MPL_PME_0], rpole[k][MPL_PME_X], rpole[k][MPL_PME_Y], rpole[k][MPL_PME_Z],
+            rpole[k][MPL_PME_XX], rpole[k][MPL_PME_XY], rpole[k][MPL_PME_XZ], rpole[k][MPL_PME_YY],
+            rpole[k][MPL_PME_YZ],
+            rpole[k][MPL_PME_ZZ], //
             f, 0, e, pgrad);
 
          if CONSTEXPR (do_a) {

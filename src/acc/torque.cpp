@@ -71,7 +71,7 @@ void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* 
                deviceptr(x,y,z,gx,gy,gz,zaxis,trqx,trqy,trqz,gpu_vir)
    for (int i = 0; i < n; ++i) {
       const int axetyp = zaxis[i].polaxe;
-      if (axetyp == pole_none)
+      if (axetyp == LFRM_NONE)
          continue;
 
       // get the local frame type and the frame-defining atoms
@@ -91,7 +91,7 @@ void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* 
 
       // v
       real vsiz1;
-      if (axetyp != pole_z_only) {
+      if (axetyp != LFRM_Z_ONLY) {
          v[0] = x[ic] - x[ib];
          v[1] = y[ic] - y[ib];
          v[2] = z[ic] - z[ib];
@@ -107,7 +107,7 @@ void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* 
 
       // w = u cross v
       real wsiz1;
-      if (axetyp == pole_z_bisect || axetyp == pole_3_fold) {
+      if (axetyp == LFRM_Z_BISECT || axetyp == LFRM_3_FOLD) {
          w[0] = x[id] - x[ib];
          w[1] = y[id] - y[ib];
          w[2] = z[id] - z[ib];
@@ -151,7 +151,7 @@ void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* 
       frcy[1] = 0;
       frcy[2] = 0;
 
-      if (axetyp == pole_z_only || axetyp == pole_z_then_x || axetyp == pole_bisector) {
+      if (axetyp == LFRM_Z_ONLY || axetyp == LFRM_Z_THEN_X || axetyp == LFRM_BISECTOR) {
          // find the perpendicular and angle for each pair of axes
          // v cross u
          real uvsiz1;
@@ -169,7 +169,7 @@ void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* 
          real uvcos = torque_dot(u, v);
          real uvsin1 = REAL_RSQRT(1 - uvcos * uvcos);
 
-         if (axetyp == pole_z_only) {
+         if (axetyp == LFRM_Z_ONLY) {
             #pragma acc loop seq
             for (int j = 0; j < 3; ++j) {
                real du = uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
@@ -179,7 +179,7 @@ void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* 
                   frcz[j] += du;
                }
             }
-         } else if (axetyp == pole_z_then_x) {
+         } else if (axetyp == LFRM_Z_THEN_X) {
             #pragma acc loop seq
             for (int j = 0; j < 3; ++j) {
                real du = uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
@@ -192,7 +192,7 @@ void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* 
                   frcx[j] += dv;
                }
             }
-         } else /* if (axetyp == pole_bisector) */ {
+         } else /* if (axetyp == LFRM_BISECTOR) */ {
             // w cross v
             real vwsiz1;
             torque_cross(vw, w, v);
@@ -212,7 +212,7 @@ void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* 
                }
             }
          }
-      } else if (axetyp == pole_z_bisect) {
+      } else if (axetyp == LFRM_Z_BISECT) {
          // build some additional axes needed for the Z-Bisect method
          real rsiz1;
          r[0] = v[0] + w[0];
@@ -297,7 +297,7 @@ void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* 
                frcy[j] += dw;
             }
          }
-      } else if (axetyp == pole_3_fold) {
+      } else if (axetyp == LFRM_3_FOLD) {
          real psiz1;
          p[0] = u[0] + v[0] + w[0];
          p[1] = u[1] + v[1] + w[1];
@@ -389,12 +389,12 @@ void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* 
       atomic_add(deib[0], gx, ib);
       atomic_add(deib[1], gy, ib);
       atomic_add(deib[2], gz, ib);
-      if (axetyp != pole_z_only) {
+      if (axetyp != LFRM_Z_ONLY) {
          atomic_add(deic[0], gx, ic);
          atomic_add(deic[1], gy, ic);
          atomic_add(deic[2], gz, ic);
       }
-      if (axetyp == pole_z_bisect || axetyp == pole_3_fold) {
+      if (axetyp == LFRM_Z_BISECT || axetyp == LFRM_3_FOLD) {
          atomic_add(deid[0], gx, id);
          atomic_add(deid[1], gy, id);
          atomic_add(deid[2], gz, id);

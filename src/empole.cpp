@@ -9,13 +9,13 @@
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
-void empole_nonewald_acc(int vers);
+void emLFRM_NONEwald_acc(int vers);
 void empole_ewald_recip_acc(int vers);
 void empole_ewald_real_self_acc(int vers);
-void empole_nonewald_cu(int vers);
+void emLFRM_NONEwald_cu(int vers);
 void empole_ewald_real_self_cu(int vers);
 
-void empole_nonewald(int vers);
+void emLFRM_NONEwald(int vers);
 void empole_ewald(int vers);
 void empole_ewald_real_self(int vers);
 void empole_ewald_recip(int vers);
@@ -85,7 +85,7 @@ void empole(int vers)
    if (useEwald())
       empole_ewald(vers);
    else
-      empole_nonewald(vers);
+      emLFRM_NONEwald(vers);
    torque(vers, demx, demy, demz);
    if (do_v) {
       VirialBuffer u2 = vir_trq;
@@ -118,14 +118,14 @@ void empole(int vers)
    }
 }
 
-void empole_nonewald(int vers)
+void emLFRM_NONEwald(int vers)
 {
 #if TINKER_CUDART
    if (mlistVersion() & Nbl::SPATIAL)
-      empole_nonewald_cu(vers);
+      emLFRM_NONEwald_cu(vers);
    else
 #endif
-      empole_nonewald_acc(vers);
+      emLFRM_NONEwald_acc(vers);
 }
 
 void empole_ewald(int vers)

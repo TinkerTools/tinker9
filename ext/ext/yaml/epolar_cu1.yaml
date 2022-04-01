@@ -70,16 +70,16 @@ K_FORCE:
   - def: register real dufld5k addto:dufld,5
 
 I_VARIABLES:
-  - def: shared real ci   from:rpole,mpl_pme_0
-  - def: shared real dix  from:rpole,mpl_pme_x
-  - def: shared real diy  from:rpole,mpl_pme_y
-  - def: shared real diz  from:rpole,mpl_pme_z
-  - def: shared real qixx from:rpole,mpl_pme_xx
-  - def: shared real qixy from:rpole,mpl_pme_xy
-  - def: shared real qixz from:rpole,mpl_pme_xz
-  - def: shared real qiyy from:rpole,mpl_pme_yy
-  - def: shared real qiyz from:rpole,mpl_pme_yz
-  - def: shared real qizz from:rpole,mpl_pme_zz
+  - def: shared real ci   from:rpole,MPL_PME_0
+  - def: shared real dix  from:rpole,MPL_PME_X
+  - def: shared real diy  from:rpole,MPL_PME_Y
+  - def: shared real diz  from:rpole,MPL_PME_Z
+  - def: shared real qixx from:rpole,MPL_PME_XX
+  - def: shared real qixy from:rpole,MPL_PME_XY
+  - def: shared real qixz from:rpole,MPL_PME_XZ
+  - def: shared real qiyy from:rpole,MPL_PME_YY
+  - def: shared real qiyz from:rpole,MPL_PME_YZ
+  - def: shared real qizz from:rpole,MPL_PME_ZZ
   - def: shared real uidx from:uind,0
   - def: shared real uidy from:uind,1
   - def: shared real uidz from:uind,2
@@ -89,16 +89,16 @@ I_VARIABLES:
   - def: shared real pdi  from:pdamp
   - def: shared real pti  from:thole
 K_VARIABLES:
-  - def: register real ck   from:rpole,mpl_pme_0
-  - def: register real dkx  from:rpole,mpl_pme_x
-  - def: register real dky  from:rpole,mpl_pme_y
-  - def: register real dkz  from:rpole,mpl_pme_z
-  - def: register real qkxx from:rpole,mpl_pme_xx
-  - def: register real qkxy from:rpole,mpl_pme_xy
-  - def: register real qkxz from:rpole,mpl_pme_xz
-  - def: register real qkyy from:rpole,mpl_pme_yy
-  - def: register real qkyz from:rpole,mpl_pme_yz
-  - def: register real qkzz from:rpole,mpl_pme_zz
+  - def: register real ck   from:rpole,MPL_PME_0
+  - def: register real dkx  from:rpole,MPL_PME_X
+  - def: register real dky  from:rpole,MPL_PME_Y
+  - def: register real dkz  from:rpole,MPL_PME_Z
+  - def: register real qkxx from:rpole,MPL_PME_XX
+  - def: register real qkxy from:rpole,MPL_PME_XY
+  - def: register real qkxz from:rpole,MPL_PME_XZ
+  - def: register real qkyy from:rpole,MPL_PME_YY
+  - def: register real qkyz from:rpole,MPL_PME_YZ
+  - def: register real qkzz from:rpole,MPL_PME_ZZ
   - def: register real ukdx from:uind,0
   - def: register real ukdy from:uind,1
   - def: register real ukdz from:uind,2

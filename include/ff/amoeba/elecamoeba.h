@@ -4,27 +4,27 @@
 namespace tinker {
 enum
 {
-   mpl_pme_0 = 0,
-   mpl_pme_x = 1,
-   mpl_pme_y = 2,
-   mpl_pme_z = 3,
-   mpl_pme_xx = 4,
-   mpl_pme_yy = 5,
-   mpl_pme_zz = 6,
-   mpl_pme_xy = 7,
-   mpl_pme_xz = 8,
-   mpl_pme_yz = 9,
-   mpl_total = 10,
-   mpl_pme_yx = mpl_pme_xy,
-   mpl_pme_zx = mpl_pme_xz,
-   mpl_pme_zy = mpl_pme_yz,
+   MPL_PME_0 = 0,
+   MPL_PME_X = 1,
+   MPL_PME_Y = 2,
+   MPL_PME_Z = 3,
+   MPL_PME_XX = 4,
+   MPL_PME_YY = 5,
+   MPL_PME_ZZ = 6,
+   MPL_PME_XY = 7,
+   MPL_PME_XZ = 8,
+   MPL_PME_YZ = 9,
+   MPL_TOTAL = 10,
+   MPL_PME_YX = MPL_PME_XY,
+   MPL_PME_ZX = MPL_PME_XZ,
+   MPL_PME_ZY = MPL_PME_YZ,
 
-   pole_none = 0,
-   pole_z_only = 1,
-   pole_z_then_x = 2,
-   pole_bisector = 3,
-   pole_z_bisect = 4,
-   pole_3_fold = 5
+   LFRM_NONE = 0,
+   LFRM_Z_ONLY = 1,
+   LFRM_Z_THEN_X = 2,
+   LFRM_BISECTOR = 3,
+   LFRM_Z_BISECT = 4,
+   LFRM_3_FOLD = 5
 };
 
 /// \brief Local axis type and x,y,z-axis defining atoms for each multipole site.
@@ -48,8 +48,8 @@ enum class UPred
 // mpole
 namespace tinker {
 TINKER_EXTERN LocalFrame* zaxis;
-TINKER_EXTERN real (*pole)[mpl_total];
-TINKER_EXTERN real (*rpole)[mpl_total];
+TINKER_EXTERN real (*pole)[MPL_TOTAL];
+TINKER_EXTERN real (*rpole)[MPL_TOTAL];
 TINKER_EXTERN real* trqx;
 TINKER_EXTERN real* trqy;
 TINKER_EXTERN real* trqz;

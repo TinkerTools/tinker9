@@ -100,40 +100,40 @@ static void mpoleData(RcOp op)
          FstrView str = mpole::polaxe[i];
          int val;
          if (str == "Z-Only")
-            val = pole_z_only;
+            val = LFRM_Z_ONLY;
          else if (str == "Z-then-X")
-            val = pole_z_then_x;
+            val = LFRM_Z_THEN_X;
          else if (str == "Bisector")
-            val = pole_bisector;
+            val = LFRM_BISECTOR;
          else if (str == "Z-Bisect")
-            val = pole_z_bisect;
+            val = LFRM_Z_BISECT;
          else if (str == "3-Fold")
-            val = pole_3_fold;
+            val = LFRM_3_FOLD;
          else
-            val = pole_none;
+            val = LFRM_NONE;
          zaxisbuf[i].polaxe = val;
       }
       darray::copyin(g::q0, n, zaxis, zaxisbuf.data());
       waitFor(g::q0);
 
-      std::vector<double> polebuf(mpl_total * n);
+      std::vector<double> polebuf(MPL_TOTAL * n);
       for (int i = 0; i < n; ++i) {
-         int b1 = mpl_total * i;
+         int b1 = MPL_TOTAL * i;
          int b2 = mpole::maxpole * i;
          // Tinker c = 0, dx = 1, dy = 2, dz = 3
          // Tinker qxx = 4, qxy = 5, qxz = 6
          //        qyx    , qyy = 8, qyz = 9
          //        qzx    , qzy    , qzz = 12
-         polebuf[b1 + mpl_pme_0] = mpole::pole[b2 + 0];
-         polebuf[b1 + mpl_pme_x] = mpole::pole[b2 + 1];
-         polebuf[b1 + mpl_pme_y] = mpole::pole[b2 + 2];
-         polebuf[b1 + mpl_pme_z] = mpole::pole[b2 + 3];
-         polebuf[b1 + mpl_pme_xx] = mpole::pole[b2 + 4];
-         polebuf[b1 + mpl_pme_xy] = mpole::pole[b2 + 5];
-         polebuf[b1 + mpl_pme_xz] = mpole::pole[b2 + 6];
-         polebuf[b1 + mpl_pme_yy] = mpole::pole[b2 + 8];
-         polebuf[b1 + mpl_pme_yz] = mpole::pole[b2 + 9];
-         polebuf[b1 + mpl_pme_zz] = mpole::pole[b2 + 12];
+         polebuf[b1 + MPL_PME_0] = mpole::pole[b2 + 0];
+         polebuf[b1 + MPL_PME_X] = mpole::pole[b2 + 1];
+         polebuf[b1 + MPL_PME_Y] = mpole::pole[b2 + 2];
+         polebuf[b1 + MPL_PME_Z] = mpole::pole[b2 + 3];
+         polebuf[b1 + MPL_PME_XX] = mpole::pole[b2 + 4];
+         polebuf[b1 + MPL_PME_XY] = mpole::pole[b2 + 5];
+         polebuf[b1 + MPL_PME_XZ] = mpole::pole[b2 + 6];
+         polebuf[b1 + MPL_PME_YY] = mpole::pole[b2 + 8];
+         polebuf[b1 + MPL_PME_YZ] = mpole::pole[b2 + 9];
+         polebuf[b1 + MPL_PME_ZZ] = mpole::pole[b2 + 12];
       }
       darray::copyin(g::q0, n, pole, polebuf.data());
       waitFor(g::q0);

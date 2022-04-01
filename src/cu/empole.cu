@@ -121,26 +121,26 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuff
       xk = x[k];
       yk = y[k];
       zk = z[k];
-      ci[klane] = rpole[i][mpl_pme_0];
-      dix[klane] = rpole[i][mpl_pme_x];
-      diy[klane] = rpole[i][mpl_pme_y];
-      diz[klane] = rpole[i][mpl_pme_z];
-      qixx[klane] = rpole[i][mpl_pme_xx];
-      qixy[klane] = rpole[i][mpl_pme_xy];
-      qixz[klane] = rpole[i][mpl_pme_xz];
-      qiyy[klane] = rpole[i][mpl_pme_yy];
-      qiyz[klane] = rpole[i][mpl_pme_yz];
-      qizz[klane] = rpole[i][mpl_pme_zz];
-      ck = rpole[k][mpl_pme_0];
-      dkx = rpole[k][mpl_pme_x];
-      dky = rpole[k][mpl_pme_y];
-      dkz = rpole[k][mpl_pme_z];
-      qkxx = rpole[k][mpl_pme_xx];
-      qkxy = rpole[k][mpl_pme_xy];
-      qkxz = rpole[k][mpl_pme_xz];
-      qkyy = rpole[k][mpl_pme_yy];
-      qkyz = rpole[k][mpl_pme_yz];
-      qkzz = rpole[k][mpl_pme_zz];
+      ci[klane] = rpole[i][MPL_PME_0];
+      dix[klane] = rpole[i][MPL_PME_X];
+      diy[klane] = rpole[i][MPL_PME_Y];
+      diz[klane] = rpole[i][MPL_PME_Z];
+      qixx[klane] = rpole[i][MPL_PME_XX];
+      qixy[klane] = rpole[i][MPL_PME_XY];
+      qixz[klane] = rpole[i][MPL_PME_XZ];
+      qiyy[klane] = rpole[i][MPL_PME_YY];
+      qiyz[klane] = rpole[i][MPL_PME_YZ];
+      qizz[klane] = rpole[i][MPL_PME_ZZ];
+      ck = rpole[k][MPL_PME_0];
+      dkx = rpole[k][MPL_PME_X];
+      dky = rpole[k][MPL_PME_Y];
+      dkz = rpole[k][MPL_PME_Z];
+      qkxx = rpole[k][MPL_PME_XX];
+      qkxy = rpole[k][MPL_PME_XY];
+      qkxz = rpole[k][MPL_PME_XZ];
+      qkyy = rpole[k][MPL_PME_YY];
+      qkyz = rpole[k][MPL_PME_YZ];
+      qkzz = rpole[k][MPL_PME_ZZ];
 
       constexpr bool incl = true;
       real xr = xk - xi[klane];
@@ -229,26 +229,26 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuff
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
-      ci[threadIdx.x] = rpole[i][mpl_pme_0];
-      dix[threadIdx.x] = rpole[i][mpl_pme_x];
-      diy[threadIdx.x] = rpole[i][mpl_pme_y];
-      diz[threadIdx.x] = rpole[i][mpl_pme_z];
-      qixx[threadIdx.x] = rpole[i][mpl_pme_xx];
-      qixy[threadIdx.x] = rpole[i][mpl_pme_xy];
-      qixz[threadIdx.x] = rpole[i][mpl_pme_xz];
-      qiyy[threadIdx.x] = rpole[i][mpl_pme_yy];
-      qiyz[threadIdx.x] = rpole[i][mpl_pme_yz];
-      qizz[threadIdx.x] = rpole[i][mpl_pme_zz];
-      ck = rpole[k][mpl_pme_0];
-      dkx = rpole[k][mpl_pme_x];
-      dky = rpole[k][mpl_pme_y];
-      dkz = rpole[k][mpl_pme_z];
-      qkxx = rpole[k][mpl_pme_xx];
-      qkxy = rpole[k][mpl_pme_xy];
-      qkxz = rpole[k][mpl_pme_xz];
-      qkyy = rpole[k][mpl_pme_yy];
-      qkyz = rpole[k][mpl_pme_yz];
-      qkzz = rpole[k][mpl_pme_zz];
+      ci[threadIdx.x] = rpole[i][MPL_PME_0];
+      dix[threadIdx.x] = rpole[i][MPL_PME_X];
+      diy[threadIdx.x] = rpole[i][MPL_PME_Y];
+      diz[threadIdx.x] = rpole[i][MPL_PME_Z];
+      qixx[threadIdx.x] = rpole[i][MPL_PME_XX];
+      qixy[threadIdx.x] = rpole[i][MPL_PME_XY];
+      qixz[threadIdx.x] = rpole[i][MPL_PME_XZ];
+      qiyy[threadIdx.x] = rpole[i][MPL_PME_YY];
+      qiyz[threadIdx.x] = rpole[i][MPL_PME_YZ];
+      qizz[threadIdx.x] = rpole[i][MPL_PME_ZZ];
+      ck = rpole[k][MPL_PME_0];
+      dkx = rpole[k][MPL_PME_X];
+      dky = rpole[k][MPL_PME_Y];
+      dkz = rpole[k][MPL_PME_Z];
+      qkxx = rpole[k][MPL_PME_XX];
+      qkxy = rpole[k][MPL_PME_XY];
+      qkxz = rpole[k][MPL_PME_XZ];
+      qkyy = rpole[k][MPL_PME_YY];
+      qkyz = rpole[k][MPL_PME_YZ];
+      qkzz = rpole[k][MPL_PME_ZZ];
 
       unsigned int mdpuinfo0 = mdpuinfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -332,26 +332,26 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuff
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
 
-      ci[threadIdx.x] = rpole[i][mpl_pme_0];
-      dix[threadIdx.x] = rpole[i][mpl_pme_x];
-      diy[threadIdx.x] = rpole[i][mpl_pme_y];
-      diz[threadIdx.x] = rpole[i][mpl_pme_z];
-      qixx[threadIdx.x] = rpole[i][mpl_pme_xx];
-      qixy[threadIdx.x] = rpole[i][mpl_pme_xy];
-      qixz[threadIdx.x] = rpole[i][mpl_pme_xz];
-      qiyy[threadIdx.x] = rpole[i][mpl_pme_yy];
-      qiyz[threadIdx.x] = rpole[i][mpl_pme_yz];
-      qizz[threadIdx.x] = rpole[i][mpl_pme_zz];
-      ck = rpole[k][mpl_pme_0];
-      dkx = rpole[k][mpl_pme_x];
-      dky = rpole[k][mpl_pme_y];
-      dkz = rpole[k][mpl_pme_z];
-      qkxx = rpole[k][mpl_pme_xx];
-      qkxy = rpole[k][mpl_pme_xy];
-      qkxz = rpole[k][mpl_pme_xz];
-      qkyy = rpole[k][mpl_pme_yy];
-      qkyz = rpole[k][mpl_pme_yz];
-      qkzz = rpole[k][mpl_pme_zz];
+      ci[threadIdx.x] = rpole[i][MPL_PME_0];
+      dix[threadIdx.x] = rpole[i][MPL_PME_X];
+      diy[threadIdx.x] = rpole[i][MPL_PME_Y];
+      diz[threadIdx.x] = rpole[i][MPL_PME_Z];
+      qixx[threadIdx.x] = rpole[i][MPL_PME_XX];
+      qixy[threadIdx.x] = rpole[i][MPL_PME_XY];
+      qixz[threadIdx.x] = rpole[i][MPL_PME_XZ];
+      qiyy[threadIdx.x] = rpole[i][MPL_PME_YY];
+      qiyz[threadIdx.x] = rpole[i][MPL_PME_YZ];
+      qizz[threadIdx.x] = rpole[i][MPL_PME_ZZ];
+      ck = rpole[k][MPL_PME_0];
+      dkx = rpole[k][MPL_PME_X];
+      dky = rpole[k][MPL_PME_Y];
+      dkz = rpole[k][MPL_PME_Z];
+      qkxx = rpole[k][MPL_PME_XX];
+      qkxy = rpole[k][MPL_PME_XY];
+      qkxz = rpole[k][MPL_PME_XZ];
+      qkyy = rpole[k][MPL_PME_YY];
+      qkyz = rpole[k][MPL_PME_YZ];
+      qkzz = rpole[k][MPL_PME_ZZ];
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
@@ -444,7 +444,7 @@ void empole_cu()
       aewald);
 }
 
-void empole_nonewald_cu(int vers)
+void emLFRM_NONEwald_cu(int vers)
 {
    if (vers == calc::v0) {
       empole_cu<calc::V0, NON_EWALD>();

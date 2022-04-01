@@ -92,16 +92,16 @@ void gridPut_cu1(const real* restrict x, const real* restrict y, const real* res
          bsplgen<3, bsorder>(w2, thetai2, array);
          bsplgen<3, bsorder>(w3, thetai3, array);
 
-         real fmpi0 = fmp[i][mpl_pme_0];
-         real fmpix = fmp[i][mpl_pme_x];
-         real fmpiy = fmp[i][mpl_pme_y];
-         real fmpiz = fmp[i][mpl_pme_z];
-         real fmpixx = fmp[i][mpl_pme_xx];
-         real fmpiyy = fmp[i][mpl_pme_yy];
-         real fmpizz = fmp[i][mpl_pme_zz];
-         real fmpixy = fmp[i][mpl_pme_xy];
-         real fmpixz = fmp[i][mpl_pme_xz];
-         real fmpiyz = fmp[i][mpl_pme_yz];
+         real fmpi0 = fmp[i][MPL_PME_0];
+         real fmpix = fmp[i][MPL_PME_X];
+         real fmpiy = fmp[i][MPL_PME_Y];
+         real fmpiz = fmp[i][MPL_PME_Z];
+         real fmpixx = fmp[i][MPL_PME_XX];
+         real fmpiyy = fmp[i][MPL_PME_YY];
+         real fmpizz = fmp[i][MPL_PME_ZZ];
+         real fmpixy = fmp[i][MPL_PME_XY];
+         real fmpixz = fmp[i][MPL_PME_XZ];
+         real fmpiyz = fmp[i][MPL_PME_YZ];
          for (int iz = 0; iz < bsorder; ++iz) {
             int zbase = igrid3 + iz;
             zbase -= (zbase >= nfft3 ? nfft3 : 0);
@@ -227,16 +227,16 @@ void gridPut_cu2(const int* restrict igrid, const real* restrict thetai1,
          real v2 = thetai3[(4 * iz + 2) * padded_n + i];
          real u2 = thetai2[(4 * iy + 2) * padded_n + i];
          real t2 = thetai1[(4 * ix + 2) * padded_n + i];
-         real fmpi0 = ptr1[i * 10 + mpl_pme_0];
-         real fmpix = ptr1[i * 10 + mpl_pme_x];
-         real fmpiy = ptr1[i * 10 + mpl_pme_y];
-         real fmpiz = ptr1[i * 10 + mpl_pme_z];
-         real fmpixx = ptr1[i * 10 + mpl_pme_xx];
-         real fmpiyy = ptr1[i * 10 + mpl_pme_yy];
-         real fmpizz = ptr1[i * 10 + mpl_pme_zz];
-         real fmpixy = ptr1[i * 10 + mpl_pme_xy];
-         real fmpixz = ptr1[i * 10 + mpl_pme_xz];
-         real fmpiyz = ptr1[i * 10 + mpl_pme_yz];
+         real fmpi0 = ptr1[i * 10 + MPL_PME_0];
+         real fmpix = ptr1[i * 10 + MPL_PME_X];
+         real fmpiy = ptr1[i * 10 + MPL_PME_Y];
+         real fmpiz = ptr1[i * 10 + MPL_PME_Z];
+         real fmpixx = ptr1[i * 10 + MPL_PME_XX];
+         real fmpiyy = ptr1[i * 10 + MPL_PME_YY];
+         real fmpizz = ptr1[i * 10 + MPL_PME_ZZ];
+         real fmpixy = ptr1[i * 10 + MPL_PME_XY];
+         real fmpixz = ptr1[i * 10 + MPL_PME_XZ];
+         real fmpiyz = ptr1[i * 10 + MPL_PME_YZ];
          real term0 = fmpi0 * u0 * v0 + fmpiy * u1 * v0 + fmpiz * u0 * v1 + fmpiyy * u2 * v0 +
             fmpizz * u0 * v2 + fmpiyz * u1 * v1;
          real term1 = fmpix * u0 * v0 + fmpixy * u1 * v0 + fmpixz * u0 * v1;

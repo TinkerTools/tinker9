@@ -55,16 +55,16 @@ void epolar_chgpen_acc1(const real (*uind)[3])
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real ci = rpole[i][mpl_pme_0];
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
-      real qixx = rpole[i][mpl_pme_xx];
-      real qixy = rpole[i][mpl_pme_xy];
-      real qixz = rpole[i][mpl_pme_xz];
-      real qiyy = rpole[i][mpl_pme_yy];
-      real qiyz = rpole[i][mpl_pme_yz];
-      real qizz = rpole[i][mpl_pme_zz];
+      real ci = rpole[i][MPL_PME_0];
+      real dix = rpole[i][MPL_PME_X];
+      real diy = rpole[i][MPL_PME_Y];
+      real diz = rpole[i][MPL_PME_Z];
+      real qixx = rpole[i][MPL_PME_XX];
+      real qixy = rpole[i][MPL_PME_XY];
+      real qixz = rpole[i][MPL_PME_XZ];
+      real qiyy = rpole[i][MPL_PME_YY];
+      real qiyz = rpole[i][MPL_PME_YZ];
+      real qizz = rpole[i][MPL_PME_ZZ];
       real uix = uind[i][0];
       real uiy = uind[i][1];
       real uiz = uind[i][2];
@@ -95,16 +95,16 @@ void epolar_chgpen_acc1(const real (*uind)[3])
             MAYBE_UNUSED real e;
             MAYBE_UNUSED real pota, potb;
 
-            real ck = rpole[k][mpl_pme_0];
-            real dkx = rpole[k][mpl_pme_x];
-            real dky = rpole[k][mpl_pme_y];
-            real dkz = rpole[k][mpl_pme_z];
-            real qkxx = rpole[k][mpl_pme_xx];
-            real qkxy = rpole[k][mpl_pme_xy];
-            real qkxz = rpole[k][mpl_pme_xz];
-            real qkyy = rpole[k][mpl_pme_yy];
-            real qkyz = rpole[k][mpl_pme_yz];
-            real qkzz = rpole[k][mpl_pme_zz];
+            real ck = rpole[k][MPL_PME_0];
+            real dkx = rpole[k][MPL_PME_X];
+            real dky = rpole[k][MPL_PME_Y];
+            real dkz = rpole[k][MPL_PME_Z];
+            real qkxx = rpole[k][MPL_PME_XX];
+            real qkxy = rpole[k][MPL_PME_XY];
+            real qkxz = rpole[k][MPL_PME_XZ];
+            real qkyy = rpole[k][MPL_PME_YY];
+            real qkyz = rpole[k][MPL_PME_YZ];
+            real qkzz = rpole[k][MPL_PME_ZZ];
             real ukx = uind[k][0];
             real uky = uind[k][1];
             real ukz = uind[k][2];
@@ -202,16 +202,16 @@ void epolar_chgpen_acc1(const real (*uind)[3])
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real ci = rpole[i][mpl_pme_0];
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
-      real qixx = rpole[i][mpl_pme_xx];
-      real qixy = rpole[i][mpl_pme_xy];
-      real qixz = rpole[i][mpl_pme_xz];
-      real qiyy = rpole[i][mpl_pme_yy];
-      real qiyz = rpole[i][mpl_pme_yz];
-      real qizz = rpole[i][mpl_pme_zz];
+      real ci = rpole[i][MPL_PME_0];
+      real dix = rpole[i][MPL_PME_X];
+      real diy = rpole[i][MPL_PME_Y];
+      real diz = rpole[i][MPL_PME_Z];
+      real qixx = rpole[i][MPL_PME_XX];
+      real qixy = rpole[i][MPL_PME_XY];
+      real qixz = rpole[i][MPL_PME_XZ];
+      real qiyy = rpole[i][MPL_PME_YY];
+      real qiyz = rpole[i][MPL_PME_YZ];
+      real qizz = rpole[i][MPL_PME_ZZ];
       real uix = uind[i][0];
       real uiy = uind[i][1];
       real uiz = uind[i][2];
@@ -239,9 +239,9 @@ void epolar_chgpen_acc1(const real (*uind)[3])
             r2, xr, yr, zr, dscale, wscale,                    //
             ci, dix, diy, diz, corei, vali, alphai,            //
             qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy, uiz, //
-            rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y], rpole[k][mpl_pme_z],
-            corek, valk, alphak, rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz],
-            rpole[k][mpl_pme_yy], rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], uind[k][0],
+            rpole[k][MPL_PME_0], rpole[k][MPL_PME_X], rpole[k][MPL_PME_Y], rpole[k][MPL_PME_Z],
+            corek, valk, alphak, rpole[k][MPL_PME_XX], rpole[k][MPL_PME_XY], rpole[k][MPL_PME_XZ],
+            rpole[k][MPL_PME_YY], rpole[k][MPL_PME_YZ], rpole[k][MPL_PME_ZZ], uind[k][0],
             uind[k][1], uind[k][2], f, 0, e, pota, potb, pgrad);
 
          if CONSTEXPR (do_a)
@@ -302,15 +302,15 @@ void epolar_chgpen_acc1(const real (*uind)[3])
       #pragma acc parallel loop independent async\
                   deviceptr(rpole,trqx,trqy,trqz,ufld,dufld)
       for (int i = 0; i < n; ++i) {
-         real dix = rpole[i][mpl_pme_x];
-         real diy = rpole[i][mpl_pme_y];
-         real diz = rpole[i][mpl_pme_z];
-         real qixx = rpole[i][mpl_pme_xx];
-         real qixy = rpole[i][mpl_pme_xy];
-         real qixz = rpole[i][mpl_pme_xz];
-         real qiyy = rpole[i][mpl_pme_yy];
-         real qiyz = rpole[i][mpl_pme_yz];
-         real qizz = rpole[i][mpl_pme_zz];
+         real dix = rpole[i][MPL_PME_X];
+         real diy = rpole[i][MPL_PME_Y];
+         real diz = rpole[i][MPL_PME_Z];
+         real qixx = rpole[i][MPL_PME_XX];
+         real qixy = rpole[i][MPL_PME_XY];
+         real qixz = rpole[i][MPL_PME_XZ];
+         real qiyy = rpole[i][MPL_PME_YY];
+         real qiyz = rpole[i][MPL_PME_YZ];
+         real qizz = rpole[i][MPL_PME_ZZ];
 
          real tep1 = diz * ufld[i][1] - diy * ufld[i][2] + qixz * dufld[i][1] - qixy * dufld[i][3] +
             2 * qiyz * (dufld[i][2] - dufld[i][5]) + (qizz - qiyy) * dufld[i][4];
@@ -434,9 +434,9 @@ void epolar_chgpen_ewald_recip_self_acc1(const real (*gpu_uind)[3])
                rpole,cmp,gpu_uind,cphidp,pot)
    for (int i = 0; i < n; ++i) {
       int offset = i & (bufsize - 1);
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
+      real dix = rpole[i][MPL_PME_X];
+      real diy = rpole[i][MPL_PME_Y];
+      real diz = rpole[i][MPL_PME_Z];
       real uix = gpu_uind[i][0];
       real uiy = gpu_uind[i][1];
       real uiz = gpu_uind[i][2];

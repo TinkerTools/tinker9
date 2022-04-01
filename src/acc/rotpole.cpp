@@ -9,7 +9,7 @@ void chkpole_acc()
    #pragma acc parallel loop independent async deviceptr(x,y,z,zaxis,pole)
    for (int i = 0; i < n; ++i) {
       int polaxe = zaxis[i].polaxe;
-      bool check = ((polaxe != pole_z_then_x) || (zaxis[i].yaxis) == 0) ? false : true;
+      bool check = ((polaxe != LFRM_Z_THEN_X) || (zaxis[i].yaxis) == 0) ? false : true;
       if (check) {
          int k = zaxis[i].yaxis;
          int ia = i;
@@ -38,11 +38,11 @@ void chkpole_acc()
          if ((k < 0 && vol > 0) || (k > 0 && vol < 0)) {
             zaxis[i].yaxis = -k;
             // y -> -y
-            pole[i][mpl_pme_y] = -pole[i][mpl_pme_y];
+            pole[i][MPL_PME_Y] = -pole[i][MPL_PME_Y];
             // xy -> -xy
             // yz -> -yz
-            pole[i][mpl_pme_xy] = -pole[i][mpl_pme_xy];
-            pole[i][mpl_pme_yz] = -pole[i][mpl_pme_yz];
+            pole[i][MPL_PME_XY] = -pole[i][MPL_PME_XY];
+            pole[i][MPL_PME_YZ] = -pole[i][MPL_PME_YZ];
          }
       }
    }
@@ -52,7 +52,7 @@ void chkpole_acc()
 static void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpole)[10],
    const real (*restrict pole)[10])
 {
-   static_assert(mpl_total == 10, "");
+   static_assert(MPL_TOTAL == 10, "");
 
    // charge
    rpole[isite][0] = pole[isite][0];
@@ -68,15 +68,15 @@ static void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpol
    // quadrupole
    real rp[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
    real mp[3][3];
-   mp[0][0] = pole[isite][mpl_pme_xx];
-   mp[0][1] = pole[isite][mpl_pme_xy];
-   mp[0][2] = pole[isite][mpl_pme_xz];
-   mp[1][0] = pole[isite][mpl_pme_yx];
-   mp[1][1] = pole[isite][mpl_pme_yy];
-   mp[1][2] = pole[isite][mpl_pme_yz];
-   mp[2][0] = pole[isite][mpl_pme_zx];
-   mp[2][1] = pole[isite][mpl_pme_zy];
-   mp[2][2] = pole[isite][mpl_pme_zz];
+   mp[0][0] = pole[isite][MPL_PME_XX];
+   mp[0][1] = pole[isite][MPL_PME_XY];
+   mp[0][2] = pole[isite][MPL_PME_XZ];
+   mp[1][0] = pole[isite][MPL_PME_YX];
+   mp[1][1] = pole[isite][MPL_PME_YY];
+   mp[1][2] = pole[isite][MPL_PME_YZ];
+   mp[2][0] = pole[isite][MPL_PME_ZX];
+   mp[2][1] = pole[isite][MPL_PME_ZY];
+   mp[2][2] = pole[isite][MPL_PME_ZZ];
    #pragma acc loop seq
    for (int i = 0; i < 3; ++i) {
       #pragma acc loop seq
@@ -91,12 +91,12 @@ static void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpol
          // }
       }
    }
-   rpole[isite][mpl_pme_xx] = rp[0][0];
-   rpole[isite][mpl_pme_xy] = rp[0][1];
-   rpole[isite][mpl_pme_xz] = rp[0][2];
-   rpole[isite][mpl_pme_yy] = rp[1][1];
-   rpole[isite][mpl_pme_yz] = rp[1][2];
-   rpole[isite][mpl_pme_zz] = rp[2][2];
+   rpole[isite][MPL_PME_XX] = rp[0][0];
+   rpole[isite][MPL_PME_XY] = rp[0][1];
+   rpole[isite][MPL_PME_XZ] = rp[0][2];
+   rpole[isite][MPL_PME_YY] = rp[1][1];
+   rpole[isite][MPL_PME_YZ] = rp[1][2];
+   rpole[isite][MPL_PME_ZZ] = rp[2][2];
 }
 
 #pragma acc routine seq
@@ -139,7 +139,7 @@ void rotpole_acc()
       // the default identity matrix
       real a[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
-      if (polaxe != pole_none) {
+      if (polaxe != LFRM_NONE) {
          real* restrict xx = &a[0][0];
          real* restrict yy = &a[1][0];
          real* restrict zz = &a[2][0];
@@ -154,7 +154,7 @@ void rotpole_acc()
 
          // STEP 2: PICK X AND NORM X
          // even if it is not needef for z then x)
-         if (polaxe == pole_z_only) {
+         if (polaxe == LFRM_Z_ONLY) {
             // pick x
             int okay = !(REAL_ABS(zz[0]) > 0.866f);
             xx[0] = (okay ? 1 : 0);
@@ -170,7 +170,7 @@ void rotpole_acc()
 
          // STEP 3: PICK Y AND NORM Y
          // only for z biscector and 3 fold
-         if (polaxe == pole_z_bisect || polaxe == pole_3_fold) {
+         if (polaxe == LFRM_Z_BISECT || polaxe == LFRM_3_FOLD) {
             yy[0] = x[iy] - xi;
             yy[1] = y[iy] - yi;
             yy[2] = z[iy] - zi;
@@ -178,13 +178,13 @@ void rotpole_acc()
          }
 
          // STEP 4
-         if (polaxe == pole_bisector) {
+         if (polaxe == LFRM_BISECTOR) {
             rotpole_addto1(zz, xx);
             rotpole_norm(zz);
-         } else if (polaxe == pole_z_bisect) {
+         } else if (polaxe == LFRM_Z_BISECT) {
             rotpole_addto1(xx, yy);
             rotpole_norm(xx);
-         } else if (polaxe == pole_3_fold) {
+         } else if (polaxe == LFRM_3_FOLD) {
             rotpole_addto2(zz, xx, yy);
             rotpole_norm(zz);
          }
@@ -201,7 +201,7 @@ void rotpole_acc()
          a[1][0] = a[0][2] * a[2][1] - a[0][1] * a[2][2];
          a[1][1] = a[0][0] * a[2][2] - a[0][2] * a[2][0];
          a[1][2] = a[0][1] * a[2][0] - a[0][0] * a[2][1];
-      } // end if (.not. pole_none)
+      } // end if (.not. LFRM_NONE)
 
       // rotsite routine
       rotsite(i, a, rpole, pole);

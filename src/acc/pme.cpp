@@ -105,16 +105,16 @@ static void gridPut_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
          bsplgen<3>(w2, thetai2, bsorder);
          bsplgen<3>(w3, thetai3, bsorder);
 
-         real fmpi0 = fmp[i][mpl_pme_0];
-         real fmpix = fmp[i][mpl_pme_x];
-         real fmpiy = fmp[i][mpl_pme_y];
-         real fmpiz = fmp[i][mpl_pme_z];
-         real fmpixx = fmp[i][mpl_pme_xx];
-         real fmpiyy = fmp[i][mpl_pme_yy];
-         real fmpizz = fmp[i][mpl_pme_zz];
-         real fmpixy = fmp[i][mpl_pme_xy];
-         real fmpixz = fmp[i][mpl_pme_xz];
-         real fmpiyz = fmp[i][mpl_pme_yz];
+         real fmpi0 = fmp[i][MPL_PME_0];
+         real fmpix = fmp[i][MPL_PME_X];
+         real fmpiy = fmp[i][MPL_PME_Y];
+         real fmpiz = fmp[i][MPL_PME_Z];
+         real fmpixx = fmp[i][MPL_PME_XX];
+         real fmpiyy = fmp[i][MPL_PME_YY];
+         real fmpizz = fmp[i][MPL_PME_ZZ];
+         real fmpixy = fmp[i][MPL_PME_XY];
+         real fmpixz = fmp[i][MPL_PME_XZ];
+         real fmpiyz = fmp[i][MPL_PME_YZ];
          #pragma acc loop seq
          for (int iz = 0; iz < bsorder; ++iz) {
             int zbase = igrid3 + iz;
@@ -733,16 +733,16 @@ void rpoleToCmp_acc()
 {
    #pragma acc parallel loop independent async deviceptr(rpole,cmp)
    for (int i = 0; i < n; ++i) {
-      cmp[i][0] = rpole[i][mpl_pme_0];
-      cmp[i][1] = rpole[i][mpl_pme_x];
-      cmp[i][2] = rpole[i][mpl_pme_y];
-      cmp[i][3] = rpole[i][mpl_pme_z];
-      cmp[i][4] = rpole[i][mpl_pme_xx];
-      cmp[i][5] = rpole[i][mpl_pme_yy];
-      cmp[i][6] = rpole[i][mpl_pme_zz];
-      cmp[i][7] = 2 * rpole[i][mpl_pme_xy];
-      cmp[i][8] = 2 * rpole[i][mpl_pme_xz];
-      cmp[i][9] = 2 * rpole[i][mpl_pme_yz];
+      cmp[i][0] = rpole[i][MPL_PME_0];
+      cmp[i][1] = rpole[i][MPL_PME_X];
+      cmp[i][2] = rpole[i][MPL_PME_Y];
+      cmp[i][3] = rpole[i][MPL_PME_Z];
+      cmp[i][4] = rpole[i][MPL_PME_XX];
+      cmp[i][5] = rpole[i][MPL_PME_YY];
+      cmp[i][6] = rpole[i][MPL_PME_ZZ];
+      cmp[i][7] = 2 * rpole[i][MPL_PME_XY];
+      cmp[i][8] = 2 * rpole[i][MPL_PME_XZ];
+      cmp[i][9] = 2 * rpole[i][MPL_PME_YZ];
    }
 }
 

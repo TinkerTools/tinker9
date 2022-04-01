@@ -32,7 +32,7 @@ void osrw_altele_acc(double el)
               deviceptr(mut,pole,polarity,polarity_inv,osrw_pole,osrw_polarity)
       for (int i = 0; i < n; ++i) {
          #pragma acc loop seq
-         for (int j = 0; j < mpl_total; ++j) {
+         for (int j = 0; j < MPL_TOTAL; ++j) {
             real m = osrw_pole[i][j];
             if (mut[i])
                m *= el;

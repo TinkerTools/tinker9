@@ -34,7 +34,7 @@ extern virial_prec osrw_dv1[9];
 extern grad_prec *osrw_dgx, *osrw_dgy, *osrw_dgz;
 
 extern real* osrw_pchg;
-extern real (*osrw_pole)[mpl_total];
+extern real (*osrw_pole)[MPL_TOTAL];
 extern real* osrw_polarity;
 extern int osrw_ntbnd;
 extern int (*osrw_itbnd)[2];

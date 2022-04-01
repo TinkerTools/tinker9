@@ -12,16 +12,16 @@ void empole_self_cu(CountBuffer restrict nem, EnergyBuffer restrict em,
    real fterm = -f * aewald * 0.5f * (real)(M_2_SQRTPI);
 
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
-      real ci = rpole[i][mpl_pme_0];
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
-      real qixx = rpole[i][mpl_pme_xx];
-      real qixy = rpole[i][mpl_pme_xy];
-      real qixz = rpole[i][mpl_pme_xz];
-      real qiyy = rpole[i][mpl_pme_yy];
-      real qiyz = rpole[i][mpl_pme_yz];
-      real qizz = rpole[i][mpl_pme_zz];
+      real ci = rpole[i][MPL_PME_0];
+      real dix = rpole[i][MPL_PME_X];
+      real diy = rpole[i][MPL_PME_Y];
+      real diz = rpole[i][MPL_PME_Z];
+      real qixx = rpole[i][MPL_PME_XX];
+      real qixy = rpole[i][MPL_PME_XY];
+      real qixz = rpole[i][MPL_PME_XZ];
+      real qiyy = rpole[i][MPL_PME_YY];
+      real qiyz = rpole[i][MPL_PME_YZ];
+      real qizz = rpole[i][MPL_PME_ZZ];
 
       real cii = ci * ci;
       real dii = dix * dix + diy * diy + diz * diz;

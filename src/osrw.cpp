@@ -25,7 +25,7 @@ virial_prec osrw_dv1[9];
 grad_prec *osrw_dgx, *osrw_dgy, *osrw_dgz;
 
 real* osrw_pchg;
-real (*osrw_pole)[mpl_total];
+real (*osrw_pole)[MPL_TOTAL];
 real* osrw_polarity;
 int osrw_ntbnd;
 int (*osrw_itbnd)[2];

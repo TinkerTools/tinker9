@@ -42,16 +42,16 @@ void dfield_chgpen_acc1(real (*field)[3])
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real ci = rpole[i][mpl_pme_0];
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
-      real qixx = rpole[i][mpl_pme_xx];
-      real qixy = rpole[i][mpl_pme_xy];
-      real qixz = rpole[i][mpl_pme_xz];
-      real qiyy = rpole[i][mpl_pme_yy];
-      real qiyz = rpole[i][mpl_pme_yz];
-      real qizz = rpole[i][mpl_pme_zz];
+      real ci = rpole[i][MPL_PME_0];
+      real dix = rpole[i][MPL_PME_X];
+      real diy = rpole[i][MPL_PME_Y];
+      real diz = rpole[i][MPL_PME_Z];
+      real qixx = rpole[i][MPL_PME_XX];
+      real qixy = rpole[i][MPL_PME_XY];
+      real qixz = rpole[i][MPL_PME_XZ];
+      real qiyy = rpole[i][MPL_PME_YY];
+      real qiyz = rpole[i][MPL_PME_YZ];
+      real qizz = rpole[i][MPL_PME_ZZ];
       real corei = pcore[i];
       real alphai = palpha[i];
       real vali = pval[i];
@@ -73,10 +73,10 @@ void dfield_chgpen_acc1(real (*field)[3])
             real3 fkd = make_real3(0, 0, 0);
             pair_dfield_chgpen<ETYP>( //
                r2, xr, yr, zr, 1, ci, dix, diy, diz, corei, vali, alphai, qixx, qixy, qixz, qiyy,
-               qiyz, qizz, rpole[k][mpl_pme_0], rpole[k][mpl_pme_x], rpole[k][mpl_pme_y],
-               rpole[k][mpl_pme_z], pcore[k], pval[k], palpha[k], rpole[k][mpl_pme_xx],
-               rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-               rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], aewald, fid.x, fid.y, fid.z, fkd.x,
+               qiyz, qizz, rpole[k][MPL_PME_0], rpole[k][MPL_PME_X], rpole[k][MPL_PME_Y],
+               rpole[k][MPL_PME_Z], pcore[k], pval[k], palpha[k], rpole[k][MPL_PME_XX],
+               rpole[k][MPL_PME_XY], rpole[k][MPL_PME_XZ], rpole[k][MPL_PME_YY],
+               rpole[k][MPL_PME_YZ], rpole[k][MPL_PME_ZZ], aewald, fid.x, fid.y, fid.z, fkd.x,
                fkd.y, fkd.z);
 
             gxi += fid.x;
@@ -106,16 +106,16 @@ void dfield_chgpen_acc1(real (*field)[3])
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real ci = rpole[i][mpl_pme_0];
-      real dix = rpole[i][mpl_pme_x];
-      real diy = rpole[i][mpl_pme_y];
-      real diz = rpole[i][mpl_pme_z];
-      real qixx = rpole[i][mpl_pme_xx];
-      real qixy = rpole[i][mpl_pme_xy];
-      real qixz = rpole[i][mpl_pme_xz];
-      real qiyy = rpole[i][mpl_pme_yy];
-      real qiyz = rpole[i][mpl_pme_yz];
-      real qizz = rpole[i][mpl_pme_zz];
+      real ci = rpole[i][MPL_PME_0];
+      real dix = rpole[i][MPL_PME_X];
+      real diy = rpole[i][MPL_PME_Y];
+      real diz = rpole[i][MPL_PME_Z];
+      real qixx = rpole[i][MPL_PME_XX];
+      real qixy = rpole[i][MPL_PME_XY];
+      real qixz = rpole[i][MPL_PME_XZ];
+      real qiyy = rpole[i][MPL_PME_YY];
+      real qiyz = rpole[i][MPL_PME_YZ];
+      real qizz = rpole[i][MPL_PME_ZZ];
       real corei = pcore[i];
       real alphai = palpha[i];
       real vali = pval[i];
@@ -129,10 +129,10 @@ void dfield_chgpen_acc1(real (*field)[3])
          real3 fid = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
          pair_dfield_chgpen<NON_EWALD>(r2, xr, yr, zr, dscale, ci, dix, diy, diz, corei, vali,
-            alphai, qixx, qixy, qixz, qiyy, qiyz, qizz, rpole[k][mpl_pme_0], rpole[k][mpl_pme_x],
-            rpole[k][mpl_pme_y], rpole[k][mpl_pme_z], pcore[k], pval[k], palpha[k],
-            rpole[k][mpl_pme_xx], rpole[k][mpl_pme_xy], rpole[k][mpl_pme_xz], rpole[k][mpl_pme_yy],
-            rpole[k][mpl_pme_yz], rpole[k][mpl_pme_zz], 0, fid.x, fid.y, fid.z, fkd.x, fkd.y,
+            alphai, qixx, qixy, qixz, qiyy, qiyz, qizz, rpole[k][MPL_PME_0], rpole[k][MPL_PME_X],
+            rpole[k][MPL_PME_Y], rpole[k][MPL_PME_Z], pcore[k], pval[k], palpha[k],
+            rpole[k][MPL_PME_XX], rpole[k][MPL_PME_XY], rpole[k][MPL_PME_XZ], rpole[k][MPL_PME_YY],
+            rpole[k][MPL_PME_YZ], rpole[k][MPL_PME_ZZ], 0, fid.x, fid.y, fid.z, fkd.x, fkd.y,
             fkd.z);
 
          atomic_add(fid.x, &field[i][0]);
