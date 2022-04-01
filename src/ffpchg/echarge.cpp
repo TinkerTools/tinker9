@@ -13,7 +13,7 @@
 namespace tinker {
 void echargeData(RcOp op)
 {
-   if (!usePotent(Potent::CHARGE))
+   if (not usePotent(Potent::CHARGE))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -123,72 +123,29 @@ void echargeData(RcOp op)
 
    if (op & RcOp::INIT) {}
 }
-
-void echarge(int vers)
-{
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_a = vers & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
-
-   zeroOnHost(energy_ec, virial_ec);
-   size_t bsize = bufferSize();
-   if (rc_a) {
-      if (do_a)
-         darray::zero(g::q0, bsize, nec);
-      if (do_e)
-         darray::zero(g::q0, bsize, ec);
-      if (do_v)
-         darray::zero(g::q0, bsize, vir_ec);
-      if (do_g)
-         darray::zero(g::q0, n, decx, decy, decz);
-   }
-
-   if (useEwald()) {
-      echarge_ewald_recip_self(vers);
-#if TINKER_CUDART
-      if (clistVersion() & Nbl::SPATIAL)
-         echarge_ewald_real_cu(vers);
-      else
-#endif
-         echarge_ewald_real_acc(vers);
-      pme_stream_finish_wait(use_pme_stream and (vers & calc::analyz));
-   } else
-      echarge_nonewald(vers);
-
-   if (rc_a) {
-      if (do_e) {
-         EnergyBuffer u = ec;
-         energy_prec e = energyReduce(u);
-         energy_ec += e;
-         energy_elec += e;
-      }
-      if (do_v) {
-         VirialBuffer u = vir_ec;
-         virial_prec v[9];
-         virialReduce(v, u);
-         for (int iv = 0; iv < 9; ++iv) {
-            virial_ec[iv] += v[iv];
-            virial_elec[iv] += v[iv];
-         }
-      }
-      if (do_g)
-         sumGradient(gx_elec, gy_elec, gz_elec, decx, decy, decz);
-   }
 }
 
-void echarge_nonewald(int vers)
+namespace tinker {
+extern void echargeNonEwald_acc(int);
+extern void echargeNonEwald_cu(int);
+extern void echargeEwaldReal_acc(int);
+extern void echargeEwaldReal_cu(int);
+extern void echargeEwaldFphiSelf_acc(int);
+extern void echargeEwaldFphiSelf_cu(int);
+
+static void echargeNonEwald(int vers)
 {
 #if TINKER_CUDART
    if (clistVersion() & Nbl::SPATIAL)
-      echarge_nonewald_cu(vers);
+      echargeNonEwald_cu(vers);
    else
 #endif
-      echarge_nonewald_acc(vers);
+      echargeNonEwald_acc(vers);
+}
 }
 
-void echarge_ewald_recip_self(int vers)
+namespace tinker {
+void echargeEwaldRecipSelf(int vers)
 {
    pme_stream_start_wait(use_pme_stream);
 
@@ -219,11 +176,65 @@ void echarge_ewald_recip_self(int vers)
 
 #if TINKER_CUDART
    if (pltfm_config & Platform::CUDA)
-      echarge_ewald_fphi_self_cu(vers);
+      echargeEwaldFphiSelf_cu(vers);
    else
 #endif
-      echarge_ewald_fphi_self_acc(vers);
+      echargeEwaldFphiSelf_acc(vers);
 
    pme_stream_finish_record(use_pme_stream);
+}
+
+void echarge(int vers)
+{
+   bool rc_a = rc_flag & calc::analyz;
+   bool do_a = vers & calc::analyz;
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+
+   zeroOnHost(energy_ec, virial_ec);
+   size_t bsize = bufferSize();
+   if (rc_a) {
+      if (do_a)
+         darray::zero(g::q0, bsize, nec);
+      if (do_e)
+         darray::zero(g::q0, bsize, ec);
+      if (do_v)
+         darray::zero(g::q0, bsize, vir_ec);
+      if (do_g)
+         darray::zero(g::q0, n, decx, decy, decz);
+   }
+
+   if (useEwald()) {
+      echargeEwaldRecipSelf(vers);
+#if TINKER_CUDART
+      if (clistVersion() & Nbl::SPATIAL)
+         echargeEwaldReal_cu(vers);
+      else
+#endif
+         echargeEwaldReal_acc(vers);
+      pme_stream_finish_wait(use_pme_stream and (vers & calc::analyz));
+   } else
+      echargeNonEwald(vers);
+
+   if (rc_a) {
+      if (do_e) {
+         EnergyBuffer u = ec;
+         energy_prec e = energyReduce(u);
+         energy_ec += e;
+         energy_elec += e;
+      }
+      if (do_v) {
+         VirialBuffer u = vir_ec;
+         virial_prec v[9];
+         virialReduce(v, u);
+         for (int iv = 0; iv < 9; ++iv) {
+            virial_ec[iv] += v[iv];
+            virial_elec[iv] += v[iv];
+         }
+      }
+      if (do_g)
+         sumGradient(gx_elec, gy_elec, gz_elec, decx, decy, decz);
+   }
 }
 }

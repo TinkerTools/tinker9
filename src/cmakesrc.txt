@@ -1,7 +1,6 @@
 set (__T9_CPP_SRC
 cflux.cpp
 compilers.cpp
-echarge.cpp
 echglj.cpp
 echgtrn.cpp
 edisp.cpp
@@ -26,6 +25,7 @@ ff/switch.cpp
 ffpchg/eangle.cpp
 ffpchg/eangtor.cpp
 ffpchg/ebond.cpp
+ffpchg/echarge.cpp
 ffpchg/egeom.cpp
 ffpchg/eimprop.cpp
 ffpchg/eimptor.cpp

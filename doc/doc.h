@@ -25,6 +25,8 @@
 ///    \ingroup ff
 ///    \defgroup vdw  Van der Waals (VDW)
 ///    \ingroup ff
+///    \defgroup charge  Partial Charge Electrostatics
+///    \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)

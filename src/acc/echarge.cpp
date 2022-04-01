@@ -1,6 +1,6 @@
 #include "ff/pchg/echarge.h"
 #include "add.h"
-#include "ff/energy.h"
+#include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
@@ -13,7 +13,7 @@
 namespace tinker {
 #define DEVICE_PTRS x, y, z, decx, decy, decz, pchg, nec, ec, vir_ec
 template <class Ver, class ETYP>
-void echarge_acc1()
+static void echarge_acc1()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -190,7 +190,7 @@ void echarge_acc1()
    }
 }
 
-void echarge_nonewald_acc(int vers)
+void echargeNonEwald_acc(int vers)
 {
    if (vers == calc::v0)
       echarge_acc1<calc::V0, NON_EWALD_TAPER>();
@@ -206,7 +206,7 @@ void echarge_nonewald_acc(int vers)
       echarge_acc1<calc::V6, NON_EWALD_TAPER>();
 }
 
-void echarge_ewald_real_acc(int vers)
+void echargeEwaldReal_acc(int vers)
 {
    if (vers == calc::v0)
       echarge_acc1<calc::V0, EWALD>();
@@ -222,10 +222,8 @@ void echarge_ewald_real_acc(int vers)
       echarge_acc1<calc::V6, EWALD>();
 }
 
-//====================================================================//
-
 template <class Ver, int bsorder>
-void echarge_acc3()
+static void echarge_acc3()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -338,7 +336,7 @@ void echarge_acc3()
    }
 }
 
-void echarge_ewald_fphi_self_acc(int vers)
+void echargeEwaldFphiSelf_acc(int vers)
 {
    int bso = epme_unit->bsorder;
    if (bso == 4) {

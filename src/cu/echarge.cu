@@ -337,7 +337,7 @@ void echarge_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nec, EnergyBuf
 }
 
 template <class Ver, class ETYP>
-void echarge_cu()
+static void echarge_cu()
 {
    const auto& st = *cspatial_v2_unit;
    real cut, off;
@@ -363,7 +363,7 @@ void echarge_cu()
       st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ebuffer, f, aewald, pchg);
 }
 
-void echarge_nonewald_cu(int vers)
+void echargeNonEwald_cu(int vers)
 {
    if (vers == calc::v0)
       echarge_cu<calc::V0, NON_EWALD_TAPER>();
@@ -379,7 +379,7 @@ void echarge_nonewald_cu(int vers)
       echarge_cu<calc::V6, NON_EWALD_TAPER>();
 }
 
-void echarge_ewald_real_cu(int vers)
+void echargeEwaldReal_cu(int vers)
 {
    if (vers == calc::v0)
       echarge_cu<calc::V0, EWALD>();
@@ -394,8 +394,6 @@ void echarge_ewald_real_cu(int vers)
    else if (vers == calc::v6)
       echarge_cu<calc::V6, EWALD>();
 }
-
-//====================================================================//
 
 template <class Ver, int bsorder>
 __global__
@@ -504,7 +502,7 @@ void echarge_cu3(CountBuffer restrict nec, EnergyBuffer restrict ec, const real*
 }
 
 template <class Ver>
-void echarge_fphi_self_cu()
+static void echargeFphiSelf_cu()
 {
    real f = electric / dielec;
    const auto& st = *epme_unit;
@@ -529,19 +527,19 @@ void echarge_fphi_self_cu()
    }
 }
 
-void echarge_ewald_fphi_self_cu(int vers)
+void echargeEwaldFphiSelf_cu(int vers)
 {
    if (vers == calc::v0)
-      echarge_fphi_self_cu<calc::V0>();
+      echargeFphiSelf_cu<calc::V0>();
    else if (vers == calc::v1)
-      echarge_fphi_self_cu<calc::V1>();
+      echargeFphiSelf_cu<calc::V1>();
    else if (vers == calc::v3)
-      echarge_fphi_self_cu<calc::V3>();
+      echargeFphiSelf_cu<calc::V3>();
    else if (vers == calc::v4)
-      echarge_fphi_self_cu<calc::V4>();
+      echargeFphiSelf_cu<calc::V4>();
    else if (vers == calc::v5)
-      echarge_fphi_self_cu<calc::V5>();
+      echargeFphiSelf_cu<calc::V5>();
    else if (vers == calc::v6)
-      echarge_fphi_self_cu<calc::V6>();
+      echargeFphiSelf_cu<calc::V6>();
 }
 }
