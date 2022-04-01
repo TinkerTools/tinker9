@@ -1,19 +1,17 @@
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/atom.h"
-#include "ff/elec.h"
 #include "math/libfunc.h"
 
 namespace tinker {
-namespace {
 #pragma acc routine seq
-real torque_dot(const real* restrict a, const real* restrict b)
+inline static real torque_dot(const real* restrict a, const real* restrict b)
 {
    return (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]);
 }
 
 #pragma acc routine seq
-void torque_cross(real* restrict ans, const real* restrict u, const real* restrict v)
+inline static void torque_cross(real* restrict ans, const real* restrict u, const real* restrict v)
 {
    ans[0] = u[1] * v[2] - u[2] * v[1];
    ans[1] = u[2] * v[0] - u[0] * v[2];
@@ -21,12 +19,11 @@ void torque_cross(real* restrict ans, const real* restrict u, const real* restri
 }
 
 #pragma acc routine seq
-void torque_normal(real* restrict a, real _1_na)
+inline static void torque_normal(real* restrict a, real _1_na)
 {
    a[0] *= _1_na;
    a[1] *= _1_na;
    a[2] *= _1_na;
-}
 }
 
 /**
@@ -48,7 +45,7 @@ void torque_normal(real* restrict a, real _1_na)
  * everything in the "local memory", the segfault would disappear.
  */
 template <int DO_V>
-void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* gz)
+static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* gz)
 {
    auto bufsize = bufferSize();
 

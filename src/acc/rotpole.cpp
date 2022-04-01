@@ -1,5 +1,4 @@
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/empole.h"
 #include "ff/atom.h"
 #include "math/libfunc.h"
 
@@ -49,7 +48,7 @@ void chkpole_acc()
 }
 
 #pragma acc routine seq
-static void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpole)[10],
+inline static void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpole)[10],
    const real (*restrict pole)[10])
 {
    static_assert(MPL_TOTAL == 10, "");
@@ -100,7 +99,7 @@ static void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpol
 }
 
 #pragma acc routine seq
-static void rotpole_norm(real* a)
+inline static void rotpole_norm(real* a)
 {
    real a1 = REAL_RSQRT(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
    a[0] *= a1;
@@ -109,7 +108,7 @@ static void rotpole_norm(real* a)
 }
 
 #pragma acc routine seq
-static void rotpole_addto1(real* restrict a, const real* restrict b)
+inline static void rotpole_addto1(real* restrict a, const real* restrict b)
 {
    a[0] += b[0];
    a[1] += b[1];
@@ -117,7 +116,7 @@ static void rotpole_addto1(real* restrict a, const real* restrict b)
 }
 
 #pragma acc routine seq
-static void rotpole_addto2(real* restrict a, const real* restrict b, const real* restrict c)
+inline static void rotpole_addto2(real* restrict a, const real* restrict b, const real* restrict c)
 {
    a[0] += (b[0] + c[0]);
    a[1] += (b[1] + c[1]);
