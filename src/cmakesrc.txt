@@ -4,7 +4,6 @@ compilers.cpp
 echglj.cpp
 echgtrn.cpp
 edisp.cpp
-elec.cpp
 emplar.cpp
 empole.cpp
 empole_chgpen.cpp
@@ -22,6 +21,7 @@ ff/pme.cpp
 ff/potent.cpp
 ff/spatial.cpp
 ff/switch.cpp
+ffamoeba/mpole.cpp
 ffpchg/eangle.cpp
 ffpchg/eangtor.cpp
 ffpchg/ebond.cpp
@@ -77,8 +77,6 @@ mdsave.cpp
 mechanic2.cpp
 mod.cpp
 moments.cpp
-nhc.cpp
-nose.cpp
 osrw.cpp
 platform.cpp
 random.cpp

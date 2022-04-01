@@ -1,12 +1,20 @@
-#include "ff/elec.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/energy.h"
+#include "ff/atom.h"
+#include "ff/elec.h"
 #include "ff/pme.h"
 
 namespace tinker {
-void chkpole_acc();
-void rotpole_acc();
-void torque_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz);
+extern void torque_acc(int vers, grad_prec*, grad_prec*, grad_prec*);
+void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz)
+{
+   torque_acc(vers, dx, dy, dz);
+}
+}
+
+namespace tinker {
+extern void chkpole_acc();
+extern void rotpole_acc();
+
 static void chkpole()
 {
    chkpole_acc();
@@ -15,15 +23,6 @@ static void chkpole()
 static void rotpole()
 {
    rotpole_acc();
-}
-
-void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz)
-{
-   // #if TINKER_CUDART
-   //    if (pltfm_config & Platform::CUDA)
-   //    else
-   // #endif
-   torque_acc(vers, dx, dy, dz);
 }
 
 void mpoleInit(int vers)

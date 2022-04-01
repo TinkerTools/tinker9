@@ -29,6 +29,10 @@
 ///    \ingroup ff
 ///    \defgroup chglj  Charge & LJ
 ///    \ingroup ff
+///    \defgroup mpole  AMOEBA Multipole Electrostatics
+///    \ingroup ff
+///    \defgroup polar  AMOEBA Polarization Electrostatics
+///    \ingroup ff
 ///    \defgroup pme  Particle Mesh Ewald
 ///    \ingroup ff
 
@@ -60,14 +64,8 @@
 /// \defgroup fft  Fast Fourier Transform
 
 /*
-
-/// \defgroup charge  Partial Charge Electrostatics
-/// \defgroup mpole  Multipole Electrostatics
-/// \defgroup polar  AMOEBA Polarization Electrostatics
-
 /// \defgroup mdsave  Saving MD Trajectory Snapshots
 /// \defgroup mdpt  Thermostats (T) and Barostats (P)
-
 /// \defgroup osrw  OSRW
 */
 
