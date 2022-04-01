@@ -23,6 +23,8 @@
 /// \ingroup ff
 /// \defgroup bonded  Valence Terms
 /// \ingroup ff
+/// \defgroup vdw  Van der Waals (VDW)
+/// \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
@@ -53,7 +55,7 @@
 /// \defgroup fft  Fast Fourier Transform
 
 /*
-/// \defgroup vdw  Van der Waals (VDW)
+
 /// \defgroup charge  Partial Charge Electrostatics
 /// \defgroup mpole  Multipole Electrostatics
 /// \defgroup polar  AMOEBA Polarization Electrostatics
