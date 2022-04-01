@@ -117,7 +117,7 @@ static bool amoeba_echglj(int vers)
       return false;
    if (ebuffer != 0)
       return false;
-   if (vdwtyp != evdw_t::lj)
+   if (vdwtyp != Vdw::LJ)
       return false;
    if (vdwpr_in_use)
       return false;

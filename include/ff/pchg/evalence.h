@@ -32,7 +32,7 @@ void evalence(int vers);
 
 namespace tinker {
 /// \defgroup bond  Bond Term
-/// \ingroup bond
+/// \ingroup bonded
 /// \{
 enum class Bond : int
 {

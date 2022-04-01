@@ -57,7 +57,7 @@ void echgljData(RcOp op)
             }
          };
          const int* src = atoms::type;
-         if (vdwindex == evdw_t::atom_class)
+         if (vdwindex == Vdw::ATOM_CLASS)
             src = atomid::class_;
          std::set<int> all_tid(src, src + n);
          auto end = all_tid.end();
@@ -247,13 +247,13 @@ void echgljData(RcOp op)
 
    if (op & RcOp::INIT) {
       std::vector<real> vrad(n), veps(n);
-      if (vdwindex == evdw_t::atom_type) {
+      if (vdwindex == Vdw::ATOM_TYPE) {
          for (int i = 0; i < n; ++i) {
             int jj = atoms::type[i] - 1;
             vrad[i] = kvdws::rad[jj];
             veps[i] = kvdws::eps[jj];
          }
-      } else if (vdwindex == evdw_t::atom_class) {
+      } else if (vdwindex == Vdw::ATOM_CLASS) {
          for (int i = 0; i < n; ++i) {
             int jj = atomid::class_[i] - 1;
             vrad[i] = kvdws::rad[jj];
@@ -279,9 +279,9 @@ void echglj(int vers)
    zeroOnHost(energy_ec, virial_ec);
    zeroOnHost(energy_ev, virial_ev);
 
-   assert(vdwtyp == evdw_t::lj);
-   assert(radrule == evdw_t::arithmetic);
-   assert(epsrule == evdw_t::geometric);
+   assert(vdwtyp == Vdw::LJ);
+   assert(radrule == Vdw::ARITHMETIC);
+   assert(epsrule == Vdw::GEOMETRIC);
    if (useEwald()) {
       echarge_ewald_recip_self(vers);
       echglj_rad_arith_eps_geom_ewald_real_cu(vers);

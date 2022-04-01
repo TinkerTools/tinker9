@@ -1,5 +1,5 @@
 #include "add.h"
-#include "ff/energy.h"
+#include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/pchg/evdw.h"
@@ -11,7 +11,7 @@
 namespace tinker {
 #define DEVICE_PTRS x, y, z, devx, devy, devz, jvdw, radmin, epsilon, mut, nev, ev, vir_ev
 template <class Ver>
-void elj_acc1()
+static void elj_acc1()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;

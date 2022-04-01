@@ -29,7 +29,7 @@ SCALE_1X_TYPE: real_const_array
 
 EXTRA_PARAMS: |
   , int njvdw, const real* restrict radmin, const real* restrict epsilon
-  , const int* restrict jvdw, const int* restrict mut, real vlam, evdw_t vcouple
+  , const int* restrict jvdw, const int* restrict mut, real vlam, Vdw vcouple
 
 I_POSITION:
   - def: register real xi from:x

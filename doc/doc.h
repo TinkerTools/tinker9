@@ -3,28 +3,28 @@
 /// \defgroup general  General Information
 
 /// \defgroup platform  Platforms and Syntaxes
-/// \defgroup cpp_syntax  C++ Syntax
-/// \ingroup platform
-/// \defgroup cuda_syntax  CUDA Specific Code
-/// \ingroup platform
-/// \defgroup acc_syntax  OpenACC Specific Code
-/// \ingroup platform
-/// \defgroup nvidia  NVIDIA GPU
-/// \ingroup platform
-
-/// \defgroup prec  Precisions
+///    \defgroup cpp_syntax  C++ Syntax
+///    \ingroup platform
+///    \defgroup cuda_syntax  CUDA Specific Code
+///    \ingroup platform
+///    \defgroup acc_syntax  OpenACC Specific Code
+///    \ingroup platform
+///    \defgroup nvidia  NVIDIA GPU
+///    \ingroup platform
 
 /// \defgroup ff  Force Fields
-/// \defgroup box  Periodic Boundary Box
-/// \ingroup ff
-/// \defgroup nblist  Neighbor List and Spatial Decomposition
-/// \ingroup ff
-/// \defgroup egv  Energy, Gradient, and Virial Tensor
-/// \ingroup ff
-/// \defgroup bonded  Valence Terms
-/// \ingroup ff
-/// \defgroup vdw  Van der Waals (VDW)
-/// \ingroup ff
+///    \defgroup prec  Precisions
+///    \ingroup ff
+///    \defgroup box  Periodic Boundary Box
+///    \ingroup ff
+///    \defgroup nblist  Neighbor List and Spatial Decomposition
+///    \ingroup ff
+///    \defgroup egv  Energy, Gradient, and Virial Tensor
+///    \ingroup ff
+///    \defgroup bonded  Valence Terms
+///    \ingroup ff
+///    \defgroup vdw  Van der Waals (VDW)
+///    \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
@@ -32,26 +32,25 @@
 /// \defgroup mdintg  Integrators
 /// \ingroup md
 
-/// \defgroup io  I/O and Text
-/// \defgroup io_read  Input
-/// \ingroup io
-/// \defgroup io_print  Formatted Output
-/// \ingroup io
-/// \defgroup io_fstrview  Fortran String View
-/// \ingroup io
-/// \defgroup io_text  Text Class
-/// \ingroup io
-
-/// \defgroup error  Errors and Exceptions
+/// \defgroup tool  Tools and Utilities
+///    \defgroup io_read  Input
+///    \ingroup tool
+///    \defgroup io_print  Formatted Output
+///    \ingroup tool
+///    \defgroup io_fstrview  Fortran String View
+///    \ingroup tool
+///    \defgroup io_text  Text Class
+///    \ingroup tool
+///    \defgroup error  Errors and Exceptions
+///    \ingroup tool
+///    \defgroup math  Math
+///    \ingroup tool
+///    \defgroup math_parallel  Parallel Algorithms
+///    \ingroup tool
 
 /// \defgroup test  Unit Tests
 /// \defgroup async  Asynchronous Flow Control
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
-
-/// \defgroup math  Math
-/// \defgroup math_parallel  Parallel Algorithms
-/// \ingroup math
-
 /// \defgroup fft  Fast Fourier Transform
 
 /*
@@ -89,7 +88,7 @@
 #define TINKER_PGI
 #define TINKER_EXTERN_DEFINITION_FILE
 
-/**
+/*
  *
  * Data structures and procedures to construct the spatial decomposition
  * in O(N) time complexity.
@@ -285,7 +284,7 @@
  *       (b) Write the neighbor atom back to `lst`.
  */
 
-/**
+/*
  *
  * %Spatial Decomposition Version 2.
  *

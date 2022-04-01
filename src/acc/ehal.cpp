@@ -9,7 +9,7 @@
 #include "tool/gpucard.h"
 
 namespace tinker {
-void ehal_reduce_xyz_acc()
+void ehalReduceXyz_acc()
 {
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,ired,kred,xred,yred,zred)
@@ -22,7 +22,7 @@ void ehal_reduce_xyz_acc()
    }
 }
 
-void ehal_resolve_gradient_acc()
+void ehalResolveGradient_acc()
 {
    #pragma acc parallel loop independent async\
                deviceptr(ired,kred,gxred,gyred,gzred,devx,devy,devz)
@@ -57,7 +57,7 @@ void ehal_resolve_gradient_acc()
 #define DEVICE_PTRS                                                                                \
    xred, yred, zred, gxred, gyred, gzred, jvdw, radmin, epsilon, mut, nev, ev, vir_ev
 template <class Ver>
-void ehal_acc1()
+static void ehal_acc1()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -101,10 +101,10 @@ void ehal_acc1()
          int mut2 = mut[k];
 
          real vlambda = 1;
-         if (vcouple == evdw_t::decouple) {
+         if (vcouple == Vdw::DECOUPLE) {
             vlambda = (mut1 == mut2 ? 1 : vlam);
          }
-         if (vcouple == evdw_t::annihilate) {
+         if (vcouple == Vdw::ANNIHILATE) {
             vlambda = (mut1 || mut2 ? vlam : 1);
          }
 
@@ -191,10 +191,10 @@ void ehal_acc1()
       int mut2 = mut[k];
 
       real vlambda = 1;
-      if (vcouple == evdw_t::decouple) {
+      if (vcouple == Vdw::DECOUPLE) {
          vlambda = (mut1 == mut2 ? 1 : vlam);
       }
-      if (vcouple == evdw_t::annihilate) {
+      if (vcouple == Vdw::ANNIHILATE) {
          vlambda = (mut1 || mut2 ? vlam : 1);
       }
 
@@ -251,7 +251,7 @@ void ehal_acc1()
    } // end for (int ii)
 
    if CONSTEXPR (do_g)
-      ehal_resolve_gradient();
+      ehalResolveGradient();
 }
 
 void ehal_acc(int vers)

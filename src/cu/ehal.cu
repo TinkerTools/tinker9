@@ -1,5 +1,5 @@
 #include "add.h"
-#include "ff/energy.h"
+#include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/pchg/evdw.h"
 #include "ff/spatial.h"
@@ -57,7 +57,7 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyBuffer
    const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
    const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
    int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
-   int njvdw, real vlam, evdw_t vcouple, const real* restrict radmin, const real* restrict epsilon,
+   int njvdw, real vlam, Vdw vcouple, const real* restrict radmin, const real* restrict epsilon,
    const int* restrict jvdw, const int* restrict mut)
 {
    constexpr bool do_e = Ver::e;
@@ -141,9 +141,9 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyBuffer
          real rv = radmin[ijvdw * njvdw + kjvdw];
          real eps = epsilon[ijvdw * njvdw + kjvdw];
          real vlambda = 1;
-         if (vcouple == evdw_t::decouple) {
+         if (vcouple == Vdw::DECOUPLE) {
             vlambda = (imut == kmut ? 1 : vlam);
-         } else if (vcouple == evdw_t::annihilate) {
+         } else if (vcouple == Vdw::ANNIHILATE) {
             vlambda = (imut || kmut ? vlam : 1);
          }
          real e, de;
@@ -237,9 +237,9 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyBuffer
             real rv = radmin[ijvdw * njvdw + kjvdw];
             real eps = epsilon[ijvdw * njvdw + kjvdw];
             real vlambda = 1;
-            if (vcouple == evdw_t::decouple) {
+            if (vcouple == Vdw::DECOUPLE) {
                vlambda = (imut == kmut ? 1 : vlam);
-            } else if (vcouple == evdw_t::annihilate) {
+            } else if (vcouple == Vdw::ANNIHILATE) {
                vlambda = (imut || kmut ? vlam : 1);
             }
             real e, de;
@@ -336,9 +336,9 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyBuffer
             real rv = radmin[ijvdw * njvdw + kjvdw];
             real eps = epsilon[ijvdw * njvdw + kjvdw];
             real vlambda = 1;
-            if (vcouple == evdw_t::decouple) {
+            if (vcouple == Vdw::DECOUPLE) {
                vlambda = (imut == kmut ? 1 : vlam);
-            } else if (vcouple == evdw_t::annihilate) {
+            } else if (vcouple == Vdw::ANNIHILATE) {
                vlambda = (imut || kmut ? vlam : 1);
             }
             real e, de;
@@ -408,7 +408,7 @@ void ehal_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyBuffer
 }
 
 template <class Ver>
-void ehal_cu3()
+static void ehal_cu3()
 {
    constexpr bool do_g = Ver::g;
 
@@ -427,7 +427,7 @@ void ehal_cu3()
       jvdw, mut);
 
    if CONSTEXPR (do_g) {
-      ehal_resolve_gradient();
+      ehalResolveGradient();
    }
 }
 

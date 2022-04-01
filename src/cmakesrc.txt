@@ -12,7 +12,6 @@ empole_chgpen.cpp
 epolar.cpp
 epolar_chgpen.cpp
 erepel.cpp
-evdw.cpp
 ff/atom.cpp
 ff/box.cpp
 ff/egvop.cpp
@@ -38,6 +37,7 @@ ffpchg/etors.cpp
 ffpchg/etortor.cpp
 ffpchg/eurey.cpp
 ffpchg/evalence.cpp
+ffpchg/evdw.cpp
 field.cpp
 field_chgpen.cpp
 induce.cpp

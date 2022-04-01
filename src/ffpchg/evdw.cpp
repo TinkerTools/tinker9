@@ -3,10 +3,9 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tinker9.h"
-#include "tool/io.h"
+#include "tool/iofortstr.h"
+#include "tool/iotext.h"
 #include <cassert>
-#include <map>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/keys.hh>
 #include <tinker/detail/mutant.hh>
@@ -14,20 +13,21 @@
 #include <tinker/detail/sizes.hh>
 #include <tinker/detail/vdw.hh>
 #include <tinker/detail/vdwpot.hh>
+#include <tinker/routines.h>
 
 namespace tinker {
-namespace {
+inline namespace v1 {
 using new_type = int; // new vdw class/type
 using old_type = int; // old vdw class/type
-std::map<old_type, new_type> jmap;
-std::vector<new_type> jvec;
-std::vector<new_type> jvdwbuf;
-int jcount;
 }
+static std::map<old_type, new_type> jmap;
+static std::vector<new_type> jvec;
+static std::vector<new_type> jvdwbuf;
+static int jcount;
 
 void evdwData(RcOp op)
 {
-   if (!usePotent(Potent::VDW))
+   if (not usePotent(Potent::VDW))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -39,7 +39,7 @@ void evdwData(RcOp op)
       jvdwbuf.clear();
       jcount = 0;
 
-      if (vdwtyp == evdw_t::hal)
+      if (vdwtyp == Vdw::HAL)
          darray::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred);
 
       darray::deallocate(jvdw, radmin, epsilon, mut);
@@ -70,49 +70,49 @@ void evdwData(RcOp op)
    if (op & RcOp::ALLOC) {
       FstrView str = vdwpot::vdwtyp;
       if (str == "LENNARD-JONES")
-         vdwtyp = evdw_t::lj;
+         vdwtyp = Vdw::LJ;
       else if (str == "BUCKINGHAM")
-         vdwtyp = evdw_t::buck;
+         vdwtyp = Vdw::BUCK;
       else if (str == "MM3-HBOND")
-         vdwtyp = evdw_t::mm3hb;
+         vdwtyp = Vdw::MM3HB;
       else if (str == "BUFFERED-14-7")
-         vdwtyp = evdw_t::hal;
+         vdwtyp = Vdw::HAL;
       else if (str == "GAUSSIAN")
-         vdwtyp = evdw_t::gauss;
+         vdwtyp = Vdw::GAUSS;
       else
          assert(false);
 
       FstrView str1 = vdwpot::vdwindex;
       if (str1 == "CLASS")
-         vdwindex = evdw_t::atom_class;
+         vdwindex = Vdw::ATOM_CLASS;
       else if (str1 == "TYPE")
-         vdwindex = evdw_t::atom_type;
+         vdwindex = Vdw::ATOM_TYPE;
       else
          assert(false);
 
       FstrView str2 = vdwpot::radrule;
       if (str2 == "ARITHMETIC")
-         radrule = evdw_t::arithmetic;
+         radrule = Vdw::ARITHMETIC;
       else if (str2 == "GEOMETRIC")
-         radrule = evdw_t::geometric;
+         radrule = Vdw::GEOMETRIC;
       else if (str2 == "CUBIC-MEAN")
-         radrule = evdw_t::cubic_mean;
+         radrule = Vdw::CUBIC_MEAN;
       else
          assert(false);
 
       FstrView str3 = vdwpot::epsrule;
       if (str3 == "ARITHMETIC")
-         epsrule = evdw_t::arithmetic;
+         epsrule = Vdw::ARITHMETIC;
       else if (str3 == "GEOMETRIC")
-         epsrule = evdw_t::geometric;
+         epsrule = Vdw::GEOMETRIC;
       else if (str3 == "CUBIC-MEAN")
-         epsrule = evdw_t::cubic_mean;
+         epsrule = Vdw::CUBIC_MEAN;
       else if (str3 == "HHG")
-         epsrule = evdw_t::hhg;
+         epsrule = Vdw::HHG;
       else
          assert(false);
 
-      if (vdwtyp == evdw_t::hal) {
+      if (vdwtyp == Vdw::HAL) {
          darray::allocate(n, &ired, &kred, &xred, &yred, &zred);
          if (rc_flag & calc::grad) {
             darray::allocate(n, &gxred, &gyred, &gzred);
@@ -317,7 +317,7 @@ void evdwData(RcOp op)
 
    if (op & RcOp::INIT) {
       // Halgren
-      if (vdwtyp == evdw_t::hal) {
+      if (vdwtyp == Vdw::HAL) {
          ghal = vdwpot::ghal;
          dhal = vdwpot::dhal;
          scexp = mutant::scexp;
@@ -372,10 +372,10 @@ void evdwData(RcOp op)
          waitFor(g::q0);
       }
 
-      if (static_cast<int>(evdw_t::decouple) == mutant::vcouple)
-         vcouple = evdw_t::decouple;
-      else if (static_cast<int>(evdw_t::annihilate) == mutant::vcouple)
-         vcouple = evdw_t::annihilate;
+      if (static_cast<int>(Vdw::DECOUPLE) == mutant::vcouple)
+         vcouple = Vdw::DECOUPLE;
+      else if (static_cast<int>(Vdw::ANNIHILATE) == mutant::vcouple)
+         vcouple = Vdw::ANNIHILATE;
       std::vector<int> mutvec(n);
       for (int i = 0; i < n; ++i) {
          if (mutant::mut[i]) {
@@ -401,51 +401,6 @@ void evdwData(RcOp op)
    }
 }
 
-void elj(int vers)
-{
-#if TINKER_CUDART
-   if (clistVersion() & Nbl::SPATIAL)
-      elj_cu(vers);
-   else
-#endif
-      elj_acc(vers);
-}
-
-void ebuck(int vers)
-{
-   ebuck_acc(vers);
-}
-
-void emm3hb(int vers)
-{
-   emm3hb_acc(vers);
-}
-
-void ehal(int vers)
-{
-#if TINKER_CUDART
-   if (vlistVersion() & Nbl::SPATIAL)
-      ehal_cu(vers);
-   else
-#endif
-      ehal_acc(vers);
-}
-
-void ehal_reduce_xyz()
-{
-   ehal_reduce_xyz_acc();
-}
-
-void ehal_resolve_gradient()
-{
-   ehal_resolve_gradient_acc();
-}
-
-void egauss(int vers)
-{
-   egauss_acc(vers);
-}
-
 void evdw(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -467,15 +422,15 @@ void evdw(int vers)
          darray::zero(g::q0, n, devx, devy, devz);
    }
 
-   if (vdwtyp == evdw_t::lj)
+   if (vdwtyp == Vdw::LJ)
       elj(vers);
-   else if (vdwtyp == evdw_t::buck)
+   else if (vdwtyp == Vdw::BUCK)
       ebuck(vers);
-   else if (vdwtyp == evdw_t::mm3hb)
+   else if (vdwtyp == Vdw::MM3HB)
       emm3hb(vers);
-   else if (vdwtyp == evdw_t::hal)
+   else if (vdwtyp == Vdw::HAL)
       ehal(vers);
-   else if (vdwtyp == evdw_t::gauss)
+   else if (vdwtyp == Vdw::GAUSS)
       egauss(vers);
    else
       assert(false);
@@ -517,5 +472,69 @@ void evdw(int vers)
       if (do_g)
          sumGradient(gx_vdw, gy_vdw, gz_vdw, devx, devy, devz);
    }
+}
+}
+
+namespace tinker {
+extern void elj_acc(int);
+extern void elj_cu(int);
+void elj(int vers)
+{
+#if TINKER_CUDART
+   if (clistVersion() & Nbl::SPATIAL)
+      elj_cu(vers);
+   else
+#endif
+      elj_acc(vers);
+}
+
+extern void elj14_cu(int);
+void elj14(int vers)
+{
+#if TINKER_CUDART
+   elj14_cu(vers);
+#endif
+}
+
+extern void ebuck_acc(int);
+void ebuck(int vers)
+{
+   ebuck_acc(vers);
+}
+
+extern void emm3hb_acc(int);
+void emm3hb(int vers)
+{
+   emm3hb_acc(vers);
+}
+
+extern void egauss_acc(int);
+void egauss(int vers)
+{
+   egauss_acc(vers);
+}
+
+extern void ehal_acc(int);
+extern void ehal_cu(int);
+void ehal(int vers)
+{
+#if TINKER_CUDART
+   if (vlistVersion() & Nbl::SPATIAL)
+      ehal_cu(vers);
+   else
+#endif
+      ehal_acc(vers);
+}
+
+extern void ehalReduceXyz_acc();
+void ehalReduceXyz()
+{
+   ehalReduceXyz_acc();
+}
+
+extern void ehalResolveGradient_acc();
+void ehalResolveGradient()
+{
+   ehalResolveGradient_acc();
 }
 }

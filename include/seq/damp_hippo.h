@@ -182,7 +182,7 @@ inline void damp_gordon1(
 }
 
 /**
- * \deprecated
+ * deprecated
  */
 #pragma acc routine seq
 template <int ORDER>
@@ -358,7 +358,7 @@ inline void damp_mut(real* restrict dmpik, real r, real alphai, real alphak)
 }
 
 /**
- * \deprecated
+ * deprecated
  */
 #pragma acc routine seq
 template <int order>

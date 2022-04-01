@@ -2,35 +2,10 @@
 #include "tool/energybuffer.h"
 #include "tool/rcman.h"
 
-/// \todo Test lj, buck, mm3hb, gauss.
-
-namespace tinker {
-/// \ingroup vdw
-/// \brief Constant flags for the VDW energy functions.
-enum class evdw_t
-{
-   decouple = 0,   ///< VDW lambda type: decouple.
-   annihilate = 1, ///< VDW lambda type: annihilate.
-
-   atom_type = 10,  ///< Indexing mode.
-   atom_class = 11, ///< Indexing mode.
-
-   arithmetic = 20, ///< Combining rule.
-   geometric = 21,  ///< Combining rule.
-   cubic_mean = 22, ///< Combining rule.
-   hhg = 23,        ///< Combinding rule.
-
-   lj,    ///< Lennard-Jones 12-6 potential.
-   buck,  ///< Buckingham potential.
-   mm3hb, ///< MM3 exp-6 potential.
-   hal,   ///< Halgren buffered 14-7 potential.
-   gauss, ///< Gaussian expansion VDW potential.
-};
-}
+/// \todo Implement buck, mm3hb, gauss.
 
 extern "C"
 {
-   // VDW terms.
    struct LJ
    {
       int foo;
@@ -58,52 +33,76 @@ extern "C"
 }
 
 namespace tinker {
+/// \ingroup vdw
+/// \brief Constant flags for the VDW energy functions.
+enum class Vdw : int
+{
+   DECOUPLE = 0,   ///< VDW lambda type: decouple.
+   ANNIHILATE = 1, ///< VDW lambda type: annihilate.
+
+   ATOM_TYPE = 10,  ///< Indexing mode.
+   ATOM_CLASS = 11, ///< Indexing mode.
+
+   ARITHMETIC = 20, ///< Combining rule.
+   GEOMETRIC = 21,  ///< Combining rule.
+   CUBIC_MEAN = 22, ///< Combining rule.
+   HHG = 23,        ///< Combinding rule.
+
+   LJ,    ///< Lennard-Jones 12-6 potential.
+   BUCK,  ///< Buckingham potential.
+   MM3HB, ///< MM3 exp-6 potential.
+   HAL,   ///< Halgren buffered 14-7 potential.
+   GAUSS, ///< Gaussian expansion VDW potential.
+};
+}
+
+namespace tinker {
+/// \ingroup vdw
 void evdwData(RcOp);
-/**
- * \ingroup vdw
- * \brief Lennard-Jones 12-6 potential.
- *
- * \f[ U(r|r_m,\epsilon) = \epsilon [(r_m/r)^{12} - 2(r_m/r)^6] \f]
- */
-void elj(int vers);
-void elj_acc(int);
-void elj_cu(int);
-void elj14_cu(int);
-void ebuck(int vers);
-void ebuck_acc(int);
-void emm3hb(int vers);
-void emm3hb_acc(int);
-/**
- * \ingroup vdw
- * \brief
- * [Halgren buffered 14-7 potential.](https://doi.org/10.1021/ja00046a032)
- *
- * \f[
- * U(r|r_m,\epsilon) = \epsilon
- * \left(\frac{1+\gamma}{\rho^m+\gamma}-2\right)
- * \left(\frac{1+\delta}{\rho+\delta}\right)^{n-m}
- * \f]
- * \f[ \rho = r/r_m,\ n=14,\ m=7,\ \gamma=0.12,\ \delta=0.07 \f]
- *
- * [Soft core buffered 14-7 potential.](https://doi.org/10.1002/jcc.21681)
- *
- * \f[
- * U(r|\lambda) = \lambda^t\epsilon
- * \left(\frac{1.12}{\alpha(1-\lambda)^2+\rho^7+0.12}-2\right)
- * \frac{1.07^5}{\alpha(1-\lambda)^2+(\rho+0.07)^7}
- * \f]
- * \f[ t=5,\ \alpha=0.7 \f]
- */
-void ehal(int vers);
-void ehal_acc(int);
-void ehal_cu(int);
-void ehal_reduce_xyz();
-void ehal_resolve_gradient();
-void ehal_reduce_xyz_acc();
-void ehal_resolve_gradient_acc();
-void egauss(int vers);
-void egauss_acc(int);
+/// \ingroup vdw
 void evdw(int vers);
+
+/// \ingroup vdw
+/// \brief Lennard-Jones 12-6 potential.
+///
+/// \f[ U(r|r_m,\epsilon) = \epsilon [(r_m/r)^{12} - 2(r_m/r)^6] \f]
+void elj(int vers);
+/// \ingroup vdw
+void elj14(int vers);
+
+/// \ingroup vdw
+void ebuck(int vers);
+
+/// \ingroup vdw
+void emm3hb(int vers);
+
+/// \ingroup vdw
+void egauss(int vers);
+
+/// \ingroup vdw
+/// \brief [Halgren buffered 14-7 potential.](https://doi.org/10.1021/ja00046a032)
+///
+/// \f[
+/// U(r|r_m,\epsilon) = \epsilon
+/// \left(\frac{1+\gamma}{\rho^m+\gamma}-2\right)
+/// \left(\frac{1+\delta}{\rho+\delta}\right)^{n-m}
+/// \f]
+/// \f[ \rho = r/r_m,\ n=14,\ m=7,\ \gamma=0.12,\ \delta=0.07 \f]
+///
+/// [Soft core buffered 14-7 potential.](https://doi.org/10.1002/jcc.21681)
+///
+/// \f[
+/// U(r|\lambda) = \lambda^t\epsilon
+/// \left(\frac{1.12}{\alpha(1-\lambda)^2+\rho^7+0.12}-2\right)
+/// \frac{1.07^5}{\alpha(1-\lambda)^2+(\rho+0.07)^7}
+/// \f]
+/// \f[ t=5,\ \alpha=0.7 \f]
+void ehal(int vers);
+
+/// \ingroup vdw
+void ehalReduceXyz();
+/// \ingroup vdw
+void ehalResolveGradient();
 }
 
 //====================================================================//
@@ -123,10 +122,10 @@ TINKER_EXTERN real v2scale;
 TINKER_EXTERN real v3scale;
 TINKER_EXTERN real v4scale;
 TINKER_EXTERN real v5scale;
-TINKER_EXTERN evdw_t vdwtyp;
-TINKER_EXTERN evdw_t vdwindex;
-TINKER_EXTERN evdw_t radrule;
-TINKER_EXTERN evdw_t epsrule;
+TINKER_EXTERN Vdw vdwtyp;
+TINKER_EXTERN Vdw vdwindex;
+TINKER_EXTERN Vdw radrule;
+TINKER_EXTERN Vdw epsrule;
 
 /// \ingroup vdw
 /// \brief Long-range energy correction (lrc), used as `e += lrc/volume`.
@@ -193,7 +192,7 @@ TINKER_EXTERN real* vexclude_scale;
 }
 
 namespace tinker {
-TINKER_EXTERN evdw_t vcouple;
+TINKER_EXTERN Vdw vcouple;
 
 /// \ingroup vdw
 /// \brief Exponential factor for soft core buffered 14-7 potential.

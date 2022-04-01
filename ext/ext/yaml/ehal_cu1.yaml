@@ -28,7 +28,7 @@ EXCLUDE_INFO:
 SCALE_1X_TYPE: real_const_array
 
 EXTRA_PARAMS: |
-  , int njvdw, real vlam, evdw_t vcouple
+  , int njvdw, real vlam, Vdw vcouple
   , const real* restrict radmin, const real* restrict epsilon
   , const int* restrict jvdw, const int* restrict mut
 
@@ -67,9 +67,9 @@ SCALED_PAIRWISE_INTERACTION: |
     real rv = radmin[@ijvdw@ * njvdw + kjvdw];
     real eps = epsilon[@ijvdw@ * njvdw + kjvdw];
     real vlambda = 1;
-    if (vcouple == evdw_t::decouple) {
+    if (vcouple == Vdw::DECOUPLE) {
       vlambda = (@imut@ == kmut ? 1 : vlam);
-    } else if (vcouple == evdw_t::annihilate) {
+    } else if (vcouple == Vdw::ANNIHILATE) {
       vlambda = (@imut@ || kmut ? vlam : 1);
     }
     real e, de;
@@ -115,9 +115,9 @@ FULL_PAIRWISE_INTERACTION: |
     real rv = radmin[@ijvdw@ * njvdw + kjvdw];
     real eps = epsilon[@ijvdw@ * njvdw + kjvdw];
     real vlambda = 1;
-    if (vcouple == evdw_t::decouple) {
+    if (vcouple == Vdw::DECOUPLE) {
       vlambda = (@imut@ == kmut ? 1 : vlam);
-    } else if (vcouple == evdw_t::annihilate) {
+    } else if (vcouple == Vdw::ANNIHILATE) {
       vlambda = (@imut@ || kmut ? vlam : 1);
     }
     real e, de;

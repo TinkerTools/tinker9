@@ -113,7 +113,7 @@ void echglj_cu5(EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf, grad_pre
    real eccut, real ecoff, real f, real aewald, const real* restrict chg,
    const unsigned int* restrict cvinfo, //
    real evcut, real evoff, const real2* restrict radeps, const int* restrict mut, real vlam,
-   evdw_t vcouple, //
+   Vdw vcouple, //
    EnergyBuffer restrict ev, VirialBuffer restrict vev, grad_prec* restrict devx,
    grad_prec* restrict devy, grad_prec* restrict devz)
 {
@@ -1034,7 +1034,7 @@ void echglj_rad_arith_eps_geom_nonewald_cu(int vers)
       }
    }
 
-   elj14_cu(vers);
+   elj14(vers);
 }
 
 void echglj_rad_arith_eps_geom_ewald_real_cu(int vers)
@@ -1086,6 +1086,6 @@ void echglj_rad_arith_eps_geom_ewald_real_cu(int vers)
       }
    }
 
-   elj14_cu(vers);
+   elj14(vers);
 }
 }

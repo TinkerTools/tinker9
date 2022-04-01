@@ -30,7 +30,7 @@ Nbl vlistVersion()
    Nbl u;
    if (not usePotent(Potent::VDW)) {
       u = Nbl::UNDEFINED;
-   } else if (vdwtyp != evdw_t::hal) {
+   } else if (vdwtyp != Vdw::HAL) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_vlist) {
       u = Nbl::DOUBLE_LOOP;
@@ -70,7 +70,7 @@ Nbl clistVersion()
    // Then, check VDW if no partial charge term is in use.
    if (not usePotent(Potent::VDW)) {
       u = Nbl::UNDEFINED;
-   } else if (vdwtyp == evdw_t::hal) {
+   } else if (vdwtyp == Vdw::HAL) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_vlist) {
       u = Nbl::DOUBLE_LOOP;
@@ -296,7 +296,7 @@ void nblistData(RcOp op)
          nblistAlloc(u, unt, 2500, cut, buf, xred, yred, zred);
       }
       if (op & RcOp::INIT) {
-         ehal_reduce_xyz();
+         ehalReduceXyz();
          nblistBuild(unt);
       }
    }
@@ -306,7 +306,7 @@ void nblistData(RcOp op)
          spatialAlloc(un2, n, cut, buf, xred, yred, zred, 1, nvexclude, vexclude);
       }
       if (op & RcOp::INIT) {
-         ehal_reduce_xyz();
+         ehalReduceXyz();
          spatialBuild(un2);
       }
    }
@@ -319,7 +319,7 @@ void nblistData(RcOp op)
    }
    if (usePotent(Potent::VDW)) {
       double vdw_cut = switchOff(Switch::VDW);
-      if (vdwtyp != evdw_t::hal)
+      if (vdwtyp != Vdw::HAL)
          cut = std::max(cut, vdw_cut);
    }
    buf = neigh::lbuffer;
@@ -461,12 +461,12 @@ void nblistRefresh()
    u = vlistVersion();
    if (u & (Nbl::DOUBLE_LOOP | Nbl::VERLET)) {
       auto& unt = vlist_unit;
-      ehal_reduce_xyz();
+      ehalReduceXyz();
       nblistUpdate(unt);
    }
    if (u & Nbl::SPATIAL) {
       auto& un2 = vspatial_v2_unit;
-      ehal_reduce_xyz();
+      ehalReduceXyz();
       spatialUpdate(un2);
    }
 

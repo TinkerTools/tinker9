@@ -1,5 +1,5 @@
 #include "add.h"
-#include "ff/energy.h"
+#include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/pchg/evdw.h"
 #include "ff/spatial.h"
@@ -21,7 +21,7 @@ void elj_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyBuffer 
    const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
    int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
    int njvdw, const real* restrict radmin, const real* restrict epsilon, const int* restrict jvdw,
-   const int* restrict mut, real vlam, evdw_t vcouple)
+   const int* restrict mut, real vlam, Vdw vcouple)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -362,7 +362,7 @@ void elj_cu2(CountBuffer restrict nebuf, EnergyBuffer restrict ebuf, VirialBuffe
    grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, TINKER_IMAGE_PARAMS,
    real cut, real off, const real* restrict x, const real* restrict y, const real* restrict z, //
    int njvdw, const real* restrict radmin, const real* restrict epsilon, const int* restrict jvdw,
-   const int* restrict mut, real vlam, evdw_t vcouple, //
+   const int* restrict mut, real vlam, Vdw vcouple, //
    real v4scale, int nvdw14, const int (*restrict vdw14ik)[2], const real* restrict radmin4,
    const real* restrict epsilon4)
 {
@@ -456,7 +456,7 @@ void elj_cu2(CountBuffer restrict nebuf, EnergyBuffer restrict ebuf, VirialBuffe
 }
 
 template <class Ver>
-void elj_cu4()
+static void elj_cu4()
 {
    const auto& st = *cspatial_v2_unit;
    const real cut = switchCut(Switch::VDW);
@@ -470,7 +470,7 @@ void elj_cu4()
 }
 
 template <class Ver>
-void elj_cu5()
+static void elj_cu5()
 {
    if (nvdw14 > 0) {
       const auto& st = *cspatial_v2_unit;
