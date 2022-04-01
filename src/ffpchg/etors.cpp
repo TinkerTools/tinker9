@@ -1,4 +1,3 @@
-#include "accasync.h"
 #include "ff/energy.h"
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
@@ -57,6 +56,7 @@ void etorsData(RcOp op)
    }
 }
 
+extern void etors_acc(int);
 void etors(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

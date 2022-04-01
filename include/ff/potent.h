@@ -32,7 +32,10 @@ enum class Potent
    SOLV,   // es
    METAL,  // elf
    GEOM,   // eg
-   EXTRA   // ex
+   EXTRA,  // ex
+
+   CHGFLX,
+   MUTATE,
 };
 
 /// \ingroup ff

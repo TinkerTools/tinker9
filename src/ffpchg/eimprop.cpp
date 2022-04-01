@@ -40,6 +40,7 @@ void eimpropData(RcOp op)
    }
 }
 
+extern void eimprop_acc(int);
 void eimprop(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

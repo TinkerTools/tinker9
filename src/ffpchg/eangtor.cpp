@@ -50,6 +50,7 @@ void eangtorData(RcOp op)
    }
 }
 
+extern void eangtor_acc(int);
 void eangtor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

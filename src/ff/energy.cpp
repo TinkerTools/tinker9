@@ -47,7 +47,7 @@ static bool fts(std::string eng, bool& use_flag, unsigned tsflag, const TimeScal
    const auto& local_cfg = tsconfig;
    try {
       bool f = local_flag & (1 << local_cfg.at(eng));
-      use_flag = use_flag || f;
+      use_flag = use_flag or f;
       return f;
    } catch (const std::out_of_range&) {
       TINKER_THROW(format("Time scale of the %s term is unknown.\n", eng));
@@ -84,15 +84,13 @@ static bool amoeba_emplar(int vers)
       return false;
    if (vers & calc::analyz)
       return false;
-
-   return usePotent(Potent::MPOLE) && usePotent(Potent::POLAR) && (mlistVersion() & Nbl::SPATIAL);
+   return usePotent(Potent::MPOLE) and usePotent(Potent::POLAR) and (mlistVersion() & Nbl::SPATIAL);
 }
 
 static bool amoeba_empole(int vers)
 {
    if (mplpot::use_chgpen)
       return false;
-
    if (amoeba_emplar(vers))
       return false;
    return usePotent(Potent::MPOLE);
@@ -102,7 +100,6 @@ static bool amoeba_epolar(int vers)
 {
    if (mplpot::use_chgpen)
       return false;
-
    if (amoeba_emplar(vers))
       return false;
    return usePotent(Potent::POLAR);
@@ -114,7 +111,7 @@ static bool amoeba_echglj(int vers)
       return false;
    if (vers & calc::analyz)
       return false;
-   if (!usePotent(Potent::CHARGE) || !usePotent(Potent::VDW))
+   if (not usePotent(Potent::CHARGE) or not usePotent(Potent::VDW))
       return false;
    if (!(clistVersion() & Nbl::SPATIAL))
       return false;
@@ -268,6 +265,8 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          erepel(vers);
 
    pme_stream_finish_wait(use_pme_stream and not(vers & calc::analyz));
+
+#undef tscfg
 }
 }
 
@@ -313,11 +312,11 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
             must_wait = true;
             reduceSumOnDevice(&ev_dptr->e_val, eng_buf, bufsize, g::q0);
          }
-         if (ecore_vdw && eng_buf_vdw) {
+         if (ecore_vdw and eng_buf_vdw) {
             must_wait = true;
             reduceSumOnDevice(&ev_dptr->e_vdw, eng_buf_vdw, bufsize, g::q0);
          }
-         if (ecore_ele && eng_buf_elec) {
+         if (ecore_ele and eng_buf_elec) {
             must_wait = true;
             reduceSumOnDevice(&ev_dptr->e_ele, eng_buf_elec, bufsize, g::q0);
          }
@@ -334,11 +333,11 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
             must_wait = true;
             reduceSum2OnDevice(ev_dptr->v_val, vir_buf, bufsize, g::q0);
          }
-         if (ecore_vdw && vir_buf_vdw) {
+         if (ecore_vdw and vir_buf_vdw) {
             must_wait = true;
             reduceSum2OnDevice(ev_dptr->v_vdw, vir_buf_vdw, bufsize, g::q0);
          }
-         if (ecore_ele && vir_buf_elec) {
+         if (ecore_ele and vir_buf_elec) {
             must_wait = true;
             reduceSum2OnDevice(ev_dptr->v_ele, vir_buf_elec, bufsize, g::q0);
          }
@@ -353,10 +352,10 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          if (ecore_val) {
             energy_valence += toFloat<energy_prec>(ev_hobj.e_val);
          }
-         if (ecore_vdw && eng_buf_vdw) {
+         if (ecore_vdw and eng_buf_vdw) {
             energy_vdw += toFloat<energy_prec>(ev_hobj.e_vdw);
          }
-         if (ecore_ele && eng_buf_elec) {
+         if (ecore_ele and eng_buf_elec) {
             energy_elec += toFloat<energy_prec>(ev_hobj.e_ele);
          }
       }
@@ -372,7 +371,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
             for (int iv = 0; iv < 9; ++iv)
                virial_valence[iv] += v2val[iv];
          }
-         if (ecore_vdw && vir_buf_vdw) {
+         if (ecore_vdw and vir_buf_vdw) {
             virial_prec vvdw[VirialBufferTraits::N], v2vdw[9];
             for (int iv = 0; iv < (int)VirialBufferTraits::N; ++iv)
                vvdw[iv] = toFloat<virial_prec>(ev_hobj.v_vdw[iv]);
@@ -380,7 +379,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
             for (int iv = 0; iv < 9; ++iv)
                virial_vdw[iv] += v2vdw[iv];
          }
-         if (ecore_ele && vir_buf_elec) {
+         if (ecore_ele and vir_buf_elec) {
             virial_prec vele[VirialBufferTraits::N], v2ele[9];
             for (int iv = 0; iv < (int)VirialBufferTraits::N; ++iv)
                vele[iv] = toFloat<virial_prec>(ev_hobj.v_ele[iv]);
@@ -393,9 +392,9 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          vir[iv] = virial_valence[iv] + virial_vdw[iv] + virial_elec[iv];
    }
    if (do_g) {
-      if (ecore_vdw && gx_vdw)
+      if (ecore_vdw and gx_vdw)
          sumGradient(gx, gy, gz, gx_vdw, gy_vdw, gz_vdw);
-      if (ecore_ele && gx_elec)
+      if (ecore_ele and gx_elec)
          sumGradient(gx, gy, gz, gx_elec, gy_elec, gz_elec);
    }
 }
@@ -467,11 +466,11 @@ bool useEnergyVdw()
    bool ans = false;
 
    // AMOEBA
-   ans = ans || usePotent(Potent::VDW);
+   ans = ans or usePotent(Potent::VDW);
 
    // HIPPO
-   ans = ans || usePotent(Potent::DISP);
-   ans = ans || usePotent(Potent::REPULS);
+   ans = ans or usePotent(Potent::DISP);
+   ans = ans or usePotent(Potent::REPULS);
 
    return ans;
 }
@@ -481,12 +480,12 @@ bool useEnergyElec()
    bool ans = false;
 
    // AMOEBA
-   ans = ans || usePotent(Potent::CHARGE);
-   ans = ans || usePotent(Potent::MPOLE);
-   ans = ans || usePotent(Potent::POLAR);
+   ans = ans or usePotent(Potent::CHARGE);
+   ans = ans or usePotent(Potent::MPOLE);
+   ans = ans or usePotent(Potent::POLAR);
 
    // HIPPO
-   ans = ans || usePotent(Potent::CHGTRN);
+   ans = ans or usePotent(Potent::CHGTRN);
 
    return ans;
 }

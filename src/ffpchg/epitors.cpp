@@ -51,6 +51,7 @@ void epitorsData(RcOp op)
    }
 }
 
+extern void epitors_acc(int);
 void epitors(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

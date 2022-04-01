@@ -1,9 +1,8 @@
-#include "ff/pchg/evalence.h"
 #include "platform.h"
 #include "tool/error.h"
 
 namespace tinker {
-void evalence_cu(int vers);
+extern void evalence_cu(int vers);
 void evalence(int vers)
 {
 #if TINKER_CUDART

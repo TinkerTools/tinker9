@@ -4,6 +4,7 @@
 #include "ff/image.h"
 #include "ff/pchg/echglj.h"
 #include "ff/pme.h"
+#include "ff/potent.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
@@ -13,7 +14,6 @@
 #include "seq/pair_lj.h"
 #include "seq/triangle.h"
 #include "tool/gpucard.h"
-#include <tinker/detail/potent.hh>
 
 extern "C"
 {
@@ -931,7 +931,7 @@ void echglj_cu3()
    auto& st = *cspatial_v2_unit;
 
    if (st.fresh & cspatial_fresh_mask_echglj) {
-      int use_mutate = potent::use_mutate ? 1 : 0;
+      int use_mutate = usePotent(Potent::MUTATE) ? 1 : 0;
       auto ker = echglj_coalesce<RADRULE, EPSRULE>;
       launch_k1s(g::s0, st.n, ker, //
          st.n, use_mutate, mut_coalesced, chg_coalesced,
@@ -1003,7 +1003,7 @@ void echglj_rad_arith_eps_geom_nonewald_cu(int vers)
          echglj_cu3<calc::V6, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, true, VOUT>();
    } else {
       constexpr bool VOUT = false;
-      if (potent::use_mutate) {
+      if (usePotent(Potent::MUTATE)) {
          constexpr bool SOFTCORE = true;
          if (vers == calc::v0)
             echglj_cu3<calc::V0, NON_EWALD_TAPER, RAD_ARITH, EPS_GEOM, SOFTCORE, VOUT>();
@@ -1055,7 +1055,7 @@ void echglj_rad_arith_eps_geom_ewald_real_cu(int vers)
          echglj_cu3<calc::V6, EWALD, RAD_ARITH, EPS_GEOM, true, VOUT>();
    } else {
       constexpr bool VOUT = false;
-      if (potent::use_mutate) {
+      if (usePotent(Potent::MUTATE)) {
          constexpr bool SOFTCORE = true;
          if (vers == calc::v0)
             echglj_cu3<calc::V0, EWALD, RAD_ARITH, EPS_GEOM, SOFTCORE, VOUT>();

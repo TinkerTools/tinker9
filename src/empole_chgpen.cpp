@@ -9,7 +9,6 @@
 #include "math/zero.h"
 #include <tinker/detail/chgpen.hh>
 #include <tinker/detail/mplpot.hh>
-#include <tinker/detail/potent.hh>
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
@@ -72,7 +71,7 @@ void empoleChgpen(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-   int use_cf = potent::use_chgflx;
+   int use_cf = usePotent(Potent::CHGFLX);
    int use_cfgrad = use_cf and do_g;
 
    zeroOnHost(energy_em, virial_em);

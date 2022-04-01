@@ -56,6 +56,7 @@ void eureyData(RcOp op)
    }
 }
 
+extern void eurey_acc(int);
 void eurey(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

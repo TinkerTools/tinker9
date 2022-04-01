@@ -2,31 +2,8 @@
 #include "tool/energybuffer.h"
 #include "tool/rcman.h"
 
-namespace tinker {
-enum class ebond_t
-{
-   harmonic,
-   morse
-};
-
-enum class eangle_t : int
-{
-   in_plane,
-   harmonic,
-   linear,
-   fourier
-};
-
-enum class eopbend_t
-{
-   w_d_c,
-   allinger
-};
-}
-
 extern "C"
 {
-   // Bond terms.
    struct HARMONIC
    {
       int foo;
@@ -37,7 +14,6 @@ extern "C"
       int foo;
    };
 
-   // Opbend terms.
    struct WDC
    {
       int foo;
@@ -50,103 +26,27 @@ extern "C"
 }
 
 namespace tinker {
+/// \ingroup bonded
 void evalence(int vers);
-
-//
-
-void ebondData(RcOp);
-void ebond(int vers);
-void ebond_acc(int);
-
-//
-
-void eangleData(RcOp);
-void eangle(int vers);
-void eangle_acc(int);
-
-//
-
-void estrbndData(RcOp);
-void estrbnd(int vers);
-void estrbnd_acc(int);
-
-//
-
-void eureyData(RcOp);
-void eurey(int vers);
-void eurey_acc(int);
-
-//
-
-void eopbendData(RcOp);
-void eopbend(int vers);
-void eopbend_acc(int);
-
-//
-
-void eimpropData(RcOp);
-void eimprop(int vers);
-void eimprop_acc(int);
-
-//
-
-void eimptorData(RcOp);
-void eimptor(int vers);
-void eimptor_acc(int);
-
-//
-
-void etorsData(RcOp);
-void etors(int vers);
-void etors_acc(int);
-
-//
-
-void epitorsData(RcOp);
-void epitors(int vers);
-void epitors_acc(int);
-
-//
-
-void estrtorData(RcOp);
-void estrtor(int vers);
-void estrtor_acc(int);
-
-//
-
-void eangtorData(RcOp);
-void eangtor(int vers);
-void eangtor_acc(int);
-
-//
-
-void etortorData(RcOp);
-void etortor(int vers);
-void etortor_acc(int);
-
-//
-
-void egeomData(RcOp);
-void egeom(int vers);
-void egeom_acc(int);
 }
 
-//====================================================================//
-//                                                                    //
-//                          Global Variables                          //
-//                                                                    //
-//====================================================================//
-
-// bndpot
 namespace tinker {
-TINKER_EXTERN ebond_t bndtyp;
+/// \defgroup bond  Bond Term
+/// \ingroup bond
+/// \{
+enum class Bond : int
+{
+   HARMONIC,
+   MORSE
+};
+void ebondData(RcOp);
+void ebond(int vers);
+
+TINKER_EXTERN Bond bndtyp;
 TINKER_EXTERN real bndunit;
 TINKER_EXTERN real cbnd;
 TINKER_EXTERN real qbnd;
-}
 
-// bndstr
-namespace tinker {
 TINKER_EXTERN int nbond;
 TINKER_EXTERN int (*ibnd)[2];
 TINKER_EXTERN real* bk;
@@ -159,12 +59,33 @@ TINKER_EXTERN grad_prec* deby;
 TINKER_EXTERN grad_prec* debz;
 TINKER_EXTERN energy_prec energy_eb;
 TINKER_EXTERN virial_prec virial_eb[9];
+/// \}
 }
 
-//
-
-// angpot
 namespace tinker {
+/// \defgroup angle  Angle and Out-of-Plane Bend Terms
+/// \ingroup bonded
+/// \{
+enum class Angle : int
+{
+   IN_PLANE,
+   HARMONIC,
+   LINEAR,
+   FOURIER
+};
+
+enum class OPBend : int
+{
+   WDC,
+   ALLINGER
+};
+
+void eangleData(RcOp);
+void eangle(int vers);
+
+void eopbendData(RcOp);
+void eopbend(int vers);
+
 TINKER_EXTERN real angunit;
 TINKER_EXTERN real stbnunit;
 TINKER_EXTERN real opbunit;
@@ -176,12 +97,9 @@ TINKER_EXTERN real copb;
 TINKER_EXTERN real qopb;
 TINKER_EXTERN real popb;
 TINKER_EXTERN real sopb;
-TINKER_EXTERN eopbend_t opbtyp;
-TINKER_EXTERN eangle_t* angtyp;
-}
+TINKER_EXTERN OPBend opbtyp;
+TINKER_EXTERN Angle* angtyp;
 
-// angbnd
-namespace tinker {
 TINKER_EXTERN int nangle;
 TINKER_EXTERN int (*iang)[4];
 TINKER_EXTERN real* ak;
@@ -195,12 +113,28 @@ TINKER_EXTERN grad_prec* deay;
 TINKER_EXTERN grad_prec* deaz;
 TINKER_EXTERN energy_prec energy_ea;
 TINKER_EXTERN virial_prec virial_ea[9];
+
+TINKER_EXTERN int nopbend;
+TINKER_EXTERN int* iopb;
+TINKER_EXTERN real* opbk;
+
+TINKER_EXTERN EnergyBuffer eopb;
+TINKER_EXTERN VirialBuffer vir_eopb;
+TINKER_EXTERN grad_prec* deopbx;
+TINKER_EXTERN grad_prec* deopby;
+TINKER_EXTERN grad_prec* deopbz;
+TINKER_EXTERN energy_prec energy_eopb;
+TINKER_EXTERN virial_prec virial_eopb[9];
+/// \}
 }
 
-//
-
-// strbnd
 namespace tinker {
+/// \defgroup strbnd  Bond Stretching Term
+/// \ingroup bonded
+/// \{
+void estrbndData(RcOp);
+void estrbnd(int vers);
+
 TINKER_EXTERN int nstrbnd;
 TINKER_EXTERN int (*isb)[3];
 TINKER_EXTERN real (*sbk)[2];
@@ -212,19 +146,20 @@ TINKER_EXTERN grad_prec* debay;
 TINKER_EXTERN grad_prec* debaz;
 TINKER_EXTERN energy_prec energy_eba;
 TINKER_EXTERN virial_prec virial_eba[9];
+/// \}
 }
 
-//
-
-// urypot
 namespace tinker {
+/// \defgroup urey  Urey-Bradley Term
+/// \ingroup bonded
+/// \{
+void eureyData(RcOp);
+void eurey(int vers);
+
 TINKER_EXTERN real ureyunit;
 TINKER_EXTERN real cury;
 TINKER_EXTERN real qury;
-}
 
-// urey
-namespace tinker {
 TINKER_EXTERN int nurey;
 TINKER_EXTERN int (*iury)[3];
 TINKER_EXTERN real* uk;
@@ -237,29 +172,38 @@ TINKER_EXTERN grad_prec* deuby;
 TINKER_EXTERN grad_prec* deubz;
 TINKER_EXTERN energy_prec energy_eub;
 TINKER_EXTERN virial_prec virial_eub[9];
+/// \}
 }
 
-//
+#include <tinker/detail/ktrtor.hh>
 
-// opbend
 namespace tinker {
-TINKER_EXTERN int nopbend;
-TINKER_EXTERN int* iopb;
-TINKER_EXTERN real* opbk;
+/// \defgroup tors  Torsion, Improper Torsion,  Pi-Torsion, and Torsion Coupling Terms
+/// \ingroup bonded
+/// \{
+void eimpropData(RcOp); // CHARMM
+void eimprop(int vers);
 
-TINKER_EXTERN EnergyBuffer eopb;
-TINKER_EXTERN VirialBuffer vir_eopb;
-TINKER_EXTERN grad_prec* deopbx;
-TINKER_EXTERN grad_prec* deopby;
-TINKER_EXTERN grad_prec* deopbz;
-TINKER_EXTERN energy_prec energy_eopb;
-TINKER_EXTERN virial_prec virial_eopb[9];
-}
+void eimptorData(RcOp); // AMBER
+void eimptor(int vers);
 
-//
+void etorsData(RcOp);
+void etors(int vers);
+
+void epitorsData(RcOp);
+void epitors(int vers);
+
+void estrtorData(RcOp);
+void estrtor(int vers);
+
+void eangtorData(RcOp);
+void eangtor(int vers);
+
+void etortorData(RcOp);
+void etortor(int vers);
 
 // torpot
-namespace tinker {
+
 TINKER_EXTERN real idihunit; // improper dihedral
 TINKER_EXTERN real itorunit; // improper torsion
 TINKER_EXTERN real torsunit; // torsion
@@ -267,10 +211,9 @@ TINKER_EXTERN real ptorunit; // pi-system torsion
 TINKER_EXTERN real storunit; // stretch-torsion
 TINKER_EXTERN real atorunit; // angle-torsion
 TINKER_EXTERN real ttorunit; // torsion-torsion
-}
 
 // improp
-namespace tinker {
+
 TINKER_EXTERN int (*iiprop)[4];
 TINKER_EXTERN real* kprop;
 TINKER_EXTERN real* vprop;
@@ -283,12 +226,9 @@ TINKER_EXTERN grad_prec* deidy;
 TINKER_EXTERN grad_prec* deidz;
 TINKER_EXTERN energy_prec energy_eid;
 TINKER_EXTERN virial_prec virial_eid[9];
-}
-
-//
 
 // imptor
-namespace tinker {
+
 TINKER_EXTERN int (*iitors)[4];
 TINKER_EXTERN real (*itors1)[4];
 TINKER_EXTERN real (*itors2)[4];
@@ -302,12 +242,9 @@ TINKER_EXTERN grad_prec* deity;
 TINKER_EXTERN grad_prec* deitz;
 TINKER_EXTERN energy_prec energy_eit;
 TINKER_EXTERN virial_prec virial_eit[9];
-}
-
-//
 
 // tors
-namespace tinker {
+
 TINKER_EXTERN int ntors;
 TINKER_EXTERN int (*itors)[4];
 TINKER_EXTERN real (*tors1)[4];
@@ -324,12 +261,9 @@ TINKER_EXTERN grad_prec* dety;
 TINKER_EXTERN grad_prec* detz;
 TINKER_EXTERN energy_prec energy_et;
 TINKER_EXTERN virial_prec virial_et[9];
-}
-
-//
 
 // pitors
-namespace tinker {
+
 TINKER_EXTERN int npitors;
 TINKER_EXTERN int (*ipit)[6];
 TINKER_EXTERN real* kpit;
@@ -341,12 +275,9 @@ TINKER_EXTERN grad_prec* depty;
 TINKER_EXTERN grad_prec* deptz;
 TINKER_EXTERN energy_prec energy_ept;
 TINKER_EXTERN virial_prec virial_ept[9];
-}
-
-//
 
 // strtor
-namespace tinker {
+
 TINKER_EXTERN int nstrtor;
 TINKER_EXTERN int (*ist)[4];
 TINKER_EXTERN real (*kst)[9];
@@ -358,12 +289,9 @@ TINKER_EXTERN grad_prec* debty;
 TINKER_EXTERN grad_prec* debtz;
 TINKER_EXTERN energy_prec energy_ebt;
 TINKER_EXTERN virial_prec virial_ebt[9];
-}
-
-//
 
 // angtor
-namespace tinker {
+
 TINKER_EXTERN int nangtor;
 TINKER_EXTERN int (*iat)[3];
 TINKER_EXTERN real (*kant)[6];
@@ -375,20 +303,14 @@ TINKER_EXTERN grad_prec* deaty;
 TINKER_EXTERN grad_prec* deatz;
 TINKER_EXTERN energy_prec energy_eat;
 TINKER_EXTERN virial_prec virial_eat[9];
-}
-
-//
 
 // bitor
-namespace tinker {
+
 TINKER_EXTERN int nbitor;
 TINKER_EXTERN int (*ibitor)[5];
-}
-
-#include <tinker/detail/ktrtor.hh>
 
 // ktrtor
-namespace tinker {
+
 // of size maxntt
 TINKER_EXTERN int* tnx;
 TINKER_EXTERN int* tny;
@@ -400,11 +322,9 @@ TINKER_EXTERN real (*tbf)[ktrtor::maxtgrd2];
 TINKER_EXTERN real (*tbx)[ktrtor::maxtgrd2];
 TINKER_EXTERN real (*tby)[ktrtor::maxtgrd2];
 TINKER_EXTERN real (*tbxy)[ktrtor::maxtgrd2];
-}
 
 // tortor
 
-namespace tinker {
 TINKER_EXTERN int* chkttor_ia_;
 
 TINKER_EXTERN int ntortor;
@@ -417,12 +337,18 @@ TINKER_EXTERN grad_prec* detty;
 TINKER_EXTERN grad_prec* dettz;
 TINKER_EXTERN energy_prec energy_ett;
 TINKER_EXTERN virial_prec virial_ett[9];
+/// \}
 }
 
-//
+namespace tinker {
+/// \defgroup geom  Geometric Restraints
+/// \ingroup bonded
+/// \{
+void egeomData(RcOp);
+void egeom(int vers);
 
 // restrn
-namespace tinker {
+
 TINKER_EXTERN int npfix;
 TINKER_EXTERN int* ipfix;
 TINKER_EXTERN int (*kpfix)[3];
@@ -431,13 +357,11 @@ TINKER_EXTERN real* ypfix;
 TINKER_EXTERN real* zpfix;
 TINKER_EXTERN real (*pfix)[2];
 
-/// \ingroup geom
 /// \brief Number of group distance restraints to be applied.
 TINKER_EXTERN int ngfix;
-/// \ingroup geom
 /// \brief Group numbers defining each group distance restraint.
 TINKER_EXTERN int (*igfix)[2];
-/// \ingroup geom
+
 /// \brief Force constant and target range for each group distance.
 TINKER_EXTERN real (*gfix)[3];
 
@@ -460,4 +384,5 @@ TINKER_EXTERN grad_prec* degy;
 TINKER_EXTERN grad_prec* degz;
 TINKER_EXTERN energy_prec energy_eg;
 TINKER_EXTERN virial_prec virial_eg[9];
+/// \}
 }

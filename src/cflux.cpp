@@ -16,12 +16,11 @@
 #include <tinker/detail/chgpen.hh>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/mpole.hh>
-#include <tinker/detail/potent.hh>
 
 namespace tinker {
 void cfluxData(RcOp op)
 {
-   if (!potent::use_chgflx)
+   if (not usePotent(Potent::CHGFLX))
       return;
 
    if (op & RcOp::DEALLOC) {

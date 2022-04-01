@@ -8,7 +8,6 @@
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polpot.hh>
-#include <tinker/detail/potent.hh>
 #include <tinker/detail/units.hh>
 #include <tinker/detail/uprior.hh>
 

@@ -135,6 +135,7 @@ void etortorData(RcOp op)
    }
 }
 
+extern void etortor_acc(int);
 void etortor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

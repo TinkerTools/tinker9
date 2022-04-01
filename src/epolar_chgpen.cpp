@@ -16,7 +16,6 @@
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polpot.hh>
-#include <tinker/detail/potent.hh>
 #include <tinker/detail/units.hh>
 #include <tinker/detail/uprior.hh>
 
@@ -158,7 +157,7 @@ void epolarChgpen(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-   int use_cf = potent::use_chgflx;
+   int use_cf = usePotent(Potent::CHGFLX);
    int use_cfgrad = use_cf and do_g;
 
    zeroOnHost(energy_ep, virial_ep);

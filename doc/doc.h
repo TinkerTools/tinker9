@@ -21,6 +21,8 @@
 /// \ingroup ff
 /// \defgroup egv  Energy, Gradient, and Virial Tensor
 /// \ingroup ff
+/// \defgroup bonded  Valence Terms
+/// \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
@@ -51,14 +53,11 @@
 /// \defgroup fft  Fast Fourier Transform
 
 /*
-/// \defgroup geom  Geometrical Restraints
 /// \defgroup vdw  Van der Waals (VDW)
 /// \defgroup charge  Partial Charge Electrostatics
 /// \defgroup mpole  Multipole Electrostatics
 /// \defgroup polar  AMOEBA Polarization Electrostatics
 /// \defgroup pme  Particle Mesh Ewald
-
-
 
 /// \defgroup mdsave  Saving MD Trajectory Snapshots
 /// \defgroup mdpt  Thermostats (T) and Barostats (P)

@@ -12,7 +12,7 @@ void dk_bond(real& restrict e, real& restrict vxx, real& restrict vyx, real& res
 
    grad_prec* restrict debx, grad_prec* restrict deby, grad_prec* restrict debz,
 
-   ebond_t bndtyp, real bndunit, int i, const int (*restrict ibnd)[2], const real* restrict bl,
+   Bond bndtyp, real bndunit, int i, const int (*restrict ibnd)[2], const real* restrict bl,
    const real* restrict bk, real cbnd, real qbnd,
 
    const real* restrict x, const real* restrict y, const real* restrict z)
@@ -34,13 +34,13 @@ void dk_bond(real& restrict e, real& restrict vxx, real& restrict vyx, real& res
    real dt = rab - ideal;
 
    real deddt;
-   if (bndtyp == ebond_t::harmonic) {
+   if (bndtyp == Bond::HARMONIC) {
       real dt2 = dt * dt;
       if CONSTEXPR (do_e)
          e = bndunit * force * dt2 * (1 + cbnd * dt + qbnd * dt2);
       if CONSTEXPR (do_g)
          deddt = 2 * bndunit * force * dt * (1 + 1.5f * cbnd * dt + 2 * qbnd * dt2);
-   } else if (bndtyp == ebond_t::morse) {
+   } else if (bndtyp == Bond::MORSE) {
       real expterm = REAL_EXP(-2 * dt);
       real bde = 0.25f * bndunit * force;
       if CONSTEXPR (do_e)

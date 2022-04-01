@@ -25,7 +25,7 @@ void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx, real& r
 
    grad_prec* restrict deopbx, grad_prec* restrict deopby, grad_prec* restrict deopbz,
 
-   eopbend_t opbtyp, real opbunit, int iopbend, const int* restrict iopb, const real* restrict opbk,
+   OPBend opbtyp, real opbunit, int iopbend, const int* restrict iopb, const real* restrict opbk,
    const int (*restrict iang)[4], real copb, real qopb, real popb, real sopb,
 
    const real* restrict x, const real* restrict y, const real* restrict z)
@@ -78,7 +78,7 @@ void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx, real& r
    real rcb2, rcd2;
    real dot;
    real cc;
-   if (opbtyp == eopbend_t::w_d_c) {
+   if (opbtyp == OPBend::WDC) {
 
       // W-D-C angle between A-B-C plane and B-D vector for D-B<AC
 
@@ -87,7 +87,7 @@ void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx, real& r
       cc = rab2 * rcb2 - (xab * xcb + yab * ycb + zab * zcb) * (xab * xcb + yab * ycb + zab * zcb);
       if CONSTEXPR (do_g)
          dot = xab * xcb + yab * ycb + zab * zcb;
-   } else if (opbtyp == eopbend_t::allinger) {
+   } else if (opbtyp == OPBend::ALLINGER) {
 
       // Allinger angle between A-C-D plane and D-B vector for D-B<AC
 
@@ -126,7 +126,7 @@ void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx, real& r
          real dccdxia, dccdyia, dccdzia;
          real dccdxic, dccdyic, dccdzic;
          real dccdxid, dccdyid, dccdzid;
-         if (opbtyp == eopbend_t::w_d_c) {
+         if (opbtyp == OPBend::WDC) {
             dccdxia = (xab * rcb2 - xcb * dot) * term;
             dccdyia = (yab * rcb2 - ycb * dot) * term;
             dccdzia = (zab * rcb2 - zcb * dot) * term;
@@ -136,7 +136,7 @@ void dk_opbend(real& restrict e, real& restrict vxx, real& restrict vyx, real& r
             dccdxid = 0;
             dccdyid = 0;
             dccdzid = 0;
-         } else if (opbtyp == eopbend_t::allinger) {
+         } else if (opbtyp == OPBend::ALLINGER) {
             dccdxia = (xad * rcd2 - xcd * dot) * term;
             dccdyia = (yad * rcd2 - ycd * dot) * term;
             dccdzia = (zad * rcd2 - zcd * dot) * term;

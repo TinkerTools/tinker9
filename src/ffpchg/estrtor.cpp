@@ -50,6 +50,7 @@ void estrtorData(RcOp op)
    }
 }
 
+extern void estrtor_acc(int);
 void estrtor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

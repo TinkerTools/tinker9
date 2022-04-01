@@ -1,21 +1,18 @@
-#include "ff/atom.h"
-#include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tool/darray.h"
-#include "tool/io.h"
+#include "tool/iofortstr.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
 #include <tinker/detail/angpot.hh>
-#include <tinker/detail/potent.hh>
 
 namespace tinker {
 void eangleData(RcOp op)
 {
    if (not usePotent(Potent::ANGLE) and not usePotent(Potent::STRBND) and
-      not usePotent(Potent::OPBEND) and not usePotent(Potent::ANGTOR) and not potent::use_chgflx)
+      not usePotent(Potent::OPBEND) and not usePotent(Potent::ANGTOR) and
+      not usePotent(Potent::CHGFLX))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -61,17 +58,17 @@ void eangleData(RcOp op)
       qang = angpot::qang;
       pang = angpot::pang;
       sang = angpot::sang;
-      std::vector<eangle_t> angtypvec(nangle);
+      std::vector<Angle> angtypvec(nangle);
       for (int i = 0; i < nangle; ++i) {
          FstrView atyp = angpot::angtyp[i];
          if (atyp == "IN-PLANE")
-            angtypvec[i] = eangle_t::in_plane;
+            angtypvec[i] = Angle::IN_PLANE;
          else if (atyp == "HARMONIC")
-            angtypvec[i] = eangle_t::harmonic;
+            angtypvec[i] = Angle::HARMONIC;
          else if (atyp == "LINEAR")
-            angtypvec[i] = eangle_t::linear;
+            angtypvec[i] = Angle::LINEAR;
          else if (atyp == "FOURIER")
-            angtypvec[i] = eangle_t::fourier;
+            angtypvec[i] = Angle::FOURIER;
          else {
             assert(false);
          }
@@ -81,6 +78,7 @@ void eangleData(RcOp op)
    }
 }
 
+extern void eangle_acc(int);
 void eangle(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

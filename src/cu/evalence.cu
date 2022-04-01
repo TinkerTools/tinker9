@@ -30,14 +30,14 @@ void evalence_cu1(
    EnergyBuffer restrict eb, VirialBuffer restrict vir_eb, grad_prec* restrict debx,
    grad_prec* restrict deby, grad_prec* restrict debz,
 
-   ebond_t bndtyp, real bndunit, int nbond, const int (*restrict ibnd)[2], const real* restrict bl,
+   Bond bndtyp, real bndunit, int nbond, const int (*restrict ibnd)[2], const real* restrict bl,
    const real* restrict bk, real cbnd, real qbnd,
 
    // eangle
    EnergyBuffer restrict ea, VirialBuffer restrict vir_ea, grad_prec* restrict deax,
    grad_prec* restrict deay, grad_prec* restrict deaz,
 
-   const eangle_t* restrict angtyp, real angunit, int nangle, const int (*restrict iang)[4],
+   const Angle* restrict angtyp, real angunit, int nangle, const int (*restrict iang)[4],
    const real* restrict anat, const real* restrict ak, const real* restrict afld,
 
    real cang, real qang, real pang, real sang,
@@ -59,7 +59,7 @@ void evalence_cu1(
    EnergyBuffer restrict eopb, VirialBuffer restrict vir_eopb, grad_prec* restrict deopbx,
    grad_prec* restrict deopby, grad_prec* restrict deopbz,
 
-   eopbend_t opbtyp, real opbunit, int nopbend, const int* restrict iopb, const real* restrict opbk,
+   OPBend opbtyp, real opbunit, int nopbend, const int* restrict iopb, const real* restrict opbk,
    real copb, real qopb, real popb, real sopb,
 
    // eimprop

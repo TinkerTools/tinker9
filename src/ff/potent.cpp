@@ -92,6 +92,13 @@ int usePotent(Potent term)
       val = potent::use_repuls;
       break;
 
+   case Potent::CHGFLX:
+      val = potent::use_chgflx;
+      break;
+   case Potent::MUTATE:
+      val = potent::use_mutate;
+      break;
+
    default:
       assert(false);
       break;

@@ -53,6 +53,7 @@ void estrbndData(RcOp op)
    }
 }
 
+extern void estrbnd_acc(int);
 void estrbnd(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

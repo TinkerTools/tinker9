@@ -1,9 +1,9 @@
+# LC_COLLATE=C ls -1a *.cpp
 cmake_minimum_required (VERSION 3.12)
 
 
 ## test files
 set (T9_TEST_SRC
-main.cpp
 angle.cpp
 angtor.cpp
 async.cpp
@@ -20,9 +20,10 @@ improp.cpp
 imptor.cpp
 info.cpp
 kinetic.cpp
+local_frame.cpp
 local_frame2.cpp
 local_frame3.cpp
-local_frame.cpp
+main.cpp
 mathfunc.cpp
 nacl.cpp
 nblist.cpp

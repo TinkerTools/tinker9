@@ -2,7 +2,7 @@
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tool/io.h"
+#include "tool/iofortstr.h"
 #include <cassert>
 #include <tinker/detail/angpot.hh>
 #include <tinker/detail/opbend.hh>
@@ -10,7 +10,7 @@
 namespace tinker {
 void eopbendData(RcOp op)
 {
-   if (!usePotent(Potent::OPBEND))
+   if (not usePotent(Potent::OPBEND))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -44,9 +44,9 @@ void eopbendData(RcOp op)
    if (op & RcOp::INIT) {
       FstrView otyp = angpot::opbtyp;
       if (otyp == "W-D-C")
-         opbtyp = eopbend_t::w_d_c;
+         opbtyp = OPBend::WDC;
       else if (otyp == "ALLINGER")
-         opbtyp = eopbend_t::allinger;
+         opbtyp = OPBend::ALLINGER;
       else
          assert(false);
       int nangle = countBondedTerm(Potent::ANGLE);
@@ -64,6 +64,7 @@ void eopbendData(RcOp op)
    }
 }
 
+extern void eopbend_acc(int);
 void eopbend(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

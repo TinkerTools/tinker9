@@ -2,16 +2,15 @@
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tool/io.h"
+#include "tool/iofortstr.h"
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>
-#include <tinker/detail/potent.hh>
 
 namespace tinker {
 void ebondData(RcOp op)
 {
    if (not usePotent(Potent::BOND) and not usePotent(Potent::STRBND) and
-      not usePotent(Potent::STRTOR) and not potent::use_chgflx)
+      not usePotent(Potent::STRTOR) and not usePotent(Potent::CHGFLX))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -44,9 +43,9 @@ void ebondData(RcOp op)
    if (op & RcOp::INIT) {
       FstrView btyp = bndpot::bndtyp;
       if (btyp == "HARMONIC")
-         bndtyp = ebond_t::harmonic;
+         bndtyp = Bond::HARMONIC;
       else if (btyp == "MORSE")
-         bndtyp = ebond_t::morse;
+         bndtyp = Bond::MORSE;
 
       cbnd = bndpot::cbnd;
       qbnd = bndpot::qbnd;
@@ -63,6 +62,7 @@ void ebondData(RcOp op)
    }
 }
 
+extern void ebond_acc(int);
 void ebond(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

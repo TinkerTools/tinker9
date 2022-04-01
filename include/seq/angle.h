@@ -28,7 +28,7 @@ void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx, real& re
 
    grad_prec* restrict deax, grad_prec* restrict deay, grad_prec* restrict deaz,
 
-   const eangle_t* restrict angtyp, real angunit, int i, const int (*restrict iang)[4],
+   const Angle* restrict angtyp, real angunit, int i, const int (*restrict iang)[4],
    const real* restrict anat, const real* restrict ak, const real* restrict afld,
 
    real cang, real qang, real pang, real sang,
@@ -49,7 +49,7 @@ void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx, real& re
    int id = iang[i][3];
    real ideal = anat[i];
    real force = ak[i];
-   eangle_t angtypi = angtyp[i];
+   Angle angtypi = angtyp[i];
 
    real xia = x[ia];
    real yia = y[ia];
@@ -61,7 +61,7 @@ void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx, real& re
    real yic = y[ic];
    real zic = z[ic];
 
-   if (angtypi != eangle_t::in_plane) {
+   if (angtypi != Angle::IN_PLANE) {
       real xab = xia - xib;
       real yab = yia - yib;
       real zab = zia - zib;
@@ -84,7 +84,7 @@ void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx, real& re
          real angle = radian * REAL_ACOS(cosine);
 
          real deddt;
-         if (angtypi == eangle_t::harmonic) {
+         if (angtypi == Angle::HARMONIC) {
             real dt = angle - ideal;
             real dt2 = dt * dt;
             real dt3 = dt2 * dt;
@@ -94,14 +94,14 @@ void dk_angle(real& restrict e, real& restrict vxx, real& restrict vyx, real& re
             if CONSTEXPR (do_g)
                deddt = angunit * force * dt * radian *
                   (2 + 3 * cang * dt + 4 * qang * dt2 + 5 * pang * dt3 + 6 * sang * dt4);
-         } else if (angtypi == eangle_t::linear) {
+         } else if (angtypi == Angle::LINEAR) {
             real factor = 2 * angunit * radian * radian;
             real sine = REAL_SQRT(1 - cosine * cosine);
             if CONSTEXPR (do_e)
                e = factor * force * (1 + cosine);
             if CONSTEXPR (do_g)
                deddt = -factor * force * sine;
-         } else if (angtypi == eangle_t::fourier) {
+         } else if (angtypi == Angle::FOURIER) {
             real fold = afld[i];
             real factor = 2 * angunit * (radian / fold) * (radian / fold);
             real dt = (fold * angle - ideal) * _1radian;

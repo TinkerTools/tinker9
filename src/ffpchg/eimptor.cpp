@@ -50,6 +50,7 @@ void eimptorData(RcOp op)
    }
 }
 
+extern void eimptor_acc(int);
 void eimptor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

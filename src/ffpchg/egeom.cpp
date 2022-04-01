@@ -90,6 +90,7 @@ void egeomData(RcOp op)
    }
 }
 
+extern void egeom_acc(int);
 void egeom(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
