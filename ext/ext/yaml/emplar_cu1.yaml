@@ -103,7 +103,7 @@ SCALED_PAIRWISE_INTERACTION: |
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
-    pair_mplar<Ver, NON_EWALD>(
+    pairMplar<Ver, NON_EWALD>(
       r2, make_real3(xr, yr, zr), scalea-1, scaleb-1, scalec-1, scaled-1,
       @ci@, make_real3(@dix@, @diy@, @diz@),
       @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@,
@@ -135,7 +135,7 @@ FULL_PAIRWISE_INTERACTION: |
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     real e, vxx, vyx, vzx, vyy, vzy, vzz;
-    pair_mplar<Ver, ETYP>(
+    pairMplar<Ver, ETYP>(
       r2, make_real3(xr, yr, zr), 1, 1, 1, 1,
       @ci@, make_real3(@dix@, @diy@, @diz@),
       @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@,

@@ -1,15 +1,10 @@
-#include "add.h"
 #include "empoleself.h"
-#include "epolartrq.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/emplar.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/induce.h"
 #include "ff/elec.h"
-#include "ff/energy.h"
 #include "ff/image.h"
-#include "ff/pchg/echarge.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
@@ -83,7 +78,7 @@ void rotG2QIMat_v2(const real (&restrict r)[3][3], //
 
 template <class Ver, class ETYP>
 __device__
-void pair_mplar(                                                          //
+void pairMplar(                                                           //
    real r2, real3 dR, real mscale, real dscale, real pscale, real uscale, //
    real ci, real3 Id, real Iqxx, real Iqxy, real Iqxz, real Iqyy, real Iqyz, real Iqzz, real3 Iud,
    real3 Iup, real pdi, real pti, //
@@ -694,7 +689,7 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
-         pair_mplar<Ver, NON_EWALD>(r2, make_real3(xr, yr, zr), scalea - 1, scaleb - 1, scalec - 1,
+         pairMplar<Ver, NON_EWALD>(r2, make_real3(xr, yr, zr), scalea - 1, scaleb - 1, scalec - 1,
             scaled - 1, ci[klane], make_real3(dix[klane], diy[klane], diz[klane]), qixx[klane],
             qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
             make_real3(uidx[klane], uidy[klane], uidz[klane]),
@@ -909,7 +904,7 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
-            pair_mplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci[klane],
+            pairMplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci[klane],
                make_real3(dix[klane], diy[klane], diz[klane]), qixx[klane], qixy[klane],
                qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
                make_real3(uidx[klane], uidy[klane], uidz[klane]),
@@ -1121,7 +1116,7 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
-            pair_mplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci[klane],
+            pairMplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci[klane],
                make_real3(dix[klane], diy[klane], diz[klane]), qixx[klane], qixy[klane],
                qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
                make_real3(uidx[klane], uidy[klane], uidz[klane]),
@@ -1169,7 +1164,7 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
 }
 
 template <class Ver, class ETYP>
-void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
+static void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
 {
    const auto& st = *mspatial_v2_unit;
    real off;
@@ -1207,7 +1202,7 @@ void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
 }
 
 template <class Ver>
-void emplar_ewald_cu()
+static void emplarEwald_cu()
 {
    // induce
    induce(uind, uinp);
@@ -1225,7 +1220,7 @@ void emplar_ewald_cu()
 }
 
 template <class Ver>
-void emplar_nonewald_cu()
+static void emplarNonEwald_cu()
 {
    // induce
    induce(uind, uinp);
@@ -1240,30 +1235,30 @@ void emplar_cu(int vers)
 {
    if (useEwald()) {
       if (vers == calc::v0)
-         emplar_ewald_cu<calc::V0>();
+         emplarEwald_cu<calc::V0>();
       else if (vers == calc::v1)
-         emplar_ewald_cu<calc::V1>();
+         emplarEwald_cu<calc::V1>();
       // else if (vers == calc::v3)
-      //    emplar_ewald_cu<calc::V3>();
+      //    emplarEwald_cu<calc::V3>();
       else if (vers == calc::v4)
-         emplar_ewald_cu<calc::V4>();
+         emplarEwald_cu<calc::V4>();
       else if (vers == calc::v5)
-         emplar_ewald_cu<calc::V5>();
+         emplarEwald_cu<calc::V5>();
       else if (vers == calc::v6)
-         emplar_ewald_cu<calc::V6>();
+         emplarEwald_cu<calc::V6>();
    } else {
       if (vers == calc::v0)
-         emplar_nonewald_cu<calc::V0>();
+         emplarNonEwald_cu<calc::V0>();
       else if (vers == calc::v1)
-         emplar_nonewald_cu<calc::V1>();
+         emplarNonEwald_cu<calc::V1>();
       // else if (vers == calc::v3)
-      //    emplar_nonewald_cu<calc::V3>();
+      //    emplarNonEwald_cu<calc::V3>();
       else if (vers == calc::v4)
-         emplar_nonewald_cu<calc::V4>();
+         emplarNonEwald_cu<calc::V4>();
       else if (vers == calc::v5)
-         emplar_nonewald_cu<calc::V5>();
+         emplarNonEwald_cu<calc::V5>();
       else if (vers == calc::v6)
-         emplar_nonewald_cu<calc::V6>();
+         emplarNonEwald_cu<calc::V6>();
    }
 }
 }

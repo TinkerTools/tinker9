@@ -4,7 +4,7 @@
 
 namespace tinker {
 __global__
-static void epolar_trq_cu(real* restrict trqx, real* restrict trqy, real* restrict trqz, int n,
+static void epolarTorque_cu(real* restrict trqx, real* restrict trqy, real* restrict trqz, int n,
    const real (*restrict rpole)[10], const real (*restrict ufld)[3],
    const real (*restrict dufld)[6])
 {

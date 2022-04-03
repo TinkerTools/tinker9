@@ -33,6 +33,8 @@
 ///    \ingroup ff
 ///    \defgroup polar  AMOEBA Polarization Electrostatics
 ///    \ingroup ff
+///    \defgroup mplar  AMOEBA Multipole & Polarization
+///    \ingroup ff
 ///    \defgroup pme  Particle Mesh Ewald
 ///    \ingroup ff
 

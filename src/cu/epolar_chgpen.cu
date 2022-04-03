@@ -1,5 +1,5 @@
 #include "add.h"
-#include "epolartrq.h"
+#include "epolartorque.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/energy.h"
 #include "ff/hippo/cflux.h"
@@ -717,7 +717,7 @@ void epolar_chgpen_cu(const real (*uind)[3])
 
    // torque
    if CONSTEXPR (do_g) {
-      launch_k1s(g::s0, n, epolar_trq_cu, //
+      launch_k1s(g::s0, n, epolarTorque_cu, //
          trqx, trqy, trqz, n, rpole, ufld, dufld);
    }
 }

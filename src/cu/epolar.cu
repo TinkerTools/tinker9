@@ -1,4 +1,4 @@
-#include "epolartrq.h"
+#include "epolartorque.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/image.h"
 #include "ff/pme.h"
@@ -622,7 +622,7 @@ static void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
 
    // torque
    if CONSTEXPR (do_g) {
-      launch_k1s(g::s0, n, epolar_trq_cu, //
+      launch_k1s(g::s0, n, epolarTorque_cu, //
          trqx, trqy, trqz, n, rpole, ufld, dufld);
    }
 }

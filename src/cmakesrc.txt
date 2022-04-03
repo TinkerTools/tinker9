@@ -1,10 +1,8 @@
 set (__T9_CPP_SRC
 cflux.cpp
 compilers.cpp
-echglj.cpp
 echgtrn.cpp
 edisp.cpp
-emplar.cpp
 empole_chgpen.cpp
 epolar_chgpen.cpp
 erepel.cpp
@@ -19,6 +17,7 @@ ff/pme.cpp
 ff/potent.cpp
 ff/spatial.cpp
 ff/switch.cpp
+ffamoeba/emplar.cpp
 ffamoeba/empole.cpp
 ffamoeba/epolar.cpp
 ffamoeba/mpole.cpp
@@ -26,6 +25,7 @@ ffpchg/eangle.cpp
 ffpchg/eangtor.cpp
 ffpchg/ebond.cpp
 ffpchg/echarge.cpp
+ffpchg/echglj.cpp
 ffpchg/egeom.cpp
 ffpchg/eimprop.cpp
 ffpchg/eimptor.cpp

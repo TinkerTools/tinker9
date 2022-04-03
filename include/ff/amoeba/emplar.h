@@ -2,6 +2,7 @@
 #include "tool/rcman.h"
 
 namespace tinker {
+/// \ingroup mplar
 /// \brief Multipole and AMOEBA polarization energy.
 /// \note Will not be called in any of the following situations:
 ///    - not using GPU;
