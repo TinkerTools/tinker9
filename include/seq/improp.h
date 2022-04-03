@@ -1,5 +1,7 @@
 #pragma once
 #include "add.h"
+#include "math/const.h"
+#include "math/libfunc.h"
 #include "seqdef.h"
 
 namespace tinker {

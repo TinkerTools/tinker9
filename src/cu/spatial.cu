@@ -4,8 +4,8 @@
 #include "ff/spatial.h"
 #include "imagefc.h"
 #include "launch.h"
-#include "seq/triangle.h"
 #include "tool/thrustcache.h"
+#include "triangle.h"
 // Eventually thrust will drop c++11 support.
 #define THRUST_IGNORE_DEPRECATED_CPP_DIALECT
 #include <thrust/sort.h>

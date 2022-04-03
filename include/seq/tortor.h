@@ -1,7 +1,9 @@
 #pragma once
 #include "add.h"
+#include "math/const.h"
 #include "math/libfunc.h"
 #include "seqdef.h"
+#include <tinker/detail/ktrtor.hh>
 
 namespace tinker {
 // see also bicubic.f

@@ -1,10 +1,7 @@
-#include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/empole.h"
 #include "ff/energy.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
-#include "ff/pchg/echarge.h"
 #include "ff/pme.h"
 #include "ff/switch.h"
 #include "seq/pair_mpole.h"
@@ -13,7 +10,7 @@
 namespace tinker {
 #define DEVICE_PTRS x, y, z, demx, demy, demz, rpole, nem, em, vir_em, trqx, trqy, trqz
 template <class Ver>
-void empole_ewald_real_self_acc1()
+static void empoleEwaldRealSelf_acc1()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -218,37 +215,37 @@ void empole_ewald_real_self_acc1()
    }
 }
 
-void empole_ewald_real_self_acc(int vers)
+void empoleEwaldRealSelf_acc(int vers)
 {
    if (vers == calc::v0)
-      empole_ewald_real_self_acc1<calc::V0>();
+      empoleEwaldRealSelf_acc1<calc::V0>();
    else if (vers == calc::v1)
-      empole_ewald_real_self_acc1<calc::V1>();
+      empoleEwaldRealSelf_acc1<calc::V1>();
    else if (vers == calc::v3)
-      empole_ewald_real_self_acc1<calc::V3>();
+      empoleEwaldRealSelf_acc1<calc::V3>();
    else if (vers == calc::v4)
-      empole_ewald_real_self_acc1<calc::V4>();
+      empoleEwaldRealSelf_acc1<calc::V4>();
    else if (vers == calc::v5)
-      empole_ewald_real_self_acc1<calc::V5>();
+      empoleEwaldRealSelf_acc1<calc::V5>();
    else if (vers == calc::v6)
-      empole_ewald_real_self_acc1<calc::V6>();
+      empoleEwaldRealSelf_acc1<calc::V6>();
 }
 
 template <class Ver, int CFLX>
-extern void empole_generic_ewald_recip_acc();
-void empole_ewald_recip_acc(int vers)
+extern void empoleEwaldRecipGeneric_acc();
+void empoleEwaldRecip_acc(int vers)
 {
    if (vers == calc::v0)
-      empole_generic_ewald_recip_acc<calc::V0, 0>();
+      empoleEwaldRecipGeneric_acc<calc::V0, 0>();
    else if (vers == calc::v1)
-      empole_generic_ewald_recip_acc<calc::V1, 0>();
+      empoleEwaldRecipGeneric_acc<calc::V1, 0>();
    else if (vers == calc::v3)
-      empole_generic_ewald_recip_acc<calc::V3, 0>();
+      empoleEwaldRecipGeneric_acc<calc::V3, 0>();
    else if (vers == calc::v4)
-      empole_generic_ewald_recip_acc<calc::V4, 0>();
+      empoleEwaldRecipGeneric_acc<calc::V4, 0>();
    else if (vers == calc::v5)
-      empole_generic_ewald_recip_acc<calc::V5, 0>();
+      empoleEwaldRecipGeneric_acc<calc::V5, 0>();
    else if (vers == calc::v6)
-      empole_generic_ewald_recip_acc<calc::V6, 0>();
+      empoleEwaldRecipGeneric_acc<calc::V6, 0>();
 }
 }

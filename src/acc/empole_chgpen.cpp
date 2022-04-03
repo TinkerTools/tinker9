@@ -266,7 +266,7 @@ void empole_chgpen_acc1()
 }
 
 template <class Ver, int CFLX>
-void empole_generic_ewald_recip_acc()
+void empoleEwaldRecipGeneric_acc()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -471,32 +471,32 @@ void empole_chgpen_ewald_recip_acc(int vers, int use_cf)
 {
    if (use_cf) {
       if (vers == calc::v0)
-         // empole_generic_ewald_recip_acc<calc::V0, 1>();
+         // empoleEwaldRecipGeneric_acc<calc::V0, 1>();
          assert(false && "CFLX must compute gradient.");
       else if (vers == calc::v1)
-         empole_generic_ewald_recip_acc<calc::V1, 1>();
+         empoleEwaldRecipGeneric_acc<calc::V1, 1>();
       else if (vers == calc::v3)
-         // empole_generic_ewald_recip_acc<calc::V3, 1>();
+         // empoleEwaldRecipGeneric_acc<calc::V3, 1>();
          assert(false && "CFLX must compute gradient.");
       else if (vers == calc::v4)
-         empole_generic_ewald_recip_acc<calc::V4, 1>();
+         empoleEwaldRecipGeneric_acc<calc::V4, 1>();
       else if (vers == calc::v5)
-         empole_generic_ewald_recip_acc<calc::V5, 1>();
+         empoleEwaldRecipGeneric_acc<calc::V5, 1>();
       else if (vers == calc::v6)
-         empole_generic_ewald_recip_acc<calc::V6, 1>();
+         empoleEwaldRecipGeneric_acc<calc::V6, 1>();
    } else {
       if (vers == calc::v0)
-         empole_generic_ewald_recip_acc<calc::V0, 0>();
+         empoleEwaldRecipGeneric_acc<calc::V0, 0>();
       else if (vers == calc::v1)
-         empole_generic_ewald_recip_acc<calc::V1, 0>();
+         empoleEwaldRecipGeneric_acc<calc::V1, 0>();
       else if (vers == calc::v3)
-         empole_generic_ewald_recip_acc<calc::V3, 0>();
+         empoleEwaldRecipGeneric_acc<calc::V3, 0>();
       else if (vers == calc::v4)
-         empole_generic_ewald_recip_acc<calc::V4, 0>();
+         empoleEwaldRecipGeneric_acc<calc::V4, 0>();
       else if (vers == calc::v5)
-         empole_generic_ewald_recip_acc<calc::V5, 0>();
+         empoleEwaldRecipGeneric_acc<calc::V5, 0>();
       else if (vers == calc::v6)
-         empole_generic_ewald_recip_acc<calc::V6, 0>();
+         empoleEwaldRecipGeneric_acc<calc::V6, 0>();
    }
 }
 }

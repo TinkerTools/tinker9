@@ -1,19 +1,15 @@
-#include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/empole.h"
 #include "ff/energy.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
-#include "ff/pchg/echarge.h"
 #include "ff/switch.h"
-#include "math/switch.h"
 #include "seq/pair_mpole.h"
 #include "tool/gpucard.h"
 
 namespace tinker {
 #define DEVICE_PTRS x, y, z, demx, demy, demz, rpole, nem, em, vir_em, trqx, trqy, trqz
 template <class Ver>
-void emLFRM_NONEwald_acc1()
+void empoleNonEwald_acc1()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -198,19 +194,19 @@ void emLFRM_NONEwald_acc1()
    }
 }
 
-void emLFRM_NONEwald_acc(int vers)
+void empoleNonEwald_acc(int vers)
 {
    if (vers == calc::v0)
-      emLFRM_NONEwald_acc1<calc::V0>();
+      empoleNonEwald_acc1<calc::V0>();
    else if (vers == calc::v1)
-      emLFRM_NONEwald_acc1<calc::V1>();
+      empoleNonEwald_acc1<calc::V1>();
    else if (vers == calc::v3)
-      emLFRM_NONEwald_acc1<calc::V3>();
+      empoleNonEwald_acc1<calc::V3>();
    else if (vers == calc::v4)
-      emLFRM_NONEwald_acc1<calc::V4>();
+      empoleNonEwald_acc1<calc::V4>();
    else if (vers == calc::v5)
-      emLFRM_NONEwald_acc1<calc::V5>();
+      empoleNonEwald_acc1<calc::V5>();
    else if (vers == calc::v6)
-      emLFRM_NONEwald_acc1<calc::V6>();
+      empoleNonEwald_acc1<calc::V6>();
 }
 }

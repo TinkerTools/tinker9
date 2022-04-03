@@ -1,5 +1,5 @@
 #pragma once
-#include "macro.h"
+#include "math/libfunc.h"
 
 namespace tinker {
 /**

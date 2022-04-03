@@ -18,9 +18,9 @@ eimprop.cpp
 eimptor.cpp
 elj.cpp
 empole_chgpen.cpp
-empole_ewald.cpp
-empole_nonewald.cpp
 empole_opbend.cpp
+empoleewald.cpp
+empolenonewald.cpp
 eopbend.cpp
 epitors.cpp
 epolar_chgpen.cpp

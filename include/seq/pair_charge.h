@@ -1,5 +1,7 @@
 #pragma once
+#include "add.h"
 #include "ff/elec.h"
+#include "math/const.h"
 #include "math/libfunc.h"
 #include "math/switch.h"
 #include "seqdef.h"

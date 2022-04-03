@@ -1,5 +1,5 @@
 #include "add.h"
-#include "empole_self.h"
+#include "empoleself.h"
 #include "epolar_trq.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/emplar.h"
@@ -15,11 +15,10 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "seq/damp.h"
-#include "seq/triangle.h"
 #include "tool/gpucard.h"
+#include "triangle.h"
 
 namespace tinker {
-void empole_ewald_recip(int vers);
 void epolar_ewald_recip_self(int vers);
 }
 
@@ -1191,7 +1190,7 @@ void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
       aewald = pu->aewald;
 
       if CONSTEXPR (Ver::e) {
-         auto ker0 = empole_self_cu<Ver::a>;
+         auto ker0 = empoleSelf_cu<Ver::a>;
          launch_k1b(g::s0, n, ker0, //
             nullptr, em, rpole, n, f, aewald);
       }
@@ -1220,7 +1219,7 @@ void emplar_ewald_cu()
    // empole real self; epolar real without epolar energy
    emplar_cu<Ver, EWALD>(uind, uinp);
    // empole recip
-   empole_ewald_recip(Ver::value);
+   empoleEwaldRecip(Ver::value);
    // epolar recip self; must toggle off the calc::energy flag
    epolar_ewald_recip_self(Ver::value & ~calc::energy);
 

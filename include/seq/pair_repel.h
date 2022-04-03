@@ -1,6 +1,5 @@
 #pragma once
-#include "ff/elec.h"
-#include "ff/switch.h"
+#include "math/realn.h"
 #include "math/switch.h"
 #include "seq/damp_hippo.h"
 

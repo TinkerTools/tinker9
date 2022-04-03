@@ -6,25 +6,11 @@
 #include "ff/potent.h"
 #include "math/zero.h"
 #include <tinker/detail/mplpot.hh>
-#include <tinker/detail/sizes.hh>
-
-namespace tinker {
-void emLFRM_NONEwald_acc(int vers);
-void empole_ewald_recip_acc(int vers);
-void empole_ewald_real_self_acc(int vers);
-void emLFRM_NONEwald_cu(int vers);
-void empole_ewald_real_self_cu(int vers);
-
-void emLFRM_NONEwald(int vers);
-void empole_ewald(int vers);
-void empole_ewald_real_self(int vers);
-void empole_ewald_recip(int vers);
-}
 
 namespace tinker {
 void empoleData(RcOp op)
 {
-   if (!usePotent(Potent::MPOLE))
+   if (not usePotent(Potent::MPOLE))
       return;
    if (mplpot::use_chgpen)
       return;
@@ -59,7 +45,49 @@ void empoleData(RcOp op)
 
    if (op & RcOp::INIT) {}
 }
+}
 
+namespace tinker {
+extern void empoleNonEwald_acc(int vers);
+extern void empoleNonEwald_cu(int vers);
+static void empoleNonEwald(int vers)
+{
+#if TINKER_CUDART
+   if (mlistVersion() & Nbl::SPATIAL)
+      empoleNonEwald_cu(vers);
+   else
+#endif
+      empoleNonEwald_acc(vers);
+}
+}
+
+namespace tinker {
+extern void empoleEwaldRealSelf_acc(int vers);
+extern void empoleEwaldRealSelf_cu(int vers);
+static void empoleEwaldRealSelf(int vers)
+{
+#if TINKER_CUDART
+   if (mlistVersion() & Nbl::SPATIAL)
+      empoleEwaldRealSelf_cu(vers);
+   else
+#endif
+      empoleEwaldRealSelf_acc(vers);
+}
+
+extern void empoleEwaldRecip_acc(int vers);
+void empoleEwaldRecip(int vers)
+{
+   empoleEwaldRecip_acc(vers);
+}
+
+static void empoleEwald(int vers)
+{
+   empoleEwaldRealSelf(vers);
+   empoleEwaldRecip(vers);
+}
+}
+
+namespace tinker {
 void empole(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -83,9 +111,9 @@ void empole(int vers)
 
    mpoleInit(vers);
    if (useEwald())
-      empole_ewald(vers);
+      empoleEwald(vers);
    else
-      emLFRM_NONEwald(vers);
+      empoleNonEwald(vers);
    torque(vers, demx, demy, demz);
    if (do_v) {
       VirialBuffer u2 = vir_trq;
@@ -116,36 +144,5 @@ void empole(int vers)
       if (do_g)
          sumGradient(gx_elec, gy_elec, gz_elec, demx, demy, demz);
    }
-}
-
-void emLFRM_NONEwald(int vers)
-{
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      emLFRM_NONEwald_cu(vers);
-   else
-#endif
-      emLFRM_NONEwald_acc(vers);
-}
-
-void empole_ewald(int vers)
-{
-   empole_ewald_real_self(vers);
-   empole_ewald_recip(vers);
-}
-
-void empole_ewald_real_self(int vers)
-{
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      empole_ewald_real_self_cu(vers);
-   else
-#endif
-      empole_ewald_real_self_acc(vers);
-}
-
-void empole_ewald_recip(int vers)
-{
-   empole_ewald_recip_acc(vers);
 }
 }

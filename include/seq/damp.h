@@ -1,4 +1,5 @@
 #pragma once
+#include "math/const.h"
 #include "math/libfunc.h"
 #include "seqdef.h"
 

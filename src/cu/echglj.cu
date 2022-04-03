@@ -9,8 +9,8 @@
 #include "md/osrw.h"
 #include "seq/pair_charge.h"
 #include "seq/pair_lj.h"
-#include "seq/triangle.h"
 #include "tool/gpucard.h"
+#include "triangle.h"
 
 extern "C"
 {

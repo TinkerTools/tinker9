@@ -8,9 +8,9 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "seq/pair_field.h"
-#include "seq/triangle.h"
 #include "tool/cudalib.h"
 #include "tool/gpucard.h"
+#include "triangle.h"
 
 namespace tinker {
 // ck.py Version 2.0.2

@@ -5,7 +5,6 @@ echglj.cpp
 echgtrn.cpp
 edisp.cpp
 emplar.cpp
-empole.cpp
 empole_chgpen.cpp
 epolar.cpp
 epolar_chgpen.cpp
@@ -21,6 +20,7 @@ ff/pme.cpp
 ff/potent.cpp
 ff/spatial.cpp
 ff/switch.cpp
+ffamoeba/empole.cpp
 ffamoeba/mpole.cpp
 ffpchg/eangle.cpp
 ffpchg/eangtor.cpp

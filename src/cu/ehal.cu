@@ -7,8 +7,8 @@
 #include "launch.h"
 #include "math/switch.h"
 #include "seq/pair_hal.h"
-#include "seq/triangle.h"
 #include "tool/gpucard.h"
+#include "triangle.h"
 
 /**
  * Overheads:

@@ -1,4 +1,7 @@
 #pragma once
+#include "add.h"
+#include "ff/pchg/evalence.h"
+#include "math/const.h"
 #include "math/libfunc.h"
 #include "seqdef.h"
 

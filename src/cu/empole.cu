@@ -1,17 +1,12 @@
-#include "add.h"
-#include "empole_self.h"
-#include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/empole.h"
-#include "ff/energy.h"
+#include "empoleself.h"
 #include "ff/image.h"
-#include "ff/pchg/echarge.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
 #include "seq/pair_mpole.h"
-#include "seq/triangle.h"
 #include "tool/gpucard.h"
+#include "triangle.h"
 
 namespace tinker {
 // ck.py Version 2.0.2
@@ -414,7 +409,7 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuff
 }
 
 template <class Ver, class ETYP>
-void empole_cu()
+static void empole_cu()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -433,7 +428,7 @@ void empole_cu()
       aewald = pu->aewald;
 
       if CONSTEXPR (do_e) {
-         launch_k1b(g::s0, n, empole_self_cu<do_a>, //
+         launch_k1b(g::s0, n, empoleSelf_cu<do_a>, //
             nem, em, rpole, n, f, aewald);
       }
    }
@@ -444,7 +439,7 @@ void empole_cu()
       aewald);
 }
 
-void emLFRM_NONEwald_cu(int vers)
+void empoleNonEwald_cu(int vers)
 {
    if (vers == calc::v0) {
       empole_cu<calc::V0, NON_EWALD>();
@@ -461,7 +456,7 @@ void emLFRM_NONEwald_cu(int vers)
    }
 }
 
-void empole_ewald_real_self_cu(int vers)
+void empoleEwaldRealSelf_cu(int vers)
 {
    if (vers == calc::v0) {
       empole_cu<calc::V0, EWALD>();

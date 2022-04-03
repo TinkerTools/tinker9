@@ -7,8 +7,8 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "seq/damp.h"
-#include "seq/triangle.h"
 #include "tool/gpucard.h"
+#include "triangle.h"
 
 namespace tinker {
 __global__
