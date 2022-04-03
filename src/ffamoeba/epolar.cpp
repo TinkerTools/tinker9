@@ -5,40 +5,21 @@
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
-#include "ff/pme.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tool/io.h"
-#include <cmath>
-#include <map>
+#include "tool/iofortstr.h"
+#include "tool/ioprint.h"
 #include <tinker/detail/couple.hh>
-#include <tinker/detail/inform.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
-#include <tinker/detail/sizes.hh>
-#include <tinker/detail/units.hh>
 #include <tinker/detail/uprior.hh>
-
-namespace tinker {
-void epolar_nonewald_acc(int vers, const real (*d)[3], const real (*p)[3]);
-void epolar_ewald_real_acc(int vers, const real (*d)[3], const real (*p)[3]);
-void epolar_ewald_recip_self_acc(int vers, const real (*d)[3], const real (*p)[3]);
-void epolar0_dotprod_acc(const real (*uind)[3], const real (*udirp)[3]);
-void epolar_nonewald_cu(int vers, const real (*d)[3], const real (*p)[3]);
-void epolar_ewald_real_cu(int vers, const real (*d)[3], const real (*p)[3]);
-
-void epolar_nonewald(int vers);
-void epolar_ewald(int vers);
-void epolar_ewald_real(int vers);
-void epolar_ewald_recip_self(int vers);
-}
 
 namespace tinker {
 void epolarData(RcOp op)
 {
-   if (!usePotent(Potent::POLAR))
+   if (not usePotent(Potent::POLAR))
       return;
    if (mplpot::use_chgpen)
       return;
@@ -296,7 +277,7 @@ void epolarData(RcOp op)
             }
          }
 
-         if (p2scale != 1 || p2iscale != 1) {
+         if (p2scale != 1 or p2iscale != 1) {
             nn = couple::n12[i];
             for (int j = 0; j < nn; ++j) {
                int k = couple::i12[i][j];
@@ -313,7 +294,7 @@ void epolarData(RcOp op)
             }
          }
 
-         if (p3scale != 1 || p3iscale != 1) {
+         if (p3scale != 1 or p3iscale != 1) {
             nn = couple::n13[i];
             bask = i * maxn13;
             for (int j = 0; j < nn; ++j) {
@@ -331,7 +312,7 @@ void epolarData(RcOp op)
             }
          }
 
-         if (p4scale != 1 || p4iscale != 1) {
+         if (p4scale != 1 or p4iscale != 1) {
             nn = couple::n14[i];
             bask = i * maxn14;
             for (int j = 0; j < nn; ++j) {
@@ -349,7 +330,7 @@ void epolarData(RcOp op)
             }
          }
 
-         if (p5scale != 1 || p5iscale != 1) {
+         if (p5scale != 1 or p5iscale != 1) {
             nn = couple::n15[i];
             bask = i * maxn15;
             for (int j = 0; j < nn; ++j) {
@@ -488,37 +469,78 @@ void epolarData(RcOp op)
       waitFor(g::q0);
    }
 }
+}
 
-extern void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3]);
-void induce(real (*ud)[3], real (*up)[3])
+namespace tinker {
+extern void epolarNonEwald_acc(int vers, const real (*d)[3], const real (*p)[3]);
+extern void epolarNonEwald_cu(int vers, const real (*d)[3], const real (*p)[3]);
+static void epolarNonEwald(int vers)
 {
-   induce_mutual_pcg1(ud, up);
-   ulspredSave(ud, up);
+   // v0: E_dot
+   // v1: EGV = E_dot + GV
+   // v3: EA = E_pair + A
+   // v4: EG = E_dot + G
+   // v5: G
+   // v6: GV
+   bool edot = vers & calc::energy; // if not do_e, edot = false
+   if (vers & calc::energy and vers & calc::analyz)
+      edot = false; // if do_e and do_a, edot = false
+   int ver2 = vers;
+   if (edot)
+      ver2 &= ~calc::energy; // toggle off the calc::energy flag
 
-   if (inform::debug && usePotent(Potent::POLAR)) {
-      std::vector<double> uindbuf;
-      uindbuf.resize(3 * n);
-      darray::copyout(g::q0, n, uindbuf.data(), ud);
-      waitFor(g::q0);
-      bool header = true;
-      for (int i = 0; i < n; ++i) {
-         if (polar::polarity[i] != 0) {
-            if (header) {
-               header = false;
-               print(stdout, "\n Induced Dipole Moments (Debye) :\n");
-               print(stdout, "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n", "");
-            }
-            double u1 = uindbuf[3 * i];
-            double u2 = uindbuf[3 * i + 1];
-            double u3 = uindbuf[3 * i + 2];
-            double unorm = std::sqrt(u1 * u1 + u2 * u2 + u3 * u3);
-            u1 *= units::debye;
-            u2 *= units::debye;
-            u3 *= units::debye;
-            unorm *= units::debye;
-            print(stdout, "%8d     %13.4f%13.4f%13.4f %13.4f\n", i + 1, u1, u2, u3, unorm);
-         }
-      }
+   induce(uind, uinp);
+   if (edot)
+      epolar0DotProd(uind, udirp);
+   if (vers != calc::v0) {
+#if TINKER_CUDART
+      if (mlistVersion() & Nbl::SPATIAL)
+         epolarNonEwald_cu(ver2, uind, uinp);
+      else
+#endif
+         epolarNonEwald_acc(ver2, uind, uinp);
+   }
+}
+
+extern void epolarEwaldRecipSelf_acc(int vers, const real (*d)[3], const real (*p)[3]);
+void epolarEwaldRecipSelf(int vers)
+{
+   epolarEwaldRecipSelf_acc(vers, uind, uinp);
+}
+
+extern void epolarEwaldReal_acc(int vers, const real (*d)[3], const real (*p)[3]);
+extern void epolarEwaldReal_cu(int vers, const real (*d)[3], const real (*p)[3]);
+static void epolarEwaldReal(int vers)
+{
+#if TINKER_CUDART
+   if (mlistVersion() & Nbl::SPATIAL)
+      epolarEwaldReal_cu(vers, uind, uinp);
+   else
+#endif
+      epolarEwaldReal_acc(vers, uind, uinp);
+}
+
+static void epolarEwald(int vers)
+{
+   // v0: E_dot
+   // v1: EGV = E_dot + GV
+   // v3: EA = E_pair + A
+   // v4: EG = E_dot + G
+   // v5: G
+   // v6: GV
+   bool edot = vers & calc::energy; // if not do_e, edot = false
+   if (vers & calc::energy and vers & calc::analyz)
+      edot = false; // if do_e and do_a, edot = false
+   int ver2 = vers;
+   if (edot)
+      ver2 &= ~calc::energy; // toggle off the calc::energy flag
+
+   induce(uind, uinp);
+   if (edot)
+      epolar0DotProd(uind, udirp);
+   if (vers != calc::v0) {
+      epolarEwaldReal(ver2);
+      epolarEwaldRecipSelf(ver2);
    }
 }
 
@@ -547,9 +569,9 @@ void epolar(int vers)
 
    mpoleInit(vers);
    if (useEwald())
-      epolar_ewald(vers);
+      epolarEwald(vers);
    else
-      epolar_nonewald(vers);
+      epolarNonEwald(vers);
    torque(vers, depx, depy, depz);
    if (do_v) {
       VirialBuffer u2 = vir_trq;
@@ -582,75 +604,9 @@ void epolar(int vers)
    }
 }
 
-void epolar_nonewald(int vers)
-{
-   // v0: E_dot
-   // v1: EGV = E_dot + GV
-   // v3: EA = E_pair + A
-   // v4: EG = E_dot + G
-   // v5: G
-   // v6: GV
-   bool edot = vers & calc::energy; // if not do_e, edot = false
-   if (vers & calc::energy && vers & calc::analyz)
-      edot = false; // if do_e and do_a, edot = false
-   int ver2 = vers;
-   if (edot)
-      ver2 &= ~calc::energy; // toggle off the calc::energy flag
-
-   induce(uind, uinp);
-   if (edot)
-      epolar0DotProd(uind, udirp);
-   if (vers != calc::v0) {
-#if TINKER_CUDART
-      if (mlistVersion() & Nbl::SPATIAL)
-         epolar_nonewald_cu(ver2, uind, uinp);
-      else
-#endif
-         epolar_nonewald_acc(ver2, uind, uinp);
-   }
-}
-
-void epolar_ewald(int vers)
-{
-   // v0: E_dot
-   // v1: EGV = E_dot + GV
-   // v3: EA = E_pair + A
-   // v4: EG = E_dot + G
-   // v5: G
-   // v6: GV
-   bool edot = vers & calc::energy; // if not do_e, edot = false
-   if (vers & calc::energy && vers & calc::analyz)
-      edot = false; // if do_e and do_a, edot = false
-   int ver2 = vers;
-   if (edot)
-      ver2 &= ~calc::energy; // toggle off the calc::energy flag
-
-   induce(uind, uinp);
-   if (edot)
-      epolar0DotProd(uind, udirp);
-   if (vers != calc::v0) {
-      epolar_ewald_real(ver2);
-      epolar_ewald_recip_self(ver2);
-   }
-}
-
-void epolar_ewald_real(int vers)
-{
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      epolar_ewald_real_cu(vers, uind, uinp);
-   else
-#endif
-      epolar_ewald_real_acc(vers, uind, uinp);
-}
-
-void epolar_ewald_recip_self(int vers)
-{
-   epolar_ewald_recip_self_acc(vers, uind, uinp);
-}
-
+extern void epolar0DotProd_acc(const real (*uind)[3], const real (*udirp)[3]);
 void epolar0DotProd(const real (*uind)[3], const real (*udirp)[3])
 {
-   return epolar0_dotprod_acc(uind, udirp);
+   return epolar0DotProd_acc(uind, udirp);
 }
 }

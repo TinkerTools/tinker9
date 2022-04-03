@@ -1,6 +1,7 @@
 #pragma once
 #include "add.h"
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/amoeba/mpole.h"
+#include "tool/energybuffer.h"
 
 namespace tinker {
 template <bool do_a>

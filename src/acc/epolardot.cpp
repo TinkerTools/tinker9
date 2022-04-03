@@ -1,12 +1,10 @@
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
+#include "ff/atom.h"
 #include "ff/elec.h"
-#include "ff/energy.h"
-#include "ff/pchg/echarge.h"
 
 namespace tinker {
-void epolar0_dotprod_acc(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
+void epolar0DotProd_acc(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
 {
    const real f = -0.5 * electric / dielec;
 

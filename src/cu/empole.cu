@@ -1,4 +1,5 @@
 #include "empoleself.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/image.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"

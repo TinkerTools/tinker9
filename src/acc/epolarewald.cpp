@@ -1,13 +1,9 @@
-#include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
-#include "ff/energy.h"
+#include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
-#include "ff/pchg/echarge.h"
 #include "ff/pme.h"
 #include "ff/switch.h"
-#include "math/switch.h"
 #include "seq/pair_polar.h"
 #include "tool/gpucard.h"
 
@@ -15,7 +11,7 @@ namespace tinker {
 #define POLAR_DPTRS                                                                                \
    x, y, z, depx, depy, depz, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep, ufld, dufld
 template <class Ver>
-void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
+static void epolarEwaldReal_acc1(const real (*uind)[3], const real (*uinp)[3])
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -332,7 +328,7 @@ void epolar_ewald_real_acc1(const real (*uind)[3], const real (*uinp)[3])
 }
 
 template <class Ver>
-void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3], const real (*gpu_uinp)[3])
+static void epolarEwaldRecipSelf_acc1(const real (*gpu_uind)[3], const real (*gpu_uinp)[3])
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -665,37 +661,37 @@ void epolar_ewald_recip_self_acc1(const real (*gpu_uind)[3], const real (*gpu_ui
    }
 }
 
-void epolar_ewald_real_acc(int vers, const real (*uind)[3], const real (*uinp)[3])
+void epolarEwaldReal_acc(int vers, const real (*uind)[3], const real (*uinp)[3])
 {
    if (vers == calc::v0) {
-      epolar_ewald_real_acc1<calc::V0>(uind, uinp);
+      epolarEwaldReal_acc1<calc::V0>(uind, uinp);
    } else if (vers == calc::v1) {
-      epolar_ewald_real_acc1<calc::V1>(uind, uinp);
+      epolarEwaldReal_acc1<calc::V1>(uind, uinp);
    } else if (vers == calc::v3) {
-      epolar_ewald_real_acc1<calc::V3>(uind, uinp);
+      epolarEwaldReal_acc1<calc::V3>(uind, uinp);
    } else if (vers == calc::v4) {
-      epolar_ewald_real_acc1<calc::V4>(uind, uinp);
+      epolarEwaldReal_acc1<calc::V4>(uind, uinp);
    } else if (vers == calc::v5) {
-      epolar_ewald_real_acc1<calc::V5>(uind, uinp);
+      epolarEwaldReal_acc1<calc::V5>(uind, uinp);
    } else if (vers == calc::v6) {
-      epolar_ewald_real_acc1<calc::V6>(uind, uinp);
+      epolarEwaldReal_acc1<calc::V6>(uind, uinp);
    }
 }
 
-void epolar_ewald_recip_self_acc(int vers, const real (*uind)[3], const real (*uinp)[3])
+void epolarEwaldRecipSelf_acc(int vers, const real (*uind)[3], const real (*uinp)[3])
 {
    if (vers == calc::v0) {
-      epolar_ewald_recip_self_acc1<calc::V0>(uind, uinp);
+      epolarEwaldRecipSelf_acc1<calc::V0>(uind, uinp);
    } else if (vers == calc::v1) {
-      epolar_ewald_recip_self_acc1<calc::V1>(uind, uinp);
+      epolarEwaldRecipSelf_acc1<calc::V1>(uind, uinp);
    } else if (vers == calc::v3) {
-      epolar_ewald_recip_self_acc1<calc::V3>(uind, uinp);
+      epolarEwaldRecipSelf_acc1<calc::V3>(uind, uinp);
    } else if (vers == calc::v4) {
-      epolar_ewald_recip_self_acc1<calc::V4>(uind, uinp);
+      epolarEwaldRecipSelf_acc1<calc::V4>(uind, uinp);
    } else if (vers == calc::v5) {
-      epolar_ewald_recip_self_acc1<calc::V5>(uind, uinp);
+      epolarEwaldRecipSelf_acc1<calc::V5>(uind, uinp);
    } else if (vers == calc::v6) {
-      epolar_ewald_recip_self_acc1<calc::V6>(uind, uinp);
+      epolarEwaldRecipSelf_acc1<calc::V6>(uind, uinp);
    }
 }
 }

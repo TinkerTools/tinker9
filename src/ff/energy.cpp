@@ -271,6 +271,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 }
 }
 
+#include "ff/elec.h"
 #include "ff/hippo/cflux.h"
 #include "ff/pme.h"
 #include "math/zero.h"

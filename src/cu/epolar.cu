@@ -1,10 +1,6 @@
-#include "add.h"
-#include "epolar_trq.h"
+#include "epolartrq.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
-#include "ff/energy.h"
 #include "ff/image.h"
-#include "ff/pchg/echarge.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
@@ -597,7 +593,7 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuff
 }
 
 template <class Ver, class ETYP>
-void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
+static void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
 {
    constexpr bool do_g = Ver::g;
 
@@ -631,7 +627,7 @@ void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
    }
 }
 
-void epolar_nonewald_cu(int vers, const real (*uind)[3], const real (*uinp)[3])
+void epolarNonEwald_cu(int vers, const real (*uind)[3], const real (*uinp)[3])
 {
    if (vers == calc::v0) {
       epolar_cu<calc::V0, NON_EWALD>(uind, uinp);
@@ -648,7 +644,7 @@ void epolar_nonewald_cu(int vers, const real (*uind)[3], const real (*uinp)[3])
    }
 }
 
-void epolar_ewald_real_cu(int vers, const real (*uind)[3], const real (*uinp)[3])
+void epolarEwaldReal_cu(int vers, const real (*uind)[3], const real (*uinp)[3])
 {
    if (vers == calc::v0) {
       epolar_cu<calc::V0, EWALD>(uind, udirp);

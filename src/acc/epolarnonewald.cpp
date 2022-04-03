@@ -1,12 +1,8 @@
-#include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
-#include "ff/energy.h"
+#include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
-#include "ff/pchg/echarge.h"
 #include "ff/switch.h"
-#include "math/switch.h"
 #include "seq/pair_polar.h"
 #include "tool/gpucard.h"
 
@@ -14,7 +10,7 @@ namespace tinker {
 #define POLAR_DPTRS                                                                                \
    x, y, z, depx, depy, depz, rpole, thole, pdamp, uind, uinp, nep, ep, vir_ep, ufld, dufld
 template <class Ver>
-void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
+static void epolarNonEwald_acc1(const real (*uind)[3], const real (*uinp)[3])
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -324,20 +320,20 @@ void epolar_nonewald_acc1(const real (*uind)[3], const real (*uinp)[3])
    }
 }
 
-void epolar_nonewald_acc(int vers, const real (*uind)[3], const real (*uinp)[3])
+void epolarNonEwald_acc(int vers, const real (*uind)[3], const real (*uinp)[3])
 {
    if (vers == calc::v0) {
-      epolar_nonewald_acc1<calc::V0>(uind, uinp);
+      epolarNonEwald_acc1<calc::V0>(uind, uinp);
    } else if (vers == calc::v1) {
-      epolar_nonewald_acc1<calc::V1>(uind, uinp);
+      epolarNonEwald_acc1<calc::V1>(uind, uinp);
    } else if (vers == calc::v3) {
-      epolar_nonewald_acc1<calc::V3>(uind, uinp);
+      epolarNonEwald_acc1<calc::V3>(uind, uinp);
    } else if (vers == calc::v4) {
-      epolar_nonewald_acc1<calc::V4>(uind, uinp);
+      epolarNonEwald_acc1<calc::V4>(uind, uinp);
    } else if (vers == calc::v5) {
-      epolar_nonewald_acc1<calc::V5>(uind, uinp);
+      epolarNonEwald_acc1<calc::V5>(uind, uinp);
    } else if (vers == calc::v6) {
-      epolar_nonewald_acc1<calc::V6>(uind, uinp);
+      epolarNonEwald_acc1<calc::V6>(uind, uinp);
    }
 }
 }

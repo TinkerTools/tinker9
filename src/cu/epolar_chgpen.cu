@@ -1,5 +1,6 @@
 #include "add.h"
-#include "epolar_trq.h"
+#include "epolartrq.h"
+#include "ff/amoeba/elecamoeba.h"
 #include "ff/energy.h"
 #include "ff/hippo/cflux.h"
 #include "ff/hippo/elechippo.h"

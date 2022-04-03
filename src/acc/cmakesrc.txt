@@ -24,9 +24,9 @@ empolenonewald.cpp
 eopbend.cpp
 epitors.cpp
 epolar_chgpen.cpp
-epolar_dot.cpp
-epolar_ewald.cpp
-epolar_nonewald.cpp
+epolardot.cpp
+epolarewald.cpp
+epolarnonewald.cpp
 erepel.cpp
 estrbnd.cpp
 estrtor.cpp

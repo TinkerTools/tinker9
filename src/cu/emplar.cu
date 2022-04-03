@@ -1,6 +1,6 @@
 #include "add.h"
 #include "empoleself.h"
-#include "epolar_trq.h"
+#include "epolartrq.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/emplar.h"
 #include "ff/amoeba/empole.h"
@@ -17,10 +17,6 @@
 #include "seq/damp.h"
 #include "tool/gpucard.h"
 #include "triangle.h"
-
-namespace tinker {
-void epolar_ewald_recip_self(int vers);
-}
 
 namespace tinker {
 // Rt Q = G
@@ -1221,7 +1217,7 @@ void emplar_ewald_cu()
    // empole recip
    empoleEwaldRecip(Ver::value);
    // epolar recip self; must toggle off the calc::energy flag
-   epolar_ewald_recip_self(Ver::value & ~calc::energy);
+   epolarEwaldRecipSelf(Ver::value & ~calc::energy);
 
    // epolar energy
    if CONSTEXPR (Ver::e)
