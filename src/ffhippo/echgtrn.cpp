@@ -1,18 +1,14 @@
-#include "ff/hippo/echgtrn.h"
-#include "ff/amoeba/elecamoeba.h"
 #include "ff/energy.h"
 #include "ff/hippo/elechippo.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tool/darray.h"
 #include <tinker/detail/chgtrn.hh>
-#include <tinker/detail/ctrpot.hh>
 
 namespace tinker {
 void echgtrnData(RcOp op)
 {
-   if (!usePotent(Potent::CHGTRN))
+   if (not usePotent(Potent::CHGTRN))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -61,8 +57,8 @@ void echgtrnData(RcOp op)
    }
 }
 
-extern void echgtrn_cu(int);
 extern void echgtrn_acc(int);
+extern void echgtrn_cu(int);
 void echgtrn(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

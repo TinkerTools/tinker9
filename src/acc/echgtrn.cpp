@@ -1,15 +1,10 @@
-#include "ff/hippo/echgtrn.h"
 #include "add.h"
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/atom.h"
 #include "ff/elec.h"
-#include "ff/energy.h"
 #include "ff/hippo/elechippo.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
-#include "ff/pchg/echarge.h"
 #include "ff/switch.h"
-#include "math/switch.h"
-#include "seq/bsplgen.h"
 #include "seq/pair_chgtrn.h"
 #include "tool/gpucard.h"
 #include <cassert>
@@ -17,7 +12,7 @@
 namespace tinker {
 #define DEVICE_PTRS x, y, z, dectx, decty, dectz, chgct, dmpct, nct, ect, vir_ect
 template <class Ver>
-void echgtrn_acc1()
+static void echgtrn_acc1()
 {
    assert(ctrntyp == Chgtrn::SEPARATE);
 

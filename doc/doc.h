@@ -43,6 +43,8 @@
 ///    \ingroup ff
 ///    \defgroup repel  HIPPO Repulsion
 ///    \ingroup ff
+///    \defgroup chgtrn  Charge Transfer
+///    \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
