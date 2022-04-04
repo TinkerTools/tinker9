@@ -1,10 +1,10 @@
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/induce.h"
+#include "ff/atom.h"
 #include "ff/elec.h"
 #include "ff/hippo/induce.h"
 #include "ff/potent.h"
-#include "md/pq.h"
 #include "tinker9.h"
 #include "tool/darray.h"
 #include <cmath>
@@ -40,7 +40,7 @@ void moments()
    moment::zyqpl = 0;
    moment::zzqpl = 0;
 
-   mdBounds();
+   bounds();
    // download x y z
    std::vector<pos_prec> xv(n), yv(n), zv(n);
    darray::copyout(g::q0, n, xv.data(), xpos);

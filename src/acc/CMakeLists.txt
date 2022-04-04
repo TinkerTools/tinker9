@@ -1,4 +1,4 @@
-# printf "set (__T9_ACC_SRC\n%s\n)\n" "$(LC_COLLATE=C ls -1a *.cpp {amoeba,hippo,pchg}/*.cpp)" > cmakesrc.txt
+# printf "set (__T9_ACC_SRC\n%s\n)\n" "$(LC_COLLATE=C ls -1a *.cpp {amoeba,hippo,md,pchg}/*.cpp)" > cmakesrc.txt
 cmake_minimum_required (VERSION 3.12)
 
 

@@ -1,4 +1,3 @@
-#include "md/pq.h"
 #include "test.h"
 #include "testrt.h"
 #include "tool/io.h"
@@ -43,8 +42,8 @@ TEST_CASE("Bounds", "[ff][box]")
    std::string fname = fsw.trim();
    std::ifstream ipt(fname);
    int done = false;
-   mdReadFrameCopyinToXyz(ipt, done);
-   mdBounds();
+   readFrameCopyinToXyz(ipt, done);
+   bounds();
 
    double eps = 1.0e-5;
    double xref[] = {-9, 3};

@@ -54,11 +54,10 @@ md/itgtNhc06.cpp
 md/lflpiston.cpp
 md/lpiston.cpp
 md/mdintg.cpp
-md/mdppg.cpp
-md/mdpq.cpp
-md/mdpt.cpp
 md/mdsave.cpp
 md/osrw.cpp
+md/pq.cpp
+md/pt.cpp
 md/rattle.cpp
 mechanic2.cpp
 mod.cpp

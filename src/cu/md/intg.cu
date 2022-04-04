@@ -1,6 +1,6 @@
 #include "md/pq.h"
-#include "reduce.h"
 #include "seq/launch.h"
+#include "seq/reduce.h"
 #include "tool/darray.h"
 #include "tool/gpucard.h"
 #include <tinker/detail/molcul.hh>

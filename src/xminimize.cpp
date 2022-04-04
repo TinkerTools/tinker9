@@ -1,6 +1,5 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
-#include "md/pq.h"
 #include "tinker9.h"
 #include "tool/io.h"
 #include <cmath>
@@ -122,7 +121,7 @@ void xMinimize(int, char**)
    print(o, "\n");
 
    // write the final coordinates into a file
-   mdBounds();
+   bounds();
    imin = tinker_f_freeunit();
    tinker_f_open(&imin, minfile, "old");
    tinker_f_rewind(&imin);

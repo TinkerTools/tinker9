@@ -1,9 +1,6 @@
-#include "ff/atom.h"
-#include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "math/random.h"
-#include "md/pq.h"
 #include "tinker9.h"
 #include "tool/darray.h"
 #include "tool/io.h"
@@ -200,7 +197,7 @@ void x_bar_makebar()
       initialize();
       done = false;
       do {
-         mdReadFrameCopyinToXyz(a_arc, done);
+         readFrameCopyinToXyz(a_arc, done);
          nblistRefresh();
          energy(calc::energy);
          ua0.push_back(esum);
@@ -240,7 +237,7 @@ void x_bar_makebar()
    initialize();
    done = false;
    do {
-      mdReadFrameCopyinToXyz(a_arc, done);
+      readFrameCopyinToXyz(a_arc, done);
       nblistRefresh();
       energy(calc::energy);
       double vol = boxVolume();
@@ -313,7 +310,7 @@ void x_bar_makebar()
       initialize();
       done = false;
       do {
-         mdReadFrameCopyinToXyz(b_arc, done);
+         readFrameCopyinToXyz(b_arc, done);
          nblistRefresh();
          energy(calc::energy);
          ub1.push_back(esum);
@@ -353,7 +350,7 @@ void x_bar_makebar()
    initialize();
    done = false;
    do {
-      mdReadFrameCopyinToXyz(b_arc, done);
+      readFrameCopyinToXyz(b_arc, done);
       nblistRefresh();
       energy(calc::energy);
       double vol = boxVolume();

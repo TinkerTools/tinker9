@@ -1,6 +1,7 @@
 #pragma once
 #include "precision.h"
 #include "tool/rcman.h"
+#include <istream>
 
 namespace tinker {
 /// \ingroup ff
@@ -20,6 +21,19 @@ void copyPosToXyz();
 /// If #xpos etc. are only aliases, return directly.
 /// \param refreshNBList  If `true`, refresh the neighbor lists by the end.
 void copyPosToXyz(bool refreshNBList);
+
+/// \ingroup ff
+/// \brief Finds the geometric center of each molecule and translate any stray
+/// molecules back into the periodic box on GPU.
+/// \note
+///    - Updating #x, #y, #z is the goal.
+///    - Checks whether PBC is in use inside this function.
+///    - Will not perturb the neighbor lists so no need to update them.
+///    - Tinker uses centers of mass.
+void bounds();
+
+/// \ingroup ff
+void readFrameCopyinToXyz(std::istream& input, int& done);
 }
 
 //====================================================================//

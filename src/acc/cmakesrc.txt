@@ -27,9 +27,8 @@ lpiston.cpp
 mathlu.cpp
 mathparallel.cpp
 mathzero.cpp
-mddebug.cpp
+md/pq.cpp
 mdintg.cpp
-mdpq.cpp
 mdpt.cpp
 minimize.cpp
 nblist.cpp

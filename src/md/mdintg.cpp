@@ -31,6 +31,10 @@ void mdData(RcOp op)
 
 //====================================================================//
 
+/// \ingroup mdpq
+/// \brief Call #bounds() at least every x steps in MD.
+constexpr int BOUNDS_EVERY_X_STEPS = 500;
+
 static BasicIntegrator* intg;
 
 void mdPropagate(int nsteps, time_prec dt_ps)
@@ -41,7 +45,7 @@ void mdPropagate(int nsteps, time_prec dt_ps)
       // mdstat
       bool save = (istep % inform::iwrite == 0);
       if (save || (istep % BOUNDS_EVERY_X_STEPS) == 0)
-         mdBounds();
+         bounds();
       if (save) {
          T_prec temp;
          mdKinetic(temp);

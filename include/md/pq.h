@@ -1,6 +1,5 @@
 #pragma once
 #include "ff/atom.h"
-#include <istream>
 
 namespace tinker {
 /// \ingroup mdpq
@@ -10,56 +9,29 @@ namespace tinker {
 void mdPos(time_prec dt);
 void mdPos(time_prec, pos_prec*, pos_prec*, pos_prec*, //
    const vel_prec*, const vel_prec*, const vel_prec*);
-void mdPos_acc(time_prec, pos_prec*, pos_prec*, pos_prec*, //
-   const vel_prec*, const vel_prec*, const vel_prec*);
 
 /// \ingroup mdpq
 /// \brief Update #xp, #y, #z via `x = a x + b v`.
 void mdPosAxbv(pos_prec a, pos_prec b);
 
 /// \ingroup mdpq
-void mdDebugPosNorm_acc(pos_prec poseps, time_prec dt, //
+void mdDebugPosNorm(pos_prec poseps, time_prec dt, //
    const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
-
-/// \ingroup mdpq
-/// \brief Call #mdBounds() at least every x steps in MD.
-constexpr int BOUNDS_EVERY_X_STEPS = 500;
-
-/// \ingroup mdpq
-/// \brief Finds the geometric center of each molecule and translate any stray
-/// molecules back into the periodic box on GPU.
-/// \note
-///    - Updating #x, #y, #z is the goal.
-///    - Checks whether PBC is in use inside this function.
-///    - Will not perturb the neighbor lists so no need to update them.
-///    - Tinker uses centers of mass.
-void mdBounds();
-void mdBounds_acc();
-
-/// \ingroup mdpq
-void mdReadFrameCopyinToXyz(std::istream& input, int& done);
 
 /// \ingroup mdpq
 /// \brief Update velocities via `v += -g/m dt`.
 void mdVel(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz);
-void mdVelA_acc(time_prec, vel_prec*, vel_prec*, vel_prec*, //
-   const grad_prec*, const grad_prec*, const grad_prec*);
 
 /// \ingroup mdpq
 /// \brief Update velocities via `v = v0 -g/m dt`.
 void mdVelB(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, //
    const vel_prec* vlx0, const vel_prec* vly0, const vel_prec* vlz0,   //
    const grad_prec* grx, const grad_prec* gry, const grad_prec* grz);
-void mdVelB_acc(time_prec, vel_prec*, vel_prec*, vel_prec*, //
-   const vel_prec*, const vel_prec*, const vel_prec*,       //
-   const grad_prec*, const grad_prec*, const grad_prec*);
 
 /// \ingroup mdpq
 /// \brief Update velocities via `v += (-g/m dt -g2/m dt2)`.
 void mdVel2(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz,
    time_prec dt2, const grad_prec* grx2, const grad_prec* gry2, const grad_prec* grz2);
-void mdVel2_acc(time_prec, const grad_prec*, const grad_prec*, const grad_prec*, time_prec,
-   const grad_prec*, const grad_prec*, const grad_prec*);
 
 /// \ingroup mdpq
 /// \brief Update velocities via `v = a v + b (g1/nrespa + g2)/m t` (isotropic).

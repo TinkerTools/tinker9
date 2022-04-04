@@ -1,6 +1,6 @@
 #include "accasync.h"
 #include "math/parallelcu.h"
-#include "reduce.h"
+#include "seq/reduce.h"
 #include "tool/cudalib.h"
 #include "tool/error.h"
 #include "tool/gpucard.h"

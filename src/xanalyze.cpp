@@ -11,7 +11,6 @@
 #include "ff/pchg/evdw.h"
 #include "ff/potent.h"
 #include "md/osrw.h"
-#include "md/pq.h"
 #include "tinker9.h"
 #include "tool/darray.h"
 #include "tool/io.h"
@@ -226,7 +225,7 @@ void xAnalyze(int, char**)
    int done = false;
    int nframe_processed = 0;
    do {
-      mdReadFrameCopyinToXyz(ipt, done);
+      readFrameCopyinToXyz(ipt, done);
       nblistRefresh();
       nframe_processed++;
       if (nframe_processed > 1)
