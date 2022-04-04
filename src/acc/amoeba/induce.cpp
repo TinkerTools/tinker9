@@ -1,6 +1,6 @@
+#include "ff/amoeba/induce.h"
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/induce.h"
 #include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"

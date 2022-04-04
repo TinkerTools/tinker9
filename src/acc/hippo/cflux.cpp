@@ -1,7 +1,7 @@
+#include "ff/hippo/cflux.h"
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/atom.h"
-#include "ff/hippo/cflux.h"
 #include "ff/hippo/elechippo.h"
 #include "ff/pchg/evalence.h"
 #include "math/libfunc.h"
