@@ -1,5 +1,5 @@
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/hippo/inducechgpen.h"
+#include "ff/hippo/induce.h"
 #include "seq/launch.h"
 #include "tool/ioprint.h"
 #include <tinker/detail/inform.hh>

@@ -2,7 +2,7 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/induce.h"
 #include "ff/elec.h"
-#include "ff/hippo/inducechgpen.h"
+#include "ff/hippo/induce.h"
 #include "ff/potent.h"
 #include "md/pq.h"
 #include "tinker9.h"

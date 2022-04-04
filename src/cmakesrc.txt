@@ -18,11 +18,11 @@ exec.cpp
 hippo/cflux.cpp
 hippo/echgtrn.cpp
 hippo/edisp.cpp
-hippo/empolechgpen.cpp
-hippo/epolarchgpen.cpp
+hippo/empole.cpp
+hippo/epolar.cpp
 hippo/erepel.cpp
-hippo/fieldchgpen.cpp
-hippo/inducedonly.cpp
+hippo/field.cpp
+hippo/induce.cpp
 initial.cpp
 iofortstr.cpp
 iotext.cpp
