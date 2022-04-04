@@ -3,9 +3,12 @@
 #include "tool/rcman.h"
 
 namespace tinker {
+/// \ingroup disp
+/// \{
 bool useDEwald();
 void edispData(RcOp);
 void edisp(int vers);
+/// \}
 }
 
 //====================================================================//

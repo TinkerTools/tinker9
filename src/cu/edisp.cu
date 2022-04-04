@@ -1,5 +1,3 @@
-#include "add.h"
-#include "ff/energy.h"
 #include "ff/hippo/edisp.h"
 #include "ff/image.h"
 #include "ff/pme.h"
@@ -346,7 +344,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
 }
 
 template <class Ver, class DTYP>
-void edisp_cu()
+static void edisp_cu()
 {
    const auto& st = *dspspatial_v2_unit;
    real cut, off;
@@ -371,7 +369,7 @@ void edisp_cu()
       csix, adisp, aewald);
 }
 
-void edisp_ewald_real_cu(int vers)
+void edispEwaldReal_cu(int vers)
 {
    if (vers == calc::v0)
       edisp_cu<calc::V0, DEWALD>();
@@ -496,7 +494,7 @@ void edisp_cu3(CountBuffer restrict ndisp, EnergyBuffer restrict edsp, const rea
 }
 
 template <class Ver>
-void edisp_cu4()
+static void edisp_cu4()
 {
    const auto& st = *dpme_unit;
    real aewald = st.aewald;
@@ -511,7 +509,7 @@ void edisp_cu4()
       dedspx, dedspy, dedspz);
 }
 
-void edisp_ewald_recip_self_cu(int vers)
+void edispEwaldRecipSelf_cu(int vers)
 {
    if (vers == calc::v0)
       edisp_cu4<calc::V0>();
@@ -527,7 +525,7 @@ void edisp_ewald_recip_self_cu(int vers)
       edisp_cu4<calc::V6>();
 }
 
-void edisp_nonewald_cu(int vers)
+void edispNonEwald_cu(int vers)
 {
    if (vers == calc::v0)
       edisp_cu<calc::V0, NON_EWALD_TAPER>();

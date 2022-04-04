@@ -1,8 +1,5 @@
 #include "ff/hippo/edisp.h"
-#include "add.h"
-#include "ff/box.h"
-#include "ff/energy.h"
-#include "ff/hippo/edisp.h"
+#include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
@@ -13,7 +10,7 @@
 
 namespace tinker {
 template <bool DO_E, bool DO_V>
-void disp_pme_conv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
+static void dispPmeConv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
@@ -105,26 +102,24 @@ void disp_pme_conv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
    }
 }
 
-void disp_pmeConv_acc(int vers)
+void dispPmeConv_acc(int vers)
 {
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    PMEUnit u = dpme_unit;
 
    if (do_e && do_v)
-      disp_pme_conv_acc1<true, true>(u, edsp, vir_edsp);
+      dispPmeConv_acc1<true, true>(u, edsp, vir_edsp);
    else if (do_e && !do_v)
-      disp_pme_conv_acc1<true, false>(u, edsp, nullptr);
+      dispPmeConv_acc1<true, false>(u, edsp, nullptr);
    else if (!do_e && do_v)
-      disp_pme_conv_acc1<false, true>(u, nullptr, vir_edsp);
+      dispPmeConv_acc1<false, true>(u, nullptr, vir_edsp);
    else if (!do_e && !do_v)
-      disp_pme_conv_acc1<false, false>(u, nullptr, nullptr);
+      dispPmeConv_acc1<false, false>(u, nullptr, nullptr);
 }
 
-//====================================================================//
-
 template <class Ver, class DTYP>
-void edisp_acc1()
+static void edisp_acc1()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -293,7 +288,7 @@ void edisp_acc1()
    }
 }
 
-void edisp_nonewald_acc(int vers)
+void edispNonEwald_acc(int vers)
 {
    if (vers == calc::v0)
       edisp_acc1<calc::V0, NON_EWALD_TAPER>();
@@ -309,7 +304,7 @@ void edisp_nonewald_acc(int vers)
       edisp_acc1<calc::V6, NON_EWALD_TAPER>();
 }
 
-void edisp_ewald_real_acc(int vers)
+void edispEwaldReal_acc(int vers)
 {
    if (vers == calc::v0)
       edisp_acc1<calc::V0, DEWALD>();
@@ -326,7 +321,7 @@ void edisp_ewald_real_acc(int vers)
 }
 
 template <class Ver, int bsorder>
-void edisp_acc2()
+static void edisp_acc2()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -437,7 +432,7 @@ void edisp_acc2()
    }
 }
 
-void edisp_ewald_recip_self_acc(int vers)
+void edispEwaldRecipSelf_acc(int vers)
 {
    constexpr int order = 4;
    assert(dpme_unit->bsorder == order);

@@ -1,18 +1,14 @@
 #include "ff/hippo/edisp.h"
-#include "ff/box.h"
 #include "ff/energy.h"
-#include "ff/hippo/edisp.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "math/zero.h"
 #include "tinker9.h"
-#include <cmath>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/disp.hh>
 #include <tinker/detail/dsppot.hh>
 #include <tinker/detail/limits.hh>
-#include <tinker/detail/sizes.hh>
 
 namespace tinker {
 bool useDEwald()
@@ -22,7 +18,7 @@ bool useDEwald()
 
 void edispData(RcOp op)
 {
-   if (!usePotent(Potent::DISP))
+   if (not usePotent(Potent::DISP))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -60,7 +56,7 @@ void edispData(RcOp op)
          bufferAllocate(rc_flag, &edsp, &vir_edsp, &dedspx, &dedspy, &dedspz);
       }
 
-      if (dsppot::use_dcorr && !useDEwald()) {
+      if (dsppot::use_dcorr && not useDEwald()) {
          double elrc = 0, vlrc = 0;
          tinker_f_evcorr1({const_cast<char*>("DISP"), 4}, &elrc, &vlrc);
          elrc_vol_dsp = elrc * boxVolume();
@@ -152,16 +148,73 @@ void edispData(RcOp op)
       waitFor(g::q0);
    }
 }
+}
 
-void edisp_nonewald(int vers);
-void edisp_nonewald_cu(int vers);
-void edisp_nonewald_acc(int vers);
-void edisp_ewald(int vers);
-void edisp_ewald_real_cu(int vers);
-void edisp_ewald_real_acc(int vers);
-void edisp_ewald_recip_self_cu(int vers);
-void edisp_ewald_recip_self_acc(int vers);
-void disp_pmeConv_acc(int vers);
+namespace tinker {
+extern void edispNonEwald_acc(int vers);
+extern void edispNonEwald_cu(int vers);
+static void edispNonEwald(int vers)
+{
+#if TINKER_CUDART
+   if (dsplistVersion() & Nbl::SPATIAL)
+      edispNonEwald_cu(vers);
+   else
+#endif
+      edispNonEwald_acc(vers);
+}
+
+extern void edispEwaldReal_acc(int vers);
+extern void edispEwaldReal_cu(int vers);
+extern void edispEwaldRecipSelf_acc(int vers);
+extern void edispEwaldRecipSelf_cu(int vers);
+extern void dispPmeConv_acc(int vers);
+static void edispEwald(int vers)
+{
+#if TINKER_CUDART
+   if (dsplistVersion() & Nbl::SPATIAL)
+      edispEwaldReal_cu(vers);
+   else
+#endif
+      edispEwaldReal_acc(vers);
+
+   // recip and self
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   bool do_g = vers & calc::grad;
+   PMEUnit u = dpme_unit;
+
+   gridDisp(u, csix);
+   fftfront(u);
+   dispPmeConv_acc(vers);
+   if (do_g) {
+      fftback(u);
+   }
+#if TINKER_CUDART
+   if (pltfm_config & Platform::CUDA)
+      edispEwaldRecipSelf_cu(vers);
+   else
+#endif
+      edispEwaldRecipSelf_acc(vers);
+
+   // account for the total energy and virial correction term
+   if CONSTEXPR (do_e || do_v) {
+      const real aewald = u->aewald;
+      const real denom0 = 6 * boxVolume() / std::pow(M_PI, 1.5);
+      energy_prec term = csixpr * aewald * aewald * aewald / denom0;
+      if CONSTEXPR (do_e) {
+         energy_edsp -= term;
+         energy_vdw -= term;
+      }
+      if CONSTEXPR (do_v) {
+         virial_edsp[0] += term; // xx
+         virial_edsp[4] += term; // yy
+         virial_edsp[8] += term; // zz
+         virial_vdw[0] += term;  // xx
+         virial_vdw[4] += term;  // yy
+         virial_vdw[8] += term;  // zz
+      }
+   }
+}
 
 void edisp(int vers)
 {
@@ -185,9 +238,9 @@ void edisp(int vers)
    }
 
    if (useDEwald())
-      edisp_ewald(vers);
+      edispEwald(vers);
    else
-      edisp_nonewald(vers);
+      edispNonEwald(vers);
 
    if (do_e) {
       if (elrc_vol_dsp != 0) {
@@ -226,63 +279,5 @@ void edisp(int vers)
       if (do_g)
          sumGradient(gx_vdw, gy_vdw, gz_vdw, dedspx, dedspy, dedspz);
    }
-}
-
-void edisp_ewald(int vers)
-{
-#if TINKER_CUDART
-   if (dsplistVersion() & Nbl::SPATIAL)
-      edisp_ewald_real_cu(vers);
-   else
-#endif
-      edisp_ewald_real_acc(vers);
-
-   // recip and self
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
-   PMEUnit u = dpme_unit;
-
-   gridDisp(u, csix);
-   fftfront(u);
-   disp_pmeConv_acc(vers);
-   if (do_g) {
-      fftback(u);
-   }
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      edisp_ewald_recip_self_cu(vers);
-   else
-#endif
-      edisp_ewald_recip_self_acc(vers);
-
-   // account for the total energy and virial correction term
-   if CONSTEXPR (do_e || do_v) {
-      const real aewald = u->aewald;
-      const real denom0 = 6 * boxVolume() / std::pow(M_PI, 1.5);
-      energy_prec term = csixpr * aewald * aewald * aewald / denom0;
-      if CONSTEXPR (do_e) {
-         energy_edsp -= term;
-         energy_vdw -= term;
-      }
-      if CONSTEXPR (do_v) {
-         virial_edsp[0] += term; // xx
-         virial_edsp[4] += term; // yy
-         virial_edsp[8] += term; // zz
-         virial_vdw[0] += term;  // xx
-         virial_vdw[4] += term;  // yy
-         virial_vdw[8] += term;  // zz
-      }
-   }
-}
-
-void edisp_nonewald(int vers)
-{
-#if TINKER_CUDART
-   if (dsplistVersion() & Nbl::SPATIAL)
-      edisp_nonewald_cu(vers);
-   else
-#endif
-      edisp_nonewald_acc(vers);
 }
 }
