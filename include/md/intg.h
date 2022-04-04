@@ -1,5 +1,6 @@
 #pragma once
-#include "ff/energy.h"
+#include "tool/rcman.h"
+#include "ff/timescale.h"
 
 namespace tinker {
 void mdData(RcOp);

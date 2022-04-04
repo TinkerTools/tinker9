@@ -1,5 +1,5 @@
 #include "tinker9.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 #include <algorithm>
 #include <functional>
 #include <map>

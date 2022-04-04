@@ -1,14 +1,12 @@
 #include "md/pq.h"
 #include "seq/launch.h"
 #include "seq/reduce.h"
-#include "tool/darray.h"
-#include "tool/gpucard.h"
 #include <tinker/detail/molcul.hh>
 
 namespace tinker {
 template <unsigned int B>
 __global__
-void mdrest_sum_p_cu(int n, vel_prec* restrict odata, const double* restrict mass,
+void mdrestSumP_cu(int n, vel_prec* restrict odata, const double* restrict mass,
    const vel_prec* restrict vx, const vel_prec* restrict vy, const vel_prec* restrict vz)
 {
    static_assert(B == 64, "");
@@ -43,7 +41,7 @@ void mdrest_sum_p_cu(int n, vel_prec* restrict odata, const double* restrict mas
 
 template <int B>
 __global__
-void mdrest_remove_p_cu(int n, double invtotmass, const vel_prec* restrict idata,
+void mdrestRemoveP_cu(int n, double invtotmass, const vel_prec* restrict idata,
    vel_prec* restrict vx, vel_prec* restrict vy, vel_prec* restrict vz, vel_prec* restrict xout)
 {
    static_assert(B == 64, "");
@@ -80,7 +78,7 @@ void mdrest_remove_p_cu(int n, double invtotmass, const vel_prec* restrict idata
    }
 }
 
-void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1, vel_prec& vtot2, vel_prec& vtot3)
+void mdrestRemovePbcMomentum_cu(bool copyout, vel_prec& vtot1, vel_prec& vtot2, vel_prec& vtot3)
 {
    vel_prec* xout;
    xout = (vel_prec*)dptr_buf;
@@ -94,8 +92,8 @@ void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1, vel_prec& vtot
    int grid_siz2 = (n + B - 1) / B;
    int ngrid = std::min(grid_siz1, grid_siz2);
 
-   mdrest_sum_p_cu<B><<<ngrid, B, 0, g::s0>>>(n, ptr, mass, vx, vy, vz);
-   mdrest_remove_p_cu<B><<<ngrid, B, 0, g::s0>>>(n, invtotmass, ptr, vx, vy, vz, xout);
+   mdrestSumP_cu<B><<<ngrid, B, 0, g::s0>>>(n, ptr, mass, vx, vy, vz);
+   mdrestRemoveP_cu<B><<<ngrid, B, 0, g::s0>>>(n, invtotmass, ptr, vx, vy, vz, xout);
 
    if (copyout) {
       vel_prec v[3];

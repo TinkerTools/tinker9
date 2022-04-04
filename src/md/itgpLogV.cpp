@@ -1,3 +1,4 @@
+#include "ff/energy.h"
 #include "math/sinhc.h"
 #include "math/trimatexp.h"
 #include "md/integrator.h"

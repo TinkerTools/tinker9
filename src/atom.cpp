@@ -46,7 +46,7 @@ void nData(RcOp op)
 
 void massData(RcOp op)
 {
-   if ((calc::mass & rc_flag) == 0)
+   if (not(calc::mass & rc_flag))
       return;
 
    if (op & RcOp::DEALLOC) {
@@ -69,7 +69,7 @@ void massData(RcOp op)
 
 void xyzData(RcOp op)
 {
-   if ((calc::xyz & rc_flag) == 0)
+   if (not(calc::xyz & rc_flag))
       return;
 
    if (op & RcOp::DEALLOC) {

@@ -1,6 +1,7 @@
 #include "platform.h"
 #include "tinker9.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
+#include "tool/iotext.h"
 
 namespace tinker {
 void platformData(RcOp op)

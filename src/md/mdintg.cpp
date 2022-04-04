@@ -1,60 +1,25 @@
-#include "ff/energy.h"
+#include "ff/atom.h"
+#include "math/pow2.h"
 #include "md/integrator.h"
 #include "md/intg.h"
-#include "md/pq.h"
 #include "md/pt.h"
-#include "md/rattle.h"
-#include "tool/darray.h"
 #include "tool/error.h"
-#include "tool/io.h"
+#include "tool/iofortstr.h"
 #include <cassert>
-#include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
-#include <tinker/detail/units.hh>
 
 namespace tinker {
-void mdrest_acc(int istep);
-void mdrest(int istep)
-{
-   mdrest_acc(istep);
-}
-
 void mdData(RcOp op)
 {
-   if ((calc::md & rc_flag) == 0)
+   if (not(calc::md & rc_flag))
       return;
 
    RcMan intg42{mdIntegrateData, op};
    RcMan save42{mdsaveData, op};
 }
 
-//====================================================================//
-
-/// \ingroup mdpq
-/// \brief Call #bounds() at least every x steps in MD.
-constexpr int BOUNDS_EVERY_X_STEPS = 500;
-
 static BasicIntegrator* intg;
-
-void mdPropagate(int nsteps, time_prec dt_ps)
-{
-   for (int istep = 1; istep <= nsteps; ++istep) {
-      intg->dynamic(istep, dt_ps);
-
-      // mdstat
-      bool save = (istep % inform::iwrite == 0);
-      if (save || (istep % BOUNDS_EVERY_X_STEPS) == 0)
-         bounds();
-      if (save) {
-         T_prec temp;
-         kinetic(temp);
-         mdsaveAsync(istep, dt_ps);
-      }
-      mdrest(istep);
-   }
-   mdsaveSynchronize();
-}
 
 void mdIntegrateData(RcOp op)
 {
@@ -155,6 +120,37 @@ void mdIntegrateData(RcOp op)
          TINKER_THROW("Beeman integrator is not available.");
       intg->printDetail(stdout);
    }
+}
+}
+
+namespace tinker {
+extern void mdrest_acc(int istep);
+void mdrest(int istep)
+{
+   mdrest_acc(istep);
+}
+
+/// \ingroup mdpq
+/// \brief Call #bounds() at least every x steps in MD.
+constexpr int BOUNDS_EVERY_X_STEPS = 500;
+
+void mdPropagate(int nsteps, time_prec dt_ps)
+{
+   for (int istep = 1; istep <= nsteps; ++istep) {
+      intg->dynamic(istep, dt_ps);
+
+      // mdstat
+      bool save = (istep % inform::iwrite == 0);
+      if (save || (istep % BOUNDS_EVERY_X_STEPS) == 0)
+         bounds();
+      if (save) {
+         T_prec temp;
+         kinetic(temp);
+         mdsaveAsync(istep, dt_ps);
+      }
+      mdrest(istep);
+   }
+   mdsaveSynchronize();
 }
 
 const TimeScaleConfig& respaTSConfig()

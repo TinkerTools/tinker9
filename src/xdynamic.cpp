@@ -1,3 +1,4 @@
+#include "ff/atom.h"
 #include "md/intg.h"
 #include "tinker9.h"
 #include "tool/io.h"

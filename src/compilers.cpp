@@ -1,5 +1,5 @@
 #include "macro.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 
 namespace tinker {
 std::string cxxCompilerName()

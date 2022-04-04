@@ -86,7 +86,7 @@ void mdVelAvbfAn(int nrespa, vel_prec a[3][3], vel_prec b[3][3], const grad_prec
 namespace tinker {
 void mdVelData(RcOp op)
 {
-   if ((calc::vel & rc_flag) == 0)
+   if (not(calc::vel & rc_flag))
       return;
 
    if (op & RcOp::DEALLOC) {

@@ -1,11 +1,8 @@
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
-#include "ff/box.h"
+#include "ff/energy.h"
 #include "ff/potent.h"
-#include "md/intg.h"
 #include "md/pq.h"
 #include "md/pt.h"
-#include "tinker9.h"
 #include "tool/execq.h"
 #include <condition_variable>
 #include <future>
@@ -17,6 +14,7 @@
 #include <tinker/detail/output.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/units.hh>
+#include <tinker/routines.h>
 
 #if TINKER_CUDART
 #   include "tool/error.h"
@@ -25,35 +23,32 @@
 #endif
 
 namespace tinker {
-namespace {
-std::mutex mtx_dup, mtx_write;
-std::condition_variable cv_dup, cv_write;
-bool idle_dup, idle_write;
-std::future<void> fut_dup_then_write;
+static std::mutex mtx_dup, mtx_write;
+static std::condition_variable cv_dup, cv_write;
+static bool idle_dup, idle_write;
+static std::future<void> fut_dup_then_write;
 
-bool mdsave_use_uind()
+static bool mdsaveUseUind()
 {
    return output::uindsave && usePotent(Potent::POLAR);
 }
 
-ExecQ dup_stream;
-real (*dup_buf_uind)[3];
-energy_prec dup_buf_esum;
-Box dup_buf_box;
-pos_prec *dup_buf_x, *dup_buf_y, *dup_buf_z;
-vel_prec *dup_buf_vx, *dup_buf_vy, *dup_buf_vz;
-grad_prec *dup_buf_gx, *dup_buf_gy, *dup_buf_gz;
+static ExecQ dup_stream;
+static real (*dup_buf_uind)[3];
+static energy_prec dup_buf_esum;
+static Box dup_buf_box;
+static pos_prec *dup_buf_x, *dup_buf_y, *dup_buf_z;
+static vel_prec *dup_buf_vx, *dup_buf_vy, *dup_buf_vz;
+static grad_prec *dup_buf_gx, *dup_buf_gy, *dup_buf_gz;
 
-void mdsave_dup_then_write(int istep, time_prec dt)
+static void mdsaveDupThenWrite(int istep, time_prec dt)
 {
 #if TINKER_CUDART
-   /**
-    * This function (mdsave_dup_then_write) will run in another CPU thread.
-    * There is no guarantee that the CUDA runtime will use the same GPU card as
-    * the main thread, unless cudaSetDevice() is called explicitly.
-    *
-    * Of course this is not a problem if the computer has only one GPU card.
-    */
+   // This function (mdsaveDupThenWrite) will run in another CPU thread.
+   // There is no guarantee that the CUDA runtime will use the same GPU card as
+   // the main thread, unless cudaSetDevice() is called explicitly.
+   //
+   // Of course this is not a problem if the computer has only one GPU card.
    check_rt(cudaSetDevice(idevice));
 #endif
 
@@ -73,7 +68,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
    darray::copy(g::q0, n, dup_buf_gy, gy);
    darray::copy(g::q0, n, dup_buf_gz, gz);
 
-   if (mdsave_use_uind()) {
+   if (mdsaveUseUind()) {
       darray::copy(g::q0, 3 * n, &dup_buf_uind[0][0], &uind[0][0]);
    }
 
@@ -143,7 +138,7 @@ void mdsave_dup_then_write(int istep, time_prec dt)
       }
    }
 
-   if (mdsave_use_uind()) {
+   if (mdsaveUseUind()) {
       darray::copyout(g::q1, n, polar::uind, dup_buf_uind);
       waitFor(g::q1);
    }
@@ -165,13 +160,14 @@ void mdsave_dup_then_write(int istep, time_prec dt)
 }
 }
 
+namespace tinker {
 void mdsaveAsync(int istep, time_prec dt)
 {
    std::unique_lock<std::mutex> lck_write(mtx_write);
    cv_write.wait(lck_write, [=]() { return idle_write; });
    idle_write = false;
 
-   fut_dup_then_write = std::async(std::launch::async, mdsave_dup_then_write, istep, dt);
+   fut_dup_then_write = std::async(std::launch::async, mdsaveDupThenWrite, istep, dt);
 
    std::unique_lock<std::mutex> lck_copy(mtx_dup);
    cv_dup.wait(lck_copy, [=]() { return idle_dup; });
@@ -189,7 +185,7 @@ void mdsaveData(RcOp op)
    if (op & RcOp::DEALLOC) {
       dup_stream.deallocate();
 
-      if (mdsave_use_uind()) {
+      if (mdsaveUseUind()) {
          darray::deallocate(dup_buf_uind);
       }
 
@@ -201,7 +197,7 @@ void mdsaveData(RcOp op)
    if (op & RcOp::ALLOC) {
       dup_stream.allocate();
 
-      if (mdsave_use_uind()) {
+      if (mdsaveUseUind()) {
          darray::allocate(n, &dup_buf_uind);
       } else {
          dup_buf_uind = nullptr;

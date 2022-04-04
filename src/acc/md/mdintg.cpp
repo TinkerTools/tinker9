@@ -1,18 +1,19 @@
 #include "md/pq.h"
 #include "platform.h"
-#include "tinker9.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/molcul.hh>
 #include <tinker/detail/units.hh>
+#include <tinker/routines.h>
 
 namespace tinker {
-void mdrest_remove_pbc_momentum_cu(bool copyout, vel_prec& vtot1, vel_prec& vtot2, vel_prec& vtot3);
+extern void mdrestRemovePbcMomentum_cu(
+   bool copyout, vel_prec& vtot1, vel_prec& vtot2, vel_prec& vtot3);
 void mdrest_acc(int istep)
 {
-   if (!mdstuf::dorest)
+   if (not mdstuf::dorest)
       return;
    if ((istep % mdstuf::irest) != 0)
       return;
@@ -28,7 +29,7 @@ void mdrest_acc(int istep)
 #if TINKER_CUDART
    if (pltfm_config & Platform::CUDA) {
       bool copyout = inform::debug or not bound::use_bounds;
-      mdrest_remove_pbc_momentum_cu(copyout, vtot1, vtot2, vtot3);
+      mdrestRemovePbcMomentum_cu(copyout, vtot1, vtot2, vtot3);
    } else
 #endif
    {
@@ -73,7 +74,7 @@ void mdrest_acc(int istep)
          vtot1, vtot2, vtot3, "", etrans);
    }
 
-   if (!bound::use_bounds) {
+   if (not bound::use_bounds) {
       energy_prec erot = 0;
       pos_prec xtot = 0, ytot = 0, ztot = 0;
       vel_prec vang[3] = {0}; // angular momentum
