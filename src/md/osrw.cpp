@@ -1,11 +1,7 @@
 #include "md/osrw.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/atom.h"
-#include "ff/box.h"
 #include "ff/energy.h"
-#include "ff/hippo/edisp.h"
 #include "ff/hippo/elechippo.h"
-#include "ff/hippo/erepel.h"
 #include "ff/pchg/echarge.h"
 #include "ff/pchg/evalence.h"
 #include "ff/pchg/evdw.h"
@@ -14,31 +10,7 @@
 #include "tinker9.h"
 
 namespace tinker {
-bool use_osrw;
-double osrw_lambda;
-int osrw_vdw;
-int osrw_ele;
-int osrw_tor;
-
-energy_prec osrw_du1;
-virial_prec osrw_dv1[9];
-grad_prec *osrw_dgx, *osrw_dgy, *osrw_dgz;
-
-real* osrw_pchg;
-real (*osrw_pole)[MPL_TOTAL];
-real* osrw_polarity;
-int osrw_ntbnd;
-int (*osrw_itbnd)[2];
-real (*osrw_tors1)[4];
-real (*osrw_tors2)[4];
-real (*osrw_tors3)[4];
-real (*osrw_tors4)[4];
-real (*osrw_tors5)[4];
-real (*osrw_tors6)[4];
-
-namespace {
-grad_prec *osrw_gx, *osrw_gy, *osrw_gz;
-}
+static grad_prec *osrw_gx, *osrw_gy, *osrw_gz;
 
 void osrw_mech()
 {
@@ -93,7 +65,7 @@ void osrw_mech()
 
 void osrwData(RcOp op)
 {
-   if (!use_osrw)
+   if (not use_osrw)
       return;
 
    if (op & RcOp::DEALLOC) {

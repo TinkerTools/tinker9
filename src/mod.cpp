@@ -8,7 +8,6 @@
 #include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
-#include "md/rattle.h"
 
 #include "ff/amoeba/elecamoeba.h"
 
@@ -22,8 +21,11 @@
 #include "ff/pchg/evdw.h"
 
 #include "md/intg.h"
+#include "md/lflpiston.h"
+#include "md/osrw.h"
 #include "md/pq.h"
 #include "md/pt.h"
+#include "md/rattle.h"
 
 #include "tool/cudalib.h"
 #include "tool/energybuffer.h"
