@@ -1,6 +1,6 @@
-#include "ff/amoeba/induce.h"
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
+#include "ff/amoeba/induce.h"
 #include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
@@ -148,7 +148,7 @@ void induceMutualPcg1_acc(real (*uind)[3], real (*uinp)[3])
    real eps = 100;
    real epsold;
 
-   while (!done) {
+   while (not done) {
       ++iter;
 
       // vec = (inv_alpha + Tu) conj, field = -Tu conj

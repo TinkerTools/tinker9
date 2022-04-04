@@ -1,10 +1,6 @@
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
 #include "ff/hippo/elechippo.h"
-#include "ff/hippo/empolechgpen.h"
-#include "ff/hippo/epolarchgpen.h"
-#include "ff/hippo/inducechgpen.h"
 #include "ff/image.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
@@ -14,7 +10,7 @@
 
 namespace tinker {
 __global__
-void sparse_precond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
+void sparsePrecond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
    const real* restrict polarity, int n, real udiag)
 {
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
@@ -27,7 +23,7 @@ void sparse_precond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
 
 // ck.py Version 2.0.3
 __global__
-void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict winfo,
+void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict winfo,
    int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
    const real* restrict x, const real* restrict y, const real* restrict z,
    const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
@@ -298,16 +294,16 @@ void sparse_precond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* re
    }
 }
 
-void sparse_precond_apply2_cu(const real (*rsd)[3], real (*zrsd)[3])
+void sparsePrecondApply2_cu(const real (*rsd)[3], real (*zrsd)[3])
 {
    const auto& st = *uspatial_v2_unit;
    const real off = switchOff(Switch::USOLVE) + st.buffer;
 
-   launch_k1s(g::s0, n, sparse_precond_cu3, //
+   launch_k1s(g::s0, n, sparsePrecond_cu3, //
       rsd, zrsd, polarity, n, udiag);
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   sparse_precond_cu4<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
+   sparsePrecond_cu4<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
       nwexclude, wexclude, wexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
       st.iak, st.lst, rsd, zrsd, palpha, polarity);
 }
