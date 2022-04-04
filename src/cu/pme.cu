@@ -5,8 +5,8 @@
 #include "ff/elec.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
-#include "launch.h"
 #include "seq/bsplgen.h"
+#include "seq/launch.h"
 
 namespace tinker {
 // compute theta values on the fly

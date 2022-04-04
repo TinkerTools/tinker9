@@ -1,34 +1,37 @@
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/hippo/elechippo.h"
 #include "ff/image.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
-#include "launch.h"
-#include "seq/damp_hippo.h"
-#include "triangle.h"
+#include "seq/damp.h"
+#include "seq/launch.h"
+#include "seq/triangle.h"
 
 namespace tinker {
 __global__
-void sparsePrecond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
-   const real* restrict polarity, int n, real udiag)
+void sparsePrecond_cu0(const real (*restrict rsd)[3], const real (*restrict rsdp)[3],
+   real (*restrict zrsd)[3], real (*restrict zrsdp)[3], const real* restrict polarity, int n,
+   real udiag)
 {
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
       real poli = udiag * polarity[i];
       #pragma unroll
-      for (int j = 0; j < 3; ++j)
+      for (int j = 0; j < 3; ++j) {
          zrsd[i][j] = poli * rsd[i][j];
+         zrsdp[i][j] = poli * rsdp[i][j];
+      }
    }
 }
 
-// ck.py Version 2.0.3
+// ck.py Version 2.0.2
 __global__
-void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict winfo,
+void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo,
    int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
    const real* restrict x, const real* restrict y, const real* restrict z,
    const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
    const int* restrict iak, const int* restrict lst, const real (*restrict rsd)[3],
-   real (*restrict zrsd)[3], const real* restrict palpha, const real* restrict polarity)
+   const real (*restrict rsdp)[3], real (*restrict zrsd)[3], real (*restrict zrsdp)[3],
+   const real* restrict pdamp, const real* restrict thole, const real* restrict polarity)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -44,18 +47,32 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
    real fidx;
    real fidy;
    real fidz;
+   real fipx;
+   real fipy;
+   real fipz;
    real fkdx;
    real fkdy;
    real fkdz;
+   real fkpx;
+   real fkpy;
+   real fkpz;
    __shared__ real uidx[BLOCK_DIM];
    __shared__ real uidy[BLOCK_DIM];
    __shared__ real uidz[BLOCK_DIM];
-   __shared__ real alphai[BLOCK_DIM];
+   __shared__ real uipx[BLOCK_DIM];
+   __shared__ real uipy[BLOCK_DIM];
+   __shared__ real uipz[BLOCK_DIM];
+   __shared__ real pdi[BLOCK_DIM];
+   __shared__ real pti[BLOCK_DIM];
    __shared__ real poli[BLOCK_DIM];
    real ukdx;
    real ukdy;
    real ukdz;
-   real alphak;
+   real ukpx;
+   real ukpy;
+   real ukpz;
+   real pdk;
+   real ptk;
    real polk;
 
    //* /
@@ -64,9 +81,15 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
       fidx = 0;
       fidy = 0;
       fidz = 0;
+      fipx = 0;
+      fipy = 0;
+      fipz = 0;
       fkdx = 0;
       fkdy = 0;
       fkdz = 0;
+      fkpx = 0;
+      fkpy = 0;
+      fkpz = 0;
 
       int i = exclude[ii][0];
       int k = exclude[ii][1];
@@ -81,12 +104,20 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
       uidx[klane] = rsd[i][0];
       uidy[klane] = rsd[i][1];
       uidz[klane] = rsd[i][2];
-      alphai[klane] = palpha[i];
+      uipx[klane] = rsdp[i][0];
+      uipy[klane] = rsdp[i][1];
+      uipz[klane] = rsdp[i][2];
+      pdi[klane] = pdamp[i];
+      pti[klane] = thole[i];
       poli[klane] = polarity[i];
       ukdx = rsd[k][0];
       ukdy = rsd[k][1];
       ukdz = rsd[k][2];
-      alphak = palpha[k];
+      ukpx = rsdp[k][0];
+      ukpy = rsdp[k][1];
+      ukpz = rsdp[k][2];
+      pdk = pdamp[k];
+      ptk = thole[k];
       polk = polarity[k];
 
       constexpr bool incl = true;
@@ -96,11 +127,10 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
          real r = REAL_SQRT(r2);
-         real dmpik[3];
-         damp_mut(dmpik, r, alphai[klane], alphak);
-         real scale3 = scalea * dmpik[1];
-         real scale5 = scalea * dmpik[2];
-
+         real scale3, scale5;
+         damp_thole2(r, pdi[klane], pti[klane], pdk, ptk, scale3, scale5);
+         scale3 *= scalea;
+         scale5 *= scalea;
          real polik = poli[klane] * polk;
          real rr3 = scale3 * polik * REAL_RECIP(r * r2);
          real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
@@ -108,21 +138,37 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
          real c;
          c = rr5 * dot3(xr, yr, zr, ukdx, ukdy, ukdz);
          fidx += c * xr - rr3 * ukdx;
-         fidy += c * yr - rr3 * ukdy;
          fidz += c * zr - rr3 * ukdz;
+         fidy += c * yr - rr3 * ukdy;
+
+         c = rr5 * dot3(xr, yr, zr, ukpx, ukpy, ukpz);
+         fipx += c * xr - rr3 * ukpx;
+         fipy += c * yr - rr3 * ukpy;
+         fipz += c * zr - rr3 * ukpz;
 
          c = rr5 * dot3(xr, yr, zr, uidx[klane], uidy[klane], uidz[klane]);
          fkdx += c * xr - rr3 * uidx[klane];
          fkdy += c * yr - rr3 * uidy[klane];
          fkdz += c * zr - rr3 * uidz[klane];
+
+         c = rr5 * dot3(xr, yr, zr, uipx[klane], uipy[klane], uipz[klane]);
+         fkpx += c * xr - rr3 * uipx[klane];
+         fkpy += c * yr - rr3 * uipy[klane];
+         fkpz += c * zr - rr3 * uipz[klane];
       } // end if (include)
 
       atomic_add(fidx, &zrsd[i][0]);
       atomic_add(fidy, &zrsd[i][1]);
       atomic_add(fidz, &zrsd[i][2]);
+      atomic_add(fipx, &zrsdp[i][0]);
+      atomic_add(fipy, &zrsdp[i][1]);
+      atomic_add(fipz, &zrsdp[i][2]);
       atomic_add(fkdx, &zrsd[k][0]);
       atomic_add(fkdy, &zrsd[k][1]);
       atomic_add(fkdz, &zrsd[k][2]);
+      atomic_add(fkpx, &zrsdp[k][0]);
+      atomic_add(fkpy, &zrsdp[k][1]);
+      atomic_add(fkpz, &zrsdp[k][2]);
    }
    // */
 
@@ -130,9 +176,15 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
       fidx = 0;
       fidy = 0;
       fidz = 0;
+      fipx = 0;
+      fipy = 0;
+      fipz = 0;
       fkdx = 0;
       fkdy = 0;
       fkdz = 0;
+      fkpx = 0;
+      fkpy = 0;
+      fkpz = 0;
 
       int tri, tx, ty;
       tri = iakpl[iw];
@@ -154,21 +206,29 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
       uidx[threadIdx.x] = rsd[i][0];
       uidy[threadIdx.x] = rsd[i][1];
       uidz[threadIdx.x] = rsd[i][2];
-      alphai[threadIdx.x] = palpha[i];
+      uipx[threadIdx.x] = rsdp[i][0];
+      uipy[threadIdx.x] = rsdp[i][1];
+      uipz[threadIdx.x] = rsdp[i][2];
+      pdi[threadIdx.x] = pdamp[i];
+      pti[threadIdx.x] = thole[i];
       poli[threadIdx.x] = polarity[i];
       ukdx = rsd[k][0];
       ukdy = rsd[k][1];
       ukdz = rsd[k][2];
-      alphak = palpha[k];
+      ukpx = rsdp[k][0];
+      ukpy = rsdp[k][1];
+      ukpz = rsdp[k][2];
+      pdk = pdamp[k];
+      ptk = thole[k];
       polk = polarity[k];
 
-      unsigned int winfo0 = winfo[iw * WARP_SIZE + ilane];
+      unsigned int uinfo0 = uinfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
          int klane = srclane + threadIdx.x - ilane;
          bool incl = iid < kid and kid < n;
          int srcmask = 1 << srclane;
-         incl = incl and (winfo0 & srcmask) == 0;
+         incl = incl and (uinfo0 & srcmask) == 0;
          real scalea = 1;
          real xr = xk - xi;
          real yr = yk - yi;
@@ -176,11 +236,10 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
-            real dmpik[3];
-            damp_mut(dmpik, r, alphai[klane], alphak);
-            real scale3 = scalea * dmpik[1];
-            real scale5 = scalea * dmpik[2];
-
+            real scale3, scale5;
+            damp_thole2(r, pdi[klane], pti[klane], pdk, ptk, scale3, scale5);
+            scale3 *= scalea;
+            scale5 *= scalea;
             real polik = poli[klane] * polk;
             real rr3 = scale3 * polik * REAL_RECIP(r * r2);
             real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
@@ -188,13 +247,23 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
             real c;
             c = rr5 * dot3(xr, yr, zr, ukdx, ukdy, ukdz);
             fidx += c * xr - rr3 * ukdx;
-            fidy += c * yr - rr3 * ukdy;
             fidz += c * zr - rr3 * ukdz;
+            fidy += c * yr - rr3 * ukdy;
+
+            c = rr5 * dot3(xr, yr, zr, ukpx, ukpy, ukpz);
+            fipx += c * xr - rr3 * ukpx;
+            fipy += c * yr - rr3 * ukpy;
+            fipz += c * zr - rr3 * ukpz;
 
             c = rr5 * dot3(xr, yr, zr, uidx[klane], uidy[klane], uidz[klane]);
             fkdx += c * xr - rr3 * uidx[klane];
             fkdy += c * yr - rr3 * uidy[klane];
             fkdz += c * zr - rr3 * uidz[klane];
+
+            c = rr5 * dot3(xr, yr, zr, uipx[klane], uipy[klane], uipz[klane]);
+            fkpx += c * xr - rr3 * uipx[klane];
+            fkpy += c * yr - rr3 * uipy[klane];
+            fkpz += c * zr - rr3 * uipz[klane];
          } // end if (include)
 
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
@@ -204,23 +273,38 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
          fidx = __shfl_sync(ALL_LANES, fidx, ilane + 1);
          fidy = __shfl_sync(ALL_LANES, fidy, ilane + 1);
          fidz = __shfl_sync(ALL_LANES, fidz, ilane + 1);
+         fipx = __shfl_sync(ALL_LANES, fipx, ilane + 1);
+         fipy = __shfl_sync(ALL_LANES, fipy, ilane + 1);
+         fipz = __shfl_sync(ALL_LANES, fipz, ilane + 1);
       }
 
       atomic_add(fidx, &zrsd[i][0]);
       atomic_add(fidy, &zrsd[i][1]);
       atomic_add(fidz, &zrsd[i][2]);
+      atomic_add(fipx, &zrsdp[i][0]);
+      atomic_add(fipy, &zrsdp[i][1]);
+      atomic_add(fipz, &zrsdp[i][2]);
       atomic_add(fkdx, &zrsd[k][0]);
       atomic_add(fkdy, &zrsd[k][1]);
       atomic_add(fkdz, &zrsd[k][2]);
+      atomic_add(fkpx, &zrsdp[k][0]);
+      atomic_add(fkpy, &zrsdp[k][1]);
+      atomic_add(fkpz, &zrsdp[k][2]);
    }
 
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       fidx = 0;
       fidy = 0;
       fidz = 0;
+      fipx = 0;
+      fipy = 0;
+      fipz = 0;
       fkdx = 0;
       fkdy = 0;
       fkdz = 0;
+      fkpx = 0;
+      fkpy = 0;
+      fkpz = 0;
 
       int ty = iak[iw];
       int atomi = ty * WARP_SIZE + ilane;
@@ -237,12 +321,20 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
       uidx[threadIdx.x] = rsd[i][0];
       uidy[threadIdx.x] = rsd[i][1];
       uidz[threadIdx.x] = rsd[i][2];
-      alphai[threadIdx.x] = palpha[i];
+      uipx[threadIdx.x] = rsdp[i][0];
+      uipy[threadIdx.x] = rsdp[i][1];
+      uipz[threadIdx.x] = rsdp[i][2];
+      pdi[threadIdx.x] = pdamp[i];
+      pti[threadIdx.x] = thole[i];
       poli[threadIdx.x] = polarity[i];
       ukdx = rsd[k][0];
       ukdy = rsd[k][1];
       ukdz = rsd[k][2];
-      alphak = palpha[k];
+      ukpx = rsdp[k][0];
+      ukpy = rsdp[k][1];
+      ukpz = rsdp[k][2];
+      pdk = pdamp[k];
+      ptk = thole[k];
       polk = polarity[k];
 
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -256,11 +348,10 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
-            real dmpik[3];
-            damp_mut(dmpik, r, alphai[klane], alphak);
-            real scale3 = scalea * dmpik[1];
-            real scale5 = scalea * dmpik[2];
-
+            real scale3, scale5;
+            damp_thole2(r, pdi[klane], pti[klane], pdk, ptk, scale3, scale5);
+            scale3 *= scalea;
+            scale5 *= scalea;
             real polik = poli[klane] * polk;
             real rr3 = scale3 * polik * REAL_RECIP(r * r2);
             real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
@@ -268,13 +359,23 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
             real c;
             c = rr5 * dot3(xr, yr, zr, ukdx, ukdy, ukdz);
             fidx += c * xr - rr3 * ukdx;
-            fidy += c * yr - rr3 * ukdy;
             fidz += c * zr - rr3 * ukdz;
+            fidy += c * yr - rr3 * ukdy;
+
+            c = rr5 * dot3(xr, yr, zr, ukpx, ukpy, ukpz);
+            fipx += c * xr - rr3 * ukpx;
+            fipy += c * yr - rr3 * ukpy;
+            fipz += c * zr - rr3 * ukpz;
 
             c = rr5 * dot3(xr, yr, zr, uidx[klane], uidy[klane], uidz[klane]);
             fkdx += c * xr - rr3 * uidx[klane];
             fkdy += c * yr - rr3 * uidy[klane];
             fkdz += c * zr - rr3 * uidz[klane];
+
+            c = rr5 * dot3(xr, yr, zr, uipx[klane], uipy[klane], uipz[klane]);
+            fkpx += c * xr - rr3 * uipx[klane];
+            fkpy += c * yr - rr3 * uipy[klane];
+            fkpz += c * zr - rr3 * uipz[klane];
          } // end if (include)
 
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
@@ -283,28 +384,42 @@ void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
          fidx = __shfl_sync(ALL_LANES, fidx, ilane + 1);
          fidy = __shfl_sync(ALL_LANES, fidy, ilane + 1);
          fidz = __shfl_sync(ALL_LANES, fidz, ilane + 1);
+         fipx = __shfl_sync(ALL_LANES, fipx, ilane + 1);
+         fipy = __shfl_sync(ALL_LANES, fipy, ilane + 1);
+         fipz = __shfl_sync(ALL_LANES, fipz, ilane + 1);
       }
 
       atomic_add(fidx, &zrsd[i][0]);
       atomic_add(fidy, &zrsd[i][1]);
       atomic_add(fidz, &zrsd[i][2]);
+      atomic_add(fipx, &zrsdp[i][0]);
+      atomic_add(fipy, &zrsdp[i][1]);
+      atomic_add(fipz, &zrsdp[i][2]);
       atomic_add(fkdx, &zrsd[k][0]);
       atomic_add(fkdy, &zrsd[k][1]);
       atomic_add(fkdz, &zrsd[k][2]);
+      atomic_add(fkpx, &zrsdp[k][0]);
+      atomic_add(fkpy, &zrsdp[k][1]);
+      atomic_add(fkpz, &zrsdp[k][2]);
    }
 }
 
-void sparsePrecondApply2_cu(const real (*rsd)[3], real (*zrsd)[3])
+void sparsePrecondApply_cu(
+   const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
    const auto& st = *uspatial_v2_unit;
-   const real off = switchOff(Switch::USOLVE) + st.buffer;
+   real off = switchOff(Switch::USOLVE);
+   off = off + st.buffer;
 
-   launch_k1s(g::s0, n, sparsePrecond_cu3, //
-      rsd, zrsd, polarity, n, udiag);
-
+   launch_k1s(g::s0, n, sparsePrecond_cu0, //
+      rsd, rsdp, zrsd, zrsdp, polarity, n, udiag);
    int ngrid = gpuGridSize(BLOCK_DIM);
-   sparsePrecond_cu4<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
-      nwexclude, wexclude, wexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
-      st.iak, st.lst, rsd, zrsd, palpha, polarity);
+   ngrid *= BLOCK_DIM;
+   int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
+   nparallel = std::max(nparallel, ngrid);
+   launch_k1s(g::s0, nparallel, sparsePrecond_cu1, //
+      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nuexclude, uexclude, uexclude_scale, st.x, st.y,
+      st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, rsd, rsdp, zrsd, zrsdp, pdamp,
+      thole, polarity);
 }
 }

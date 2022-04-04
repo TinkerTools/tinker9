@@ -1,11 +1,11 @@
-#include "copysign.h"
 #include "ff/box.h"
 #include "ff/image.h"
 #include "ff/spatial.h"
-#include "imagefc.h"
-#include "launch.h"
+#include "seq/copysign.h"
+#include "seq/imagefc.h"
+#include "seq/launch.h"
+#include "seq/triangle.h"
 #include "tool/thrustcache.h"
-#include "triangle.h"
 // Eventually thrust will drop c++11 support.
 #define THRUST_IGNORE_DEPRECATED_CPP_DIALECT
 #include <thrust/sort.h>

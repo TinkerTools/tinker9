@@ -1,4 +1,5 @@
 #pragma once
+#include "ff/energy.h"
 
 namespace tinker {
 // Langevin Piston barostat (Leap Frog)

@@ -1,12 +1,12 @@
-#include "epolartorque.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/image.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
-#include "launch.h"
+#include "seq/epolartorque.h"
+#include "seq/launch.h"
 #include "seq/pair_polar.h"
-#include "triangle.h"
+#include "seq/triangle.h"
 
 namespace tinker {
 // ck.py Version 2.0.2

@@ -1,7 +1,7 @@
 #include "add.h"
-#include "launch.h"
 #include "md/pq.h"
 #include "md/rattle.h"
+#include "seq/launch.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {

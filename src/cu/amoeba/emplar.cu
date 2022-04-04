@@ -8,9 +8,9 @@
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
-#include "launch.h"
 #include "seq/damp.h"
-#include "triangle.h"
+#include "seq/launch.h"
+#include "seq/triangle.h"
 
 namespace tinker {
 // Rt Q = G

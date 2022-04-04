@@ -1,4 +1,4 @@
-#include "empolechgpenself.h"
+#include "empoleself.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/hippo/cflux.h"
 #include "ff/hippo/elechippo.h"
@@ -6,9 +6,9 @@
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
-#include "launch.h"
+#include "seq/launch.h"
 #include "seq/pair_mpole_chgpen.h"
-#include "triangle.h"
+#include "seq/triangle.h"
 
 namespace tinker {
 // ck.py Version 2.0.3

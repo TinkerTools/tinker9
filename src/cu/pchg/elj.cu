@@ -4,10 +4,10 @@
 #include "ff/pchg/evdw.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
-#include "launch.h"
 #include "math/switch.h"
+#include "seq/launch.h"
 #include "seq/pair_lj.h"
-#include "triangle.h"
+#include "seq/triangle.h"
 
 namespace tinker {
 // ck.py Version 2.0.3

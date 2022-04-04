@@ -1,5 +1,5 @@
-#include "ff/hippo/edisp.h"
 #include "ff/atom.h"
+#include "ff/hippo/edisp.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"

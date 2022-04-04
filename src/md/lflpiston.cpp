@@ -1,7 +1,7 @@
+#include "md/lflpiston.h"
 #include "ff/box.h"
 #include "ff/energy.h"
 #include "math/random.h"
-#include "md/lflpiston.h"
 #include "md/pq.h"
 #include "md/pt.h"
 #include "md/rattle.h"

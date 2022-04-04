@@ -4,9 +4,9 @@
 #include "ff/image.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
-#include "launch.h"
+#include "seq/launch.h"
 #include "seq/pair_chgtrn.h"
-#include "triangle.h"
+#include "seq/triangle.h"
 #include <cassert>
 
 namespace tinker {

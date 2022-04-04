@@ -1,6 +1,6 @@
-#include "launch.h"
 #include "md/pt.h"
 #include "reduce.h"
+#include "seq/launch.h"
 #include "tool/gpucard.h"
 #include <tinker/detail/units.hh>
 

@@ -5,11 +5,11 @@
 #include "ff/potent.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
-#include "launch.h"
 #include "md/osrw.h"
+#include "seq/launch.h"
 #include "seq/pair_charge.h"
 #include "seq/pair_lj.h"
-#include "triangle.h"
+#include "seq/triangle.h"
 
 extern "C"
 {

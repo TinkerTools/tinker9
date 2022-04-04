@@ -4,10 +4,10 @@
 #include "ff/pchg/evdw.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
-#include "launch.h"
 #include "math/switch.h"
+#include "seq/launch.h"
 #include "seq/pair_hal.h"
-#include "triangle.h"
+#include "seq/triangle.h"
 
 /**
  * Overheads:

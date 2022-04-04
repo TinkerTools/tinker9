@@ -1,6 +1,6 @@
+#include "md/lflpiston.h"
 #include "add.h"
 #include "ff/energy.h"
-#include "md/lflpiston.h"
 #include "md/pq.h"
 #include <tinker/detail/units.hh>
 
