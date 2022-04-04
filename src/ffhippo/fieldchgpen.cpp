@@ -5,7 +5,7 @@
 #include "ff/nblist.h"
 
 namespace tinker {
-void dfield_ewald_recip_self_acc(real (*field)[3]);
+void dfieldEwaldRecipSelf_acc(real (*field)[3]);
 
 void dfield_chgpen_nonewald(real (*field)[3]);
 void dfield_chgpen_ewald(real (*field)[3]);
@@ -56,7 +56,7 @@ void dfield_chgpen_ewald(real (*field)[3])
 
 void dfield_chgpen_ewald_recip_self(real (*field)[3])
 {
-   dfield_ewald_recip_self_acc(field);
+   dfieldEwaldRecipSelf_acc(field);
 }
 
 void dfield_chgpen_ewald_real(real (*field)[3])

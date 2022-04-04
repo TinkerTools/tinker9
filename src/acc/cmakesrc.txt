@@ -34,8 +34,8 @@ etors.cpp
 etortor.cpp
 eurey.cpp
 field_chgpen.cpp
-field_ewald.cpp
-field_nonewald.cpp
+fieldewald.cpp
+fieldnonewald.cpp
 induce.cpp
 induce_donly.cpp
 lf_lpiston.cpp

@@ -13,7 +13,6 @@
 #include "launch.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_polar_chgpen.h"
-#include "tool/gpucard.h"
 #include "triangle.h"
 
 namespace tinker {

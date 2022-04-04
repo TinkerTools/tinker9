@@ -1,33 +1,46 @@
-#include "ff/amoeba/induce.h"
+#include "ff/atom.h"
 #include "ff/elec.h"
-#include "ff/energy.h"
 #include "ff/nblist.h"
 
 namespace tinker {
-void dfield_ewald_recip_self(real (*field)[3], real (*fieldp)[3]);
-void dfield_ewald_real(real (*field)[3], real (*fieldp)[3]);
+extern void dfieldNonEwald_acc(real (*field)[3], real (*fieldp)[3]);
+extern void dfieldNonEwald_cu(real (*field)[3], real (*fieldp)[3]);
+void dfieldNonEwald(real (*field)[3], real (*fieldp)[3])
+{
+#if TINKER_CUDART
+   if (mlistVersion() & Nbl::SPATIAL)
+      dfieldNonEwald_cu(field, fieldp);
+   else
+#endif
+      dfieldNonEwald_acc(field, fieldp);
+}
+}
 
-void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3]);
-void dfield_ewald_recip_self_acc(real (*field)[3]);
-void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3]);
-void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3]);
-void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3]);
+namespace tinker {
+extern void dfieldEwaldRecipSelf_acc(real (*field)[3]);
+static void dfieldEwaldRecipSelf(real (*field)[3], real (*fieldp)[3])
+{
+   dfieldEwaldRecipSelf_acc(field);
+   darray::copy(g::q0, n, fieldp, field);
+}
 
-void ufield_ewald_recip_self(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
-void ufield_ewald_real(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+void dfieldEwaldReal_acc(real (*field)[3], real (*fieldp)[3]);
+void dfieldEwaldReal_cu(real (*field)[3], real (*fieldp)[3]);
+static void dfieldEwaldReal(real (*field)[3], real (*fieldp)[3])
+{
+#if TINKER_CUDART
+   if (mlistVersion() & Nbl::SPATIAL)
+      dfieldEwaldReal_cu(field, fieldp);
+   else
+#endif
+      dfieldEwaldReal_acc(field, fieldp);
+}
 
-void ufield_nonewald_acc(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
-void ufield_ewald_recip_self_acc(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
-void ufield_ewald_real_acc(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
-void ufield_nonewald_cu(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
-void ufield_ewald_real_cu(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3]);
+void dfieldEwald(real (*field)[3], real (*fieldp)[3])
+{
+   dfieldEwaldRecipSelf(field, fieldp);
+   dfieldEwaldReal(field, fieldp);
+}
 }
 
 namespace tinker {
@@ -38,78 +51,62 @@ void dfield(real (*field)[3], real (*fieldp)[3])
    else
       dfieldNonEwald(field, fieldp);
 }
+}
 
-void dfieldNonEwald(real (*field)[3], real (*fieldp)[3])
+namespace tinker {
+extern void ufieldNonEwald_acc(const real (*uind)[3], const real (*uinp)[3], //
+   real (*field)[3], real (*fieldp)[3]);
+extern void ufieldNonEwald_cu(const real (*uind)[3], const real (*uinp)[3], //
+   real (*field)[3], real (*fieldp)[3]);
+void ufieldNonEwald(
+   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
 #if TINKER_CUDART
    if (mlistVersion() & Nbl::SPATIAL)
-      dfield_nonewald_cu(field, fieldp);
+      ufieldNonEwald_cu(uind, uinp, field, fieldp);
    else
 #endif
-      dfield_nonewald_acc(field, fieldp);
+      ufieldNonEwald_acc(uind, uinp, field, fieldp);
+}
 }
 
-void dfieldEwald(real (*field)[3], real (*fieldp)[3])
+namespace tinker {
+extern void ufieldEwaldRecipSelf_acc(const real (*uind)[3], const real (*uinp)[3], //
+   real (*field)[3], real (*fieldp)[3]);
+static void ufieldEwaldRecipSelf(const real (*uind)[3], const real (*uinp)[3], //
+   real (*field)[3], real (*fieldp)[3])
 {
-   dfield_ewald_recip_self(field, fieldp);
-   dfield_ewald_real(field, fieldp);
+   ufieldEwaldRecipSelf_acc(uind, uinp, field, fieldp);
 }
 
-void dfield_ewald_recip_self(real (*field)[3], real (*fieldp)[3])
-{
-   dfield_ewald_recip_self_acc(field);
-   darray::copy(g::q0, n, fieldp, field);
-}
-
-void dfield_ewald_real(real (*field)[3], real (*fieldp)[3])
+extern void ufieldEwaldReal_acc(const real (*uind)[3], const real (*uinp)[3], //
+   real (*field)[3], real (*fieldp)[3]);
+extern void ufieldEwaldReal_cu(const real (*uind)[3], const real (*uinp)[3], //
+   real (*field)[3], real (*fieldp)[3]);
+void ufieldEwaldReal(const real (*uind)[3], const real (*uinp)[3], //
+   real (*field)[3], real (*fieldp)[3])
 {
 #if TINKER_CUDART
    if (mlistVersion() & Nbl::SPATIAL)
-      dfield_ewald_real_cu(field, fieldp);
+      ufieldEwaldReal_cu(uind, uinp, field, fieldp);
    else
 #endif
-      dfield_ewald_real_acc(field, fieldp);
+      ufieldEwaldReal_acc(uind, uinp, field, fieldp);
 }
 
+void ufieldEwald(const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
+{
+   ufieldEwaldRecipSelf(uind, uinp, field, fieldp);
+   ufieldEwaldReal(uind, uinp, field, fieldp);
+}
+}
+
+namespace tinker {
 void ufield(const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    if (useEwald())
       ufieldEwald(uind, uinp, field, fieldp);
    else
       ufieldNonEwald(uind, uinp, field, fieldp);
-}
-
-void ufieldNonEwald(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
-{
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      ufield_nonewald_cu(uind, uinp, field, fieldp);
-   else
-#endif
-      ufield_nonewald_acc(uind, uinp, field, fieldp);
-}
-
-void ufieldEwald(const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
-{
-   ufield_ewald_recip_self(uind, uinp, field, fieldp);
-   ufield_ewald_real(uind, uinp, field, fieldp);
-}
-
-void ufield_ewald_recip_self(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
-{
-   ufield_ewald_recip_self_acc(uind, uinp, field, fieldp);
-}
-
-void ufield_ewald_real(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
-{
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      ufield_ewald_real_cu(uind, uinp, field, fieldp);
-   else
-#endif
-      ufield_ewald_real_acc(uind, uinp, field, fieldp);
 }
 }

@@ -19,7 +19,6 @@
 #include "seq/torsion.h"
 #include "seq/tortor.h"
 #include "seq/urey.h"
-#include "tool/gpucard.h"
 #include <cassert>
 
 namespace tinker {

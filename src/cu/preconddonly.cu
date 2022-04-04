@@ -10,7 +10,6 @@
 #include "ff/switch.h"
 #include "launch.h"
 #include "seq/damp_hippo.h"
-#include "tool/gpucard.h"
 #include "triangle.h"
 
 namespace tinker {

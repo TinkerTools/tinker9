@@ -1,15 +1,10 @@
-#include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
-#include "ff/energy.h"
 #include "ff/image.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
 #include "seq/pair_field.h"
-#include "tool/cudalib.h"
-#include "tool/gpucard.h"
 #include "triangle.h"
 
 namespace tinker {
@@ -349,7 +344,7 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict d
    }
 }
 
-void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
+void dfieldEwaldReal_cu(real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_v2_unit;
    const real off = switchOff(Switch::EWALD);
@@ -367,7 +362,7 @@ void dfield_ewald_real_cu(real (*field)[3], real (*fieldp)[3])
       pdamp, aewald);
 }
 
-void dfield_nonewald_cu(real (*field)[3], real (*fieldp)[3])
+void dfieldNonEwald_cu(real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_v2_unit;
    const real off = switchOff(Switch::MPOLE);
@@ -681,7 +676,7 @@ void ufield_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict u
    }
 }
 
-void ufield_ewald_real_cu(
+void ufieldEwaldReal_cu(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_v2_unit;
@@ -700,7 +695,7 @@ void ufield_ewald_real_cu(
       thole, pdamp, aewald);
 }
 
-void ufield_nonewald_cu(
+void ufieldNonEwald_cu(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    const auto& st = *mspatial_v2_unit;

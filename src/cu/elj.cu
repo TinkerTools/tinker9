@@ -7,7 +7,6 @@
 #include "launch.h"
 #include "math/switch.h"
 #include "seq/pair_lj.h"
-#include "tool/gpucard.h"
 #include "triangle.h"
 
 namespace tinker {

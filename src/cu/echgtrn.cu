@@ -12,7 +12,6 @@
 #include "math/switch.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_chgtrn.h"
-#include "tool/gpucard.h"
 #include "triangle.h"
 #include <cassert>
 

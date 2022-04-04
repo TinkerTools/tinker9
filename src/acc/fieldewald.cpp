@@ -1,19 +1,15 @@
-#include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/empole.h"
-#include "ff/amoeba/epolar.h"
-#include "ff/energy.h"
+#include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
-#include "ff/potent.h"
 #include "ff/switch.h"
 #include "seq/pair_field.h"
 #include "tool/gpucard.h"
 
 namespace tinker {
 // see also subroutine udirect1 in induce.f
-void dfield_ewald_recip_self_acc(real (*field)[3])
+void dfieldEwaldRecipSelf_acc(real (*field)[3])
 {
    darray::zero(g::q0, n, field);
 
@@ -45,7 +41,7 @@ void dfield_ewald_recip_self_acc(real (*field)[3])
 
 // see also subroutine udirect2b / dfield0c in induce.f
 #define DFIELD_DPTRS x, y, z, thole, pdamp, field, fieldp, rpole
-void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
+void dfieldEwaldReal_acc(real (*field)[3], real (*fieldp)[3])
 {
    const real off = switchOff(Switch::EWALD);
    const real off2 = off * off;
@@ -190,7 +186,7 @@ void dfield_ewald_real_acc(real (*field)[3], real (*fieldp)[3])
 }
 
 // see also subroutine umutual1 in induce.f
-void ufield_ewald_recip_self_acc(
+void ufieldEwaldRecipSelf_acc(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    darray::zero(g::q0, n, field, fieldp);
@@ -240,7 +236,7 @@ void ufield_ewald_recip_self_acc(
 }
 
 #define UFIELD_DPTRS x, y, z, thole, pdamp, field, fieldp, uind, uinp
-void ufield_ewald_real_acc(
+void ufieldEwaldReal_acc(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    const real off = switchOff(Switch::EWALD);

@@ -9,7 +9,6 @@
 #include "seq/bsplgen.h"
 #include "seq/damp_hippo.h"
 #include "seq/pair_repel.h"
-#include "tool/gpucard.h"
 #include "triangle.h"
 
 namespace tinker {

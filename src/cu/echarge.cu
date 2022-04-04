@@ -1,4 +1,3 @@
-#include "add.h"
 #include "ff/energy.h"
 #include "ff/image.h"
 #include "ff/pchg/echarge.h"
@@ -8,7 +7,6 @@
 #include "launch.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_charge.h"
-#include "tool/gpucard.h"
 #include "triangle.h"
 
 namespace tinker {

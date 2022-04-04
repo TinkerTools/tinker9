@@ -1,7 +1,5 @@
-#include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
-#include "ff/energy.h"
+#include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/switch.h"
@@ -11,7 +9,7 @@
 namespace tinker {
 // see also subroutine dfield0b in induce.f
 #define DFIELD_DPTRS x, y, z, thole, pdamp, field, fieldp, rpole
-void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
+void dfieldNonEwald_acc(real (*field)[3], real (*fieldp)[3])
 {
    darray::zero(g::q0, n, field, fieldp);
 
@@ -156,7 +154,7 @@ void dfield_nonewald_acc(real (*field)[3], real (*fieldp)[3])
 
 // see also subroutine ufield0b in induce.f
 #define UFIELD_DPTRS x, y, z, thole, pdamp, field, fieldp, uind, uinp
-void ufield_nonewald_acc(
+void ufieldNonEwald_acc(
    const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
 {
    darray::zero(g::q0, n, field, fieldp);
