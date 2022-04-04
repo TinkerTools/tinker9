@@ -1,13 +1,10 @@
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/energy.h"
 #include "ff/hippo/erepel.h"
 #include "ff/image.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
-#include "seq/bsplgen.h"
-#include "seq/damp_hippo.h"
 #include "seq/pair_repel.h"
 #include "triangle.h"
 
@@ -484,7 +481,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
 }
 
 template <class Ver>
-void erepel_cu2()
+static void erepel_cu2()
 {
    const auto& st = *mspatial_v2_unit;
    real cut = switchCut(Switch::REPULS);

@@ -1,22 +1,19 @@
 #include "ff/hippo/erepel.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/empole.h"
-#include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/hippo/erepel.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tool/darray.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/repel.hh>
 #include <tinker/detail/reppot.hh>
-#include <tinker/detail/sizes.hh>
 
 namespace tinker {
 void erepelData(RcOp op)
 {
-   if (!usePotent(Potent::REPULS))
+   if (not usePotent(Potent::REPULS))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -136,8 +133,8 @@ void erepelData(RcOp op)
    }
 }
 
-void erepel_cu(int);
-void erepel_acc(int);
+extern void erepel_acc(int);
+extern void erepel_cu(int);
 void erepel(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

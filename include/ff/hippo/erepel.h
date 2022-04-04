@@ -3,7 +3,9 @@
 #include "tool/rcman.h"
 
 namespace tinker {
+/// \ingroup repel
 void erepelData(RcOp);
+/// \ingroup repel
 void erepel(int vers);
 }
 

@@ -1,14 +1,10 @@
 #include "ff/hippo/erepel.h"
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/energy.h"
-#include "ff/hippo/erepel.h"
+#include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/switch.h"
-#include "math/switch.h"
-#include "seq/bsplgen.h"
-#include "seq/damp_hippo.h"
 #include "seq/pair_repel.h"
 #include "tool/gpucard.h"
 
@@ -16,7 +12,7 @@ namespace tinker {
 #define DEVICE_PTRS                                                                                \
    x, y, z, derx, dery, derz, rpole, sizpr, dmppr, elepr, nrep, er, vir_er, trqx, trqy, trqz
 template <class Ver>
-void erepel_acc1()
+static void erepel_acc1()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
