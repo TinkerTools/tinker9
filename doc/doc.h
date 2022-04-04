@@ -37,6 +37,12 @@
 ///    \ingroup ff
 ///    \defgroup pme  Particle Mesh Ewald
 ///    \ingroup ff
+///    \defgroup cflux  Charge Flux
+///    \ingroup ff
+///    \defgroup disp  HIPPO Dispersion
+///    \ingroup ff
+///    \defgroup repel  HIPPO Repulsion
+///    \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)

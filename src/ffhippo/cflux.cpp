@@ -1,20 +1,11 @@
-#include "ff/hippo/cflux.h"
 #include "ff/atom.h"
 #include "ff/hippo/elechippo.h"
-#include "ff/molecule.h"
-#include "ff/nblist.h"
 #include "ff/pchg/evalence.h"
 #include "ff/potent.h"
-#include "math/zero.h"
-#include "tool/io.h"
-#include <cassert>
-#include <tinker/detail/angbnd.hh>
-#include <tinker/detail/angpot.hh>
+#include "tool/darray.h"
 #include <tinker/detail/atmlst.hh>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/cflux.hh>
-#include <tinker/detail/chgpen.hh>
-#include <tinker/detail/couple.hh>
 #include <tinker/detail/mpole.hh>
 
 namespace tinker {
@@ -65,15 +56,15 @@ void cfluxData(RcOp op)
    }
 }
 
-void cfluxZeroPot()
-{
-   darray::zero(g::q0, n, pot);
-}
-
 extern void alterchg_acc();
 void alterchg()
 {
    alterchg_acc();
+}
+
+void cfluxZeroPot()
+{
+   darray::zero(g::q0, n, pot);
 }
 
 extern void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, VirialBuffer vir);

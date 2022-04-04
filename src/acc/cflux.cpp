@@ -1,26 +1,107 @@
+#include "ff/hippo/cflux.h"
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
 #include "ff/atom.h"
-#include "ff/elec.h"
-#include "ff/hippo/cflux.h"
 #include "ff/hippo/elechippo.h"
-#include "ff/molecule.h"
 #include "ff/pchg/evalence.h"
 #include "math/libfunc.h"
-#include "seq/bsplgen.h"
-#include "tool/energybuffer.h"
-#include "tool/gpucard.h"
+#include "tool/darray.h"
 
 namespace tinker {
-namespace {
-#pragma acc routine seq
-real dot_vect(const real* restrict a, const real* restrict b)
+static void bndchg_acc1()
 {
-   return (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]);
+   #pragma acc parallel loop independent async\
+               deviceptr(x,y,z,ibnd,bflx,bl,\
+               pdelta)
+   for (int i = 0; i < nbond; ++i) {
+      int ia = ibnd[i][0];
+      int ib = ibnd[i][1];
+
+      real pb = bflx[i];
+      real ideal = bl[i];
+      real xab = x[ia] - x[ib];
+      real yab = y[ia] - y[ib];
+      real zab = z[ia] - z[ib];
+      real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
+      real dq = pb * (rab - ideal);
+
+      atomic_add(-dq, pdelta, ia);
+      atomic_add(dq, pdelta, ib);
+   } // end for (int i)
+}
+
+static void angchg_acc1()
+{
+   #pragma acc parallel loop independent async\
+               deviceptr(x,y,z,iang,anat,angtyp,\
+               aflx,abflx,bl,balist,pdelta)
+   for (int i = 0; i < nangle; ++i) {
+      int ia = iang[i][0];
+      int ib = iang[i][1];
+      int ic = iang[i][2];
+
+      real pa1 = aflx[i][0];
+      real pa2 = aflx[i][1];
+      real pb1 = abflx[i][0];
+      real pb2 = abflx[i][1];
+      real ideal = anat[i];
+      real xia = x[ia];
+      real yia = y[ia];
+      real zia = z[ia];
+      real xib = x[ib];
+      real yib = y[ib];
+      real zib = z[ib];
+      real xic = x[ic];
+      real yic = y[ic];
+      real zic = z[ic];
+      real xab = xia - xib;
+      real yab = yia - yib;
+      real zab = zia - zib;
+      real xcb = xic - xib;
+      real ycb = yic - yib;
+      real zcb = zic - zib;
+      real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
+      real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
+
+      real dot, angle, cosine;
+      if (rab != 0 and rcb != 0) {
+         dot = xab * xcb + yab * ycb + zab * zcb;
+         cosine = dot / (rab * rcb);
+         cosine = REAL_MIN(1.0, REAL_MAX(-1, cosine));
+         angle = radian * REAL_ACOS(cosine);
+      }
+
+      int ab = balist[i][0];
+      int cb = balist[i][1];
+      real rab0 = bl[ab];
+      real rcb0 = bl[cb];
+      real dq1 = pb1 * (rcb - rcb0) + pa1 * (angle - ideal) / radian;
+      real dq2 = pb2 * (rab - rab0) + pa2 * (angle - ideal) / radian;
+      atomic_add(dq1, pdelta, ia);
+      atomic_add(dq2, pdelta, ic);
+      atomic_add(-(dq1 + dq2), pdelta, ib);
+   } // end for (int i)
+}
+
+void alterchg_acc()
+{
+   darray::zero(g::q0, n, pdelta);
+
+   bndchg_acc1();
+   angchg_acc1();
+
+   // alter monopoles and charge penetration
+   #pragma acc parallel loop independent async\
+           deviceptr(pval,pval0,pdelta,pole,mono0)
+   for (int i = 0; i < n; ++i) {
+      pval[i] = pval0[i] + pdelta[i];
+      pole[i][0] = mono0[i] + pdelta[i];
+   }
 }
 }
 
-void bnd_dcflux()
+namespace tinker {
+static void dcfluxBnd_acc()
 {
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,ibnd,bflx,pot,\
@@ -49,11 +130,10 @@ void bnd_dcflux()
    }
 }
 
-void ang_dcflux()
+static void dcfluxAng_acc()
 {
    #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,iang,aflx,abflx,pot,\
-               decfx,decfy,decfz)
+               deviceptr(x,y,z,iang,aflx,abflx,pot,decfx,decfy,decfz)
    for (int i = 0; i < nangle; ++i) {
       int ia = iang[i][0];
       int ib = iang[i][1];
@@ -103,7 +183,7 @@ void ang_dcflux()
       real fby = -(fay + fcy);
       real fbz = -(faz + fcz);
 
-      real dot = dot_vect(dba, dbc);
+      real dot = dba[0] * dbc[0] + dba[1] * dbc[1] + dba[2] * dbc[2];
       real term = -rba * rbc / REAL_SQRT(rba2 * rbc2 - dot * dot);
       real fterm = term * (dpota * pa1 + dpotc * pa2);
       c1 = 1 / (rba * rbc);
@@ -131,7 +211,7 @@ void ang_dcflux()
 }
 
 template <int DO_V>
-void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
+static void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
    VirialBuffer restrict vir)
 {
    auto bufsize = bufferSize();
@@ -144,8 +224,8 @@ void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* rest
       decfz[i] = 0;
    }
 
-   bnd_dcflux();
-   ang_dcflux();
+   dcfluxBnd_acc();
+   dcfluxAng_acc();
 
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,decfx,decfy,decfz,\
