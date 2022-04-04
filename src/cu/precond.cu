@@ -1,7 +1,5 @@
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
-#include "ff/amoeba/induce.h"
 #include "ff/image.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
@@ -12,7 +10,7 @@
 
 namespace tinker {
 __global__
-void sparse_precond_cu0(const real (*restrict rsd)[3], const real (*restrict rsdp)[3],
+void sparsePrecond_cu0(const real (*restrict rsd)[3], const real (*restrict rsdp)[3],
    real (*restrict zrsd)[3], real (*restrict zrsdp)[3], const real* restrict polarity, int n,
    real udiag)
 {
@@ -28,7 +26,7 @@ void sparse_precond_cu0(const real (*restrict rsd)[3], const real (*restrict rsd
 
 // ck.py Version 2.0.2
 __global__
-void sparse_precond_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo,
+void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo,
    int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
    const real* restrict x, const real* restrict y, const real* restrict z,
    const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
@@ -407,20 +405,20 @@ void sparse_precond_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* re
    }
 }
 
-void sparse_precond_apply_cu(
+void sparsePrecondApply_cu(
    const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
    const auto& st = *uspatial_v2_unit;
    real off = switchOff(Switch::USOLVE);
    off = off + st.buffer;
 
-   launch_k1s(g::s0, n, sparse_precond_cu0, //
+   launch_k1s(g::s0, n, sparsePrecond_cu0, //
       rsd, rsdp, zrsd, zrsdp, polarity, n, udiag);
    int ngrid = gpuGridSize(BLOCK_DIM);
    ngrid *= BLOCK_DIM;
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
-   launch_k1s(g::s0, nparallel, sparse_precond_cu1, //
+   launch_k1s(g::s0, nparallel, sparsePrecond_cu1, //
       st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nuexclude, uexclude, uexclude_scale, st.x, st.y,
       st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, rsd, rsdp, zrsd, zrsdp, pdamp,
       thole, polarity);

@@ -15,8 +15,6 @@ erepel.cu
 evalence.cu
 field.cu
 field_chgpen.cu
-induce.cu
-induce_donly.cu
 lpiston.cu
 mathfunc_parallel.cu
 mdintg.cu
@@ -24,6 +22,8 @@ mdpt.cu
 pcg.cu
 pcg_donly.cu
 pme.cu
+precond.cu
+preconddonly.cu
 rattle.cu
 spatial.cu
 )

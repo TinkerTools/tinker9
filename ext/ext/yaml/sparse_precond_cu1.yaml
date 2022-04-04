@@ -1,4 +1,4 @@
-KERNEL_NAME: sparse_precond_cu1
+KERNEL_NAME: sparsePrecond_cu1
 # TEMPLATE_PARAMS:
 # CONSTEXPR_FLAGS:
 

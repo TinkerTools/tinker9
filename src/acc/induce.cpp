@@ -1,8 +1,6 @@
 #include "ff/amoeba/induce.h"
 #include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/amoeba/epolar.h"
-#include "ff/amoeba/induce.h"
 #include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
@@ -10,196 +8,34 @@
 #include "seq/damp.h"
 #include "tool/error.h"
 #include "tool/gpucard.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void induce_mutual_pcg1_cu(real (*uind)[3], real (*uinp)[3]);
-}
-
-namespace tinker {
-void diagPrecond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
-{
-   #pragma acc parallel loop independent async\
-               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
-   for (int i = 0; i < n; ++i) {
-      real poli = polarity[i];
-      #pragma acc loop seq
-      for (int j = 0; j < 3; ++j) {
-         zrsd[i][j] = poli * rsd[i][j];
-         zrsdp[i][j] = poli * rsdp[i][j];
-      }
-   }
-}
-
-#define APPLY_DPTRS rsd, rsdp, zrsd, zrsdp, x, y, z, polarity, pdamp, thole
-void sparse_precond_apply_acc(
-   const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
-{
-   #pragma acc parallel loop independent async\
-               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
-   for (int i = 0; i < n; ++i) {
-      real poli = udiag * polarity[i];
-      #pragma acc loop seq
-      for (int j = 0; j < 3; ++j) {
-         zrsd[i][j] = poli * rsd[i][j];
-         zrsdp[i][j] = poli * rsdp[i][j];
-      }
-   }
-
-   const int maxnlst = ulist_unit->maxnlst;
-   const auto* ulst = ulist_unit.deviceptr();
-
-   MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
-   #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(APPLY_DPTRS,ulst)
-   #pragma acc loop gang independent
-   for (int i = 0; i < n; ++i) {
-      real xi = x[i];
-      real yi = y[i];
-      real zi = z[i];
-      real pdi = pdamp[i];
-      real pti = thole[i];
-      real poli = polarity[i];
-
-      int nulsti = ulst->nlst[i];
-      int base = i * maxnlst;
-      real gxi = 0, gyi = 0, gzi = 0;
-      real txi = 0, tyi = 0, tzi = 0;
-
-      #pragma acc loop vector independent reduction(+:gxi,gyi,gzi,txi,tyi,tzi)
-      for (int kk = 0; kk < nulsti; ++kk) {
-         int k = ulst->lst[base + kk];
-         real xr = x[k] - xi;
-         real yr = y[k] - yi;
-         real zr = z[k] - zi;
-
-         real r2 = image2(xr, yr, zr);
-         real r = REAL_SQRT(r2);
-
-         real scale3, scale5;
-         damp_thole2(r, pdi, pti, pdamp[k], thole[k], scale3, scale5);
-
-         real polik = poli * polarity[k];
-         real rr3 = scale3 * polik * REAL_RECIP(r * r2);
-         real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
-
-         real m0 = rr5 * xr * xr - rr3;
-         real m1 = rr5 * xr * yr;
-         real m2 = rr5 * xr * zr;
-         real m3 = rr5 * yr * yr - rr3;
-         real m4 = rr5 * yr * zr;
-         real m5 = rr5 * zr * zr - rr3;
-
-         gxi += m0 * rsd[k][0] + m1 * rsd[k][1] + m2 * rsd[k][2];
-         gyi += m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2];
-         gzi += m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2];
-
-         atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2], &zrsd[k][0]);
-         atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2], &zrsd[k][1]);
-         atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2], &zrsd[k][2]);
-
-         txi += m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2];
-         tyi += m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2];
-         tzi += m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2];
-
-         atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2], &zrsdp[k][0]);
-         atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2], &zrsdp[k][1]);
-         atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2], &zrsdp[k][2]);
-      }
-
-      atomic_add(gxi, &zrsd[i][0]);
-      atomic_add(gyi, &zrsd[i][1]);
-      atomic_add(gzi, &zrsd[i][2]);
-
-      atomic_add(txi, &zrsdp[i][0]);
-      atomic_add(tyi, &zrsdp[i][1]);
-      atomic_add(tzi, &zrsdp[i][2]);
-   }
-
-   #pragma acc parallel loop async\
-               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(APPLY_DPTRS,uexclude,uexclude_scale)
-   for (int ii = 0; ii < nuexclude; ++ii) {
-      int i = uexclude[ii][0];
-      int k = uexclude[ii][1];
-      real uscale = uexclude_scale[ii] - 1;
-
-      real xi = x[i];
-      real yi = y[i];
-      real zi = z[i];
-      real pdi = pdamp[i];
-      real pti = thole[i];
-      real poli = polarity[i];
-
-      real xr = x[k] - xi;
-      real yr = y[k] - yi;
-      real zr = z[k] - zi;
-
-      real r2 = image2(xr, yr, zr);
-      real r = REAL_SQRT(r2);
-
-      real scale3, scale5;
-      damp_thole2(r, pdi, pti, pdamp[k], thole[k], scale3, scale5);
-      scale3 *= uscale;
-      scale5 *= uscale;
-
-      real polik = poli * polarity[k];
-      real rr3 = scale3 * polik * REAL_RECIP(r * r2);
-      real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
-
-      real m0 = rr5 * xr * xr - rr3;
-      real m1 = rr5 * xr * yr;
-      real m2 = rr5 * xr * zr;
-      real m3 = rr5 * yr * yr - rr3;
-      real m4 = rr5 * yr * zr;
-      real m5 = rr5 * zr * zr - rr3;
-
-      atomic_add(m0 * rsd[k][0] + m1 * rsd[k][1] + m2 * rsd[k][2], &zrsd[i][0]);
-      atomic_add(m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2], &zrsd[i][1]);
-      atomic_add(m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2], &zrsd[i][2]);
-
-      atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2], &zrsd[k][0]);
-      atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2], &zrsd[k][1]);
-      atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2], &zrsd[k][2]);
-
-      atomic_add(m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2], &zrsdp[i][0]);
-      atomic_add(m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2], &zrsdp[i][1]);
-      atomic_add(m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2], &zrsdp[i][2]);
-
-      atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2], &zrsdp[k][0]);
-      atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2], &zrsdp[k][1]);
-      atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2], &zrsdp[k][2]);
-   }
-}
-
-/**
- * PCG
- *
- * M = preconditioner
- * T = inv_alpha + Tu, -Tu = ufield
- *
- * r(0) = E - T u(0)
- * p(0) (or conj(0)) = M r(0)
- * ------------------------------
- * gamma (or a) = r(i) M r(i) / p(i) T p(i)
- * u(i+1) = u(i) + a p(i)
- * r(i+1) = r(i) - a T p(i)
- * beta (or b(i+1)) = r(i+1) M r(i+1) / r(i) M r(i)
- * p(i+1) = M r(i+1) + b(i+1) p(i)
- * ------------------------------
- *
- * subroutine induce0a in induce.f
- * rsd = r
- * zrsd = M r
- * conj = p
- * vec = T P
- */
-void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
+// PCG
+//
+// M = preconditioner
+// T = inv_alpha + Tu, -Tu = ufield
+//
+// r(0) = E - T u(0)
+// p(0) (or conj(0)) = M r(0)
+// ------------------------------
+// gamma (or a) = r(i) M r(i) / p(i) T p(i)
+// u(i+1) = u(i) + a p(i)
+// r(i+1) = r(i) - a T p(i)
+// beta (or b(i+1)) = r(i+1) M r(i+1) / r(i) M r(i)
+// p(i+1) = M r(i+1) + b(i+1) p(i)
+// ------------------------------
+//
+// subroutine induce0a in induce.f
+// rsd = r
+// zrsd = M r
+// conj = p
+// vec = T P
+void induceMutualPcg1_acc(real (*uind)[3], real (*uinp)[3])
 {
    auto* field = work01_;
    auto* fieldp = work02_;
@@ -449,18 +285,166 @@ void induce_mutual_pcg1_acc(real (*uind)[3], real (*uinp)[3])
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
 }
-
-void induce_mutual_pcg1(real (*uind)[3], real (*uinp)[3])
-{
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      induce_mutual_pcg1_cu(uind, uinp);
-   else
-#endif
-      induce_mutual_pcg1_acc(uind, uinp);
 }
 
-void ulspred_save_acc(const real (*restrict uind)[3], const real (*restrict uinp)[3])
+namespace tinker {
+void diagPrecond_acc(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
+{
+   #pragma acc parallel loop independent async\
+               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
+   for (int i = 0; i < n; ++i) {
+      real poli = polarity[i];
+      #pragma acc loop seq
+      for (int j = 0; j < 3; ++j) {
+         zrsd[i][j] = poli * rsd[i][j];
+         zrsdp[i][j] = poli * rsdp[i][j];
+      }
+   }
+}
+
+#define APPLY_DPTRS rsd, rsdp, zrsd, zrsdp, x, y, z, polarity, pdamp, thole
+void sparsePrecondApply_acc(
+   const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
+{
+   #pragma acc parallel loop independent async\
+               deviceptr(polarity,rsd,rsdp,zrsd,zrsdp)
+   for (int i = 0; i < n; ++i) {
+      real poli = udiag * polarity[i];
+      #pragma acc loop seq
+      for (int j = 0; j < 3; ++j) {
+         zrsd[i][j] = poli * rsd[i][j];
+         zrsdp[i][j] = poli * rsdp[i][j];
+      }
+   }
+
+   const int maxnlst = ulist_unit->maxnlst;
+   const auto* ulst = ulist_unit.deviceptr();
+
+   MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
+   #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
+               deviceptr(APPLY_DPTRS,ulst)
+   #pragma acc loop gang independent
+   for (int i = 0; i < n; ++i) {
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
+      real pdi = pdamp[i];
+      real pti = thole[i];
+      real poli = polarity[i];
+
+      int nulsti = ulst->nlst[i];
+      int base = i * maxnlst;
+      real gxi = 0, gyi = 0, gzi = 0;
+      real txi = 0, tyi = 0, tzi = 0;
+
+      #pragma acc loop vector independent reduction(+:gxi,gyi,gzi,txi,tyi,tzi)
+      for (int kk = 0; kk < nulsti; ++kk) {
+         int k = ulst->lst[base + kk];
+         real xr = x[k] - xi;
+         real yr = y[k] - yi;
+         real zr = z[k] - zi;
+
+         real r2 = image2(xr, yr, zr);
+         real r = REAL_SQRT(r2);
+
+         real scale3, scale5;
+         damp_thole2(r, pdi, pti, pdamp[k], thole[k], scale3, scale5);
+
+         real polik = poli * polarity[k];
+         real rr3 = scale3 * polik * REAL_RECIP(r * r2);
+         real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
+
+         real m0 = rr5 * xr * xr - rr3;
+         real m1 = rr5 * xr * yr;
+         real m2 = rr5 * xr * zr;
+         real m3 = rr5 * yr * yr - rr3;
+         real m4 = rr5 * yr * zr;
+         real m5 = rr5 * zr * zr - rr3;
+
+         gxi += m0 * rsd[k][0] + m1 * rsd[k][1] + m2 * rsd[k][2];
+         gyi += m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2];
+         gzi += m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2];
+
+         atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2], &zrsd[k][0]);
+         atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2], &zrsd[k][1]);
+         atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2], &zrsd[k][2]);
+
+         txi += m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2];
+         tyi += m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2];
+         tzi += m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2];
+
+         atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2], &zrsdp[k][0]);
+         atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2], &zrsdp[k][1]);
+         atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2], &zrsdp[k][2]);
+      }
+
+      atomic_add(gxi, &zrsd[i][0]);
+      atomic_add(gyi, &zrsd[i][1]);
+      atomic_add(gzi, &zrsd[i][2]);
+
+      atomic_add(txi, &zrsdp[i][0]);
+      atomic_add(tyi, &zrsdp[i][1]);
+      atomic_add(tzi, &zrsdp[i][2]);
+   }
+
+   #pragma acc parallel loop async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
+               deviceptr(APPLY_DPTRS,uexclude,uexclude_scale)
+   for (int ii = 0; ii < nuexclude; ++ii) {
+      int i = uexclude[ii][0];
+      int k = uexclude[ii][1];
+      real uscale = uexclude_scale[ii] - 1;
+
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
+      real pdi = pdamp[i];
+      real pti = thole[i];
+      real poli = polarity[i];
+
+      real xr = x[k] - xi;
+      real yr = y[k] - yi;
+      real zr = z[k] - zi;
+
+      real r2 = image2(xr, yr, zr);
+      real r = REAL_SQRT(r2);
+
+      real scale3, scale5;
+      damp_thole2(r, pdi, pti, pdamp[k], thole[k], scale3, scale5);
+      scale3 *= uscale;
+      scale5 *= uscale;
+
+      real polik = poli * polarity[k];
+      real rr3 = scale3 * polik * REAL_RECIP(r * r2);
+      real rr5 = 3 * scale5 * polik * REAL_RECIP(r * r2 * r2);
+
+      real m0 = rr5 * xr * xr - rr3;
+      real m1 = rr5 * xr * yr;
+      real m2 = rr5 * xr * zr;
+      real m3 = rr5 * yr * yr - rr3;
+      real m4 = rr5 * yr * zr;
+      real m5 = rr5 * zr * zr - rr3;
+
+      atomic_add(m0 * rsd[k][0] + m1 * rsd[k][1] + m2 * rsd[k][2], &zrsd[i][0]);
+      atomic_add(m1 * rsd[k][0] + m3 * rsd[k][1] + m4 * rsd[k][2], &zrsd[i][1]);
+      atomic_add(m2 * rsd[k][0] + m4 * rsd[k][1] + m5 * rsd[k][2], &zrsd[i][2]);
+
+      atomic_add(m0 * rsd[i][0] + m1 * rsd[i][1] + m2 * rsd[i][2], &zrsd[k][0]);
+      atomic_add(m1 * rsd[i][0] + m3 * rsd[i][1] + m4 * rsd[i][2], &zrsd[k][1]);
+      atomic_add(m2 * rsd[i][0] + m4 * rsd[i][1] + m5 * rsd[i][2], &zrsd[k][2]);
+
+      atomic_add(m0 * rsdp[k][0] + m1 * rsdp[k][1] + m2 * rsdp[k][2], &zrsdp[i][0]);
+      atomic_add(m1 * rsdp[k][0] + m3 * rsdp[k][1] + m4 * rsdp[k][2], &zrsdp[i][1]);
+      atomic_add(m2 * rsdp[k][0] + m4 * rsdp[k][1] + m5 * rsdp[k][2], &zrsdp[i][2]);
+
+      atomic_add(m0 * rsdp[i][0] + m1 * rsdp[i][1] + m2 * rsdp[i][2], &zrsdp[k][0]);
+      atomic_add(m1 * rsdp[i][0] + m3 * rsdp[i][1] + m4 * rsdp[i][2], &zrsdp[k][1]);
+      atomic_add(m2 * rsdp[i][0] + m4 * rsdp[i][1] + m5 * rsdp[i][2], &zrsdp[k][2]);
+   }
+}
+
+void ulspredSave_acc(const real (*restrict uind)[3], const real (*restrict uinp)[3])
 {
    if (polpred == UPred::NONE)
       return;
@@ -505,7 +489,7 @@ void ulspred_save_acc(const real (*restrict uind)[3], const real (*restrict uinp
    }
 }
 
-void ulspred_sum_acc(real (*restrict uind)[3], real (*restrict uinp)[3])
+void ulspredSum_acc(real (*restrict uind)[3], real (*restrict uinp)[3])
 {
    if (nualt < maxualt)
       return;

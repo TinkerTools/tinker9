@@ -2,6 +2,8 @@
 #include "precision.h"
 
 namespace tinker {
+/// \ingroup polar
+/// \{
 // electrostatic field due to permanent multipoles
 void dfield(real (*field)[3], real (*fieldp)[3]);
 void dfieldNonEwald(real (*field)[3], real (*fieldp)[3]);
@@ -24,4 +26,11 @@ void ulspredSave(const real (*uind)[3], const real (*uinp)[3]);
 void ulspredSum(real (*uind)[3], real (*uinp)[3]);
 
 void induce(real (*uind)[3], real (*uinp)[3]);
+/// \}
 }
+
+//          | h        | cpp        | acc            | cu
+// field    | induce.h | field.cpp  | acc/field*.cpp | field.cu
+// pcg      | --       | --         | acc/induce.cpp | pcg.cu
+// precond  | induce.h | induce.cpp | acc/induce.cpp | precond.cu
+// upredict | induce.h | induce.cpp | acc/induce.cpp | --
