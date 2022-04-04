@@ -1,17 +1,12 @@
-#include "add.h"
-#include "empole_chgpen_self.h"
+#include "empolechgpenself.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/energy.h"
 #include "ff/hippo/cflux.h"
 #include "ff/hippo/elechippo.h"
-#include "ff/hippo/empolechgpen.h"
 #include "ff/image.h"
-#include "ff/pchg/echarge.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
-#include "seq/bsplgen.h"
 #include "seq/pair_mpole_chgpen.h"
 #include "triangle.h"
 
@@ -19,7 +14,7 @@ namespace tinker {
 // ck.py Version 2.0.3
 template <class Ver, class ETYP, bool CFLX>
 __global__
-void empole_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
+void empoleChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
    EnergyBuffer restrict em, VirialBuffer restrict vem, grad_prec* restrict gx,
    grad_prec* restrict gy, grad_prec* restrict gz, real off, const unsigned* restrict minfo,
    int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
@@ -537,7 +532,7 @@ void empole_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
 }
 
 template <class Ver, class ETYP, int CFLX>
-void empole_chgpen_cu()
+static void empoleChgpen_cu()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -554,83 +549,83 @@ void empole_chgpen_cu()
    if CONSTEXPR (eq<ETYP, EWALD>()) {
       PMEUnit pu = epme_unit;
       aewald = pu->aewald;
-      launch_k1b(g::s0, n, empole_chgpen_self_cu<do_a, do_e, CFLX>, //
+      launch_k1b(g::s0, n, empoleChgpenSelf_cu<do_a, do_e, CFLX>, //
          nem, em, rpole, pot, n, f, aewald);
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   empole_chgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nem,
+   empoleChgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nem,
       em, vir_em, demx, demy, demz, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale,
       st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, trqx, trqy, trqz,
       pot, rpole, pcore, pval, palpha, aewald, f);
 }
 
-void empole_chgpen_nonewald_cu(int vers, int use_cf)
+void empoleChgpenNonEwald_cu(int vers, int use_cf)
 {
    if (use_cf) {
       if (vers == calc::v0) {
-         // empole_chgpen_cu<calc::V0, NON_EWALD, 1>();
+         // empoleChgpen_cu<calc::V0, NON_EWALD, 1>();
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
-         empole_chgpen_cu<calc::V1, NON_EWALD, 1>();
+         empoleChgpen_cu<calc::V1, NON_EWALD, 1>();
       } else if (vers == calc::v3) {
-         // empole_chgpen_cu<calc::V3, NON_EWALD, 1>();
+         // empoleChgpen_cu<calc::V3, NON_EWALD, 1>();
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
-         empole_chgpen_cu<calc::V4, NON_EWALD, 1>();
+         empoleChgpen_cu<calc::V4, NON_EWALD, 1>();
       } else if (vers == calc::v5) {
-         empole_chgpen_cu<calc::V5, NON_EWALD, 1>();
+         empoleChgpen_cu<calc::V5, NON_EWALD, 1>();
       } else if (vers == calc::v6) {
-         empole_chgpen_cu<calc::V6, NON_EWALD, 1>();
+         empoleChgpen_cu<calc::V6, NON_EWALD, 1>();
       }
    } else {
       if (vers == calc::v0) {
-         empole_chgpen_cu<calc::V0, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V0, NON_EWALD, 0>();
       } else if (vers == calc::v1) {
-         empole_chgpen_cu<calc::V1, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V1, NON_EWALD, 0>();
       } else if (vers == calc::v3) {
-         empole_chgpen_cu<calc::V3, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V3, NON_EWALD, 0>();
       } else if (vers == calc::v4) {
-         empole_chgpen_cu<calc::V4, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V4, NON_EWALD, 0>();
       } else if (vers == calc::v5) {
-         empole_chgpen_cu<calc::V5, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V5, NON_EWALD, 0>();
       } else if (vers == calc::v6) {
-         empole_chgpen_cu<calc::V6, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V6, NON_EWALD, 0>();
       }
    }
 }
 
-void empole_chgpen_ewald_real_self_cu(int vers, int use_cf)
+void empoleChgpenEwaldRealSelf_cu(int vers, int use_cf)
 {
    if (use_cf) {
       if (vers == calc::v0) {
-         // empole_chgpen_cu<calc::V0, EWALD, 1>();
+         // empoleChgpen_cu<calc::V0, EWALD, 1>();
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
-         empole_chgpen_cu<calc::V1, EWALD, 1>();
+         empoleChgpen_cu<calc::V1, EWALD, 1>();
       } else if (vers == calc::v3) {
-         // empole_chgpen_cu<calc::V3, EWALD, 1>();
+         // empoleChgpen_cu<calc::V3, EWALD, 1>();
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
-         empole_chgpen_cu<calc::V4, EWALD, 1>();
+         empoleChgpen_cu<calc::V4, EWALD, 1>();
       } else if (vers == calc::v5) {
-         empole_chgpen_cu<calc::V5, EWALD, 1>();
+         empoleChgpen_cu<calc::V5, EWALD, 1>();
       } else if (vers == calc::v6) {
-         empole_chgpen_cu<calc::V6, EWALD, 1>();
+         empoleChgpen_cu<calc::V6, EWALD, 1>();
       }
    } else {
       if (vers == calc::v0) {
-         empole_chgpen_cu<calc::V0, EWALD, 0>();
+         empoleChgpen_cu<calc::V0, EWALD, 0>();
       } else if (vers == calc::v1) {
-         empole_chgpen_cu<calc::V1, EWALD, 0>();
+         empoleChgpen_cu<calc::V1, EWALD, 0>();
       } else if (vers == calc::v3) {
-         empole_chgpen_cu<calc::V3, EWALD, 0>();
+         empoleChgpen_cu<calc::V3, EWALD, 0>();
       } else if (vers == calc::v4) {
-         empole_chgpen_cu<calc::V4, EWALD, 0>();
+         empoleChgpen_cu<calc::V4, EWALD, 0>();
       } else if (vers == calc::v5) {
-         empole_chgpen_cu<calc::V5, EWALD, 0>();
+         empoleChgpen_cu<calc::V5, EWALD, 0>();
       } else if (vers == calc::v6) {
-         empole_chgpen_cu<calc::V6, EWALD, 0>();
+         empoleChgpen_cu<calc::V6, EWALD, 0>();
       }
    }
 }

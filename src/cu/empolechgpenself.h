@@ -1,11 +1,13 @@
 #pragma once
 #include "add.h"
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/amoeba/mpole.h"
+#include "tool/energybuffer.h"
+#include <cmath>
 
 namespace tinker {
 template <bool do_a, bool do_e, int CFLX>
 __global__
-void empole_chgpen_self_cu(CountBuffer restrict nem, EnergyBuffer restrict em,
+void empoleChgpenSelf_cu(CountBuffer restrict nem, EnergyBuffer restrict em,
    const real (*restrict rpole)[10], real* restrict pot, int n, real f, real aewald)
 {
    real aewald_sq_2 = 2 * aewald * aewald;

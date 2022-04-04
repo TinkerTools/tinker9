@@ -45,6 +45,10 @@
 ///    \ingroup ff
 ///    \defgroup chgtrn  Charge Transfer
 ///    \ingroup ff
+///    \defgroup hippompole  HIPPO Multipole Electrostatics
+///    \ingroup ff
+///    \defgroup hippopolar  HIPPO Polarization
+///    \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
 /// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)

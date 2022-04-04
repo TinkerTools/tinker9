@@ -8,7 +8,7 @@ ehal.cu
 elj.cu
 emplar.cu
 empole.cu
-empole_chgpen.cu
+empolechgpen.cu
 epolar.cu
 epolar_chgpen.cu
 erepel.cu

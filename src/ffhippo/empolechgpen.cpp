@@ -3,26 +3,10 @@
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/hippo/cflux.h"
-#include "ff/hippo/empolechgpen.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include <tinker/detail/chgpen.hh>
 #include <tinker/detail/mplpot.hh>
-#include <tinker/detail/sizes.hh>
-
-namespace tinker {
-void empole_chgpen_nonewald_acc(int vers, int use_cf);
-void empole_chgpen_ewald_recip_acc(int vers, int use_cf);
-void empole_chgpen_ewald_real_self_acc(int vers, int use_cf);
-void empole_chgpen_nonewald_cu(int vers, int use_cf);
-void empole_chgpen_ewald_real_self_cu(int vers, int use_cf);
-
-void empole_chgpen_nonewald(int vers, int use_cf);
-void empole_chgpen_ewald(int vers, int use_cf);
-void empole_chgpen_ewald_real_self(int vers, int use_cf);
-void empole_chgpen_ewald_recip(int vers, int use_cf);
-}
 
 namespace tinker {
 void empoleChgpenData(RcOp op)
@@ -63,7 +47,49 @@ void empoleChgpenData(RcOp op)
 
    if (op & RcOp::INIT) {}
 }
+}
 
+namespace tinker {
+extern void empoleChgpenNonEwald_acc(int vers, int use_cf);
+extern void empoleChgpenNonEwald_cu(int vers, int use_cf);
+static void empoleChgpenNonEwald(int vers, int use_cf)
+{
+#if TINKER_CUDART
+   if (mlistVersion() & Nbl::SPATIAL)
+      empoleChgpenNonEwald_cu(vers, use_cf);
+   else
+#endif
+      empoleChgpenNonEwald_acc(vers, use_cf);
+}
+}
+
+namespace tinker {
+extern void empoleChgpenEwaldRealSelf_acc(int vers, int use_cf);
+extern void empoleChgpenEwaldRealSelf_cu(int vers, int use_cf);
+static void empoleChgpenEwaldRealSelf(int vers, int use_cf)
+{
+#if TINKER_CUDART
+   if (mlistVersion() & Nbl::SPATIAL)
+      empoleChgpenEwaldRealSelf_cu(vers, use_cf);
+   else
+#endif
+      empoleChgpenEwaldRealSelf_acc(vers, use_cf);
+}
+
+extern void empoleChgpenEwaldRecip_acc(int vers, int use_cf);
+static void empoleChgpenEwaldRecip(int vers, int use_cf)
+{
+   empoleChgpenEwaldRecip_acc(vers, use_cf);
+}
+
+static void empoleChgpenEwald(int vers, int use_cf)
+{
+   empoleChgpenEwaldRealSelf(vers, use_cf);
+   empoleChgpenEwaldRecip(vers, use_cf);
+}
+}
+
+namespace tinker {
 void empoleChgpen(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -94,9 +120,9 @@ void empoleChgpen(int vers)
       cfluxZeroPot();
    }
    if (useEwald())
-      empole_chgpen_ewald(vers, use_cfgrad);
+      empoleChgpenEwald(vers, use_cfgrad);
    else
-      empole_chgpen_nonewald(vers, use_cfgrad);
+      empoleChgpenNonEwald(vers, use_cfgrad);
    torque(vers, demx, demy, demz);
    if (use_cfgrad)
       dcflux(vers, demx, demy, demz, vir_em);
@@ -129,36 +155,5 @@ void empoleChgpen(int vers)
       if (do_g)
          sumGradient(gx_elec, gy_elec, gz_elec, demx, demy, demz);
    }
-}
-
-void empole_chgpen_nonewald(int vers, int use_cf)
-{
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      empole_chgpen_nonewald_cu(vers, use_cf);
-   else
-#endif
-      empole_chgpen_nonewald_acc(vers, use_cf);
-}
-
-void empole_chgpen_ewald(int vers, int use_cf)
-{
-   empole_chgpen_ewald_real_self(vers, use_cf);
-   empole_chgpen_ewald_recip(vers, use_cf);
-}
-
-void empole_chgpen_ewald_real_self(int vers, int use_cf)
-{
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      empole_chgpen_ewald_real_self_cu(vers, use_cf);
-   else
-#endif
-      empole_chgpen_ewald_real_self_acc(vers, use_cf);
-}
-
-void empole_chgpen_ewald_recip(int vers, int use_cf)
-{
-   empole_chgpen_ewald_recip_acc(vers, use_cf);
 }
 }
