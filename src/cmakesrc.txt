@@ -26,9 +26,9 @@ hippo/inducedonly.cpp
 initial.cpp
 iofortstr.cpp
 iotext.cpp
-math/lu.cpp
-math/random.cpp
-math/trimatexp.cpp
+mathlu.cpp
+mathrandom.cpp
+mathtrimatexp.cpp
 md/itgEnum.cpp
 md/itgbBasic.cpp
 md/itgbBerendsen.cpp

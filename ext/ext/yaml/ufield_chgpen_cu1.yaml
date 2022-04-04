@@ -1,4 +1,4 @@
-KERNEL_NAME: ufield_chgpen_cu1
+KERNEL_NAME: ufieldChgpen_cu1
 TEMPLATE_PARAMS: template <class ETYP>
 # CONSTEXPR_FLAGS:
 

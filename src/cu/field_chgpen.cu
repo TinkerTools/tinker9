@@ -1,9 +1,5 @@
-#include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/energy.h"
 #include "ff/hippo/elechippo.h"
-#include "ff/hippo/empolechgpen.h"
-#include "ff/hippo/epolarchgpen.h"
 #include "ff/image.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
@@ -16,7 +12,7 @@ namespace tinker {
 // ck.py Version 2.0.3
 template <class ETYP>
 __global__
-void dfield_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict dinfo,
+void dfieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict dinfo,
    int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
    const real* restrict x, const real* restrict y, const real* restrict z,
    const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
@@ -307,7 +303,7 @@ void dfield_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
 }
 
 template <class ETYP>
-void dfield_chgpen_cu(real (*field)[3])
+static void dfieldChgpen_cu(real (*field)[3])
 {
    const auto& st = *mspatial_v2_unit;
    real off;
@@ -324,26 +320,26 @@ void dfield_chgpen_cu(real (*field)[3])
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   dfield_chgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off,
-      st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl,
-      st.iakpl, st.niak, st.iak, st.lst, field, rpole, pcore, pval, palpha, aewald);
+   dfieldChgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
+      nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+      st.niak, st.iak, st.lst, field, rpole, pcore, pval, palpha, aewald);
 }
 
-void dfield_chgpen_ewald_real_cu(real (*field)[3])
+void dfieldChgpenEwaldReal_cu(real (*field)[3])
 {
-   dfield_chgpen_cu<EWALD>(field);
+   dfieldChgpen_cu<EWALD>(field);
 }
-void dfield_chgpen_nonewald_cu(real (*field)[3])
+void dfieldChgpenNonEwald_cu(real (*field)[3])
 {
    darray::zero(g::q0, n, field);
 
-   dfield_chgpen_cu<NON_EWALD>(field);
+   dfieldChgpen_cu<NON_EWALD>(field);
 }
 
 // ck.py Version 2.0.3
 template <class ETYP>
 __global__
-void ufield_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict winfo,
+void ufieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict winfo,
    int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
    const real* restrict x, const real* restrict y, const real* restrict z,
    const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
@@ -573,7 +569,7 @@ void ufield_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
 }
 
 template <class ETYP>
-void ufield_chgpen_cu(const real (*uind)[3], real (*field)[3])
+static void ufieldChgpen_cu(const real (*uind)[3], real (*field)[3])
 {
 
    const auto& st = *mspatial_v2_unit;
@@ -591,19 +587,19 @@ void ufield_chgpen_cu(const real (*uind)[3], real (*field)[3])
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   ufield_chgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off,
-      st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl,
-      st.iakpl, st.niak, st.iak, st.lst, uind, field, pcore, pval, palpha, aewald);
+   ufieldChgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
+      nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+      st.niak, st.iak, st.lst, uind, field, pcore, pval, palpha, aewald);
 }
 
-void ufield_chgpen_ewald_real_cu(const real (*uind)[3], real (*field)[3])
+void ufieldChgpenEwaldReal_cu(const real (*uind)[3], real (*field)[3])
 {
-   ufield_chgpen_cu<EWALD>(uind, field);
+   ufieldChgpen_cu<EWALD>(uind, field);
 }
 
-void ufield_chgpen_nonewald_cu(const real (*uind)[3], real (*field)[3])
+void ufieldChgpenNonEwald_cu(const real (*uind)[3], real (*field)[3])
 {
    darray::zero(g::q0, n, field);
-   ufield_chgpen_cu<NON_EWALD>(uind, field);
+   ufieldChgpen_cu<NON_EWALD>(uind, field);
 }
 }

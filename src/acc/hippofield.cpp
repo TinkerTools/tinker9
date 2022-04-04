@@ -1,9 +1,6 @@
-#include "add.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/energy.h"
+#include "ff/atom.h"
 #include "ff/hippo/elechippo.h"
-#include "ff/hippo/empolechgpen.h"
-#include "ff/hippo/epolarchgpen.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
@@ -16,7 +13,7 @@ namespace tinker {
 // see also subroutine udirect2b / dfield_chgpen0c in induce.f
 #define DFIELD_DPTRS x, y, z, pcore, pval, palpha, field, rpole
 template <class ETYP>
-void dfield_chgpen_acc1(real (*field)[3])
+static void dfieldChgpen_acc1(real (*field)[3])
 {
    real aewald = 0;
    real off;
@@ -146,8 +143,18 @@ void dfield_chgpen_acc1(real (*field)[3])
    }
 }
 
+void dfieldChgpenNonEwald_acc(real (*field)[3])
+{
+   dfieldChgpen_acc1<NON_EWALD>(field);
+}
+
+void dfieldChgpenEwaldReal_acc(real (*field)[3])
+{
+   dfieldChgpen_acc1<EWALD>(field);
+}
+
 // see also subroutine umutual1 in induce.f
-void ufield_chgpen_ewald_recip_self_acc(const real (*uind)[3], real (*field)[3])
+void ufieldChgpenEwaldRecipSelf_acc(const real (*uind)[3], real (*field)[3])
 {
    darray::zero(g::q0, n, field);
 
@@ -194,7 +201,7 @@ void ufield_chgpen_ewald_recip_self_acc(const real (*uind)[3], real (*field)[3])
 
 #define UFIELD_DPTRS x, y, z, pcore, pval, palpha, field, uind
 template <class ETYP>
-void ufield_chgpen_acc1(const real (*uind)[3], real (*field)[3])
+static void ufieldChgpen_acc1(const real (*uind)[3], real (*field)[3])
 {
    real aewald = 0;
    real off;
@@ -302,23 +309,13 @@ void ufield_chgpen_acc1(const real (*uind)[3], real (*field)[3])
    }
 }
 
-void dfield_chgpen_nonewald_acc(real (*field)[3])
+void ufieldChgpenNonEwald_acc(const real (*uind)[3], real (*field)[3])
 {
-   dfield_chgpen_acc1<NON_EWALD>(field);
+   ufieldChgpen_acc1<NON_EWALD>(uind, field);
 }
 
-void dfield_chgpen_ewald_real_acc(real (*field)[3])
+void ufieldChgpenEwaldReal_acc(const real (*uind)[3], real (*field)[3])
 {
-   dfield_chgpen_acc1<EWALD>(field);
-}
-
-void ufield_chgpen_nonewald_acc(const real (*uind)[3], real (*field)[3])
-{
-   ufield_chgpen_acc1<NON_EWALD>(uind, field);
-}
-
-void ufield_chgpen_ewald_real_acc(const real (*uind)[3], real (*field)[3])
-{
-   ufield_chgpen_acc1<EWALD>(uind, field);
+   ufieldChgpen_acc1<EWALD>(uind, field);
 }
 }
