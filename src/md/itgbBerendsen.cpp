@@ -20,6 +20,6 @@ void BerendsenBarostat::control2(time_prec dt)
    if (not applyBaro)
       return;
 
-   mdBerendsenBarostat(dt);
+   berendsenBarostat(dt);
 }
 }

@@ -22,7 +22,7 @@ void BasicThermostat::control2(time_prec, bool save)
 {
    if (save) {
       T_prec temp;
-      mdKinetic(temp);
+      kinetic(temp);
    }
 }
 }

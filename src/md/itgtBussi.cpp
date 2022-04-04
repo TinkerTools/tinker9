@@ -13,7 +13,7 @@ void BussiThermostat::printDetail(FILE* o)
 void BussiThermostat::control2(time_prec dt, bool)
 {
    double temp;
-   mdKinetic(temp);
-   mdBussiThermostat(dt, temp);
+   kinetic(temp);
+   bussiThermostat(dt, temp);
 }
 }

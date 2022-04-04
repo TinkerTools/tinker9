@@ -17,7 +17,7 @@ namespace tinker {
 void hcKinetic()
 {
    auto& m = rattle_dmol;
-   mdKineticEnergy(hc_eksum, hc_ekin, m.nmol, m.molmass, ratcom_vx, ratcom_vy, ratcom_vz);
+   kineticEnergy(hc_eksum, hc_ekin, m.nmol, m.molmass, ratcom_vx, ratcom_vy, ratcom_vz);
 }
 
 extern void lp_mol_virial_acc();

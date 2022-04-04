@@ -29,7 +29,7 @@ TEST_CASE("Kinetic-ArBox", "[ff][kinetic][arbox]")
    initialize();
 
    T_prec temp;
-   mdKinetic(temp);
+   kinetic(temp);
 
    const double ref_eksum = 100446.40376;
    const double ref_temp = 156008.001336;

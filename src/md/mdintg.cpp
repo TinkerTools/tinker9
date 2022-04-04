@@ -48,7 +48,7 @@ void mdPropagate(int nsteps, time_prec dt_ps)
          bounds();
       if (save) {
          T_prec temp;
-         mdKinetic(temp);
+         kinetic(temp);
          mdsaveAsync(istep, dt_ps);
       }
       mdrest(istep);

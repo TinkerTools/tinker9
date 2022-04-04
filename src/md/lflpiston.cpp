@@ -112,12 +112,12 @@ static void kinetic_leapfrog(T_prec& temp)
    // Ek at +1/2
    T_prec t1;
    energy_prec ekin1[3][3];
-   mdKineticExplicit(t1, eksum, ekin1, leapfrog_vx, leapfrog_vy, leapfrog_vz);
+   kineticExplicit(t1, eksum, ekin1, leapfrog_vx, leapfrog_vy, leapfrog_vz);
 
    // Ek at -1/2
    T_prec t2;
    energy_prec ekin2[3][3];
-   mdKineticExplicit(t2, eksum_old, ekin2, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
+   kineticExplicit(t2, eksum_old, ekin2, leapfrog_vxold, leapfrog_vyold, leapfrog_vzold);
 
    ekin[0][0] = 0.5 * (ekin1[0][0] + ekin2[0][0]);
    ekin[0][1] = 0.5 * (ekin1[0][1] + ekin2[0][1]);

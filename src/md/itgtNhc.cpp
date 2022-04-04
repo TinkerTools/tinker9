@@ -123,7 +123,7 @@ void NhcDevice::control2(time_prec dt, bool)
 double NhcDevice::kineticAtomic()
 {
    T_prec temp;
-   mdKinetic(temp);
+   kinetic(temp);
    return eksum;
 }
 

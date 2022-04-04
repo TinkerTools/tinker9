@@ -1,18 +1,17 @@
-#include "ff/box.h"
+#include "md/pt.h"
 #include "ff/energy.h"
 #include "ff/molecule.h"
 #include "ff/nblist.h"
 #include "math/random.h"
 #include "md/pq.h"
-#include "md/pt.h"
-#include "tool/io.h"
+#include "tool/iofortstr.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-void kinetic_energy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
+void kineticEnergy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
    const double* mass, const vel_prec* vx, const vel_prec* vy, const vel_prec* vz)
 {
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
@@ -46,7 +45,7 @@ void kinetic_energy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], i
 
 //====================================================================//
 
-void mdBussiThermostat_acc(time_prec dt_prec, T_prec temp_prec)
+void bussiThermostat_acc(time_prec dt_prec, T_prec temp_prec)
 {
    double dt = dt_prec;
    double temp = temp_prec;
@@ -85,7 +84,7 @@ void mdBussiThermostat_acc(time_prec dt_prec, T_prec temp_prec)
 
 //====================================================================//
 
-void mdBerendsenBarostat_acc(time_prec dt)
+void berendsenBarostat_acc(time_prec dt)
 {
    if (not bound::use_bounds)
       return;
@@ -188,7 +187,7 @@ void mdBerendsenBarostat_acc(time_prec dt)
    }
 }
 
-void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp)
+void monteCarloBarostat_acc(energy_prec epot, T_prec temp)
 {
    if (not bound::use_bounds)
       return;

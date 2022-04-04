@@ -2,14 +2,13 @@
 #include "precision.h"
 
 namespace tinker {
-void mdKineticEnergy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
-   const double* mass, const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
-void mdKineticExplicit(T_prec& temp_out, energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
+void kineticEnergy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n, const double* mass,
    const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
-void mdKinetic(T_prec& temp);
+void kineticExplicit(T_prec& temp_out, energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
+   const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
+void kinetic(T_prec& temp);
 
-void mdBussiThermostat(time_prec dt, T_prec temp);
-void mdBussiThermostat_acc(time_prec dt, T_prec temp);
+void bussiThermostat(time_prec dt, T_prec temp);
 
 /// \ingroup mdpt
 /// \brief Applies a box size correction as needed for the Monte Carlo barostat
@@ -21,8 +20,7 @@ void mdBussiThermostat_acc(time_prec dt, T_prec temp);
 ///    "NpT-ensemble Monte Carlo calculations for binary liquid mixtures",
 ///    Molecular Physics, 23, 41-58 (1972).
 ///    </a>
-void mdMonteCarloBarostat(energy_prec epot, T_prec temp);
-void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp);
+void monteCarloBarostat(energy_prec epot, T_prec temp);
 
 /// \ingroup mdpt
 /// \brief Berendsen barostat by scaling the coordinates and box dimensions via
@@ -37,8 +35,7 @@ void mdMonteCarloBarostat_acc(energy_prec epot, T_prec temp);
 ///    "Molecular dynamics with coupling to an external bath",
 ///    J. Chem. Phys., 81, 3684-3690 (1984).
 ///    </a>
-void mdBerendsenBarostat(time_prec dt);
-void mdBerendsenBarostat_acc(time_prec);
+void berendsenBarostat(time_prec dt);
 }
 
 //====================================================================//

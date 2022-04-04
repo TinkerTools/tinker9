@@ -30,7 +30,7 @@ static void hoover(time_prec dt, virial_prec press)
 
    const double vbox = boxVolume();
    T_prec temp;
-   mdKinetic(temp);
+   kinetic(temp);
    const double ekt = units::gasconst * bath::kelvin;
    const int df = mdstuf::nfree;
    const double odnf = 1 + 3.0 / df;

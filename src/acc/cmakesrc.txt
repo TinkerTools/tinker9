@@ -28,8 +28,8 @@ mathlu.cpp
 mathparallel.cpp
 mathzero.cpp
 md/pq.cpp
+md/pt.cpp
 mdintg.cpp
-mdpt.cpp
 minimize.cpp
 nblist.cpp
 osrw.cpp

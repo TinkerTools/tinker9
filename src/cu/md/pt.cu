@@ -1,14 +1,12 @@
-#include "md/pt.h"
 #include "seq/launch.h"
 #include "seq/reduce.h"
-#include "tool/gpucard.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {
 // velocity to ekin[3][3] (actually ekin[6])
 template <unsigned int B>
 __global__
-void velocity_to_ekin_cu(energy_prec* out, const vel_prec* restrict vx, const vel_prec* restrict vy,
+void velocityToEkin_cu(energy_prec* out, const vel_prec* restrict vx, const vel_prec* restrict vy,
    const vel_prec* restrict vz, const double* restrict mass, int n, energy_prec ekcal_inv)
 {
    constexpr int HN = 6;
@@ -43,7 +41,7 @@ void velocity_to_ekin_cu(energy_prec* out, const vel_prec* restrict vx, const ve
          out[blockIdx.x * HN + j] = sd[j][0];
 }
 
-void kinetic_energy_cu(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
+void kineticEnergy_cu(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
    const double* mass, const vel_prec* vx, const vel_prec* vy, const vel_prec* vz)
 {
    cudaStream_t st = g::s0;
@@ -56,7 +54,7 @@ void kinetic_energy_cu(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], in
    int grid_siz2 = (n + BLOCK_DIM - 1) / BLOCK_DIM;
    int grid_size = std::min(grid_siz1, grid_siz2);
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
-   velocity_to_ekin_cu<BLOCK_DIM>
+   velocityToEkin_cu<BLOCK_DIM>
       <<<grid_size, BLOCK_DIM, 0, st>>>(dptr, vx, vy, vz, mass, n, ekcal_inv);
    reduce2<energy_prec, BLOCK_DIM, HN, HN, OpPlus<energy_prec>>
       <<<1, BLOCK_DIM, 0, st>>>(dptr6, dptr6, grid_size);
