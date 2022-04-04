@@ -1,10 +1,8 @@
 #include "md/rattle.h"
-#include "ff/atom.h"
 #include "ff/energy.h"
-#include "tool/darray.h"
+#include "md/pt.h"
 #include <algorithm>
 #include <cassert>
-#include <map>
 #include <set>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/freeze.hh>
@@ -542,5 +540,63 @@ void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const p
       shakeMethyl_cu(dt, xnew, ynew, znew, xold, yold, zold);
 #endif
    shake_acc(dt, xnew, ynew, znew, xold, yold, zold);
+}
+}
+
+namespace tinker {
+void hcKinetic()
+{
+   auto& m = rattle_dmol;
+   kineticEnergy(hc_eksum, hc_ekin, m.nmol, m.molmass, ratcom_vx, ratcom_vy, ratcom_vz);
+}
+
+extern void hcVirial_acc();
+extern void hcVirial_cu();
+void hcVirial()
+{
+   for (int iv = 0; iv < 9; ++iv)
+      hc_vir[iv] = 0;
+#if TINKER_CUDART
+   if (pltfm_config & Platform::CUDA)
+      hcVirial_cu();
+   else
+#endif
+      hcVirial_acc();
+}
+
+extern void hcCenterOfMass_acc(const pos_prec*, const pos_prec*, const pos_prec*, //
+   pos_prec*, pos_prec*, pos_prec*);
+void hcCenterOfMass(const pos_prec* atomx, const pos_prec* atomy, const pos_prec* atomz,
+   pos_prec* molx, pos_prec* moly, pos_prec* molz)
+{
+   static_assert(std::is_same<pos_prec, vel_prec>::value, //
+      "pos_prec and vel_prec must be the same type.");
+   hcCenterOfMass_acc(atomx, atomy, atomz, molx, moly, molz);
+}
+
+extern void hcVelIso_acc(vel_prec);
+void hcVelIso(vel_prec scal)
+{
+   hcVelIso_acc(scal);
+}
+
+extern void hcVelAn_acc(vel_prec scal[3][3]);
+void hcVelAn(vel_prec scal[3][3])
+{
+   hcVelAn_acc(scal);
+}
+
+/// \ingroup mdpq
+extern void hcPosIso_acc(pos_prec s);
+void hcPosIso(pos_prec s)
+{
+   hcPosIso_acc(s);
+}
+
+/// \ingroup mdpq
+extern void hcPosAn_acc(pos_prec (*scal)[3]);
+void hcPosAn(pos_prec (*scal)[3])
+{
+   hcPosAn_acc(scal);
 }
 }

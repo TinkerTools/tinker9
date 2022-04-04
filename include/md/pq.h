@@ -15,6 +15,10 @@ void mdPos(time_prec, pos_prec*, pos_prec*, pos_prec*, //
 void mdPosAxbv(pos_prec a, pos_prec b);
 
 /// \ingroup mdpq
+/// \brief Update #xp, #y, #z via `r = MatA R + MatB v`.
+void mdPosAxbvAn(pos_prec (*a)[3], pos_prec (*b)[3]);
+
+/// \ingroup mdpq
 void mdDebugPosNorm(pos_prec poseps, time_prec dt, //
    const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
 

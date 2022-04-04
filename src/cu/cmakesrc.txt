@@ -16,7 +16,6 @@ hippo/pcg.cu
 hippo/precond.cu
 mathparallel.cu
 md/intg.cu
-md/lpiston.cu
 md/pt.cu
 md/rattle.cu
 pchg/echarge.cu

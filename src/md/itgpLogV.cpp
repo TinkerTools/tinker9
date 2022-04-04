@@ -126,9 +126,6 @@ LogVDevice::~LogVDevice()
    }
 }
 
-extern void pLogVPosMolIso_acc(double scal);
-extern void pLogVPosMolAniso_acc(double (*scal)[3]);
-extern void pLogVPosAtmAniso_acc(double (*a)[3], double (*b)[3]);
 void LogVDevice::updatePosition(time_prec t)
 {
    if (atomic) {
@@ -138,7 +135,7 @@ void LogVDevice::updatePosition(time_prec t)
          double a[3][3], b[3][3];
          trimatExp(a, vbar_matrix, t);
          trimatTExpm1c(b, vbar_matrix, t);
-         pLogVPosAtmAniso_acc(a, b);
+         mdPosAxbvAn(a, b);
       } else {
          double vt = vbar * t;
          double vt2 = vt * 0.5;
@@ -155,12 +152,12 @@ void LogVDevice::updatePosition(time_prec t)
          trimatExp(scal, vbar_matrix, t);
          for (int i = 0; i < 3; ++i)
             scal[i][i] -= 1;
-         pLogVPosMolAniso_acc(scal);
+         hcPosAn(scal);
          mdPos(t);
       } else {
          hcCenterOfMass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
          double scal = std::exp(vbar * t) - 1;
-         pLogVPosMolIso_acc(scal);
+         hcPosIso(scal);
          mdPos(t);
       }
    }

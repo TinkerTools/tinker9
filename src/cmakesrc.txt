@@ -52,7 +52,6 @@ md/itgtBussi.cpp
 md/itgtNhc.cpp
 md/itgtNhc06.cpp
 md/lflpiston.cpp
-md/lpiston.cpp
 md/mdintg.cpp
 md/mdsave.cpp
 md/osrw.cpp

@@ -51,6 +51,12 @@ void hcVelIso(vel_prec s);
 /// \brief Update velocities by
 /// \f$ \boldsymbol{v}_{ui}(t) = \boldsymbol{v}_{ui}(0) + \boldsymbol{S} \boldsymbol{V}_{u}(0) \f$.
 void hcVelAn(vel_prec s[3][3]);
+
+/// \ingroup mdpq
+void hcPosIso(pos_prec s);
+
+/// \ingroup mdpq
+void hcPosAn(pos_prec (*scal)[3]);
 }
 
 //====================================================================//

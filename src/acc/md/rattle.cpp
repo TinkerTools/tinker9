@@ -753,3 +753,177 @@ void rattle2CH_acc(time_prec dt, bool do_v)
    }
 }
 }
+
+namespace tinker {
+void hcVirial_acc()
+{
+   int nmol = rattle_dmol.nmol;
+   auto* molmass = rattle_dmol.molmass;
+   auto* imol = rattle_dmol.imol;
+   auto* kmol = rattle_dmol.kmol;
+
+   double mvxx = 0, mvyy = 0, mvzz = 0, mvxy = 0, mvxz = 0, mvyz = 0;
+   #pragma acc parallel loop independent async\
+               copy(mvxx,mvyy,mvzz,mvxy,mvxz,mvyz)\
+               reduction(+:mvxx,mvyy,mvzz,mvxy,mvxz,mvyz)\
+               deviceptr(molmass,imol,kmol,mass,xpos,ypos,zpos,gx,gy,gz)
+   for (int im = 0; im < nmol; ++im) {
+      double vxx = 0, vyy = 0, vzz = 0, vxy = 0, vxz = 0, vyz = 0;
+      double igx, igy, igz;             // atomic gradients
+      pos_prec irx, iry, irz;           // atomic positions
+      double mgx = 0, mgy = 0, mgz = 0; // molecular gradients
+      pos_prec rx = 0, ry = 0, rz = 0;  // molecular positions
+      int start = imol[im][0];
+      int end = imol[im][1];
+      #pragma acc loop seq
+      for (int i = start; i < end; ++i) {
+         int k = kmol[i];
+#if TINKER_DETERMINISTIC_FORCE
+         igx = fixedTo<double>(gx[k]);
+         igy = fixedTo<double>(gy[k]);
+         igz = fixedTo<double>(gz[k]);
+#else
+         igx = gx[k];
+         igy = gy[k];
+         igz = gz[k];
+#endif
+         irx = xpos[k];
+         iry = ypos[k];
+         irz = zpos[k];
+         vxx -= igx * irx;
+         vyy -= igy * iry;
+         vzz -= igz * irz;
+         vxy -= 0.5 * (igx * iry + igy * irx);
+         vxz -= 0.5 * (igx * irz + igz * irx);
+         vyz -= 0.5 * (igy * irz + igz * iry);
+
+         mgx += igx;
+         mgy += igy;
+         mgz += igz;
+         auto massk = mass[k];
+         rx += massk * irx;
+         ry += massk * iry;
+         rz += massk * irz;
+      }
+      auto mmassinv = 1 / molmass[im];
+      vxx += mgx * rx * mmassinv;
+      vyy += mgy * ry * mmassinv;
+      vzz += mgz * rz * mmassinv;
+      vxy += 0.5 * (mgx * ry + mgy * rx) * mmassinv;
+      vxz += 0.5 * (mgx * rz + mgz * rx) * mmassinv;
+      vyz += 0.5 * (mgy * rz + mgz * ry) * mmassinv;
+      mvxx += vxx;
+      mvyy += vyy;
+      mvzz += vzz;
+      mvxy += vxy;
+      mvxz += vxz;
+      mvyz += vyz;
+   }
+   #pragma acc wait
+
+   hc_vir[0] = mvxx + vir[0];
+   hc_vir[1] = mvxy + vir[1];
+   hc_vir[2] = mvxz + vir[2];
+   hc_vir[3] = mvxy + vir[3];
+   hc_vir[4] = mvyy + vir[4];
+   hc_vir[5] = mvyz + vir[5];
+   hc_vir[6] = mvxz + vir[6];
+   hc_vir[7] = mvyz + vir[7];
+   hc_vir[8] = mvzz + vir[8];
+}
+
+void hcCenterOfMass_acc(const pos_prec* ax, const pos_prec* ay, const pos_prec* az, pos_prec* mx,
+   pos_prec* my, pos_prec* mz)
+{
+   const int nmol = rattle_dmol.nmol;
+   const auto* imol = rattle_dmol.imol;
+   const auto* kmol = rattle_dmol.kmol;
+   const auto* mfrac = ratcom_massfrac;
+   #pragma acc parallel loop independent async\
+               deviceptr(ax,ay,az,mx,my,mz,mfrac,imol,kmol)
+   for (int im = 0; im < nmol; ++im) {
+      int start = imol[im][0];
+      int end = imol[im][1];
+      pos_prec tx = 0, ty = 0, tz = 0;
+      #pragma acc loop seq
+      for (int i = start; i < end; ++i) {
+         int k = kmol[i];
+         auto frk = mfrac[k];
+         tx += frk * ax[k];
+         ty += frk * ay[k];
+         tz += frk * az[k];
+      }
+      mx[im] = tx;
+      my[im] = ty;
+      mz[im] = tz;
+   }
+}
+
+void hcVelIso_acc(vel_prec scal)
+{
+   auto* molec = rattle_dmol.molecule;
+   #pragma acc parallel loop independent async\
+               deviceptr(vx,vy,vz,ratcom_vx,ratcom_vy,ratcom_vz,molec)
+   for (int i = 0; i < n; ++i) {
+      int im = molec[i];
+      vx[i] = vx[i] + scal * ratcom_vx[im];
+      vy[i] = vy[i] + scal * ratcom_vy[im];
+      vz[i] = vz[i] + scal * ratcom_vz[im];
+   }
+}
+
+void hcVelAn_acc(vel_prec scal[3][3])
+{
+   auto s00 = scal[0][0], s01 = scal[0][1], s02 = scal[0][2];
+   auto s10 = scal[1][0], s11 = scal[1][1], s12 = scal[1][2];
+   auto s20 = scal[2][0], s21 = scal[2][1], s22 = scal[2][2];
+   auto* molec = rattle_dmol.molecule;
+   #pragma acc parallel loop independent async\
+               deviceptr(vx,vy,vz,ratcom_vx,ratcom_vy,ratcom_vz,molec)
+   for (int i = 0; i < n; ++i) {
+      int im = molec[i];
+      auto xm = ratcom_vx[im], ym = ratcom_vy[im], zm = ratcom_vz[im];
+      vx[i] += s00 * xm + s01 * ym + s02 * zm;
+      vy[i] += s10 * xm + s11 * ym + s12 * zm;
+      vz[i] += s20 * xm + s21 * ym + s22 * zm;
+   }
+}
+
+void hcPosIso_acc(pos_prec s)
+{
+   const auto* molec = rattle_dmol.molecule;
+   #pragma acc parallel loop independent async\
+           deviceptr(xpos,ypos,zpos,ratcom_x,ratcom_y,ratcom_z,molec)
+   for (int i = 0; i < n; ++i) {
+      auto k = molec[i];
+      xpos[i] += ratcom_x[k] * s;
+      ypos[i] += ratcom_y[k] * s;
+      zpos[i] += ratcom_z[k] * s;
+   }
+}
+
+void hcPosAn_acc(pos_prec (*scal)[3])
+{
+   double s00, s01, s02;
+   double s10, s11, s12;
+   double s20, s21, s22;
+   s00 = scal[0][0], s01 = scal[0][1], s02 = scal[0][2];
+   s10 = scal[1][0], s11 = scal[1][1], s12 = scal[1][2];
+   s20 = scal[2][0], s21 = scal[2][1], s22 = scal[2][2];
+   const auto* molec = rattle_dmol.molecule;
+   #pragma acc parallel loop independent async\
+           deviceptr(xpos,ypos,zpos,ratcom_x,ratcom_y,ratcom_z,molec)
+   for (int i = 0; i < n; ++i) {
+      auto k = molec[i];
+      auto xc = ratcom_x[k];
+      auto yc = ratcom_y[k];
+      auto zc = ratcom_z[k];
+      auto xd = s00 * xc + s01 * yc + s02 * zc;
+      auto yd = s10 * xc + s11 * yc + s12 * zc;
+      auto zd = s20 * xc + s21 * yc + s22 * zc;
+      xpos[i] += xd;
+      ypos[i] += yd;
+      zpos[i] += zd;
+   }
+}
+}

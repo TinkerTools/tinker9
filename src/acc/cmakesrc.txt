@@ -23,12 +23,12 @@ hippo/erepel.cpp
 hippo/field.cpp
 hippo/induce.cpp
 lflpiston.cpp
-lpiston.cpp
 mathlu.cpp
 mathparallel.cpp
 mathzero.cpp
 md/pq.cpp
 md/pt.cpp
+md/rattle.cpp
 mdintg.cpp
 minimize.cpp
 nblist.cpp
@@ -50,5 +50,4 @@ pchg/etors.cpp
 pchg/etortor.cpp
 pchg/eurey.cpp
 pme.cpp
-rattle.cpp
 )

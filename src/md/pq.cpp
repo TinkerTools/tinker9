@@ -22,6 +22,12 @@ void mdPosAxbv(pos_prec a, pos_prec b)
    mdPosAxbv_acc(a, b);
 }
 
+extern void mdPosAxbvAn_acc(pos_prec (*a)[3], pos_prec (*b)[3]);
+void mdPosAxbvAn(pos_prec (*a)[3], pos_prec (*b)[3])
+{
+   mdPosAxbvAn_acc(a, b);
+}
+
 extern void mdDebugPosNorm_acc(pos_prec poseps, time_prec dt, //
    const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
 void mdDebugPosNorm(pos_prec poseps, time_prec dt, //
