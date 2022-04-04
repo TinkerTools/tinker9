@@ -1,17 +1,11 @@
-#include "add.h"
 #include "epolartorque.h"
 #include "ff/amoeba/elecamoeba.h"
-#include "ff/energy.h"
-#include "ff/hippo/cflux.h"
 #include "ff/hippo/elechippo.h"
-#include "ff/hippo/epolarchgpen.h"
 #include "ff/image.h"
-#include "ff/pchg/echarge.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
 #include "launch.h"
-#include "seq/bsplgen.h"
 #include "seq/pair_polar_chgpen.h"
 #include "triangle.h"
 
@@ -19,15 +13,14 @@ namespace tinker {
 // ck.py Version 2.0.3
 template <class Ver, class ETYP, bool CFLX>
 __global__
-void epolar_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict np,
-   EnergyBuffer restrict ep, VirialBuffer restrict vp, grad_prec* restrict gx,
-   grad_prec* restrict gy, grad_prec* restrict gz, real off, const unsigned* restrict dwinfo,
-   int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, real (*restrict ufld)[3],
-   real (*restrict dufld)[6], const real (*restrict uind)[3], real* restrict pot,
-   const real (*restrict rpole)[10], real* restrict pcore, real* restrict pval,
+void epolarChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict np, EnergyBuffer restrict ep,
+   VirialBuffer restrict vp, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
+   real off, const unsigned* restrict dwinfo, int nexclude, const int (*restrict exclude)[2],
+   const real (*restrict exclude_scale)[3], const real* restrict x, const real* restrict y,
+   const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl,
+   const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
+   real (*restrict ufld)[3], real (*restrict dufld)[6], const real (*restrict uind)[3],
+   real* restrict pot, const real (*restrict rpole)[10], real* restrict pcore, real* restrict pval,
    const real* restrict palpha, real aewald, real f)
 {
    constexpr bool do_a = Ver::a;
@@ -687,7 +680,7 @@ void epolar_chgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict np,
 }
 
 template <class Ver, class ETYP, int CFLX>
-void epolar_chgpen_cu(const real (*uind)[3])
+static void epolarChgpen_cu(const real (*uind)[3])
 {
    constexpr bool do_g = Ver::g;
    const auto& st = *mspatial_v2_unit;
@@ -709,7 +702,7 @@ void epolar_chgpen_cu(const real (*uind)[3])
       darray::zero(g::q0, n, ufld, dufld);
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   epolar_chgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep,
+   epolarChgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep,
       ep, vir_ep, depx, depy, depz, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale,
       st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind,
       pot, rpole, pcore, pval, palpha, aewald, f);
@@ -721,72 +714,72 @@ void epolar_chgpen_cu(const real (*uind)[3])
    }
 }
 
-void epolar_chgpen_nonewald_cu(int vers, int use_cf, const real (*uind)[3])
+void epolarChgpenNonEwald_cu(int vers, int use_cf, const real (*uind)[3])
 {
    if (use_cf) {
       if (vers == calc::v0) {
-         // epolar_chgpen_cu<calc::V0, NON_EWALD, 1>(uind);
+         // epolarChgpen_cu<calc::V0, NON_EWALD, 1>(uind);
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
-         epolar_chgpen_cu<calc::V1, NON_EWALD, 1>(uind);
+         epolarChgpen_cu<calc::V1, NON_EWALD, 1>(uind);
       } else if (vers == calc::v3) {
-         // epolar_chgpen_cu<calc::V3, NON_EWALD, 1>(uind);
+         // epolarChgpen_cu<calc::V3, NON_EWALD, 1>(uind);
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
-         epolar_chgpen_cu<calc::V4, NON_EWALD, 1>(uind);
+         epolarChgpen_cu<calc::V4, NON_EWALD, 1>(uind);
       } else if (vers == calc::v5) {
-         epolar_chgpen_cu<calc::V5, NON_EWALD, 1>(uind);
+         epolarChgpen_cu<calc::V5, NON_EWALD, 1>(uind);
       } else if (vers == calc::v6) {
-         epolar_chgpen_cu<calc::V6, NON_EWALD, 1>(uind);
+         epolarChgpen_cu<calc::V6, NON_EWALD, 1>(uind);
       }
    } else {
       if (vers == calc::v0) {
-         epolar_chgpen_cu<calc::V0, NON_EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V0, NON_EWALD, 0>(uind);
       } else if (vers == calc::v1) {
-         epolar_chgpen_cu<calc::V1, NON_EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V1, NON_EWALD, 0>(uind);
       } else if (vers == calc::v3) {
-         epolar_chgpen_cu<calc::V3, NON_EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V3, NON_EWALD, 0>(uind);
       } else if (vers == calc::v4) {
-         epolar_chgpen_cu<calc::V4, NON_EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V4, NON_EWALD, 0>(uind);
       } else if (vers == calc::v5) {
-         epolar_chgpen_cu<calc::V5, NON_EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V5, NON_EWALD, 0>(uind);
       } else if (vers == calc::v6) {
-         epolar_chgpen_cu<calc::V6, NON_EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V6, NON_EWALD, 0>(uind);
       }
    }
 }
 
-void epolar_chgpen_ewald_real_cu(int vers, int use_cf, const real (*uind)[3])
+void epolarChgpenEwaldReal_cu(int vers, int use_cf, const real (*uind)[3])
 {
    if (use_cf) {
       if (vers == calc::v0) {
-         // epolar_chgpen_cu<calc::V0, EWALD, 1>(uind);
+         // epolarChgpen_cu<calc::V0, EWALD, 1>(uind);
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
-         epolar_chgpen_cu<calc::V1, EWALD, 1>(uind);
+         epolarChgpen_cu<calc::V1, EWALD, 1>(uind);
       } else if (vers == calc::v3) {
-         // epolar_chgpen_cu<calc::V3, EWALD, 1>(uind);
+         // epolarChgpen_cu<calc::V3, EWALD, 1>(uind);
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
-         epolar_chgpen_cu<calc::V4, EWALD, 1>(uind);
+         epolarChgpen_cu<calc::V4, EWALD, 1>(uind);
       } else if (vers == calc::v5) {
-         epolar_chgpen_cu<calc::V5, EWALD, 1>(uind);
+         epolarChgpen_cu<calc::V5, EWALD, 1>(uind);
       } else if (vers == calc::v6) {
-         epolar_chgpen_cu<calc::V6, EWALD, 1>(uind);
+         epolarChgpen_cu<calc::V6, EWALD, 1>(uind);
       }
    } else {
       if (vers == calc::v0) {
-         epolar_chgpen_cu<calc::V0, EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V0, EWALD, 0>(uind);
       } else if (vers == calc::v1) {
-         epolar_chgpen_cu<calc::V1, EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V1, EWALD, 0>(uind);
       } else if (vers == calc::v3) {
-         epolar_chgpen_cu<calc::V3, EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V3, EWALD, 0>(uind);
       } else if (vers == calc::v4) {
-         epolar_chgpen_cu<calc::V4, EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V4, EWALD, 0>(uind);
       } else if (vers == calc::v5) {
-         epolar_chgpen_cu<calc::V5, EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V5, EWALD, 0>(uind);
       } else if (vers == calc::v6) {
-         epolar_chgpen_cu<calc::V6, EWALD, 0>(uind);
+         epolarChgpen_cu<calc::V6, EWALD, 0>(uind);
       }
    }
 }

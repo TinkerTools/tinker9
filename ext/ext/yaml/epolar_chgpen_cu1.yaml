@@ -1,4 +1,4 @@
-KERNEL_NAME: epolar_chgpen_cu1
+KERNEL_NAME: epolarChgpen_cu1
 TEMPLATE_PARAMS: template <class Ver, class ETYP, bool CFLX>
 CONSTEXPR_FLAGS: |
   constexpr bool do_a = Ver::a;

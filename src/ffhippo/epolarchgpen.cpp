@@ -4,33 +4,15 @@
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/hippo/cflux.h"
-#include "ff/hippo/epolarchgpen.h"
 #include "ff/hippo/inducechgpen.h"
 #include "ff/nblist.h"
-#include "ff/pme.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tool/io.h"
-#include <map>
-#include <tinker/detail/inform.hh>
+#include "tool/iofortstr.h"
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polpot.hh>
-#include <tinker/detail/units.hh>
 #include <tinker/detail/uprior.hh>
-
-namespace tinker {
-void epolar_chgpen_nonewald(int vers, int use_cf);
-void epolar_chgpen_ewald(int vers, int use_cf);
-void epolar_chgpen_ewald_real(int vers, int use_cf);
-void epolar_chgpen_ewald_recip_self(int vers, int use_cf);
-
-void epolar_chgpen_nonewald_acc(int vers, int use_cf, const real (*d)[3]);
-void epolar_chgpen_ewald_real_acc(int vers, int use_cf, const real (*d)[3]);
-void epolar_chgpen_ewald_recip_self_acc(int vers, int use_cf, const real (*d)[3]);
-void epolar_chgpen_nonewald_cu(int vers, int use_cf, const real (*d)[3]);
-void epolar_chgpen_ewald_real_cu(int vers, int use_cf, const real (*d)[3]);
-}
 
 namespace tinker {
 void epolarChgpenData(RcOp op)
@@ -149,7 +131,85 @@ void epolarChgpenData(RcOp op)
       waitFor(g::q0);
    }
 }
+}
 
+namespace tinker {
+extern void epolarChgpenNonEwald_acc(int vers, int use_cf, const real (*d)[3]);
+extern void epolarChgpenNonEwald_cu(int vers, int use_cf, const real (*d)[3]);
+static void epolarChgpenNonEwald(int vers, int use_cf)
+{
+   // v0: E_dot
+   // v1: EGV = E_dot + GV
+   // v3: EA = E_pair + A
+   // v4: EG = E_dot + G
+   // v5: G
+   // v6: GV
+   bool edot = vers & calc::energy; // if not do_e, edot = false
+   if (vers & calc::energy && vers & calc::analyz)
+      edot = false; // if do_e and do_a, edot = false
+   int ver2 = vers;
+   if (edot)
+      ver2 &= ~calc::energy; // toggle off the calc::energy flag
+
+   induce2(uind);
+   if (edot)
+      epolar0DotProd(uind, udir);
+   if (vers != calc::v0) {
+#if TINKER_CUDART
+      if (mlistVersion() & Nbl::SPATIAL)
+         epolarChgpenNonEwald_cu(ver2, use_cf, uind);
+      else
+#endif
+         epolarChgpenNonEwald_acc(ver2, use_cf, uind);
+   }
+}
+}
+
+namespace tinker {
+extern void epolarChgpenEwaldReal_acc(int vers, int use_cf, const real (*d)[3]);
+extern void epolarChgpenEwaldReal_cu(int vers, int use_cf, const real (*d)[3]);
+static void epolarChgpenEwaldReal(int vers, int use_cf)
+{
+#if TINKER_CUDART
+   if (mlistVersion() & Nbl::SPATIAL)
+      epolarChgpenEwaldReal_cu(vers, use_cf, uind);
+   else
+#endif
+      epolarChgpenEwaldReal_acc(vers, use_cf, uind);
+}
+
+extern void epolarChgpenEwaldRecipSelf_acc(int vers, int use_cf, const real (*d)[3]);
+static void epolarChgpenEwaldRecipSelf(int vers, int use_cf)
+{
+   epolarChgpenEwaldRecipSelf_acc(vers, use_cf, uind);
+}
+
+static void epolarChgpenEwald(int vers, int use_cf)
+{
+   // v0: E_dot
+   // v1: EGV = E_dot + GV
+   // v3: EA = E_pair + A
+   // v4: EG = E_dot + G
+   // v5: G
+   // v6: GV
+   bool edot = vers & calc::energy; // if not do_e, edot = false
+   if (vers & calc::energy && vers & calc::analyz)
+      edot = false; // if do_e and do_a, edot = false
+   int ver2 = vers;
+   if (edot)
+      ver2 &= ~calc::energy; // toggle off the calc::energy flag
+
+   induce2(uind);
+   if (edot)
+      epolar0DotProd(uind, udir);
+   if (vers != calc::v0) {
+      epolarChgpenEwaldReal(ver2, use_cf);
+      epolarChgpenEwaldRecipSelf(ver2, use_cf);
+   }
+}
+}
+
+namespace tinker {
 void epolarChgpen(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -180,9 +240,9 @@ void epolarChgpen(int vers)
       cfluxZeroPot();
    }
    if (useEwald())
-      epolar_chgpen_ewald(vers, use_cfgrad);
+      epolarChgpenEwald(vers, use_cfgrad);
    else
-      epolar_chgpen_nonewald(vers, use_cfgrad);
+      epolarChgpenNonEwald(vers, use_cfgrad);
    torque(vers, depx, depy, depz);
    if (use_cfgrad)
       dcflux(vers, depx, depy, depz, vir_ep);
@@ -215,72 +275,5 @@ void epolarChgpen(int vers)
       if (do_g)
          sumGradient(gx_elec, gy_elec, gz_elec, depx, depy, depz);
    }
-}
-
-void epolar_chgpen_nonewald(int vers, int use_cf)
-{
-   // v0: E_dot
-   // v1: EGV = E_dot + GV
-   // v3: EA = E_pair + A
-   // v4: EG = E_dot + G
-   // v5: G
-   // v6: GV
-   bool edot = vers & calc::energy; // if not do_e, edot = false
-   if (vers & calc::energy && vers & calc::analyz)
-      edot = false; // if do_e and do_a, edot = false
-   int ver2 = vers;
-   if (edot)
-      ver2 &= ~calc::energy; // toggle off the calc::energy flag
-
-   induce2(uind);
-   if (edot)
-      epolar0DotProd(uind, udir);
-   if (vers != calc::v0) {
-#if TINKER_CUDART
-      if (mlistVersion() & Nbl::SPATIAL)
-         epolar_chgpen_nonewald_cu(ver2, use_cf, uind);
-      else
-#endif
-         epolar_chgpen_nonewald_acc(ver2, use_cf, uind);
-   }
-}
-
-void epolar_chgpen_ewald(int vers, int use_cf)
-{
-   // v0: E_dot
-   // v1: EGV = E_dot + GV
-   // v3: EA = E_pair + A
-   // v4: EG = E_dot + G
-   // v5: G
-   // v6: GV
-   bool edot = vers & calc::energy; // if not do_e, edot = false
-   if (vers & calc::energy && vers & calc::analyz)
-      edot = false; // if do_e and do_a, edot = false
-   int ver2 = vers;
-   if (edot)
-      ver2 &= ~calc::energy; // toggle off the calc::energy flag
-
-   induce2(uind);
-   if (edot)
-      epolar0DotProd(uind, udir);
-   if (vers != calc::v0) {
-      epolar_chgpen_ewald_real(ver2, use_cf);
-      epolar_chgpen_ewald_recip_self(ver2, use_cf);
-   }
-}
-
-void epolar_chgpen_ewald_real(int vers, int use_cf)
-{
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      epolar_chgpen_ewald_real_cu(vers, use_cf, uind);
-   else
-#endif
-      epolar_chgpen_ewald_real_acc(vers, use_cf, uind);
-}
-
-void epolar_chgpen_ewald_recip_self(int vers, int use_cf)
-{
-   epolar_chgpen_ewald_recip_self_acc(vers, use_cf, uind);
 }
 }
