@@ -43,7 +43,7 @@ Synopsis
     tinker9.docker [CudaVersion] [Stage]
         Generate the docker files and print the command.
 
-    tinker9.docker [CudaVer] [Stage] | bash
+    tinker9.docker [CudaVersion] [Stage] | bash
         Generate the docker files and execute the command.\n'''
 
         line += '\nCudaVersion'
