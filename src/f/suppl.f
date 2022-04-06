@@ -96,14 +96,20 @@
 #ifdef TINKER_SUPPL_IMPL
       subroutine suppl_read_stdin_line (out)
       implicit none
-      integer i,outlen,stdin
+      integer i,outlen,stdin,stdout
       parameter (stdin=5)
+      parameter (stdout=6)
       character*(*) out
       outlen = len(out)
+      if (outlen .lt. 240) then
+         write (stdout,'(a)') ' Exit. The capacity of the output'//
+     &      ' string must be at least 240.'
+         call exit (1)
+      end if
       do i = 1, outlen
          out(i:i) = char(0)
       end do
-      read (stdin,'(a)')  out
+      read (stdin,'(a240)')  out
       return
       end
 #endif

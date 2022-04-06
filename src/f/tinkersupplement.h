@@ -1,5 +1,6 @@
 #pragma once
 #include <tinker/routines.h>
+
 #define TINKER_SUPPL_DECL
 
 #ifdef __cplusplus
