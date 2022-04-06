@@ -1,8 +1,10 @@
 #include "md/integrator.h"
 #include "md/pt.h"
+#include <tinker/detail/inform.hh>
+
 #include "test.h"
 #include "testrt.h"
-#include <tinker/detail/inform.hh>
+
 using namespace tinker;
 
 #if TINKER_REAL_SIZE == 8

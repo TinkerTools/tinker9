@@ -1,6 +1,8 @@
 #include "ff/hippo/edisp.h"
+
 #include "test.h"
 #include "testrt.h"
+
 using namespace tinker;
 
 TEST_CASE("EDISP-1-NONDEWALD", "[ff][hippo][edisp][nondewald]")

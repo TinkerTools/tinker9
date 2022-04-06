@@ -6,6 +6,11 @@ amoeba/field.cu
 amoeba/pcg.cu
 amoeba/precond.cu
 compilers.cu
+echarge.cu
+echglj.cu
+ehal.cu
+elj.cu
+evalence.cu
 hippo/echgtrn.cu
 hippo/edisp.cu
 hippo/empole.cu
@@ -18,11 +23,6 @@ mathparallel.cu
 md/mdintg.cu
 md/pt.cu
 md/rattle.cu
-pchg/echarge.cu
-pchg/echglj.cu
-pchg/ehal.cu
-pchg/elj.cu
-pchg/evalence.cu
 pme.cu
 spatial.cu
 )

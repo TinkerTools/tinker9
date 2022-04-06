@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/precision.h"
-#include "seqdef.h"
+#include "seq/seq.h"
 
 namespace tinker {
 /// \ingroup math

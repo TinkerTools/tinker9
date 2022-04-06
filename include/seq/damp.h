@@ -1,7 +1,7 @@
 #pragma once
 #include "math/const.h"
 #include "math/libfunc.h"
-#include "seqdef.h"
+#include "seq/seq.h"
 
 namespace tinker {
 // ufield, PCG

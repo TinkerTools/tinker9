@@ -1,9 +1,9 @@
 #pragma once
-#include "add.h"
-#include "ff/pchg/evalence.h"
+#include "ff/evalence.h"
 #include "math/const.h"
 #include "math/libfunc.h"
-#include "seqdef.h"
+#include "seq/add.h"
+#include "seq/seq.h"
 
 namespace tinker {
 /**

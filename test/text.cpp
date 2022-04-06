@@ -1,5 +1,6 @@
 #include "test.h"
 #include "tool/iotext.h"
+
 using namespace tinker;
 
 TEST_CASE("Text", "[util][text]")

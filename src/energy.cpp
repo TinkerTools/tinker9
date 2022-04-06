@@ -58,18 +58,18 @@ static bool fts(std::string eng, bool& use_flag, unsigned tsflag, const TimeScal
 #include "ff/amoeba/emplar.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
+#include "ff/echarge.h"
+#include "ff/echglj.h"
+#include "ff/evalence.h"
+#include "ff/evdw.h"
 #include "ff/hippo/echgtrn.h"
 #include "ff/hippo/edisp.h"
 #include "ff/hippo/empole.h"
 #include "ff/hippo/epolar.h"
 #include "ff/hippo/erepel.h"
 #include "ff/nblist.h"
-#include "ff/pchg/echarge.h"
-#include "ff/pchg/echglj.h"
-#include "ff/pchg/evalence.h"
-#include "ff/pchg/evdw.h"
+#include "ff/pmestream.h"
 #include "ff/potent.h"
-#include "tool/pmestream.h"
 #include <tinker/detail/mplpot.hh>
 
 namespace tinker {

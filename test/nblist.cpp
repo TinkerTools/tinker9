@@ -1,7 +1,5 @@
 #include "ff/nblist.h"
 #include "ff/atom.h"
-#include "test.h"
-#include "testrt.h"
 #include "tool/error.h"
 #include "tool/ioread.h"
 #include "tool/platform.h"
@@ -9,6 +7,9 @@
 #include <fstream>
 #include <set>
 #include <sstream>
+
+#include "test.h"
+#include "testrt.h"
 
 using namespace tinker;
 

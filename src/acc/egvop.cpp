@@ -1,5 +1,5 @@
-#include "add.h"
 #include "ff/atom.h"
+#include "seq/add.h"
 
 namespace tinker {
 void scaleGradient_acc(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z)

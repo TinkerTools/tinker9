@@ -1,4 +1,4 @@
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/amoebamod.h"
 #include "ff/hippo/induce.h"
 #include "seq/launch.h"
 #include "tool/ioprint.h"

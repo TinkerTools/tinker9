@@ -1,8 +1,8 @@
 #include "ff/atom.h"
 #include "ff/box.h"
+#include "ff/energybuffer.h"
 #include "ff/nblist.h"
 #include "tool/darray.h"
-#include "tool/energybuffer.h"
 #include "tool/error.h"
 #include "tool/gpucard.h"
 #include <cassert>

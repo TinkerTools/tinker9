@@ -1,5 +1,5 @@
 #include "md/pq.h"
-#include "add.h"
+#include "seq/add.h"
 #include "tool/error.h"
 #include <tinker/detail/units.hh>
 

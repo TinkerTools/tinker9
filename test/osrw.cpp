@@ -1,8 +1,10 @@
 #include "md/osrw.h"
-#include "ff/amoeba/elecamoeba.h"
-#include "ff/pchg/evdw.h"
+#include "ff/amoebamod.h"
+#include "ff/evdw.h"
+
 #include "test.h"
 #include "testrt.h"
+
 using namespace tinker;
 
 namespace {

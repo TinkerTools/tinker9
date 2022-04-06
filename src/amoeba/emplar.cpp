@@ -1,5 +1,5 @@
-#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/empole.h"
+#include "ff/amoebamod.h"
 #include "ff/energy.h"
 #include "math/zero.h"
 #include "tool/error.h"

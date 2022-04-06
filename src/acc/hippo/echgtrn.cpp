@@ -1,10 +1,10 @@
-#include "add.h"
 #include "ff/atom.h"
 #include "ff/elec.h"
-#include "ff/hippo/elechippo.h"
+#include "ff/hippomod.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/switch.h"
+#include "seq/add.h"
 #include "seq/pair_chgtrn.h"
 #include "tool/gpucard.h"
 #include <cassert>

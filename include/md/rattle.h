@@ -1,6 +1,6 @@
 #pragma once
+#include "ff/energybuffer.h"
 #include "ff/molecule.h"
-#include "tool/energybuffer.h"
 
 extern "C"
 {

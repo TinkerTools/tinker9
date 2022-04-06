@@ -2,9 +2,9 @@
 #include "ff/atom.h"
 #include "ff/box.h"
 #include "ff/egvop.h"
+#include "ff/energybuffer.h"
 #include "ff/timescale.h"
 #include "tool/darray.h"
-#include "tool/energybuffer.h"
 
 namespace tinker {
 /// \ingroup egv

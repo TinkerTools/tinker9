@@ -1,6 +1,8 @@
-#include "ff/pchg/evalence.h"
+#include "ff/evalence.h"
+
 #include "test.h"
 #include "testrt.h"
+
 using namespace tinker;
 
 TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]")

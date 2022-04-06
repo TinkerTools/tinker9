@@ -1,8 +1,8 @@
 #pragma once
-#include "add.h"
 #include "math/const.h"
 #include "math/libfunc.h"
-#include "seqdef.h"
+#include "seq/add.h"
+#include "seq/seq.h"
 
 namespace tinker {
 // Computing angle from sine instead of cosine may have a higher precision.

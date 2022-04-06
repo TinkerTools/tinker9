@@ -1,23 +1,22 @@
-#include "test.h"
-#include "testrt.h"
+#include "ff/box.h"
 #include "tool/iofortstr.h"
 #include <fstream>
 #include <tinker/detail/files.hh>
 
-#include "ff/box.h"
-namespace {
-const char* coord = R"**(   2
+#include "test.h"
+#include "testrt.h"
+
+static const char* coord = R"**(   2
    1 Na+    51.000000   -83.000000   164.000000     7
    2 Cl-    63.000000    95.000000    47.000000    14
 )**";
 
-const char* keyfile = R"**(
+static const char* keyfile = R"**(
 parameters                 amoeba09
 a-axis                       20.000
 
 bondterm                       only
 )**";
-}
 
 using namespace tinker;
 

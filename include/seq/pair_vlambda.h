@@ -1,6 +1,6 @@
 #pragma once
-#include "ff/pchg/evdw.h"
-#include "seqdef.h"
+#include "ff/evdw.h"
+#include "seq/seq.h"
 
 namespace tinker {
 /**

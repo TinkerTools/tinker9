@@ -1,6 +1,6 @@
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/amoebamod.h"
 #include "ff/atom.h"
-#include "ff/hippo/elechippo.h"
+#include "ff/hippomod.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"

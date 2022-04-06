@@ -1,6 +1,6 @@
 #include "ff/atom.h"
-#include "ff/hippo/elechippo.h"
-#include "ff/pchg/evalence.h"
+#include "ff/evalence.h"
+#include "ff/hippomod.h"
 #include "ff/potent.h"
 #include "tool/darray.h"
 #include <tinker/detail/atmlst.hh>

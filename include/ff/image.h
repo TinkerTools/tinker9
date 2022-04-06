@@ -1,7 +1,7 @@
 #pragma once
 #include "ff/box.h"
 #include "math/libfunc.h"
-#include "seqdef.h"
+#include "seq/seq.h"
 
 namespace tinker {
 #define IMAGE_TRI__(xr, yr, zr, l1, l2, l3, ra, rb, rc)                                            \

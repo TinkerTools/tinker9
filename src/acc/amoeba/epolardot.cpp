@@ -1,7 +1,7 @@
-#include "add.h"
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/amoebamod.h"
 #include "ff/atom.h"
 #include "ff/elec.h"
+#include "seq/add.h"
 
 namespace tinker {
 void epolar0DotProd_acc(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])

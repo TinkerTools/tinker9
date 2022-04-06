@@ -1,7 +1,7 @@
 #include "md/lflpiston.h"
-#include "add.h"
 #include "ff/energy.h"
 #include "md/pq.h"
+#include "seq/add.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {

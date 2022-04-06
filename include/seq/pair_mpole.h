@@ -1,6 +1,6 @@
 #pragma once
-#include "add.h"
 #include "ff/elec.h"
+#include "seq/add.h"
 #include "seq/damp.h"
 
 namespace tinker {

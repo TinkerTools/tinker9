@@ -1,6 +1,8 @@
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/amoebamod.h"
+
 #include "test.h"
 #include "testrt.h"
+
 using namespace tinker;
 
 TEST_CASE("EPOLAR-1-EWALD-HIPPO", "[ff][hippo][ephippo][ewald]")

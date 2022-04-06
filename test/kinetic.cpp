@@ -1,6 +1,8 @@
 #include "md/pt.h"
+
 #include "test.h"
 #include "testrt.h"
+
 using namespace tinker;
 
 static const char* verlet_intg = "integrator  verlet\n";

@@ -1,10 +1,10 @@
 #include "ff/hippo/cflux.h"
-#include "add.h"
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/amoebamod.h"
 #include "ff/atom.h"
-#include "ff/hippo/elechippo.h"
-#include "ff/pchg/evalence.h"
+#include "ff/evalence.h"
+#include "ff/hippomod.h"
 #include "math/libfunc.h"
+#include "seq/add.h"
 #include "tool/darray.h"
 
 namespace tinker {

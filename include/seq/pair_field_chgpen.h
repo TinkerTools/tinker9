@@ -1,7 +1,7 @@
 #pragma once
-#include "add.h"
 #include "ff/elec.h"
 #include "math/realn.h"
+#include "seq/add.h"
 #include "seq/damp.h"
 #include "seq/damp_hippo.h"
 

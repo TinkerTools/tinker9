@@ -1,6 +1,6 @@
 #pragma once
 #include "math/sinhc.h"
-#include "seqdef.h"
+#include "seq/seq.h"
 
 namespace tinker {
 #pragma acc routine seq

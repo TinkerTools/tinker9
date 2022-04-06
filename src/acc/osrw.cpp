@@ -1,9 +1,9 @@
 #include "md/osrw.h"
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/amoebamod.h"
 #include "ff/atom.h"
-#include "ff/pchg/echarge.h"
-#include "ff/pchg/evalence.h"
-#include "ff/pchg/evdw.h"
+#include "ff/echarge.h"
+#include "ff/evalence.h"
+#include "ff/evdw.h"
 #include "ff/potent.h"
 #include "math/libfunc.h"
 

@@ -1,4 +1,4 @@
-#include "tool/energybuffer.h"
+#include "ff/energybuffer.h"
 #include "ff/atom.h"
 #include "tool/darray.h"
 #include "tool/rcman.h"

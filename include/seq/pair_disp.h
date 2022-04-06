@@ -1,10 +1,10 @@
 #pragma once
-#include "add.h"
 #include "ff/elec.h"
 #include "math/libfunc.h"
 #include "math/switch.h"
+#include "seq/add.h"
 #include "seq/damp_hippodisp.h"
-#include "seqdef.h"
+#include "seq/seq.h"
 
 namespace tinker {
 #pragma acc routine seq

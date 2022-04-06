@@ -1,11 +1,12 @@
-#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/induce.h"
-#include "test.h"
-#include "testrt.h"
+#include "ff/amoebamod.h"
 #include <array>
 #include <tinker/detail/units.hh>
+
+#include "test.h"
+#include "testrt.h"
 
 using namespace tinker;
 

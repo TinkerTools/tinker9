@@ -1,6 +1,8 @@
-#include "ff/pchg/echarge.h"
+#include "ff/echarge.h"
+
 #include "test.h"
 #include "testrt.h"
+
 using namespace tinker;
 
 TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")

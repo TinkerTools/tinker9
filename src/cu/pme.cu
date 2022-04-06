@@ -1,10 +1,10 @@
-#include "add.h"
-#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/empole.h"
+#include "ff/amoebamod.h"
 #include "ff/box.h"
 #include "ff/elec.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
+#include "seq/add.h"
 #include "seq/bsplgen.h"
 #include "seq/launch.h"
 

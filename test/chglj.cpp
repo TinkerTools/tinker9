@@ -1,5 +1,6 @@
 #include "test.h"
 #include "testrt.h"
+
 using namespace tinker;
 
 TEST_CASE("Chglj-Trpcage", "[ff][echarge][evdw][echglj][lj][trpcage]")

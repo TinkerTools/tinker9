@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/precision.h"
-#include "seqdef.h"
+#include "seq/seq.h"
 #include <cmath>
 
 // erfc

@@ -1,6 +1,8 @@
 #include "ff/hippo/erepel.h"
+
 #include "test.h"
 #include "testrt.h"
+
 using namespace tinker;
 
 TEST_CASE("EREPEL-1", "[ff][hippo][erepel][c5h12-acnh2]")

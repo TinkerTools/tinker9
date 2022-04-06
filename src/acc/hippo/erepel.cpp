@@ -1,10 +1,10 @@
 #include "ff/hippo/erepel.h"
-#include "add.h"
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/amoebamod.h"
 #include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/switch.h"
+#include "seq/add.h"
 #include "seq/pair_repel.h"
 #include "tool/gpucard.h"
 

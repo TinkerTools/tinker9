@@ -1,6 +1,6 @@
-#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/induce.h"
+#include "ff/amoebamod.h"
 #include "ff/atom.h"
 #include "ff/hippo/induce.h"
 #include "ff/potent.h"

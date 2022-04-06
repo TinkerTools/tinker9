@@ -1,6 +1,6 @@
 #pragma once
 #include "math/libfunc.h"
-#include "seqdef.h"
+#include "seq/seq.h"
 #include "tool/macro.h"
 
 // sinhc on host

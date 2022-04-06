@@ -1,4 +1,4 @@
-#include "ff/amoeba/elecamoeba.h"
+#include "ff/amoebamod.h"
 #include "ff/atom.h"
 #include "math/libfunc.h"
 

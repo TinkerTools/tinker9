@@ -1,6 +1,6 @@
-#include "add.h"
 #include "md/pq.h"
 #include "md/rattle.h"
+#include "seq/add.h"
 #include "seq/launch.h"
 #include <tinker/detail/units.hh>
 

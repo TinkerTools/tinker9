@@ -1,6 +1,6 @@
 #include "ff/amoeba/epolar.h"
-#include "ff/amoeba/elecamoeba.h"
 #include "ff/amoeba/empole.h"
+#include "ff/amoebamod.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/hippo/cflux.h"

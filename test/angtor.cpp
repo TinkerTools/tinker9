@@ -1,6 +1,8 @@
-#include "ff/pchg/evalence.h"
+#include "ff/evalence.h"
+
 #include "test.h"
 #include "testrt.h"
+
 using namespace tinker;
 
 TEST_CASE("Angtor-A4", "[ff][eangtor][a4]")

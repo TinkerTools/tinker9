@@ -1,5 +1,7 @@
 #include "math/trimatexp.h"
+
 #include "test.h"
+
 using namespace tinker;
 
 TEST_CASE("TriMatExp", "[util][math][trimatexp]")
