@@ -3,7 +3,9 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/iofortstr.h"
 #include <tinker/detail/chgtrn.hh>
+#include <tinker/detail/ctrpot.hh>
 
 namespace tinker {
 void echgtrnData(RcOp op)
@@ -14,6 +16,7 @@ void echgtrnData(RcOp op)
    bool rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
+      ctrntyp = Chgtrn::NONE;
       darray::deallocate(chgct, dmpct);
 
       if (rc_a) {
@@ -44,6 +47,14 @@ void echgtrnData(RcOp op)
    }
 
    if (op & RcOp::INIT) {
+      FstrView ctypstr = ctrpot::ctrntyp;
+      if (ctypstr == "SEPARATE")
+         ctrntyp = Chgtrn::SEPARATE;
+      else if (ctypstr == "COMBINED")
+         ctrntyp = Chgtrn::COMBINED;
+      else
+         ctrntyp = Chgtrn::NONE;
+
       darray::copyin(g::q0, n, chgct, chgtrn::chgct);
       std::vector<real> dmpctvec(n);
       for (int i = 0; i < n; ++i) {
@@ -59,6 +70,8 @@ void echgtrnData(RcOp op)
 
 extern void echgtrn_acc(int);
 extern void echgtrn_cu(int);
+extern void echgtrnAplus_acc(int);
+extern void echgtrnAplus_cu(int);
 void echgtrn(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -82,10 +95,16 @@ void echgtrn(int vers)
 
 #if TINKER_CUDART
    if (mlistVersion() & Nbl::SPATIAL)
-      echgtrn_cu(vers);
+      if (ctrntyp == Chgtrn::SEPARATE)
+         echgtrn_cu(vers);
+      else
+         echgtrnAplus_cu(vers);
    else
 #endif
+      if (ctrntyp == Chgtrn::SEPARATE)
       echgtrn_acc(vers);
+   else if (ctrntyp == Chgtrn::COMBINED)
+      echgtrnAplus_acc(vers);
 
    if (rc_a) {
       if (do_e) {

@@ -5,6 +5,7 @@ amoeba/epolar.cpp
 amoeba/field.cpp
 amoeba/induce.cpp
 amoeba/mpole.cpp
+aplus/epolar.cpp
 argkey.cpp
 atom.cpp
 bonded/eangle.cpp

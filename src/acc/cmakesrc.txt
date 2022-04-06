@@ -9,6 +9,7 @@ amoeba/fieldnonewald.cpp
 amoeba/induce.cpp
 amoeba/rotpole.cpp
 amoeba/torque.cpp
+aplus/echgtrn.cpp
 atom.cpp
 box.cpp
 compilers.cpp

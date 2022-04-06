@@ -5,6 +5,7 @@ amoeba/epolar.cu
 amoeba/field.cu
 amoeba/pcg.cu
 amoeba/precond.cu
+aplus/echgtrn.cu
 compilers.cu
 echarge.cu
 echglj.cu

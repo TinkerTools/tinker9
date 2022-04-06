@@ -5,8 +5,9 @@ namespace tinker {
 /// \ingroup chgtrn
 enum class Chgtrn
 {
-   SEPARATE,
-   COMBINED
+   NONE,
+   SEPARATE, // hippo
+   COMBINED  // amoeba+
 };
 
 /// \ingroup chgtrn
