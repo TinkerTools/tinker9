@@ -49,7 +49,7 @@ Synopsis
         line += '\nCudaVersion'
         for k in lCudaKeys:
             c = ConfigData[k]
-            line += '\n    %-8s NVHPC %-8s Ubuntu %-8s' % (k, c[kNvhpc], c[kUbuntu])
+            line += '\n    %-8s   NVHPC %-8s Ubuntu %-8s' % (k, c[kNvhpc], c[kUbuntu])
 
         line += '\n\nStage'
         line += '\n    devel      Create a heavy image with all the tools.'
