@@ -27,7 +27,7 @@ void platformData(RcOp op)
             Text::upcase(gpu_package);
          }
          if (gpu_package == "") {
-            get_kv("GPU-PACKAGE", gpu_package, "CUDA");
+            getKV("GPU-PACKAGE", gpu_package, "CUDA");
          }
          if (gpu_package == "CUDA") {
             pltfm_config = Platform::CUDA;

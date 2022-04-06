@@ -19,7 +19,7 @@ BasicPropagator::BasicPropagator()
 
    atomic = not useRattle();
    aniso = bath::anisotrop;
-   get_kbool("SEMIISO-PRESSURE", semiiso, false);
+   getKV("SEMIISO-PRESSURE", semiiso, false);
    if (semiiso)
       aniso = true;
 }

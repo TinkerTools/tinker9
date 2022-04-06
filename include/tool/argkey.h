@@ -1,6 +1,7 @@
 #pragma once
 #include <cstring>
 #include <string>
+#include <vector>
 
 namespace tinker {
 void nextarg(size_t len, char* str, int& exist);
@@ -12,8 +13,8 @@ void nextarg(char (&str)[Len], int& exist)
 }
 
 template <class T1, class T2>
-void get_kv(std::string k, T1& v, T2 vdefault);
+void getKV(std::string k, T1& v, T2 vIfKNotFound);
 
 template <class T>
-void get_kbool(std::string k, T& v, bool vIfKNotFound);
+void getKV(std::string k, std::vector<T>& v);
 }

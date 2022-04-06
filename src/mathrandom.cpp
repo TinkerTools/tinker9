@@ -77,7 +77,7 @@ void randomData(RcOp op)
 {
    if (op & RcOp::INIT) {
       int seed;
-      get_kv("RANDOMSEED", seed, 0);
+      getKV("RANDOMSEED", seed, 0);
       seed = std::max(1, seed);
       if (seed == 0) {
          auto now = std::chrono::system_clock::now();

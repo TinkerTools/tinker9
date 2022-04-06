@@ -33,7 +33,7 @@ void xDynamic(int, char**)
    // check for keywords containing any altered parameters
 
    std::string intgstr;
-   get_kv("INTEGRATOR", intgstr, "BEEMAN");
+   getKV("INTEGRATOR", intgstr, "BEEMAN");
    FstrView integrate = mdstuf::integrate;
    integrate = intgstr;
 

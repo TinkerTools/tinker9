@@ -1,6 +1,7 @@
 set (__T9_TEST_SRC
 angle.cpp
 angtor.cpp
+argkey.cpp
 async.cpp
 bond.cpp
 bounds.cpp
@@ -32,7 +33,6 @@ strbnd.cpp
 strtor.cpp
 testrt.cpp
 text.cpp
-tinkerrt.cpp
 torsion.cpp
 tortor.cpp
 trimatexp.cpp
@@ -40,4 +40,5 @@ truncated8.cpp
 urey.cpp
 vdw14.cpp
 verlet.cpp
+versionsuffix.cpp
 )

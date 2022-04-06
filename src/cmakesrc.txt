@@ -5,6 +5,7 @@ amoeba/epolar.cpp
 amoeba/field.cpp
 amoeba/induce.cpp
 amoeba/mpole.cpp
+argkey.cpp
 atom.cpp
 bonded/eangle.cpp
 bonded/eangtor.cpp
@@ -86,7 +87,6 @@ potent.cpp
 rcman.cpp
 spatial.cpp
 switch.cpp
-tinkerrt.cpp
 tinkersuppl.cpp
 xanalyze.cpp
 xbar.cpp

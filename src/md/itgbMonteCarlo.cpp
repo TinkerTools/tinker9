@@ -17,7 +17,7 @@ MonteCarloBarostat::MonteCarloBarostat()
    : BasicBarostat()
 {
    darray::allocate(n, &x_pmonte, &y_pmonte, &z_pmonte);
-   get_kv("VOLUME-TRIAL", m_nbaro, bath::voltrial);
+   getKV("VOLUME-TRIAL", m_nbaro, bath::voltrial);
 }
 
 void MonteCarloBarostat::printDetail(FILE* o)

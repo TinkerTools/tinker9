@@ -45,8 +45,8 @@ void osrw_mech()
 
    // OSRW keywords.
 
-   get_kbool("OSRW-LAMBDA", use_osrw, false);
-   get_kv("OSRW-LAMBDA", osrw_lambda, 1.0);
+   getKV("OSRW-LAMBDA", use_osrw, false);
+   getKV("OSRW-LAMBDA", osrw_lambda, 1.0);
 
    auto assign = [](int& func_int, const std::string& name) {
       if (name == "LINEAR")
@@ -55,11 +55,11 @@ void osrw_mech()
          func_int = OSRW_LAM_QUADRATIC;
    };
    std::string record;
-   get_kv("OSRW-VDW", record, "LINEAR");
+   getKV("OSRW-VDW", record, "LINEAR");
    assign(osrw_vdw, record);
-   get_kv("OSRW-ELE", record, "LINEAR");
+   getKV("OSRW-ELE", record, "LINEAR");
    assign(osrw_ele, record);
-   get_kv("OSRW-TORS", record, "LINEAR");
+   getKV("OSRW-TORS", record, "LINEAR");
    assign(osrw_tor, record);
 }
 
@@ -103,7 +103,7 @@ void osrwData(RcOp op)
       if (usePotent(Potent::TORSION)) {
          std::vector<int> buf;
          std::vector<std::string> vs;
-         get_kv("ROTATABLE-BOND", vs, "");
+         getKV("ROTATABLE-BOND", vs);
          for (size_t i = 0; i < vs.size(); i += 2) {
             std::string s1 = vs.at(i);
             std::string s2 = vs.at(i + 1);

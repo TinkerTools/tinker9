@@ -21,7 +21,7 @@ BasicBarostat::BasicBarostat()
    : m_nbaro(1)
 {
    int msave = m_nbaro;
-   get_kv("VOLUME-TRIAL", m_nbaro, msave);
+   getKV("VOLUME-TRIAL", m_nbaro, msave);
 }
 
 BasicBarostat::~BasicBarostat() {}

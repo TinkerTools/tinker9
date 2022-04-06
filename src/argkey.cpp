@@ -1,7 +1,5 @@
 #include "tool/iofortstr.h"
 #include "tool/iotext.h"
-#include "tool/tinkersuppl.h"
-#include <algorithm>
 #include <tinker/detail/argue.hh>
 #include <tinker/detail/keys.hh>
 
@@ -24,33 +22,27 @@ void nextarg(size_t len, char* str, int& exist)
       }
    }
 }
+}
 
-inline namespace v1 {
-template <class T>
-void vstr_to_val(T&, std::string);
-
-template <>
-void vstr_to_val<int>(int& v, std::string vstr)
+namespace tinker {
+static void vstrToVal(int& v, std::string vstr)
 {
    v = std::stoi(vstr);
 }
 
-template <>
-void vstr_to_val<double>(double& v, std::string vstr)
+static void vstrToVal(double& v, std::string vstr)
 {
    v = std::stod(vstr);
 }
 
-template <>
-void vstr_to_val<std::string>(std::string& v, std::string vstr)
+static void vstrToVal(std::string& v, std::string vstr)
 {
    v = vstr;
    Text::upcase(v);
 }
-}
 
 template <class T1, class T2>
-void get_kv(std::string k, T1& v, T2 vdefault)
+void getKV(std::string k, T1& v, T2 vIfKNotFound)
 {
    std::string value_str = "";
    for (int i = 0; i < keys::nkey; ++i) {
@@ -64,39 +56,14 @@ void get_kv(std::string k, T1& v, T2 vdefault)
          }
       }
    }
-   if (value_str != "") {
-      vstr_to_val(v, value_str);
-   } else {
-      v = vdefault;
-   }
-}
-template void get_kv(std::string, int&, int);
-template void get_kv(std::string, double&, double);
-template void get_kv(std::string, std::string&, std::string);
-template void get_kv(std::string, std::string&, const char*);
-template <>
-void get_kv<std::vector<std::string>, const char*>(
-   std::string k, std::vector<std::string>& v, const char*)
-{
-   for (int i = 0; i < keys::nkey; ++i) {
-      FstrView record = keys::keyline[i];
-      auto vs = Text::split(record.trim());
-      if (vs.size()) {
-         std::string keyword = vs.at(0);
-         Text::upcase(keyword);
-         if (keyword == k && vs.size() > 1) {
-            v.clear();
-            for (size_t j = 1; j < vs.size(); ++j) {
-               v.push_back(vs[j]);
-               Text::upcase(v[j - 1]);
-            }
-         }
-      }
-   }
+   if (value_str != "")
+      vstrToVal(v, value_str);
+   else
+      v = vIfKNotFound;
 }
 
-template <class T>
-void get_kbool(std::string k, T& v, bool v_if_k_not_found)
+template <>
+void getKV<bool, bool>(std::string k, bool& v, bool vIfKNotFound)
 {
    bool found = false;
    for (int i = 0; i < keys::nkey; ++i) {
@@ -111,10 +78,42 @@ void get_kbool(std::string k, T& v, bool v_if_k_not_found)
       }
    }
    if (found)
-      v = !v_if_k_not_found;
+      v = !vIfKNotFound;
    else
-      v = v_if_k_not_found;
+      v = vIfKNotFound;
 }
-template void get_kbool(std::string k, bool& v, bool vdefault);
-template void get_kbool(std::string k, int& v, bool vdefault);
+template void getKV(std::string, int&, int);
+template void getKV(std::string, double&, double);
+template void getKV(std::string, std::string&, const char*);
+}
+
+namespace tinker {
+template <class T>
+void getKV(std::string k, std::vector<T>& v)
+{
+   std::vector<std::string> value_str;
+   for (int i = 0; i < keys::nkey; ++i) {
+      FstrView record = keys::keyline[i];
+      auto vs = Text::split(record.trim());
+      if (vs.size()) {
+         std::string keyword = vs.at(0);
+         Text::upcase(keyword);
+         if (keyword == k && vs.size() > 1) {
+            value_str.clear();
+            for (size_t j = 1; j < vs.size(); ++j)
+               value_str.push_back(vs[j]);
+         }
+      }
+   }
+   if (value_str.size()) {
+      v.resize(value_str.size());
+      for (size_t i = 0; i < value_str.size(); ++i)
+         vstrToVal(v[i], value_str[i]);
+   } else
+      v.clear();
+}
+
+template void getKV(std::string, std::vector<int>&);
+template void getKV(std::string, std::vector<double>&);
+template void getKV(std::string, std::vector<std::string>&);
 }
