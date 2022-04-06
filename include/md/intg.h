@@ -1,4 +1,5 @@
 #pragma once
+#include "ff/precision.h"
 #include "ff/timescale.h"
 #include "tool/rcman.h"
 

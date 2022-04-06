@@ -2,11 +2,9 @@
 #include "ff/nblist.h"
 #include "math/random.h"
 #include "tool/argkey.h"
-#include "tool/darray.h"
 #include "tool/iofortstr.h"
 #include "tool/ioprint.h"
 #include "tool/ioread.h"
-#include <array>
 #include <fstream>
 #include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>
@@ -18,46 +16,9 @@
 #include "tinker9.h"
 
 namespace tinker {
-void x_bar_makebar();
-void x_bar_barcalc();
-
 static constexpr int MAX_NCHAR = 240;
 
-void xBar(int, char**)
-{
-   initial();
-
-   char string[MAX_NCHAR];
-   auto out = stdout;
-   int exist;
-   int mode = 0;
-   auto invalid_mode = [](int m) { return m != 1 and m != 2; };
-   const char* mode_string1 = R"(
- The Tinker Thermodynamic Perturbation Utility Can :
-
-    (1) Create BAR File with Perturbed Potential Energies
-    (2) Compute Thermodynamic Values from Tinker BAR File
-)";
-
-   nextarg(string, exist);
-   if (exist)
-      ioReadString(mode, string);
-   if (invalid_mode(mode))
-      print(out, "%s", mode_string1);
-   ioReadStream(mode,
-      "\n"
-      " Enter the Number of the Desired Choice :  ",
-      0, invalid_mode);
-
-   if (mode == 1)
-      x_bar_makebar();
-   if (mode == 2)
-      x_bar_barcalc();
-
-   tinker_f_final();
-}
-
-void x_bar_makebar()
+static void xBarMake()
 {
    rc_flag = calc::xyz | calc::mass | calc::energy;
 
@@ -386,7 +347,7 @@ void x_bar_makebar()
       barfile);
 }
 
-void x_bar_barcalc()
+static void xBarCalc()
 {
    auto out = stdout;
    int exist = false;
@@ -903,5 +864,41 @@ void x_bar_barcalc()
    print(out, " Enthalpy via BAR Estimate           %12.4lf +/-%9.4lf Kcal/mol\n", hbar, stdev);
    print(out, " Entropy via BAR Estimate            %12.6lf Kcal/mol/K\n", sbar);
    print(out, " BAR Estimate of -T*dS               %12.4lf Kcal/mol\n", -tsbar);
+}
+}
+
+namespace tinker {
+void xBar(int, char**)
+{
+   initial();
+
+   char string[MAX_NCHAR];
+   auto out = stdout;
+   int exist;
+   int mode = 0;
+   auto invalid_mode = [](int m) { return m != 1 and m != 2; };
+   const char* mode_string1 = R"(
+ The Tinker Thermodynamic Perturbation Utility Can :
+
+    (1) Create BAR File with Perturbed Potential Energies
+    (2) Compute Thermodynamic Values from Tinker BAR File
+)";
+
+   nextarg(string, exist);
+   if (exist)
+      ioReadString(mode, string);
+   if (invalid_mode(mode))
+      print(out, "%s", mode_string1);
+   ioReadStream(mode,
+      "\n"
+      " Enter the Number of the Desired Choice :  ",
+      0, invalid_mode);
+
+   if (mode == 1)
+      xBarMake();
+   if (mode == 2)
+      xBarCalc();
+
+   tinker_f_final();
 }
 }

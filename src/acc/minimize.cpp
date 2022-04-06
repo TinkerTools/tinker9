@@ -1,7 +1,7 @@
 #include "md/pq.h"
 
 namespace tinker {
-void minimize_set_xx_by_pos_acc(int n, double* xx, const double* scale)
+void xMinimizeSetXxByPos_acc(int n, double* xx, const double* scale)
 {
    #pragma acc parallel loop independent async deviceptr(xpos,ypos,zpos)\
            copyin(scale[0:3*n]) copyout(xx[0:3*n])
@@ -14,7 +14,7 @@ void minimize_set_xx_by_pos_acc(int n, double* xx, const double* scale)
    #pragma acc wait
 }
 
-void minimize_set_pos_acc(int n, const double* xx, const double* scale)
+void xMinimizeSetPos_acc(int n, const double* xx, const double* scale)
 {
    #pragma acc parallel loop independent async deviceptr(xpos,ypos,zpos)\
            copyin(scale[0:3*n],xx[0:3*n])

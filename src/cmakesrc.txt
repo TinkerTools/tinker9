@@ -79,7 +79,6 @@ md/rattle.cpp
 mechanic2.cpp
 mod.cpp
 molecule.cpp
-moments.cpp
 nblist.cpp
 platform.cpp
 pme.cpp

@@ -31,7 +31,7 @@
 "  ###                                                                      ### ""\n" \
 " ###            Tinker9  --  Software Tools for Molecular Design            ###""\n" \
 " ##                                                                          ##""\n" \
-" ##                      Version 1.0.0-rc  January 2021                      ##""\n" \
+" ##                       Version 1.0.0-rc  April 2021                       ##""\n" \
 " ##                                                                          ##""\n" \
 " ##                 Copyright (c)  Zhi Wang & the Ponder Lab                 ##""\n" \
 " ###                           All Rights Reserved                          ###""\n" \
@@ -45,17 +45,28 @@ TINKER9_PROMO1__                                                                
 // clang-format on
 
 namespace tinker {
-void xAnalyze(int, char**);
-void xBar(int, char**);
-void xDynamic(int, char**);
-void xHelp(int, char**);
-void xInfo(int, char**);
-void xMinimize(int, char**);
-void xTestgrad(int, char**);
+/// \ingroup general
+/// \{
+void xAnalyze(int, char**);  ///< Entry point of the \c analyze program.
+void xBar(int, char**);      ///< Entry point of the \c bar program.
+void xDynamic(int, char**);  ///< Entry point of the \c dynamic program.
+void xHelp(int, char**);     ///< Entry point of the \c help program.
+void xInfo(int, char**);     ///< Entry point of the \c info program.
+void xMinimize(int, char**); ///< Entry point of the \c minimize program.
+void xTestgrad(int, char**); ///< Entry point of the \c testgrad program.
+/// \}
 }
 
 namespace tinker {
+/// \ingroup general
+/// \{
+/// \brief Writes a banner message.
 void promo();
+/// \brief Sets up original values. This function must be translated
+/// from the Fortran \c initial subroutine line-by-line.
 void initial();
+/// \brief Sets up extra parameters and selectable options
+/// in addition to the Fortran \c mechanic subroutine.
 void mechanic2();
+/// \}
 }

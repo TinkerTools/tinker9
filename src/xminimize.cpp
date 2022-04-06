@@ -4,7 +4,6 @@
 #include "tool/iofortstr.h"
 #include "tool/ioprint.h"
 #include "tool/ioread.h"
-#include "tool/tinkersuppl.h"
 #include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/scales.hh>
@@ -15,13 +14,48 @@
 namespace tinker {
 static std::vector<double> grx, gry, grz;
 
-static double minimiz1(double* xx, double* g);
+extern void xMinimizeSetPos_acc(int, const double*, const double*);
+static void xMinimizeSetXyz(int n, const double* xx, const double* scale)
+{
+   xMinimizeSetPos_acc(n, xx, scale);
+   copyPosToXyz();
+   nblistRefresh();
+}
 
-void minimize_set_xx(int n, double* xx, const double* scale);
-void minimize_set_xyz(int n, const double* xx, const double* scale);
-void minimize_set_xx_by_pos_acc(int, double*, const double*);
-void minimize_set_pos_acc(int, const double*, const double*);
+extern void xMinimizeSetXxByPos_acc(int, double*, const double*);
+static void xMinimizeSetXx(int n, double* xx, const double* scale)
+{
+   xMinimizeSetXxByPos_acc(n, xx, scale);
+}
 
+static double minimiz1(double* xx, double* g)
+{
+   // convert optimization parameters to atomic coordinates
+   xMinimizeSetXyz(n, xx, scales::scale);
+
+   // compute and store the energy and gradient
+   energy(calc::energy + calc::grad);
+   energy_prec eout;
+   copyEnergy(calc::energy, &eout);
+   copyGradient(calc::grad, grx.data(), gry.data(), grz.data());
+
+   // convert coordinates and gradient to optimization parameters
+
+   // Unnecessary if we don't use shake() algorithm that may change xyz.
+   xMinimizeSetXx(n, xx, scales::scale);
+
+   for (int i = 0; i < n; ++i) {
+      int ii = 3 * i;
+      g[ii + 0] = grx[i] / scales::scale[ii + 0];
+      g[ii + 1] = gry[i] / scales::scale[ii + 1];
+      g[ii + 2] = grz[i] / scales::scale[ii + 2];
+   }
+
+   return eout;
+}
+}
+
+namespace tinker {
 void xMinimize(int, char**)
 {
    initial();
@@ -82,7 +116,7 @@ void xMinimize(int, char**)
    grz.resize(n);
 
    // convert atomic coordinates to optimization parameters
-   minimize_set_xx(n, xx, scales::scale);
+   xMinimizeSetXx(n, xx, scales::scale);
 
    // make the call to the optimization routine
    int n3 = 3 * n;
@@ -90,7 +124,7 @@ void xMinimize(int, char**)
    tinker_f_lbfgs(&n3, xx, &mini, &grdmin, minimiz1, tinker_f_optsave);
 
    // convert optimization parameters to atomic coordinates
-   minimize_set_xyz(n, xx, scales::scale);
+   xMinimizeSetXyz(n, xx, scales::scale);
 
    // compute the final function and RMS gradient values
    double minimum;
@@ -133,43 +167,5 @@ void xMinimize(int, char**)
 
    finish();
    tinker_f_final();
-}
-
-static double minimiz1(double* xx, double* g)
-{
-   // convert optimization parameters to atomic coordinates
-   minimize_set_xyz(n, xx, scales::scale);
-
-   // compute and store the energy and gradient
-   energy(calc::energy + calc::grad);
-   energy_prec eout;
-   copyEnergy(calc::energy, &eout);
-   copyGradient(calc::grad, grx.data(), gry.data(), grz.data());
-
-   // convert coordinates and gradient to optimization parameters
-
-   // Unnecessary if we don't use shake() algorithm that may change xyz.
-   minimize_set_xx(n, xx, scales::scale);
-
-   for (int i = 0; i < n; ++i) {
-      int ii = 3 * i;
-      g[ii + 0] = grx[i] / scales::scale[ii + 0];
-      g[ii + 1] = gry[i] / scales::scale[ii + 1];
-      g[ii + 2] = grz[i] / scales::scale[ii + 2];
-   }
-
-   return eout;
-}
-
-void minimize_set_xx(int n, double* xx, const double* scale)
-{
-   minimize_set_xx_by_pos_acc(n, xx, scale);
-}
-
-void minimize_set_xyz(int n, const double* xx, const double* scale)
-{
-   minimize_set_pos_acc(n, xx, scale);
-   copyPosToXyz();
-   nblistRefresh();
 }
 }

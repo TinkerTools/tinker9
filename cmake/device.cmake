@@ -8,7 +8,7 @@ set (__T9_EXTRA_LINK_FLAGS
 )
 
 
-add_executable (tinker9 src/maintinker9.cc)
+add_executable (tinker9 src/main.cc)
 target_link_libraries (tinker9
    tinker9_acc
    tinker9_cu

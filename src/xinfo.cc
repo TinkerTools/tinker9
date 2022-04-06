@@ -7,7 +7,7 @@
 #include "tinker9.h"
 
 namespace tinker {
-static const char* get_SHA1()
+static const char* getSHA1()
 {
    return         //
       "5aa9948d"; // Wed Dec 15 14:44:53 2021 -0600
@@ -31,7 +31,7 @@ static const char* get_SHA1()
    // "36063480";
 }
 
-static std::string get_version_string()
+static std::string getVersionString()
 {
    std::string r =
       format("%d.%d.%d", TINKER9_VERSION_MAJOR, TINKER9_VERSION_MINOR, TINKER9_VERSION_PATCH);
@@ -51,8 +51,8 @@ void xInfo(int, char**)
    gpuData(RcOp::INIT);
 
    print(out, "\n\n Program Information\n\n");
-   print(out, fmt, "Version:", get_version_string());
-   print(out, fmt, "Synchronized with Tinker commit:", get_SHA1());
+   print(out, fmt, "Version:", getVersionString());
+   print(out, fmt, "Synchronized with Tinker commit:", getSHA1());
    print(out, fmt, "C++ compiler:", cxxCompilerName());
    print(out, fmz, "Size of real (bytes):", sizeof(real));
    print(out, fmz, "Size of mixed (bytes):", sizeof(mixed));

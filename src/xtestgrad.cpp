@@ -1,4 +1,3 @@
-#include "ff/atom.h"
 #include "ff/energy.h"
 #include "tool/ioprint.h"
 #include <tinker/detail/inform.hh>
