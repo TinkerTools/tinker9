@@ -16,9 +16,8 @@ using namespace tinker;
 // static const int ans[5][216][70];
 #include "nblist.hh"
 
-namespace {
 // if all integers in ref can be found in array
-bool find_match(const int* array, int na, int iframe, int iatom)
+static bool find_match(const int* array, int na, int iframe, int iatom)
 {
    std::set<int> array_set(array, array + na);
    std::vector<int> missing;
@@ -46,7 +45,7 @@ bool find_match(const int* array, int na, int iframe, int iatom)
    }
 }
 
-void goto_frame(int idx0)
+static void goto_frame(int idx0)
 {
    assert(calc::traj & rc_flag);
    x = trajx + n * idx0;
@@ -56,7 +55,7 @@ void goto_frame(int idx0)
    boxSetCurrent(b);
 }
 
-void copyin_arc_file(const std::string& arcfile, int first1, int last1, int step)
+static void copyin_arc_file(const std::string& arcfile, int first1, int last1, int step)
 {
 
    if (!(first1 >= 1 && last1 >= first1 && step > 0)) {
@@ -144,7 +143,6 @@ void copyin_arc_file(const std::string& arcfile, int first1, int last1, int step
       msg += arcfile;
       TINKER_THROW(msg);
    }
-}
 }
 
 TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")

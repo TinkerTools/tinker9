@@ -11,7 +11,7 @@
 #include <numeric>
 
 namespace tinker {
-namespace {
+inline namespace v1 {
 template <class T, class Op>
 void reduce_to_dptr(const T* a, size_t nelem, cudaStream_t st)
 {

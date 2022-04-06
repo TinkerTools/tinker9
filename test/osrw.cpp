@@ -7,37 +7,35 @@
 
 using namespace tinker;
 
-namespace {
-std::string k0 = "osrw-lambda   0.5\n";
-const char* k1 = "test_osrw.key";
-const char* x1 = "test_osrw.xyz";
-const char* argv[] = {"dummy", x1};
-int argc = 2;
+static std::string k0 = "osrw-lambda   0.5\n";
+static const char* k1 = "test_osrw.key";
+static const char* x1 = "test_osrw.xyz";
+static const char* argv[] = {"dummy", x1};
+static int argc = 2;
 
-const double eps = 0.0001;
-const double veps = 0.001;
-const double geps = 0.0005;
+static const double eps = 0.0001;
+static const double veps = 0.001;
+static const double geps = 0.0005;
 
-const double s1 = 0.5;
-const double refev_1 = 4.1749;
-const double refem_1 = -42.4972;
-const double refep_1 = -4.0921;
-const double refe_1 = -42.2312;
-const double refvir_1[][3] = {
+static const double s1 = 0.5;
+static const double refev_1 = 4.1749;
+static const double refem_1 = -42.4972;
+static const double refep_1 = -4.0921;
+static const double refe_1 = -42.2312;
+static const double refvir_1[][3] = {
    {7.948, -0.088, -0.017}, {-0.088, 7.438, 0.025}, {-0.017, 0.025, 7.874}};
-const double refg_1[][3] = {{0.0025, 0.0004, -0.0089}, {0.0031, -0.0058, -0.0063},
+static const double refg_1[][3] = {{0.0025, 0.0004, -0.0089}, {0.0031, -0.0058, -0.0063},
    {-0.0037, 0.0011, 0.0042}, {-0.0068, -0.0027, -0.0003}};
 
-const double s0 = 0.5;
-const double refev_0 = 0;
-const double refem_0 = -0.0234;
-const double refep_0 = -0.0000;
-const double refe_0 = 0.1598;
-const double refvir_0[][3] = {
+static const double s0 = 0.5;
+static const double refev_0 = 0;
+static const double refem_0 = -0.0234;
+static const double refep_0 = -0.0000;
+static const double refe_0 = 0.1598;
+static const double refvir_0[][3] = {
    {2.888, -4.334, -1.242}, {-4.334, 6.601, 1.632}, {-1.242, 1.632, 4.096}};
-const double refg_0[][3] = {{0.0000, 0.0000, 0.0000}, {-9.1476, 13.6765, 5.6035},
+static const double refg_0[][3] = {{0.0000, 0.0000, 0.0000}, {-9.1476, 13.6765, 5.6035},
    {4.2502, -6.1981, -4.9165}, {4.9047, -7.4853, -0.6896}};
-}
 
 TEST_CASE("K-Water", "[ff][osrw]")
 {

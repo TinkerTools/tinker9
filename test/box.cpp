@@ -15,8 +15,7 @@ namespace tinker {
 extern void boxData_acc(RcOp);
 }
 
-namespace {
-void set_box(BoxShape shape, const double* p)
+static void set_box(BoxShape shape, const double* p)
 {
    if (shape == BoxShape::UNBOUND)
       return;
@@ -24,7 +23,6 @@ void set_box(BoxShape shape, const double* p)
    Box bo;
    boxLattice(bo, shape, p[0], p[1], p[2], p[3], p[4], p[5]);
    boxSetCurrent(bo);
-}
 }
 
 #define compare_im()                                                                               \

@@ -5,9 +5,8 @@
 
 using namespace tinker;
 
-namespace {
-int usage = calc::xyz | calc::vmask;
-const char* key0 = R"**(
+static int usage = calc::xyz | calc::vmask;
+static const char* key0 = R"**(
 parameters  amoeba09
 cutoff           7.0
 neighbor-list
@@ -22,11 +21,10 @@ ureyterm        none
 torsionterm     none
 vdwterm         none
 )**";
-const char* kname = "test_local_frame3.key";
-const char* xname = "test_local_frame3.xyz";
-const char* argv[] = {"dummy", xname};
-int argc = 2;
-}
+static const char* kname = "test_local_frame3.key";
+static const char* xname = "test_local_frame3.xyz";
+static const char* argv[] = {"dummy", xname};
+static int argc = 2;
 
 TEST_CASE("Local-Frame3-1", "[ff][empole][epolar][emplar][nonewald][local-frame3]")
 {
