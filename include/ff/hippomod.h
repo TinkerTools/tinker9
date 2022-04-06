@@ -1,6 +1,12 @@
 #pragma once
 #include "ff/energybuffer.h"
+#include "ff/hippo/chgpen.h"
 #include "ff/hippo/echgtrn.h"
+
+// mplpot
+namespace tinker {
+TINKER_EXTERN Chgpen pentyp;
+}
 
 // cflux
 namespace tinker {
