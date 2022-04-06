@@ -11,7 +11,7 @@
 namespace tinker {
 void cfluxData(RcOp op)
 {
-   if (not usePotent(Potent::CHGFLX))
+   if (not use(Potent::CHGFLX))
       return;
 
    if (op & RcOp::DEALLOC) {

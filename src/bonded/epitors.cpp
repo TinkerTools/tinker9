@@ -8,7 +8,7 @@
 namespace tinker {
 void epitorsData(RcOp op)
 {
-   if (!usePotent(Potent::PITORS))
+   if (!use(Potent::PITORS))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

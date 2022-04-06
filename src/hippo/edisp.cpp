@@ -13,12 +13,12 @@
 namespace tinker {
 bool useDEwald()
 {
-   return usePotent(Potent::DISP) and limits::use_dewald;
+   return use(Potent::DISP) and limits::use_dewald;
 }
 
 void edispData(RcOp op)
 {
-   if (not usePotent(Potent::DISP))
+   if (not use(Potent::DISP))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

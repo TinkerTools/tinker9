@@ -28,7 +28,7 @@ namespace tinker {
 Nbl vlistVersion()
 {
    Nbl u;
-   if (not usePotent(Potent::VDW)) {
+   if (not use(Potent::VDW)) {
       u = Nbl::UNDEFINED;
    } else if (vdwtyp != Vdw::HAL) {
       u = Nbl::UNDEFINED;
@@ -51,7 +51,7 @@ Nbl clistVersion()
 {
    Nbl u;
    // First, forget about VDW, only check partial charge models.
-   if (not usePotent(Potent::CHARGE) /* and not usePotent(Potent::SOLV) */) {
+   if (not use(Potent::CHARGE) /* and not use(Potent::SOLV) */) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_clist) {
       u = Nbl::DOUBLE_LOOP;
@@ -68,7 +68,7 @@ Nbl clistVersion()
    if (u != Nbl::UNDEFINED)
       return u;
    // Then, check VDW if no partial charge term is in use.
-   if (not usePotent(Potent::VDW)) {
+   if (not use(Potent::VDW)) {
       u = Nbl::UNDEFINED;
    } else if (vdwtyp == Vdw::HAL) {
       u = Nbl::UNDEFINED;
@@ -90,9 +90,8 @@ Nbl clistVersion()
 Nbl mlistVersion()
 {
    Nbl u;
-   if (not usePotent(Potent::MPOLE) and not usePotent(Potent::POLAR) and
-      not usePotent(Potent::CHGTRN) and
-      not usePotent(Potent::REPULS) /* and not usePotent(Potent::SOLV) */) {
+   if (not use(Potent::MPOLE) and not use(Potent::POLAR) and not use(Potent::CHGTRN) and
+      not use(Potent::REPULS) /* and not use(Potent::SOLV) */) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_mlist) {
       u = Nbl::DOUBLE_LOOP;
@@ -112,7 +111,7 @@ Nbl mlistVersion()
 Nbl ulistVersion()
 {
    Nbl u;
-   if (not usePotent(Potent::POLAR)) {
+   if (not use(Potent::POLAR)) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_ulist) {
       u = Nbl::DOUBLE_LOOP;
@@ -132,7 +131,7 @@ Nbl ulistVersion()
 Nbl dsplistVersion()
 {
    Nbl u;
-   if (not usePotent(Potent::DISP)) {
+   if (not use(Potent::DISP)) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_dlist) {
       u = Nbl::DOUBLE_LOOP;
@@ -314,10 +313,10 @@ void nblistData(RcOp op)
    // clist
    u = clistVersion();
    cut = -1;
-   if (usePotent(Potent::CHARGE)) {
+   if (use(Potent::CHARGE)) {
       cut = useEwald() ? switchOff(Switch::EWALD) : switchOff(Switch::CHARGE);
    }
-   if (usePotent(Potent::VDW)) {
+   if (use(Potent::VDW)) {
       double vdw_cut = switchOff(Switch::VDW);
       if (vdwtyp != Vdw::HAL)
          cut = std::max(cut, vdw_cut);

@@ -17,7 +17,7 @@
 namespace tinker {
 void epolarChgpenData(RcOp op)
 {
-   if (not usePotent(Potent::POLAR))
+   if (not use(Potent::POLAR))
       return;
    if (not mplpot::use_chgpen)
       return;
@@ -217,7 +217,7 @@ void epolarChgpen(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
-   int use_cf = usePotent(Potent::CHGFLX);
+   int use_cf = use(Potent::CHGFLX);
    int use_cfgrad = use_cf and do_g;
 
    zeroOnHost(energy_ep, virial_ep);

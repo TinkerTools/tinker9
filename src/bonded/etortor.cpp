@@ -12,7 +12,7 @@
 namespace tinker {
 void etortorData(RcOp op)
 {
-   if (!usePotent(Potent::TORTOR))
+   if (!use(Potent::TORTOR))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

@@ -17,9 +17,9 @@
 #include <tinker/detail/urey.hh>
 
 namespace tinker {
-int usePotent(Potent term)
+bool use(Potent term)
 {
-   int val = 0;
+   bool val = false;
    switch (term) {
 
       // bonded terms

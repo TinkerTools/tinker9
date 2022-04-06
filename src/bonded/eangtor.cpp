@@ -8,7 +8,7 @@
 namespace tinker {
 void eangtorData(RcOp op)
 {
-   if (not usePotent(Potent::ANGTOR))
+   if (not use(Potent::ANGTOR))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

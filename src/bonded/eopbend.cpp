@@ -10,7 +10,7 @@
 namespace tinker {
 void eopbendData(RcOp op)
 {
-   if (not usePotent(Potent::OPBEND))
+   if (not use(Potent::OPBEND))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

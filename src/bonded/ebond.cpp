@@ -9,8 +9,8 @@
 namespace tinker {
 void ebondData(RcOp op)
 {
-   if (not usePotent(Potent::BOND) and not usePotent(Potent::STRBND) and
-      not usePotent(Potent::STRTOR) and not usePotent(Potent::CHGFLX))
+   if (not use(Potent::BOND) and not use(Potent::STRBND) and not use(Potent::STRTOR) and
+      not use(Potent::CHGFLX))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

@@ -25,7 +25,7 @@ void echgljData(RcOp op)
    if (not(clistVersion() & Nbl::SPATIAL))
       return;
 
-   if (not usePotent(Potent::CHARGE) or not usePotent(Potent::VDW))
+   if (not use(Potent::CHARGE) or not use(Potent::VDW))
       return;
 
    if (op & RcOp::DEALLOC) {

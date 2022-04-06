@@ -10,9 +10,9 @@
 namespace tinker {
 void osrw_altele_acc(double el)
 {
-   bool use_ec = usePotent(Potent::CHARGE);
-   bool use_em = usePotent(Potent::MPOLE);
-   bool use_ep = usePotent(Potent::POLAR);
+   bool use_ec = use(Potent::CHARGE);
+   bool use_em = use(Potent::MPOLE);
+   bool use_ep = use(Potent::POLAR);
 
    if (use_ec) {
       #pragma acc parallel loop independent async\

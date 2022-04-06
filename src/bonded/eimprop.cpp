@@ -8,7 +8,7 @@
 namespace tinker {
 void eimpropData(RcOp op)
 {
-   if (not usePotent(Potent::IMPROP))
+   if (not use(Potent::IMPROP))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

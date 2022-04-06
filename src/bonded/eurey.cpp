@@ -8,7 +8,7 @@
 namespace tinker {
 void eureyData(RcOp op)
 {
-   if (!usePotent(Potent::UREY))
+   if (!use(Potent::UREY))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

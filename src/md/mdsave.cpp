@@ -30,7 +30,7 @@ static std::future<void> fut_dup_then_write;
 
 static bool mdsaveUseUind()
 {
-   return output::uindsave && usePotent(Potent::POLAR);
+   return output::uindsave && use(Potent::POLAR);
 }
 
 static ExecQ dup_stream;

@@ -13,7 +13,7 @@
 namespace tinker {
 void echargeData(RcOp op)
 {
-   if (not usePotent(Potent::CHARGE))
+   if (not use(Potent::CHARGE))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

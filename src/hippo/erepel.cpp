@@ -13,7 +13,7 @@
 namespace tinker {
 void erepelData(RcOp op)
 {
-   if (not usePotent(Potent::REPULS))
+   if (not use(Potent::REPULS))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

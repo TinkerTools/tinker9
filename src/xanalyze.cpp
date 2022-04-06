@@ -50,64 +50,64 @@ static void xAnalyzeE()
 
    const char* fmt = " %-29s %18.4f %16d\n";
 
-   if (usePotent(Potent::BOND))
+   if (use(Potent::BOND))
       print(out, fmt, "Bond Stretching", energy_eb, countBondedTerm(Potent::BOND));
 
-   if (usePotent(Potent::ANGLE))
+   if (use(Potent::ANGLE))
       print(out, fmt, "Angle Bending", energy_ea, countBondedTerm(Potent::ANGLE));
 
-   if (usePotent(Potent::STRBND))
+   if (use(Potent::STRBND))
       print(out, fmt, "Stretch-Bend", energy_eba, countBondedTerm(Potent::STRBND));
 
-   if (usePotent(Potent::UREY))
+   if (use(Potent::UREY))
       print(out, fmt, "Urey-Bradley", energy_eub, countBondedTerm(Potent::UREY));
 
-   if (usePotent(Potent::OPBEND))
+   if (use(Potent::OPBEND))
       print(out, fmt, "Out-of-Plane Bend", energy_eopb, countBondedTerm(Potent::OPBEND));
 
-   if (usePotent(Potent::IMPROP))
+   if (use(Potent::IMPROP))
       print(out, fmt, "Improper Dihedral", energy_eid, countBondedTerm(Potent::IMPROP));
 
-   if (usePotent(Potent::IMPTORS))
+   if (use(Potent::IMPTORS))
       print(out, fmt, "Improper Torsion", energy_eit, countBondedTerm(Potent::IMPTORS));
 
-   if (usePotent(Potent::TORSION))
+   if (use(Potent::TORSION))
       print(out, fmt, "Torsional Angle", energy_et, countBondedTerm(Potent::TORSION));
 
-   if (usePotent(Potent::PITORS))
+   if (use(Potent::PITORS))
       print(out, fmt, "Pi-Orbital Torsion", energy_ept, countBondedTerm(Potent::PITORS));
 
-   if (usePotent(Potent::STRTOR))
+   if (use(Potent::STRTOR))
       print(out, fmt, "Stretch-Torsion", energy_ebt, countBondedTerm(Potent::STRTOR));
 
-   if (usePotent(Potent::ANGTOR))
+   if (use(Potent::ANGTOR))
       print(out, fmt, "Angle-Torsion", energy_eat, countBondedTerm(Potent::ANGLE));
 
-   if (usePotent(Potent::TORTOR))
+   if (use(Potent::TORTOR))
       print(out, fmt, "Torsion-Torsion", energy_ett, countBondedTerm(Potent::TORTOR));
 
-   if (usePotent(Potent::VDW))
+   if (use(Potent::VDW))
       print(out, fmt, "Van der Waals", energy_ev, countReduce(nev));
 
-   if (usePotent(Potent::REPULS))
+   if (use(Potent::REPULS))
       print(out, fmt, "Repulsion", energy_er, countReduce(nrep));
 
-   if (usePotent(Potent::DISP))
+   if (use(Potent::DISP))
       print(out, fmt, "Dispersion", energy_edsp, countReduce(ndisp));
 
-   if (usePotent(Potent::CHARGE))
+   if (use(Potent::CHARGE))
       print(out, fmt, "Charge-Charge", energy_ec, countReduce(nec));
 
-   if (usePotent(Potent::MPOLE))
+   if (use(Potent::MPOLE))
       print(out, fmt, "Atomic Multipoles", energy_em, countReduce(nem));
 
-   if (usePotent(Potent::POLAR))
+   if (use(Potent::POLAR))
       print(out, fmt, "Polarization", energy_ep, countReduce(nep));
 
-   if (usePotent(Potent::CHGTRN))
+   if (use(Potent::CHGTRN))
       print(out, fmt, "Charge Transfer", energy_ect, countReduce(nct));
 
-   if (usePotent(Potent::GEOM))
+   if (use(Potent::GEOM))
       print(out, fmt, "Geometric Restraints", energy_eg, countBondedTerm(Potent::GEOM));
 }
 }
@@ -214,12 +214,12 @@ static void xAnalyzeMoments()
    }
 
    // atomic multipoles
-   if (usePotent(Potent::MPOLE) or usePotent(Potent::POLAR)) {
+   if (use(Potent::MPOLE) or use(Potent::POLAR)) {
       // download rpole, uind
       std::vector<real> rpolev(n * 10), uindv(n * 3);
       mpoleInit(calc::energy);
       darray::copyout(g::q0, n * 10, rpolev.data(), &rpole[0][0]);
-      if (usePotent(Potent::POLAR)) {
+      if (use(Potent::POLAR)) {
          if (mplpot::use_chgpen)
             induce2(uind);
          else

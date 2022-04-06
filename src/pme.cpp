@@ -140,7 +140,7 @@ void pmeData(RcOp op)
       }
    }
 
-   if (usePotent(Potent::CHARGE) && useEwald()) {
+   if (use(Potent::CHARGE) && useEwald()) {
       if (op & RcOp::ALLOC) {
          epme_unit.close();
          PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bseorder);
@@ -152,10 +152,10 @@ void pmeData(RcOp op)
       }
    }
 
-   if ((usePotent(Potent::MPOLE) || usePotent(Potent::POLAR)) && useEwald()) {
+   if ((use(Potent::MPOLE) || use(Potent::POLAR)) && useEwald()) {
       if (op & RcOp::DEALLOC) {
          darray::deallocate(cmp, fmp, cphi, fphi);
-         if (usePotent(Potent::POLAR)) {
+         if (use(Potent::POLAR)) {
             darray::deallocate(fuind, fuinp, fdip_phi1, fdip_phi2, cphidp, fphidp);
             darray::deallocate(vir_m);
          }
@@ -163,7 +163,7 @@ void pmeData(RcOp op)
 
       if (op & RcOp::ALLOC) {
          darray::allocate(n, &cmp, &fmp, &cphi, &fphi);
-         if (usePotent(Potent::POLAR)) {
+         if (use(Potent::POLAR)) {
             darray::allocate(n, &fuind, &fuinp, &fdip_phi1, &fdip_phi2, &cphidp, &fphidp);
             if (rc_flag & calc::virial)
                darray::allocate(bufferSize(), &vir_m);
@@ -177,7 +177,7 @@ void pmeData(RcOp op)
 
          // electrostatics
          epme_unit.close();
-         if (usePotent(Potent::MPOLE)) {
+         if (use(Potent::MPOLE)) {
             unique_grids = false;
             PME::Params p(ewald::aeewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bseorder);
             pmeOpAlloc(epme_unit, p, unique_grids);
@@ -186,7 +186,7 @@ void pmeData(RcOp op)
          // polarization
          ppme_unit.close();
          pvpme_unit.close();
-         if (usePotent(Potent::POLAR)) {
+         if (use(Potent::POLAR)) {
             PME::Params p(ewald::apewald, pme::nefft1, pme::nefft2, pme::nefft3, pme::bsporder);
             pmeOpAlloc(ppme_unit, p, unique_grids);
             if (rc_flag & calc::virial) {
@@ -203,7 +203,7 @@ void pmeData(RcOp op)
       }
    }
 
-   if (usePotent(Potent::DISP) && useDEwald()) {
+   if (use(Potent::DISP) && useDEwald()) {
       if (op & RcOp::ALLOC) {
          dpme_unit.close();
          PME::Params p(ewald::adewald, pme::ndfft1, pme::ndfft2, pme::ndfft3, pme::bsdorder);

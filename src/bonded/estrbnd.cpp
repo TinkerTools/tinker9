@@ -8,7 +8,7 @@
 namespace tinker {
 void estrbndData(RcOp op)
 {
-   if (!usePotent(Potent::STRBND))
+   if (!use(Potent::STRBND))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

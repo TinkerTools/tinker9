@@ -74,7 +74,7 @@ void osrwData(RcOp op)
          darray::deallocate(osrw_gx, osrw_gy, osrw_gz);
       }
 
-      if (usePotent(Potent::TORSION)) {
+      if (use(Potent::TORSION)) {
          if (osrw_ntbnd > 0) {
             darray::deallocate(
                osrw_itbnd, osrw_tors1, osrw_tors2, osrw_tors3, osrw_tors4, osrw_tors5, osrw_tors6);
@@ -82,13 +82,13 @@ void osrwData(RcOp op)
          }
       }
 
-      if (usePotent(Potent::CHARGE)) {
+      if (use(Potent::CHARGE)) {
          darray::deallocate(osrw_pchg);
       }
 
-      if (usePotent(Potent::MPOLE) || usePotent(Potent::POLAR)) {
+      if (use(Potent::MPOLE) || use(Potent::POLAR)) {
          darray::deallocate(osrw_pole);
-         if (usePotent(Potent::POLAR)) {
+         if (use(Potent::POLAR)) {
             darray::deallocate(osrw_polarity);
          }
       }
@@ -100,7 +100,7 @@ void osrwData(RcOp op)
          darray::allocate(n, &osrw_gx, &osrw_gy, &osrw_gz);
       }
 
-      if (usePotent(Potent::TORSION)) {
+      if (use(Potent::TORSION)) {
          std::vector<int> buf;
          std::vector<std::string> vs;
          getKV("ROTATABLE-BOND", vs);
@@ -126,26 +126,26 @@ void osrwData(RcOp op)
          }
       }
 
-      if (usePotent(Potent::CHARGE)) {
+      if (use(Potent::CHARGE)) {
          darray::allocate(n, &osrw_pchg);
       }
 
-      if (usePotent(Potent::MPOLE) || usePotent(Potent::POLAR)) {
+      if (use(Potent::MPOLE) || use(Potent::POLAR)) {
          darray::allocate(n, &osrw_pole);
-         if (usePotent(Potent::POLAR)) {
+         if (use(Potent::POLAR)) {
             darray::allocate(n, &osrw_polarity);
          }
       }
    }
 
    if (op & RcOp::INIT) {
-      if (usePotent(Potent::CHARGE)) {
+      if (use(Potent::CHARGE)) {
          darray::copy(g::q0, n, osrw_pchg, pchg);
       }
 
-      if (usePotent(Potent::MPOLE) || usePotent(Potent::POLAR)) {
+      if (use(Potent::MPOLE) || use(Potent::POLAR)) {
          darray::copy(g::q0, n, osrw_pole, pole);
-         if (usePotent(Potent::POLAR)) {
+         if (use(Potent::POLAR)) {
             darray::copy(g::q0, n, osrw_polarity, polarity);
          }
       }

@@ -10,7 +10,7 @@
 namespace tinker {
 void empoleData(RcOp op)
 {
-   if (not usePotent(Potent::MPOLE))
+   if (not use(Potent::MPOLE))
       return;
    if (mplpot::use_chgpen)
       return;

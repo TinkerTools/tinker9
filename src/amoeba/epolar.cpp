@@ -19,7 +19,7 @@
 namespace tinker {
 void epolarData(RcOp op)
 {
-   if (not usePotent(Potent::POLAR))
+   if (not use(Potent::POLAR))
       return;
    if (mplpot::use_chgpen)
       return;

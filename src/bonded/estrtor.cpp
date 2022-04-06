@@ -8,7 +8,7 @@
 namespace tinker {
 void estrtorData(RcOp op)
 {
-   if (not usePotent(Potent::STRTOR))
+   if (not use(Potent::STRTOR))
       return;
 
    bool rc_a = rc_flag & calc::analyz;

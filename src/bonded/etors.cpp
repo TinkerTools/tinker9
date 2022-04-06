@@ -8,8 +8,7 @@
 namespace tinker {
 void etorsData(RcOp op)
 {
-   if (not usePotent(Potent::TORSION) and not usePotent(Potent::STRTOR) and
-      not usePotent(Potent::ANGTOR))
+   if (not use(Potent::TORSION) and not use(Potent::STRTOR) and not use(Potent::ANGTOR))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
