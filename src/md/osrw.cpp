@@ -7,7 +7,7 @@
 #include "ff/pchg/evdw.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tinker9.h"
+#include "tool/argkey.h"
 
 namespace tinker {
 static grad_prec *osrw_gx, *osrw_gy, *osrw_gz;

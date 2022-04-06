@@ -1,4 +1,4 @@
-#include "macro.h"
+#include "tool/macro.h"
 #include "tool/ioprint.h"
 
 namespace tinker {

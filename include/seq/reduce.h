@@ -1,5 +1,5 @@
 #pragma once
-#include "macro.h"
+#include "tool/macro.h"
 
 namespace tinker {
 template <class T>

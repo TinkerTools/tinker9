@@ -1,6 +1,6 @@
 #include "md/integrator.h"
 #include "md/pt.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 
 namespace tinker {
 void BerendsenBarostat::printDetail(FILE* o)

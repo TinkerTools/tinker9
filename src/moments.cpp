@@ -2,12 +2,9 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/induce.h"
 #include "ff/atom.h"
-#include "ff/elec.h"
 #include "ff/hippo/induce.h"
 #include "ff/potent.h"
-#include "tinker9.h"
 #include "tool/darray.h"
-#include <cmath>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/charge.hh>
@@ -17,7 +14,7 @@
 #include <tinker/detail/mpole.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/units.hh>
-#include <vector>
+#include <tinker/routines.h>
 
 namespace tinker {
 void moments()

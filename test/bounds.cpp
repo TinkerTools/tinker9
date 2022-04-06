@@ -1,6 +1,6 @@
 #include "test.h"
 #include "testrt.h"
-#include "tool/io.h"
+#include "tool/iofortstr.h"
 #include <fstream>
 #include <tinker/detail/files.hh>
 

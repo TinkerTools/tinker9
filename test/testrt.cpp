@@ -1,8 +1,10 @@
-#include "testrt.h"
-#include "tinker9.h"
 #include "tool/error.h"
 #include <fstream>
 #include <tinker/detail/bath.hh>
+#include <tinker/routines.h>
+
+#include "testrt.h"
+#include "tinker9.h"
 
 namespace tinker {
 TestFile::TestFile(std::string file, std::string dst, std::string extra)

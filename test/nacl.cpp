@@ -2,7 +2,6 @@
 #include "ff/pchg/evdw.h"
 #include "test.h"
 #include "testrt.h"
-
 using namespace tinker;
 
 #define COMPARE_CODE_BLOCK1                                                                        \

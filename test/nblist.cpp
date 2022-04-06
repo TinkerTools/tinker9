@@ -1,10 +1,10 @@
 #include "ff/nblist.h"
 #include "ff/atom.h"
-#include "platform.h"
 #include "test.h"
 #include "testrt.h"
 #include "tool/error.h"
-#include "tool/io.h"
+#include "tool/ioread.h"
+#include "tool/platform.h"
 #include "tool/rcman.h"
 #include <fstream>
 #include <set>

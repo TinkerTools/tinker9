@@ -1,5 +1,5 @@
 #pragma once
-#include "precision.h"
+#include "ff/precision.h"
 
 namespace tinker {
 void kineticEnergy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n, const double* mass,

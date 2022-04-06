@@ -1,9 +1,10 @@
 #include "ff/atom.h"
 #include "ff/energy.h"
-#include "tinker9.h"
-#include "tool/io.h"
-#include <cmath>
+#include "tool/ioprint.h"
 #include <tinker/detail/inform.hh>
+#include <tinker/routines.h>
+
+#include "tinker9.h"
 
 #define TINKER_TESTGRAD_VIRIAL 0
 

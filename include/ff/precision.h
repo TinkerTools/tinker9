@@ -1,5 +1,5 @@
 #pragma once
-#include "macro.h"
+#include "tool/macro.h"
 
 /// \ingroup prec
 /// \def TINKER_DETERMINISTIC_FORCE

@@ -1,4 +1,4 @@
-#include "precision.h"
+#include "ff/precision.h"
 
 namespace tinker {
 template <class T>

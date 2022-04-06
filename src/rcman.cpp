@@ -31,8 +31,8 @@ void finish()
 }
 
 #include "math/random.h"
-#include "platform.h"
 #include "tool/gpucard.h"
+#include "tool/platform.h"
 
 #include "ff/box.h"
 #include "ff/energy.h"

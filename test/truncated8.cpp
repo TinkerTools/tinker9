@@ -1,7 +1,6 @@
 #include "ff/pchg/evdw.h"
 #include "test.h"
 #include "testrt.h"
-
 using namespace tinker;
 
 TEST_CASE("Truncated-Octahedron", "[ff][pbc][arbox]")

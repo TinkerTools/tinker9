@@ -1,7 +1,7 @@
 #if defined(__APPLE__) || defined(__linux__)
-#   include "macro.h"
 #   include "tool/ioprint.h"
 #   include "tool/iotext.h"
+#   include "tool/macro.h"
 #   include <cstring>
 #   include <cxxabi.h>
 #   include <execinfo.h>

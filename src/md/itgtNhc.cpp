@@ -3,9 +3,8 @@
 #include "md/pq.h"
 #include "md/pt.h"
 #include "tool/darray.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 #include <algorithm>
-#include <cmath>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/units.hh>
 

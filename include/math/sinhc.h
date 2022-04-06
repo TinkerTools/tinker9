@@ -1,7 +1,7 @@
 #pragma once
-#include "macro.h"
 #include "math/libfunc.h"
 #include "seqdef.h"
+#include "tool/macro.h"
 
 // sinhc on host
 namespace tinker {

@@ -1,6 +1,6 @@
 #include "md/integrator.h"
-#include "tinker9.h"
-#include "tool/io.h"
+#include "tool/argkey.h"
+#include "tool/ioprint.h"
 #include <tinker/detail/bath.hh>
 
 namespace tinker {

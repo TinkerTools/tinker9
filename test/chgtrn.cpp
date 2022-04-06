@@ -1,7 +1,6 @@
 #include "ff/hippo/elechippo.h"
 #include "test.h"
 #include "testrt.h"
-
 using namespace tinker;
 
 TEST_CASE("ECHGTRN-1", "[ff][hippo][echgtrn][dmso]")

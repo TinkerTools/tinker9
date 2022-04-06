@@ -72,7 +72,6 @@
 ///    \defgroup math_parallel  Parallel Algorithms
 ///    \ingroup tool
 
-/// \defgroup test  Unit Tests
 /// \defgroup async  Asynchronous Flow Control
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
 /// \defgroup fft  Fast Fourier Transform

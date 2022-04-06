@@ -1,6 +1,6 @@
 #include "tool/cudalib.h"
-#include "accasync.h"
-#include "platform.h"
+#include "tool/accasync.h"
+#include "tool/platform.h"
 #if TINKER_CUDART
 #   include "tool/error.h"
 #   include "tool/gpucard.h"

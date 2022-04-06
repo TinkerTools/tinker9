@@ -1,5 +1,5 @@
 #include "md/integrator.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 
 namespace tinker {
 Nhc06Barostat::Nhc06Barostat()

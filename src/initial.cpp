@@ -1,10 +1,11 @@
-#include "tinker9.h"
 #include "tool/iofortstr.h"
 #include <tinker/modcpp.h>
 #include <tinker/routines.h>
 #ifdef _OPENMP
 #   include <omp.h>
 #endif
+
+#include "tinker9.h"
 
 namespace tinker {
 void initial()

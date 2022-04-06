@@ -1,8 +1,13 @@
+#include "tool/iofortstr.h"
+#include "tool/ioprint.h"
+#include "tool/ioread.h"
+#include <cstring>
+#include <tinker/routines.h>
+
 #include "test.h"
 #include "testrt.h"
 #include "tinker9.h"
-#include "tool/io.h"
-#include <cstring>
+
 using namespace tinker;
 
 TEST_CASE("Tinker_RT", "[util]")

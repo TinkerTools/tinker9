@@ -1,5 +1,5 @@
 #pragma once
-#include "precision.h"
+#include "ff/precision.h"
 #include <cstdio>
 #include <string>
 #include <tinker/detail/bath.hh>

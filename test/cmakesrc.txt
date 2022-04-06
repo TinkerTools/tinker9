@@ -30,6 +30,7 @@ reduce.cpp
 rephippo.cpp
 strbnd.cpp
 strtor.cpp
+testrt.cpp
 text.cpp
 tinkerrt.cpp
 torsion.cpp

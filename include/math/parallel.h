@@ -1,9 +1,8 @@
 #pragma once
-#include "macro.h"
-#include "platform.h"
-
 #include "math/parallelacc.h"
 #include "math/parallelcu.h"
+#include "tool/macro.h"
+#include "tool/platform.h"
 
 namespace tinker {
 /// \ingroup math_parallel

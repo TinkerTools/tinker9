@@ -1,5 +1,5 @@
-#include "platform.h"
 #include "tool/error.h"
+#include "tool/platform.h"
 
 namespace tinker {
 extern void evalence_cu(int vers);

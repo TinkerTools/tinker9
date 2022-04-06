@@ -4,11 +4,11 @@
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "math/zero.h"
-#include "tinker9.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/disp.hh>
 #include <tinker/detail/dsppot.hh>
 #include <tinker/detail/limits.hh>
+#include <tinker/routines.h>
 
 namespace tinker {
 bool useDEwald()

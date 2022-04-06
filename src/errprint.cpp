@@ -1,8 +1,8 @@
 #include "ff/atom.h"
 #include "ff/box.h"
-#include "tinker9.h"
 #include "tool/darray.h"
 #include <tinker/detail/atoms.hh>
+#include <tinker/routines.h>
 
 namespace tinker {
 void printError()

@@ -1,7 +1,7 @@
 #pragma once
 #include "ff/amoeba/mpole.h"
+#include "ff/precision.h"
 #include "ff/timescale.h"
-#include "precision.h"
 #include "tool/rcman.h"
 
 namespace tinker {

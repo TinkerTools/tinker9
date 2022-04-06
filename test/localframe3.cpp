@@ -1,7 +1,6 @@
 #include "ff/amoeba/elecamoeba.h"
 #include "test.h"
 #include "testrt.h"
-
 using namespace tinker;
 
 namespace {

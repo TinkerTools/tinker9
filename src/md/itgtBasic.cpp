@@ -1,6 +1,6 @@
 #include "md/integrator.h"
 #include "md/pt.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 #include <tinker/detail/bath.hh>
 
 namespace tinker {

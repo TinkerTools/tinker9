@@ -3,7 +3,6 @@
 #include "test.h"
 #include "testrt.h"
 #include <tinker/detail/inform.hh>
-
 using namespace tinker;
 
 #if TINKER_REAL_SIZE == 8

@@ -27,10 +27,9 @@
 #include "md/pt.h"
 #include "md/rattle.h"
 
+#include "tool/accasync.h"
 #include "tool/cudalib.h"
 #include "tool/energybuffer.h"
 #include "tool/gpucard.h"
+#include "tool/platform.h"
 #include "tool/rcman.h"
-
-#include "accasync.h"
-#include "platform.h"

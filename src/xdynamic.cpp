@@ -1,13 +1,18 @@
 #include "ff/atom.h"
 #include "md/intg.h"
-#include "tinker9.h"
-#include "tool/io.h"
+#include "tool/argkey.h"
+#include "tool/iofortstr.h"
+#include "tool/ioprint.h"
+#include "tool/ioread.h"
 #include <chrono>
 #include <cmath>
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
+#include <tinker/routines.h>
+
+#include "tinker9.h"
 
 namespace tinker {
 void xDynamic(int, char**)

@@ -1,9 +1,11 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "math/random.h"
-#include "tinker9.h"
+#include "tool/argkey.h"
 #include "tool/darray.h"
-#include "tool/io.h"
+#include "tool/iofortstr.h"
+#include "tool/ioprint.h"
+#include "tool/ioread.h"
 #include <array>
 #include <fstream>
 #include <tinker/detail/files.hh>
@@ -11,6 +13,9 @@
 #include <tinker/detail/keys.hh>
 #include <tinker/detail/titles.hh>
 #include <tinker/detail/units.hh>
+#include <tinker/routines.h>
+
+#include "tinker9.h"
 
 namespace tinker {
 void x_bar_makebar();

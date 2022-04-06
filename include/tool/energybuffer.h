@@ -1,6 +1,6 @@
 #pragma once
+#include "ff/precision.h"
 #include "math/pow2.h"
-#include "precision.h"
 #include <type_traits>
 
 namespace tinker {

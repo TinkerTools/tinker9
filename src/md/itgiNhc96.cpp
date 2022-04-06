@@ -5,7 +5,6 @@
 #include "md/pt.h"
 #include "md/rattle.h"
 #include "tool/error.h"
-#include <cmath>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>

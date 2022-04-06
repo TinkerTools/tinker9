@@ -1,5 +1,5 @@
 #include "md/integrator.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 #include <tinker/detail/stodyn.hh>
 
 namespace tinker {

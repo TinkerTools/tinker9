@@ -11,16 +11,21 @@
 #include "ff/pchg/evdw.h"
 #include "ff/potent.h"
 #include "md/osrw.h"
-#include "tinker9.h"
+#include "tool/argkey.h"
 #include "tool/darray.h"
-#include "tool/io.h"
-#include <cmath>
+#include "tool/iofortstr.h"
+#include "tool/ioprint.h"
+#include "tool/ioread.h"
+#include "tool/iotext.h"
 #include <fstream>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/files.hh>
 #include <tinker/detail/moment.hh>
 #include <tinker/detail/units.hh>
+#include <tinker/routines.h>
+
+#include "tinker9.h"
 
 namespace tinker {
 static void x_analyze_e()

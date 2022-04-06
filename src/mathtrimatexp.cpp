@@ -1,6 +1,5 @@
 #include "math/sinhc.h"
 #include <algorithm>
-#include <cmath>
 
 namespace tinker {
 template <class T>

@@ -2,7 +2,7 @@
 #include "md/integrator.h"
 #include "md/pq.h"
 #include "md/rattle.h"
-#include "tinker9.h"
+#include "tool/argkey.h"
 #include "tool/darray.h"
 #include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>

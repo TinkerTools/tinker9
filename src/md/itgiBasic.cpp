@@ -3,7 +3,7 @@
 #include "md/intg.h"
 #include "md/pq.h"
 #include "md/rattle.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 
 namespace tinker {
 void BasicIntegrator::plan(int istep)

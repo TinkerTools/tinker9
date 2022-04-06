@@ -1,5 +1,5 @@
-#include "platform.h"
-#include "tinker9.h"
+#include "tool/platform.h"
+#include "tool/argkey.h"
 #include "tool/ioprint.h"
 #include "tool/iotext.h"
 

@@ -1,5 +1,5 @@
 #include "tool/gpucard.h"
-#include "tinker9.h"
+#include "tool/argkey.h"
 #include "tool/error.h"
 #include "tool/exec.h"
 #include <algorithm>

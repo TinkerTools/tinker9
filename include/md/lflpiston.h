@@ -1,5 +1,5 @@
 #pragma once
-#include "precision.h"
+#include "ff/precision.h"
 
 namespace tinker {
 void lf_lpiston_npt(int istep, time_prec dt_ps); // Langevin Piston barostat (Leap Frog)

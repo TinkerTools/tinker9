@@ -86,7 +86,6 @@ potent.cpp
 rcman.cpp
 spatial.cpp
 switch.cpp
-testrt.cpp
 tinkerrt.cpp
 tinkersuppl.cpp
 xanalyze.cpp

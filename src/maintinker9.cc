@@ -1,10 +1,10 @@
-#include "tinker9.h"
 #include "tool/ioprint.h"
 #include <algorithm>
 #include <functional>
 #include <map>
-#include <string>
-#include <vector>
+#include <tinker/routines.h>
+
+#include "tinker9.h"
 
 namespace tinker {
 static const char* main_name = "tinker9";

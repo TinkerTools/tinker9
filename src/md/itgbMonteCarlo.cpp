@@ -2,9 +2,9 @@
 #include "math/random.h"
 #include "md/integrator.h"
 #include "md/pt.h"
-#include "tinker9.h"
+#include "tool/argkey.h"
 #include "tool/darray.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 #include <tinker/detail/bath.hh>
 
 namespace tinker {

@@ -1,18 +1,21 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
-#include "tinker9.h"
-#include "tool/io.h"
-#include <cmath>
+#include "tool/argkey.h"
+#include "tool/iofortstr.h"
+#include "tool/ioprint.h"
+#include "tool/ioread.h"
+#include "tool/tinkersuppl.h"
 #include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/scales.hh>
+#include <tinker/routines.h>
+
+#include "tinker9.h"
 
 namespace tinker {
-namespace {
-std::vector<double> grx, gry, grz;
-}
+static std::vector<double> grx, gry, grz;
 
-double minimiz1(double* xx, double* g);
+static double minimiz1(double* xx, double* g);
 
 void minimize_set_xx(int n, double* xx, const double* scale);
 void minimize_set_xyz(int n, const double* xx, const double* scale);
@@ -132,7 +135,7 @@ void xMinimize(int, char**)
    tinker_f_final();
 }
 
-double minimiz1(double* xx, double* g)
+static double minimiz1(double* xx, double* g)
 {
    // convert optimization parameters to atomic coordinates
    minimize_set_xyz(n, xx, scales::scale);

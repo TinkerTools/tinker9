@@ -1,12 +1,14 @@
 #include "ff/box.h"
 #include "ff/image.h"
 #include "math/const.h"
-#include "test.h"
-#include "tinker9.h"
 #include "tool/gpucard.h"
-#include <cmath>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
+#include <tinker/routines.h>
+
+#include "test.h"
+#include "tinker9.h"
+
 using namespace tinker;
 
 namespace tinker {

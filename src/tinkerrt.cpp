@@ -1,5 +1,6 @@
-#include "tinker9.h"
-#include "tool/io.h"
+#include "tool/iofortstr.h"
+#include "tool/iotext.h"
+#include "tool/tinkersuppl.h"
 #include <algorithm>
 #include <tinker/detail/argue.hh>
 #include <tinker/detail/keys.hh>

@@ -1,6 +1,6 @@
 #pragma once
 #include "ff/amoeba/mpole.h"
-#include "precision.h"
+#include "ff/precision.h"
 
 namespace tinker {
 __global__

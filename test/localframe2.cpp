@@ -1,7 +1,6 @@
 #include "ff/pchg/evdw.h"
 #include "test.h"
 #include "testrt.h"
-
 using namespace tinker;
 
 static const char* triclinic_box = R"**(

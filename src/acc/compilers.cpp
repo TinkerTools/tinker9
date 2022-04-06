@@ -1,5 +1,5 @@
 #include "tool/compilers.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
 
 namespace tinker {
 #if TINKER_CUDART

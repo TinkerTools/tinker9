@@ -1,9 +1,10 @@
-#include "platform.h"
-#include "precision.h"
-#include "tinker9.h"
+#include "ff/precision.h"
 #include "tool/compilers.h"
 #include "tool/gpucard.h"
-#include "tool/io.h"
+#include "tool/ioprint.h"
+#include "tool/platform.h"
+
+#include "tinker9.h"
 
 namespace tinker {
 static const char* get_SHA1()
