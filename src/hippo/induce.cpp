@@ -1,3 +1,4 @@
+#include "ff/amoeba/induce.h"
 #include "ff/atom.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
@@ -57,31 +58,6 @@ void induce2(real (*ud)[3])
 {
    induceMutualPcg2(ud);
    ulspredSave2(ud);
-
-   if (inform::debug && use(Potent::POLAR)) {
-      std::vector<double> uindbuf;
-      uindbuf.resize(3 * n);
-      darray::copyout(g::q0, n, uindbuf.data(), ud);
-      waitFor(g::q0);
-      bool header = true;
-      for (int i = 0; i < n; ++i) {
-         if (polar::polarity[i] != 0) {
-            if (header) {
-               header = false;
-               print(stdout, "\n Induced Dipole Moments (Debye) :\n");
-               print(stdout, "\n    Atom %1$13s X %1$10s Y %1$10s Z %1$9s Total\n\n", "");
-            }
-            double u1 = uindbuf[3 * i];
-            double u2 = uindbuf[3 * i + 1];
-            double u3 = uindbuf[3 * i + 2];
-            double unorm = std::sqrt(u1 * u1 + u2 * u2 + u3 * u3);
-            u1 *= units::debye;
-            u2 *= units::debye;
-            u3 *= units::debye;
-            unorm *= units::debye;
-            print(stdout, "%8d     %13.4f%13.4f%13.4f %13.4f\n", i + 1, u1, u2, u3, unorm);
-         }
-      }
-   }
+   inducePrint(ud);
 }
 }

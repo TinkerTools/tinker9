@@ -2,9 +2,11 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/induce.h"
 #include "ff/amoebamod.h"
+#include "ff/aplus/epolar.h"
 #include "ff/aplusmod.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
+#include "ff/hippo/cflux.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
@@ -581,6 +583,8 @@ void epolar(int vers)
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    bool do_g = vers & calc::grad;
+   bool use_cf = use(Potent::CHGFLX);
+   bool use_cfgrad = use_cf and do_g;
 
    zeroOnHost(energy_ep, virial_ep);
    size_t bsize = bufferSize();
@@ -597,12 +601,26 @@ void epolar(int vers)
       }
    }
 
+   if (use_cf)
+      alterchg();
    mpoleInit(vers);
-   if (useEwald())
-      epolarEwald(vers);
-   else
-      epolarNonEwald(vers);
+   if (use_cfgrad)
+      cfluxZeroPot();
+
+   if (useEwald()) {
+      if (polpot::use_dirdamp)
+         epolarAplusEwald(vers, use_cfgrad);
+      else
+         epolarEwald(vers);
+   } else {
+      if (polpot::use_dirdamp)
+         epolarAplusNonEwald(vers, use_cfgrad);
+      else
+         epolarNonEwald(vers);
+   }
    torque(vers, depx, depy, depz);
+   if (use_cfgrad)
+      dcflux(vers, depx, depy, depz, vir_ep);
    if (do_v) {
       VirialBuffer u2 = vir_trq;
       virial_prec v2[9];

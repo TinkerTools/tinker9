@@ -71,6 +71,7 @@ static bool fts(std::string eng, bool& use_flag, unsigned tsflag, const TimeScal
 #include "ff/pmestream.h"
 #include "ff/potent.h"
 #include <tinker/detail/mplpot.hh>
+#include <tinker/detail/polpot.hh>
 
 namespace tinker {
 static bool ecore_val;
@@ -99,7 +100,7 @@ static bool amoeba_empole(int vers)
 
 static bool amoeba_epolar(int vers)
 {
-   if (mplpot::use_chgpen)
+   if (mplpot::use_chgpen and not polpot::use_dirdamp) // HIPPO Polarization
       return false;
    if (amoeba_emplar(vers))
       return false;
@@ -151,6 +152,8 @@ static bool hippo_empole(int vers)
 static bool hippo_epolar(int vers)
 {
    if (not mplpot::use_chgpen)
+      return false;
+   if (polpot::use_dirdamp) // AMOEBA Plus Polarization
       return false;
    if (amoeba_emplar(vers))
       return false;

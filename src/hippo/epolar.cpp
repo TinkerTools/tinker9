@@ -181,7 +181,7 @@ static void epolarChgpenEwaldReal(int vers, int use_cf)
 }
 
 extern void epolarChgpenEwaldRecipSelf_acc(int vers, int use_cf, const real (*d)[3]);
-static void epolarChgpenEwaldRecipSelf(int vers, int use_cf)
+void epolarChgpenEwaldRecipSelf(int vers, int use_cf)
 {
    epolarChgpenEwaldRecipSelf_acc(vers, use_cf, uind);
 }

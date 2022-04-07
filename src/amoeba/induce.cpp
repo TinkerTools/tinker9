@@ -55,11 +55,8 @@ static void induceMutualPcg1(real (*uind)[3], real (*uinp)[3])
       induceMutualPcg1_acc(uind, uinp);
 }
 
-void induce(real (*ud)[3], real (*up)[3])
+void inducePrint(const real (*ud)[3])
 {
-   induceMutualPcg1(ud, up);
-   ulspredSave(ud, up);
-
    if (inform::debug and use(Potent::POLAR)) {
       std::vector<double> uindbuf;
       uindbuf.resize(3 * n);
@@ -85,5 +82,12 @@ void induce(real (*ud)[3], real (*up)[3])
          }
       }
    }
+}
+
+void induce(real (*ud)[3], real (*up)[3])
+{
+   induceMutualPcg1(ud, up);
+   ulspredSave(ud, up);
+   inducePrint(ud);
 }
 }
