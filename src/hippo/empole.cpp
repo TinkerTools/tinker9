@@ -1,8 +1,10 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoebamod.h"
+#include "ff/aplus/empole.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/hippo/cflux.h"
+#include "ff/hippomod.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
@@ -77,7 +79,7 @@ static void empoleChgpenEwaldRealSelf(int vers, int use_cf)
 }
 
 extern void empoleChgpenEwaldRecip_acc(int vers, int use_cf);
-static void empoleChgpenEwaldRecip(int vers, int use_cf)
+void empoleChgpenEwaldRecip(int vers, int use_cf)
 {
    empoleChgpenEwaldRecip_acc(vers, use_cf);
 }
@@ -119,10 +121,17 @@ void empoleChgpen(int vers)
    if (use_cfgrad) {
       cfluxZeroPot();
    }
-   if (useEwald())
-      empoleChgpenEwald(vers, use_cfgrad);
-   else
-      empoleChgpenNonEwald(vers, use_cfgrad);
+   if (useEwald()) {
+      if (pentyp == Chgpen::GORDON1)
+         empoleChgpenEwald(vers, use_cfgrad);
+      else if (pentyp == Chgpen::GORDON2)
+         empoleAplusEwald(vers, use_cfgrad);
+   } else {
+      if (pentyp == Chgpen::GORDON1)
+         empoleChgpenNonEwald(vers, use_cfgrad);
+      else if (pentyp == Chgpen::GORDON2)
+         empoleAplusNonEwald(vers, use_cfgrad);
+   }
    torque(vers, demx, demy, demz);
    if (use_cfgrad)
       dcflux(vers, demx, demy, demz, vir_em);

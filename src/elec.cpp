@@ -500,6 +500,7 @@ static void mdpuscaleData(RcOp op)
 static void chgpenData(RcOp op)
 {
    if (op & RcOp::DEALLOC) {
+      pentyp = Chgpen::NONE;
       nmdwexclude = 0;
       darray::deallocate(mdwexclude, mdwexclude_scale);
       nwexclude = 0;
@@ -774,6 +775,13 @@ static void chgpenData(RcOp op)
    }
 
    if (op & RcOp::INIT) {
+      FstrView pentstr = mplpot::pentyp;
+      if (pentstr == "GORDON1")
+         pentyp = Chgpen::GORDON1;
+      else if (pentstr == "GORDON2")
+         pentyp = Chgpen::GORDON2;
+      else
+         pentyp = Chgpen::NONE;
       darray::copyin(g::q0, n, pcore, chgpen::pcore);
       darray::copyin(g::q0, n, pval0, chgpen::pval0);
       darray::copyin(g::q0, n, pval, chgpen::pval);

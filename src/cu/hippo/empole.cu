@@ -1,5 +1,4 @@
 #include "ff/amoebamod.h"
-#include "ff/hippo/cflux.h"
 #include "ff/hippomod.h"
 #include "ff/image.h"
 #include "ff/pme.h"

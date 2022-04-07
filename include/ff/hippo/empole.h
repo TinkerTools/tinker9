@@ -6,4 +6,6 @@ namespace tinker {
 void empoleChgpenData(RcOp);
 /// \ingroup hippompole
 void empoleChgpen(int vers);
+/// \ingroup hippompole
+void empoleChgpenEwaldRecip(int vers, int useCF);
 }
