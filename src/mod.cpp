@@ -1,6 +1,7 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
 #include "ff/amoebamod.h"
+#include "ff/aplusmod.h"
 #include "ff/atom.h"
 #include "ff/box.h"
 #include "ff/echarge.h"

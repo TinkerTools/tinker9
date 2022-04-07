@@ -2,6 +2,7 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/induce.h"
 #include "ff/amoebamod.h"
+#include "ff/aplusmod.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
@@ -21,7 +22,7 @@ void epolarData(RcOp op)
 {
    if (not use(Potent::POLAR))
       return;
-   if (mplpot::use_chgpen)
+   if (mplpot::use_chgpen and not polpot::use_dirdamp) // HIPPO Polarization
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -35,6 +36,8 @@ void epolarData(RcOp op)
       darray::deallocate(dpuexclude, dpuexclude_scale);
 
       darray::deallocate(polarity, thole, pdamp, polarity_inv);
+      if (polpot::use_dirdamp)
+         darray::deallocate(dirdamp);
 
       if (rc_a) {
          bufferDeallocate(rc_flag, nep);
@@ -48,22 +51,30 @@ void epolarData(RcOp op)
       depz = nullptr;
 
       darray::deallocate(ufld, dufld);
-      darray::deallocate(
-         work01_, work02_, work03_, work04_, work05_, work06_, work07_, work08_, work09_, work10_);
+      darray::deallocate(work01_, work02_, work03_, work04_, work05_);
+      if (not polpot::use_dirdamp) // AMOEBA
+         darray::deallocate(work06_, work07_, work08_, work09_, work10_);
 
       if (polpred == UPred::ASPC) {
          darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06,
             udalt_07, udalt_08, udalt_09, udalt_10, udalt_11, udalt_12, udalt_13, udalt_14,
-            udalt_15, upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05, upalt_06,
-            upalt_07, upalt_08, upalt_09, upalt_10, upalt_11, upalt_12, upalt_13, upalt_14,
-            upalt_15);
+            udalt_15);
+         if (not polpot::use_dirdamp) // AMOEBA
+            darray::deallocate(upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05, upalt_06,
+               upalt_07, upalt_08, upalt_09, upalt_10, upalt_11, upalt_12, upalt_13, upalt_14,
+               upalt_15);
       } else if (polpred == UPred::GEAR) {
-         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, upalt_00,
-            upalt_01, upalt_02, upalt_03, upalt_04, upalt_05);
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05);
+         if (not polpot::use_dirdamp) // AMOEBA
+            darray::deallocate(upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05);
       } else if (polpred == UPred::LSQR) {
-         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06,
-            upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
-         darray::deallocate(udalt_lsqr_a, udalt_lsqr_b, upalt_lsqr_a, upalt_lsqr_b);
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06);
+         darray::deallocate(udalt_lsqr_a, udalt_lsqr_b);
+         if (not polpot::use_dirdamp) { // AMOEBA
+            darray::deallocate(
+               upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
+            darray::deallocate(upalt_lsqr_a, upalt_lsqr_b);
+         }
       }
       polpred = UPred::NONE;
       maxualt = 0;
@@ -377,6 +388,8 @@ void epolarData(RcOp op)
       waitFor(g::q0);
 
       darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
+      if (polpot::use_dirdamp)
+         darray::allocate(n, &dirdamp);
 
       nep = nullptr;
       ep = eng_buf_elec;
@@ -396,8 +409,9 @@ void epolarData(RcOp op)
          dufld = nullptr;
       }
 
-      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_, &work06_, &work07_,
-         &work08_, &work09_, &work10_);
+      darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_);
+      if (not polpot::use_dirdamp) // AMOEBA
+         darray::allocate(n, &work06_, &work07_, &work08_, &work09_, &work10_);
 
       if (uprior::use_pred) {
          FstrView predstr = uprior::polpred;
@@ -426,30 +440,44 @@ void epolarData(RcOp op)
          maxualt = 16;
          darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05,
             &udalt_06, &udalt_07, &udalt_08, &udalt_09, &udalt_10, &udalt_11, &udalt_12, &udalt_13,
-            &udalt_14, &udalt_15, &upalt_00, &upalt_01, &upalt_02, &upalt_03, &upalt_04, &upalt_05,
-            &upalt_06, &upalt_07, &upalt_08, &upalt_09, &upalt_10, &upalt_11, &upalt_12, &upalt_13,
-            &upalt_14, &upalt_15);
+            &udalt_14, &udalt_15);
          darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05,
             udalt_06, udalt_07, udalt_08, udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
-            udalt_14, udalt_15, upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05,
-            upalt_06, upalt_07, upalt_08, upalt_09, upalt_10, upalt_11, upalt_12, upalt_13,
-            upalt_14, upalt_15);
+            udalt_14, udalt_15);
+         if (not polpot::use_dirdamp) { // AMOEBA
+            darray::allocate(n, &upalt_00, &upalt_01, &upalt_02, &upalt_03, &upalt_04, &upalt_05,
+               &upalt_06, &upalt_07, &upalt_08, &upalt_09, &upalt_10, &upalt_11, &upalt_12,
+               &upalt_13, &upalt_14, &upalt_15);
+            darray::zero(g::q0, n, upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05,
+               upalt_06, upalt_07, upalt_08, upalt_09, upalt_10, upalt_11, upalt_12, upalt_13,
+               upalt_14, upalt_15);
+         }
       } else if (polpred == UPred::GEAR) {
          maxualt = 6;
-         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05,
-            &upalt_00, &upalt_01, &upalt_02, &upalt_03, &upalt_04, &upalt_05);
-         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05,
-            upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05);
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05);
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05);
+         if (not polpot::use_dirdamp) { // AMOEBA
+            darray::allocate(n, &upalt_00, &upalt_01, &upalt_02, &upalt_03, &upalt_04, &upalt_05);
+            darray::zero(g::q0, n, upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05);
+         }
       } else if (polpred == UPred::LSQR) {
          maxualt = 7;
-         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05,
-            &udalt_06, &upalt_00, &upalt_01, &upalt_02, &upalt_03, &upalt_04, &upalt_05, &upalt_06);
          int lenb = maxualt - 1;
          int lena = lenb * lenb; // lenb*(lenb+1)/2 should be plenty.
-         darray::allocate(lena, &udalt_lsqr_a, &upalt_lsqr_a);
-         darray::allocate(lenb, &udalt_lsqr_b, &upalt_lsqr_b);
-         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05,
-            udalt_06, upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
+         darray::allocate(
+            n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05, &udalt_06);
+         darray::allocate(lena, &udalt_lsqr_a);
+         darray::allocate(lenb, &udalt_lsqr_b);
+         darray::zero(
+            g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06);
+         if (not polpot::use_dirdamp) { // AMOEBA
+            darray::allocate(
+               n, &upalt_00, &upalt_01, &upalt_02, &upalt_03, &upalt_04, &upalt_05, &upalt_06);
+            darray::allocate(lena, &upalt_lsqr_a);
+            darray::allocate(lenb, &upalt_lsqr_b);
+            darray::zero(
+               g::q0, n, upalt_00, upalt_01, upalt_02, upalt_03, upalt_04, upalt_05, upalt_06);
+         }
       }
    }
 
@@ -466,6 +494,8 @@ void epolarData(RcOp op)
       darray::copyin(g::q0, n, thole, polar::thole);
       darray::copyin(g::q0, n, pdamp, polar::pdamp);
       darray::copyin(g::q0, n, polarity_inv, pinvbuf.data());
+      if (polpot::use_dirdamp)
+         darray::copyin(g::q0, n, dirdamp, polar::dirdamp);
       waitFor(g::q0);
    }
 }
