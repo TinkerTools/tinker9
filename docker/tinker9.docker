@@ -189,7 +189,7 @@ class RuntimeFile(DockerFile):
     def content(self) -> str:
         develFile = DevelFile(self.cudaVersion)
 
-        c += '''FROM %s AS tool_image
+        c = '''FROM %s AS tool_image
 FROM nvidia/cuda:%s''' % (develFile.tag(), self.config[kRuntimeUbuntu])
 
         c += NewLine
