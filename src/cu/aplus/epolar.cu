@@ -153,7 +153,7 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
 
       int i = exclude[ii][0];
       int k = exclude[ii][1];
-      real scaleb = exclude_scale[ii][1]; // d
+      real scaleb = exclude_scale[ii][2]; // p
       real scaled = exclude_scale[ii][3]; // u
 
       xi[klane] = x[i];
@@ -386,7 +386,7 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             real pota, potb;
-            pair_polar_aplus_v2<Ver, NON_EWALD, CFLX>(                                           //
+            pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                           //
                r2, xr, yr, zr, 1, 1, ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], //
                qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],                  //
                uix[klane], uiy[klane], uiz[klane],                                               //
@@ -548,7 +548,7 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             real pota, potb;
-            pair_polar_aplus_v2<Ver, NON_EWALD, CFLX>(                                           //
+            pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                           //
                r2, xr, yr, zr, 1, 1, ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], //
                qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],                  //
                uix[klane], uiy[klane], uiz[klane],                                               //
@@ -651,7 +651,7 @@ static void epolarAplus_cu(const real (*uind)[3])
    }
    int ngrid = gpuGridSize(BLOCK_DIM);
    epolarAplus_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep,
-      ep, vir_ep, depx, depy, depz, off, st.si1.bit0, nmdpuexclude, mdpuexclude, mdpuexclude_scale,
+      ep, vir_ep, depx, depy, depz, off, st.si2.bit0, nmdpuexclude, mdpuexclude, mdpuexclude_scale,
       st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind,
       pot, rpole, pdamp, thole, dirdamp, aewald, f);
 

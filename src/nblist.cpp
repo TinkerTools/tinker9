@@ -16,6 +16,7 @@
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/neigh.hh>
+#include <tinker/detail/polpot.hh>
 
 namespace tinker {
 NBList::~NBList()
@@ -358,10 +359,13 @@ void nblistData(RcOp op)
    if (u & Nbl::SPATIAL) {
       auto& un2 = mspatial_v2_unit;
       if (op & RcOp::ALLOC) {
-         if (mplpot::use_chgpen) {
+         if (mplpot::use_chgpen and not polpot::use_dirdamp) { // HIPPO
             spatialAlloc(
                un2, n, cut, buf, x, y, z, 2, nmdwexclude, mdwexclude, nrepexclude, repexclude);
-         } else {
+         } else if (mplpot::use_chgpen and polpot::use_dirdamp) { // AMOEBA Plus
+            spatialAlloc(un2, n, cut, buf, x, y, z, 3, nmdwexclude, mdwexclude, nmdpuexclude,
+               mdpuexclude, nuexclude, uexclude);
+         } else { // AMOEBA
             spatialAlloc(un2, n, cut, buf, x, y, z, 4, nmdpuexclude, mdpuexclude, nmexclude,
                mexclude, ndpexclude, dpexclude, nuexclude, uexclude);
          }
@@ -388,9 +392,9 @@ void nblistData(RcOp op)
    if (u & Nbl::SPATIAL) {
       auto& un2 = uspatial_v2_unit;
       if (op & RcOp::ALLOC) {
-         if (mplpot::use_chgpen) {
+         if (mplpot::use_chgpen and not polpot::use_dirdamp) { // HIPPO
             spatialAlloc(un2, n, cut, buf, x, y, z, 1, nwexclude, wexclude);
-         } else {
+         } else { // AMOEBA and AMOEBA Plus
             spatialAlloc(un2, n, cut, buf, x, y, z, 1, nuexclude, uexclude);
          }
       }

@@ -109,6 +109,8 @@ void evdwData(RcOp op)
          epsrule = Vdw::CUBIC_MEAN;
       else if (str3 == "HHG")
          epsrule = Vdw::HHG;
+      else if (str3 == "W-H")
+         epsrule = Vdw::W_H;
       else
          assert(false);
 

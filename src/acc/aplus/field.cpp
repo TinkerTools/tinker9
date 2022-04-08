@@ -96,7 +96,7 @@ static void dfieldAplus_acc1(real (*field)[3])
    for (int ii = 0; ii < ndpexclude; ++ii) {
       int i = dpexclude[ii][0];
       int k = dpexclude[ii][1];
-      real dscale = dpexclude_scale[ii][0] - 1;
+      real pscale = dpexclude_scale[ii][1] - 1;
 
       real xi = x[i];
       real yi = y[i];
@@ -122,7 +122,7 @@ static void dfieldAplus_acc1(real (*field)[3])
       if (r2 <= off2) {
          real3 fid = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
-         pair_dfield_aplus<NON_EWALD>(r2, xr, yr, zr, dscale, ci, dix, diy, diz, pdi, ddi, qixx,
+         pair_dfield_aplus<NON_EWALD>(r2, xr, yr, zr, pscale, ci, dix, diy, diz, pdi, ddi, qixx,
             qixy, qixz, qiyy, qiyz, qizz, rpole[k][MPL_PME_0], rpole[k][MPL_PME_X],
             rpole[k][MPL_PME_Y], rpole[k][MPL_PME_Z], pdamp[k], dirdamp[k], rpole[k][MPL_PME_XX],
             rpole[k][MPL_PME_XY], rpole[k][MPL_PME_XZ], rpole[k][MPL_PME_YY], rpole[k][MPL_PME_YZ],

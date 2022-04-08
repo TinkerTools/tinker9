@@ -1,5 +1,6 @@
 #include "ff/amoebamod.h"
 #include "ff/aplusmod.h"
+#include "ff/hippomod.h"
 #include "ff/image.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
@@ -13,7 +14,7 @@ namespace tinker {
 template <class ETYP>
 __global__
 void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict dpinfo,
-   int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[2],
+   int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
    const real* restrict x, const real* restrict y, const real* restrict z,
    const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
    const int* restrict iak, const int* restrict lst, real (*restrict field)[3],
@@ -74,7 +75,7 @@ void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
 
       int i = exclude[ii][0];
       int k = exclude[ii][1];
-      real scaleb = exclude_scale[ii][0];
+      real scaleb = exclude_scale[ii][1];
 
       xi = x[i];
       yi = y[i];
@@ -311,7 +312,7 @@ static void dfieldAplus_cu(real (*field)[3])
 
    int ngrid = gpuGridSize(BLOCK_DIM);
    dfieldAplus_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
-      ndpexclude, dpexclude, dpexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+      nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
       st.niak, st.iak, st.lst, field, rpole, pdamp, dirdamp, aewald);
 }
 
@@ -552,7 +553,6 @@ void ufieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
 template <class ETYP>
 static void ufieldAplus_cu(const real (*uind)[3], real (*field)[3])
 {
-
    const auto& st = *mspatial_v2_unit;
    real off;
 
@@ -568,7 +568,7 @@ static void ufieldAplus_cu(const real (*uind)[3], real (*field)[3])
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   ufieldAplus_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
+   ufieldAplus_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si3.bit0,
       nuexclude, uexclude, uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
       st.iak, st.lst, uind, field, pdamp, thole, aewald);
 }

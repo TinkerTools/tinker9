@@ -46,7 +46,8 @@ enum class Vdw : int
    ARITHMETIC = 20, ///< Combining rule.
    GEOMETRIC = 21,  ///< Combining rule.
    CUBIC_MEAN = 22, ///< Combining rule.
-   HHG = 23,        ///< Combinding rule.
+   HHG = 23,        ///< Combining rule.
+   W_H = 24,        ///< Combining rule.
 
    LJ,    ///< Lennard-Jones 12-6 potential.
    BUCK,  ///< Buckingham potential.

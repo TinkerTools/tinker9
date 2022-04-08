@@ -192,7 +192,7 @@ static void epolarAplus_acc1(const real (*uind)[3])
 
       int i = dpuexclude[ii][0];
       int k = dpuexclude[ii][1];
-      real dscale = dpuexclude_scale[ii][0] - 1;
+      real pscale = dpuexclude_scale[ii][1] - 1; // AMOEBA Plus d-equals-p; use p
       real uscale = dpuexclude_scale[ii][2] - 1;
 
       real xi = x[i];
@@ -223,7 +223,7 @@ static void epolarAplus_acc1(const real (*uind)[3])
       real pdk = pdamp[k];
       real ddk = dirdamp[k];
 
-      bool incl = dscale != 0 or uscale != 0;
+      bool incl = pscale != 0 or uscale != 0;
 
       real r2 = image2(xr, yr, zr);
       if (r2 <= off2 and incl) {
@@ -232,7 +232,7 @@ static void epolarAplus_acc1(const real (*uind)[3])
          MAYBE_UNUSED real pota, potb;
 
          pair_polar_aplus<do_e, do_g, NON_EWALD, CFLX>(        //
-            r2, xr, yr, zr, dscale, uscale,                    //
+            r2, xr, yr, zr, pscale, uscale,                    //
             ci, dix, diy, diz, pdi, pti, ddi,                  //
             qixx, qixy, qixz, qiyy, qiyz, qizz, uix, uiy, uiz, //
             rpole[k][MPL_PME_0], rpole[k][MPL_PME_X], rpole[k][MPL_PME_Y], rpole[k][MPL_PME_Z], pdk,
@@ -241,7 +241,7 @@ static void epolarAplus_acc1(const real (*uind)[3])
             uind[k][1], uind[k][2], f, 0, e, pota, potb, pgrad);
 
          if CONSTEXPR (do_a)
-            if (dscale == -1 and e != 0)
+            if (pscale == -1 and e != 0)
                atomic_add(-1, nep, offset);
 
          if CONSTEXPR (do_e)

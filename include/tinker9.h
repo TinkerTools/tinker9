@@ -31,7 +31,7 @@
 "  ###                                                                      ### ""\n" \
 " ###            Tinker9  --  Software Tools for Molecular Design            ###""\n" \
 " ##                                                                          ##""\n" \
-" ##                       Version 1.0.0-rc  April 2021                       ##""\n" \
+" ##                       Version 1.0.0-rc  April 2022                       ##""\n" \
 " ##                                                                          ##""\n" \
 " ##                 Copyright (c)  Zhi Wang & the Ponder Lab                 ##""\n" \
 " ###                           All Rights Reserved                          ###""\n" \
