@@ -1,7 +1,7 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/amoebamod.h"
-#include "ff/aplus/induce.h"
 #include "ff/hippo/epolar.h"
+#include "ff/hippo/induce.h"
 #include "ff/nblist.h"
 
 namespace tinker {
@@ -31,7 +31,7 @@ void epolarAplusEwald(int vers, int use_cf)
    if (edot)
       ver2 &= ~calc::energy; // toggle off the calc::energy flag
 
-   induce3(uind);
+   induce2(uind);
    if (edot)
       epolar0DotProd(uind, udir);
    if (vers != calc::v0) {
@@ -53,7 +53,7 @@ void epolarAplusNonEwald(int vers, int use_cf)
    if (edot)
       ver2 &= ~calc::energy; // toggle off the calc::energy flag
 
-   induce3(uind);
+   induce2(uind);
    if (edot)
       epolar0DotProd(uind, udir);
    if (vers != calc::v0) {

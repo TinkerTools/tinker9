@@ -32,24 +32,3 @@ void ulspredSum3(real (*uind)[3])
    ulspredSum2(uind);
 }
 }
-
-namespace tinker {
-extern void induceMutualPcg3_acc(real (*uind)[3]);
-extern void induceMutualPcg3_cu(real (*uind)[3]);
-static void induceMutualPcg3(real (*uind)[3])
-{
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      induceMutualPcg3_cu(uind);
-   else
-#endif
-      induceMutualPcg3_acc(uind);
-}
-
-void induce3(real (*uind)[3])
-{
-   induceMutualPcg3(uind);
-   ulspredSave3(uind);
-   inducePrint(uind);
-}
-}

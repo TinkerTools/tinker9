@@ -13,6 +13,4 @@ void sparsePrecondApply3(const real (*rsd)[3], real (*zrsd)[3]);
 
 void ulspredSave3(const real (*uind)[3]);
 void ulspredSum3(real (*uind)[3]);
-
-void induce3(real (*uind)[3]);
 }
