@@ -51,7 +51,7 @@ void dfieldChgpen(real (*field)[3])
 
 namespace tinker {
 extern void ufieldChgpenEwaldRecipSelf_acc(const real (*uind)[3], real (*field)[3]);
-static void ufieldChgpenEwaldRecipSelf(const real (*uind)[3], real (*field)[3])
+void ufieldChgpenEwaldRecipSelf(const real (*uind)[3], real (*field)[3])
 {
    ufieldChgpenEwaldRecipSelf_acc(uind, field);
 }
