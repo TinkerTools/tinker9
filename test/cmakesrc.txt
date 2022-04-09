@@ -1,6 +1,8 @@
 set (__T9_TEST_SRC
 angle.cpp
 angtor.cpp
+aplusgas.cpp
+aplusliquid.cpp
 argkey.cpp
 async.cpp
 bond.cpp

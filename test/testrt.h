@@ -1,5 +1,4 @@
 #pragma once
-#include "ff/atom.h"
 #include "ff/energy.h"
 #include <string>
 #include <vector>
@@ -43,15 +42,15 @@ public:
 class TestReference
 {
 private:
-   std::vector<double> gradient;
-   double virial[3][3];
-   double energy;
-   int count;
+   class Impl;
+   Impl* pimpl;
 
 public:
+   ~TestReference();
    TestReference(std::string pathToRefFile);
    int getCount() const;
    double getEnergy() const;
+   void getEnergyCountByName(std::string name, double& energy, int& count);
    const double (*getVirial() const)[3];
    const double (*getGradient() const)[3];
 };
