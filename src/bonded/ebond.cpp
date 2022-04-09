@@ -2,6 +2,7 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include <tinker/detail/bndpot.hh>
 #include <tinker/detail/bndstr.hh>
@@ -62,7 +63,7 @@ void ebondData(RcOp op)
    }
 }
 
-extern void ebond_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, ebond, int);
 void ebond(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -81,7 +82,7 @@ void ebond(int vers)
          darray::zero(g::q0, n, debx, deby, debz);
    }
 
-   ebond_acc(vers);
+   TINKER_F1CALL(acc, ebond, vers);
 
    if (rc_a) {
       if (do_e) {

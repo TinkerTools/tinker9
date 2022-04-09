@@ -21,7 +21,7 @@ struct FFTPlanFFTW : public FFTPlan
 
 void fftData(RcOp op)
 {
-   if (!useEwald() && !useDEwald())
+   if (not useEwald() && not useDEwald())
       return;
 
    if (op & RcOp::DEALLOC) {

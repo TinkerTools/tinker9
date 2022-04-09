@@ -2,13 +2,14 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/urey.hh>
 #include <tinker/detail/urypot.hh>
 
 namespace tinker {
 void eureyData(RcOp op)
 {
-   if (!use(Potent::UREY))
+   if (not use(Potent::UREY))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -56,7 +57,7 @@ void eureyData(RcOp op)
    }
 }
 
-extern void eurey_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, eurey, int);
 void eurey(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -75,7 +76,7 @@ void eurey(int vers)
          darray::zero(g::q0, n, deubx, deuby, deubz);
    }
 
-   eurey_acc(vers);
+   TINKER_F1CALL(acc, eurey, vers);
 
    if (rc_a) {
       if (do_e) {

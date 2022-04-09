@@ -2,31 +2,31 @@
 #include "tool/error.h"
 #include "tool/macro.h"
 
-#define TINKER_F1EXTN(RETURN_TYPE, FUNC, SUFFIX, HAS_IMPL, ...)                                    \
+#define TINKER_F1EXTN(SUFFIX, HAS_IMPL, RETURN_TYPE, FUNC, ...)                                    \
    TINKER_F1EXTN_##HAS_IMPL##__(RETURN_TYPE, FUNC, SUFFIX, __VA_ARGS__)
 #define TINKER_F1EXTN_1__(R, F, S, ...) extern R F##_##S(__VA_ARGS__)
 #define TINKER_F1EXTN_0__(R, F, S, ...)                                                            \
-   static R F##_##S(__VA_ARGS__)                                                                   \
+   MAYBE_UNUSED static R F##_##S(__VA_ARGS__)                                                      \
    {                                                                                               \
       throw FatalError("F1EXTN: " #R " " #F "_" #S "(...) is not implemented.");                   \
    }
 
-#define TINKER_F1CALL(FUNC, SUFFIX1, ...) return FUNC##_##SUFFIX1(__VA_ARGS__)
+#define TINKER_F1CALL(SUFFIX1, FUNC, ...) FUNC##_##SUFFIX1(__VA_ARGS__)
 
-#define TINKER_F2EXTN(RETURN_TYPE, FUNC, SUFFIX1, HAS_IMPL1, SUFFIX2, HAS_IMPL2, ...)              \
-   TINKER_F1EXTN(RETURN_TYPE, FUNC, SUFFIX1, HAS_IMPL1, __VA_ARGS__);                              \
-   TINKER_F1EXTN(RETURN_TYPE, FUNC, SUFFIX2, HAS_IMPL2, __VA_ARGS__)
+#define TINKER_F2EXTN(SUFFIX1, HAS_IMPL1, SUFFIX2, HAS_IMPL2, RETURN_TYPE, FUNC, ...)              \
+   TINKER_F1EXTN(SUFFIX1, HAS_IMPL1, RETURN_TYPE, FUNC, __VA_ARGS__);                              \
+   TINKER_F1EXTN(SUFFIX2, HAS_IMPL2, RETURN_TYPE, FUNC, __VA_ARGS__)
 
-#define TINKER_F2CALL(FUNC, SUFFIX1, SUFFIX2, ...)                                                 \
+#define TINKER_F2PICK(SUFFIX1, SUFFIX2, FUNC, ...)                                                 \
    if (0) {                                                                                        \
-   } else if (TINKER_F2CALL_##SUFFIX1##__) {                                                       \
+   } else if (TINKER_F2PICK_##SUFFIX1##__) {                                                       \
       return FUNC##_##SUFFIX1(__VA_ARGS__);                                                        \
-   } else if (TINKER_F2CALL_##SUFFIX2##__) {                                                       \
+   } else if (TINKER_F2PICK_##SUFFIX2##__) {                                                       \
       return FUNC##_##SUFFIX2(__VA_ARGS__);                                                        \
    } else if (TINKER_HOST) {                                                                       \
       return FUNC##_acc(__VA_ARGS__);                                                              \
    } else {                                                                                        \
-      throw FatalError("F2CALL: " #FUNC "(...) does not have a fallback implementation.");         \
+      throw FatalError("F2PICK: " #FUNC "(...) does not have a fallback implementation.");         \
    }
-#define TINKER_F2CALL_cu__  TINKER_GPULANG_CUDA
-#define TINKER_F2CALL_acc__ TINKER_GPULANG_OPENACC
+#define TINKER_F2PICK_cu__  TINKER_GPULANG_CUDA
+#define TINKER_F2PICK_acc__ TINKER_GPULANG_OPENACC

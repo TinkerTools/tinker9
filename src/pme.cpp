@@ -118,7 +118,7 @@ static void pmeOpCopyin(PMEUnit unit)
 
 void pmeData(RcOp op)
 {
-   if (!useEwald() && !useDEwald())
+   if (not useEwald() && not useDEwald())
       return;
 
    if (op & RcOp::DEALLOC) {

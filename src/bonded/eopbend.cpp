@@ -2,6 +2,7 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include <cassert>
 #include <tinker/detail/angpot.hh>
@@ -64,7 +65,7 @@ void eopbendData(RcOp op)
    }
 }
 
-extern void eopbend_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, eopbend, int);
 void eopbend(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -83,7 +84,7 @@ void eopbend(int vers)
          darray::zero(g::q0, n, deopbx, deopby, deopbz);
    }
 
-   eopbend_acc(vers);
+   TINKER_F1CALL(acc, eopbend, vers);
 
    if (rc_a) {
       if (do_e) {

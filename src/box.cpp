@@ -138,10 +138,10 @@ static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape bo
 }
 
 namespace tinker {
-TINKER_F2EXTN(void, boxDataP1, cu, 0, acc, 1, RcOp);
+TINKER_F2EXTN(cu, 0, acc, 1, void, boxDataP1, RcOp);
 static void boxDataP1(RcOp op)
 {
-   TINKER_F2CALL(boxDataP1, cu, acc, op);
+   TINKER_F2PICK(cu, acc, boxDataP1, op);
 }
 
 void boxData(RcOp op)
@@ -290,10 +290,10 @@ void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alphaD
    boxSetRecip(p.recipa, p.recipb, p.recipc, p.box_shape, p.lvec1, p.lvec2, p.lvec3);
 }
 
-TINKER_F2EXTN(void, boxCopyin, cu, 0, acc, 1);
+TINKER_F2EXTN(cu, 0, acc, 1, void, boxCopyin);
 void boxCopyin()
 {
-   TINKER_F2CALL(boxCopyin, cu, acc);
+   TINKER_F2PICK(cu, acc, boxCopyin);
 }
 
 real boxVolume()

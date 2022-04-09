@@ -2,13 +2,14 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/angpot.hh>
 #include <tinker/detail/strbnd.hh>
 
 namespace tinker {
 void estrbndData(RcOp op)
 {
-   if (!use(Potent::STRBND))
+   if (not use(Potent::STRBND))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -53,7 +54,7 @@ void estrbndData(RcOp op)
    }
 }
 
-extern void estrbnd_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, estrbnd, int);
 void estrbnd(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -72,7 +73,7 @@ void estrbnd(int vers)
          darray::zero(g::q0, n, debax, debay, debaz);
    }
 
-   estrbnd_acc(vers);
+   TINKER_F1CALL(acc, estrbnd, vers);
 
    if (rc_a) {
       if (do_e) {

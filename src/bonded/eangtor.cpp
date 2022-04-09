@@ -2,6 +2,7 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/angtor.hh>
 #include <tinker/detail/torpot.hh>
 
@@ -50,7 +51,7 @@ void eangtorData(RcOp op)
    }
 }
 
-extern void eangtor_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, eangtor, int);
 void eangtor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -69,7 +70,7 @@ void eangtor(int vers)
          darray::zero(g::q0, n, deatx, deaty, deatz);
    }
 
-   eangtor_acc(vers);
+   TINKER_F1CALL(acc, eangtor, vers);
 
    if (rc_a) {
       if (do_e) {

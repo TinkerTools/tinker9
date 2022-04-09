@@ -2,13 +2,14 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/restrn.hh>
 #include <tinker/detail/sizes.hh>
 
 namespace tinker {
 void egeomData(RcOp op)
 {
-   if (!use(Potent::GEOM))
+   if (not use(Potent::GEOM))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -90,7 +91,7 @@ void egeomData(RcOp op)
    }
 }
 
-extern void egeom_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, egeom, int);
 void egeom(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -109,7 +110,7 @@ void egeom(int vers)
          darray::zero(g::q0, n, degx, degy, degz);
    }
 
-   egeom_acc(vers);
+   TINKER_F1CALL(acc, egeom, vers);
 
    if (rc_a) {
       if (do_e) {

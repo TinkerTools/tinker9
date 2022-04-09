@@ -2,13 +2,14 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/imptor.hh>
 #include <tinker/detail/torpot.hh>
 
 namespace tinker {
 void eimptorData(RcOp op)
 {
-   if (!use(Potent::IMPTORS))
+   if (not use(Potent::IMPTORS))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -50,7 +51,7 @@ void eimptorData(RcOp op)
    }
 }
 
-extern void eimptor_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, eimptor, int);
 void eimptor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -69,7 +70,7 @@ void eimptor(int vers)
          darray::zero(g::q0, n, deitx, deity, deitz);
    }
 
-   eimptor_acc(vers);
+   TINKER_F1CALL(acc, eimptor, vers);
 
    if (rc_a) {
       if (do_e) {

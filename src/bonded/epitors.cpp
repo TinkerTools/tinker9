@@ -2,13 +2,14 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/pitors.hh>
 #include <tinker/detail/torpot.hh>
 
 namespace tinker {
 void epitorsData(RcOp op)
 {
-   if (!use(Potent::PITORS))
+   if (not use(Potent::PITORS))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -51,7 +52,7 @@ void epitorsData(RcOp op)
    }
 }
 
-extern void epitors_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, epitors, int);
 void epitors(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -70,7 +71,7 @@ void epitors(int vers)
          darray::zero(g::q0, n, deptx, depty, deptz);
    }
 
-   epitors_acc(vers);
+   TINKER_F1CALL(acc, epitors, vers);
 
    if (rc_a) {
       if (do_e) {

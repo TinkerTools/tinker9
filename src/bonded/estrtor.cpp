@@ -2,6 +2,7 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/strtor.hh>
 #include <tinker/detail/torpot.hh>
 
@@ -50,7 +51,7 @@ void estrtorData(RcOp op)
    }
 }
 
-extern void estrtor_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, estrtor, int);
 void estrtor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -69,7 +70,7 @@ void estrtor(int vers)
          darray::zero(g::q0, n, debtx, debty, debtz);
    }
 
-   estrtor_acc(vers);
+   TINKER_F1CALL(acc, estrtor, vers);
 
    if (rc_a) {
       if (do_e) {

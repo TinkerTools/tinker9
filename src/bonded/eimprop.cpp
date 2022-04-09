@@ -2,6 +2,7 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/improp.hh>
 #include <tinker/detail/torpot.hh>
 
@@ -40,7 +41,7 @@ void eimpropData(RcOp op)
    }
 }
 
-extern void eimprop_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, eimprop, int);
 void eimprop(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -59,7 +60,7 @@ void eimprop(int vers)
          darray::zero(g::q0, n, deidx, deidy, deidz);
    }
 
-   eimprop_acc(vers);
+   TINKER_F1CALL(acc, eimprop, vers);
 
    if (rc_a) {
       if (do_e) {

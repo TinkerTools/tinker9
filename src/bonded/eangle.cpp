@@ -2,6 +2,7 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include <cassert>
 #include <tinker/detail/angbnd.hh>
@@ -77,7 +78,7 @@ void eangleData(RcOp op)
    }
 }
 
-extern void eangle_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, eangle, int);
 void eangle(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -96,7 +97,7 @@ void eangle(int vers)
          darray::zero(g::q0, n, deax, deay, deaz);
    }
 
-   eangle_acc(vers);
+   TINKER_F1CALL(acc, eangle, vers);
 
    if (rc_a) {
       if (do_e) {

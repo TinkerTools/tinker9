@@ -2,6 +2,7 @@
 #include "ff/evalence.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/bitor.hh>
@@ -12,7 +13,7 @@
 namespace tinker {
 void etortorData(RcOp op)
 {
-   if (!use(Potent::TORTOR))
+   if (not use(Potent::TORTOR))
       return;
 
    bool rc_a = rc_flag & calc::analyz;
@@ -135,7 +136,7 @@ void etortorData(RcOp op)
    }
 }
 
-extern void etortor_acc(int);
+TINKER_F2EXTN(cu, 0, acc, 1, void, etortor, int);
 void etortor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -154,7 +155,7 @@ void etortor(int vers)
          darray::zero(g::q0, n, dettx, detty, dettz);
    }
 
-   etortor_acc(vers);
+   TINKER_F1CALL(acc, etortor, vers);
 
    if (rc_a) {
       if (do_e) {
