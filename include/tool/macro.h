@@ -135,6 +135,20 @@
 #   define TINKER_CUDART 0
 #endif
 
+#ifdef TINKER_GPULANG_OPENACC
+#   undef TINKER_GPULANG_OPENACC
+#   define TINKER_GPULANG_OPENACC 1
+#else
+#   define TINKER_GPULANG_OPENACC 0
+#endif
+
+#ifdef TINKER_GPULANG_CUDA
+#   undef TINKER_GPULANG_CUDA
+#   define TINKER_GPULANG_CUDA 1
+#else
+#   define TINKER_GPULANG_CUDA 0
+#endif
+
 /// \def TINKER_DOUBLE_PRECISION
 /// \ingroup prec
 /// \brief Macro for the precision mode. Types `real` and `mixed` have different

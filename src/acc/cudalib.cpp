@@ -5,13 +5,15 @@
 #   include "tool/error.h"
 #   include "tool/gpucard.h"
 #   include <cuda_profiler_api.h>
-#   include <openacc.h>
+#   if TINKER_GPULANG_OPENACC
+#      include <openacc.h>
+#   endif
 #endif
 
 namespace tinker {
 void cudalibData(RcOp op)
 {
-#if TINKER_CUDART
+#if TINKER_CUDART && TINKER_GPULANG_OPENACC
    if (op & RcOp::DEALLOC) {
       check_rt(cudaProfilerStop());
 

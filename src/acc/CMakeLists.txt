@@ -13,7 +13,7 @@ target_link_libraries (tinker9_acc PRIVATE tinker9_cpp)
 
 
 if (HOST)
-else ()
+elseif (GPU_LANG STREQUAL "OPENACC")
    string (APPEND CMAKE_CXX_FLAGS " CUDA_HOME=${CUDA_DIR}")
    target_compile_options (tinker9_acc PUBLIC
       -acc verystrict

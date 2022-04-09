@@ -237,6 +237,24 @@ set (HOST ${hostValue} CACHE BOOL "Build Executables for GPU Platform (OFF) or C
 
 
 #[[
+!!/ **-DGPU_LANG (gpu_lang) = OPENACC** (experimental, in progress)
+!!/
+!!/ If set to *CUDA*, the GPU code will only use the cuda source files.
+!!/ And the program will crash at runtime if it falls into an OpenACC code path.
+!!/
+]]
+if (DEFINED ENV{gpu_lang})
+   set (gpuLangValue $ENV{gpu_lang})
+else ()
+   set (gpuLangValue openacc)
+endif ()
+string (TOUPPER ${gpuLangValue} gpuLangValue)
+set (GPU_LANG ${gpuLangValue} CACHE STRING
+   "GPU Programming Language (experimental): OPENACC, CUDA"
+)
+
+
+#[[
 !!/ **-DCOMPUTE_CAPABILITY (compute_capability) = 60,70**
 !!/
 !!/ GPU code only.
@@ -265,7 +283,7 @@ string (REPLACE "," ";" T9_CUCCLIST ${COMPUTE_CAPABILITY}) # 60;70
 #[[
 !!/ **-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
 !!/
-!!/ GPU code only.
+!!/ Nvidia GPU code only.
 !!/
 !!/ Top-level CUDA installation directory, under which directories *include*,
 !!/ *lib* or *lib64* can be found.
@@ -295,7 +313,8 @@ endif ()
 set (CUDA_DIR ${cudaDirValue} CACHE PATH "[GPU ONLY] CUDA Directory")
 ## cuda compiler
 ## set CMAKE_CUDA_COMPILER before project ()
-if (NOT HOST)
+if (HOST)
+else ()
    set (CMAKE_CUDA_COMPILER "${CUDA_DIR}/bin/nvcc")
 endif ()
 
@@ -361,7 +380,8 @@ set (FFTW_DIR ${fftwDirValue} CACHE PATH "[CPU ONLY] FFTW3 Directory")
 
 
 ## openacc compiler
-if (NOT HOST)
+if (HOST)
+elseif (GPU_LANG STREQUAL "OPENACC")
    if (DEFINED ENV{ACC})
       find_program (T9_ACC_COMPILER
          NAMES
@@ -395,6 +415,9 @@ endif ()
 
 
 project (Tinker9 LANGUAGES NONE)
+if (GPU_LANG STREQUAL "CUDA")
+   enable_language (CUDA)
+endif ()
 enable_language (CXX)
 enable_language (Fortran)
 set (CMAKE_CXX_STANDARD ${T9_CPPSTD})
@@ -496,6 +519,11 @@ if (HOST)
    list (APPEND T9_DEFS TINKER_HOST)
 else ()
    list (APPEND T9_DEFS TINKER_CUDART)
+   if (GPU_LANG STREQUAL "CUDA")
+      list (APPEND T9_DEFS TINKER_GPULANG_CUDA)
+   elseif (GPU_LANG STREQUAL "OPENACC")
+      list (APPEND T9_DEFS TINKER_GPULANG_OPENACC)
+   endif ()
 endif ()
 ## macro: deterministic force
 if (DETERMINISTIC_FORCE STREQUAL "AUTO")

@@ -1,3 +1,4 @@
+if (GPU_LANG STREQUAL "OPENACC")
 set (__T9_EXTRA_LINK_FLAGS
    -acc
    -Mcudalib=cufft,cublas
@@ -6,6 +7,9 @@ set (__T9_EXTRA_LINK_FLAGS
    "$<$<CONFIG:RELEASE>:-ta=tesla:fastmath${__T9_ACC_CCLST4}>"
    "$<$<CONFIG:MINSIZEREL>:-ta=tesla:fastmath${__T9_ACC_CCLST4}>"
 )
+elseif (GPU_LANG STREQUAL "CUDA")
+   set (__T9_EXTRA_LINK_FLAGS "")
+endif ()
 
 
 add_executable (tinker9 src/main.cc)

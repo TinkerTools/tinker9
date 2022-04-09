@@ -122,6 +122,11 @@ cost of slightly slower simulation speed, a more "deterministic" force
 Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
 version.
 
+**-DGPU_LANG (gpu_lang) = OPENACC** (experimental, in progress)
+
+If set to *CUDA*, the GPU code will only use the cuda source files.
+And the program will crash at runtime if it falls into an OpenACC code path.
+
 **-DCOMPUTE_CAPABILITY (compute_capability) = 60,70**
 
 GPU code only.
@@ -136,7 +141,7 @@ The full list of compute capabilities can be found on the
 
 **-DCUDA_DIR (cuda_dir) = /usr/local/cuda**
 
-GPU code only.
+Nvidia GPU code only.
 
 Top-level CUDA installation directory, under which directories *include*,
 *lib* or *lib64* can be found.

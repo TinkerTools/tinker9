@@ -12,6 +12,7 @@ include (cmakesrc.txt)
 add_library (tinker9_cu OBJECT "${__T9_CU_SRC}")
 target_include_directories (tinker9_cu PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/cu")
 target_link_libraries (tinker9_cu PRIVATE tinker9_cpp)
+target_link_libraries (tinker9_cu PUBLIC cufft cublas)
 
 
 ## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
