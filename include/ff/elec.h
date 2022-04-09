@@ -2,7 +2,7 @@
 #include "ff/precision.h"
 #include "tool/rcman.h"
 
-extern "C"
+TINKER_DECL_C_NAME
 {
    struct PCHG
    {

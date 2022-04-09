@@ -1,5 +1,5 @@
 # printf "set (__T9_CPP_SRC\n%s\n)\n" "$(LC_COLLATE=C ls -1a *.cpp {amoeba,aplus,bonded,hippo,md}/*.cpp)" > cmakesrc.txt
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.15)
 
 
 include (cmakesrc.txt)

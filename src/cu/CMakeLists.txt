@@ -1,5 +1,5 @@
 # printf "set (__T9_CU_SRC\n%s\n)\n" "$(LC_COLLATE=C ls -1a *.cu {amoeba,aplus,hippo,md}/*.cu)" > cmakesrc.txt
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.15)
 
 
 enable_language (CUDA)

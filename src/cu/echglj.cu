@@ -11,7 +11,7 @@
 #include "seq/pair_lj.h"
 #include "seq/triangle.h"
 
-extern "C"
+TINKER_DECL_C_NAME
 {
    using real = tinker::real;
 

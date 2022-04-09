@@ -1,12 +1,18 @@
 #include "tool/error.h"
+#include "tool/macro.h"
 #include <cuda_runtime.h>
 
-extern "C"
+TINKER_DECL_C_NAME
 {
    struct cublasStatus_t
-   {};
+   {
+      int foo;
+   };
+
    struct cufftResult_t
-   {};
+   {
+      int foo;
+   };
 }
 
 namespace tinker {

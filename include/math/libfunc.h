@@ -4,7 +4,7 @@
 #include <cmath>
 
 // erfc
-extern "C"
+TINKER_DECL_C_NAME
 {
    // The helper function for the complementary error function.
    // \param ex2  exp(-x*x)

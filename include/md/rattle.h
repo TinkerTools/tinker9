@@ -2,7 +2,7 @@
 #include "ff/energybuffer.h"
 #include "ff/molecule.h"
 
-extern "C"
+TINKER_DECL_C_NAME
 {
    struct RATTLE
    {
