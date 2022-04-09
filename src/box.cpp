@@ -1,15 +1,13 @@
 #include "ff/box.h"
 #include "ff/atom.h"
 #include "tool/darray.h"
+#include "tool/externfunc.h"
 #include <cstdlib>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
 #include <tinker/routines.h>
 
 namespace tinker {
-extern void boxData_acc(RcOp);
-extern void boxCopyin_acc();
-
 static void boxGetTinkerModule(Box& p)
 {
    if (not bound::use_bounds) {
@@ -140,9 +138,15 @@ static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape bo
 }
 
 namespace tinker {
+TINKER_F2EXTN(void, boxDataP1, cu, 0, acc, 1, RcOp);
+static void boxDataP1(RcOp op)
+{
+   TINKER_F2CALL(boxDataP1, cu, acc, op);
+}
+
 void boxData(RcOp op)
 {
-   boxData_acc(op);
+   boxDataP1(op);
 
    if (op & RcOp::DEALLOC) {
       if (calc::traj & rc_flag) {
@@ -286,9 +290,10 @@ void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alphaD
    boxSetRecip(p.recipa, p.recipb, p.recipc, p.box_shape, p.lvec1, p.lvec2, p.lvec3);
 }
 
+TINKER_F2EXTN(void, boxCopyin, cu, 0, acc, 1);
 void boxCopyin()
 {
-   boxCopyin_acc();
+   TINKER_F2CALL(boxCopyin, cu, acc);
 }
 
 real boxVolume()

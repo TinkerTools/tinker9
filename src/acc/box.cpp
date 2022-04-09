@@ -1,7 +1,7 @@
 #include "ff/box.h"
 
 namespace tinker {
-void boxData_acc(RcOp op)
+void boxDataP1_acc(RcOp op)
 {
    if (op & RcOp::DEALLOC) {
       #pragma acc exit data async delete(lvec1,lvec2,lvec3,recipa,recipb,recipc)

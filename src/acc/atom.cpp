@@ -16,7 +16,7 @@ void copyPosToXyz_acc()
    }
 }
 
-void bounds_acc()
+void boundsP1_acc()
 {
    auto nmol = molecule.nmol;
    const auto* imol = molecule.imol;
