@@ -3,7 +3,7 @@
 #include "ff/energybuffer.h"
 #include "ff/nblist.h"
 #include "tool/darray.h"
-#include "tool/error.h"
+#include "tool/externfunc.h"
 #include "tool/gpucard.h"
 #include <cassert>
 #include <tinker/detail/atomid.hh>
@@ -127,10 +127,10 @@ void xyzData(RcOp op)
 }
 
 namespace tinker {
-extern void copyPosToXyz_acc();
+TINKER_F2EXTRN(void, copyPosToXyz, cu, 0, acc, 1);
 void copyPosToXyz()
 {
-   copyPosToXyz_acc();
+   TINKER_F2CALL(copyPosToXyz, cu, acc);
 }
 
 void copyPosToXyz(bool refreshNBList)
@@ -140,13 +140,13 @@ void copyPosToXyz(bool refreshNBList)
       nblistRefresh();
 }
 
-extern void bounds_acc();
+TINKER_F2EXTRN(void, bounds, cu, 0, acc, 1);
 void bounds()
 {
    if (not bound::use_bounds)
       return;
 
-   bounds_acc();
+   TINKER_F2CALL(bounds, cu, acc);
    copyPosToXyz();
 }
 

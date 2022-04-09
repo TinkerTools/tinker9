@@ -30,6 +30,5 @@ target_compile_options (tinker9_cu PRIVATE
    "$<$<CONFIG:MINSIZEREL>:--use_fast_math>"
 )
 target_compile_options (tinker9_cu PRIVATE
-   "$<$<CONFIG:DEBUG>:--compiler-options;-Wall>"
-   "$<$<CONFIG:DEBUG>:--compiler-options;-Wno-unknown-pragmas>"
+   "$<$<CONFIG:DEBUG>:SHELL:--compiler-options;-Wall;--compiler-options;-Wno-unknown-pragmas>"
 )
