@@ -11,9 +11,7 @@ void platformData(RcOp op)
    }
 
    if (op & RcOp::INIT) {
-#if TINKER_HOST
-      pltfm_config = Platform::ACC;
-#elif TINKER_CUDART
+#if TINKER_CUDART
 #   if TINKER_GPULANG_OPENACC
       // Feature: If the platform has been hard-coded, do not change it.
       if (pltfm_config == Platform::UNSET) {
@@ -40,6 +38,8 @@ void platformData(RcOp op)
 #   elif TINKER_GPULANG_CUDA
       pltfm_config = Platform::CUDA;
 #   endif
+#else
+      pltfm_config = Platform::ACC;
 #endif
    }
 }

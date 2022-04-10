@@ -117,21 +117,13 @@
 #   define TINKER_DEBUG 1
 #endif
 
-/// \def TINKER_HOST
-/// \ingroup cpp_syntax
-/// \brief Macro for the CPU-only code.
-/// \see TINKER_CUDART
-///
 /// \def TINKER_CUDART
 /// \ingroup cpp_syntax
 /// \brief Macro for the CUDA runtime-enabled GPU code.
-/// \see TINKER_HOST
-#ifndef TINKER_HOST
-#   define TINKER_HOST   0
+#ifdef TINKER_CUDART
+#   undef TINKER_CUDART
 #   define TINKER_CUDART 1
 #else
-#   undef TINKER_HOST
-#   define TINKER_HOST   1
 #   define TINKER_CUDART 0
 #endif
 

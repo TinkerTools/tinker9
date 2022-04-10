@@ -64,10 +64,6 @@ void xInfo(int, char**)
 #endif
    print(out, fmt, "Debug mode:", dbg);
 
-#if TINKER_HOST
-   print(out, fmt, "Platform:", "CPU");
-#endif
-
 #if TINKER_CUDART
    auto fmd = "    %-36s %d\n";
    auto fm1 = "    %-36s\n";
@@ -105,6 +101,8 @@ void xInfo(int, char**)
                a.total_mem_bytes / B_to_GB));
       }
    }
+#else
+   print(out, fmt, "Platform:", "CPU");
 #endif
 
    gpuData(RcOp::DEALLOC);

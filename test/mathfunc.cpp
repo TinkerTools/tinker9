@@ -148,7 +148,8 @@ TEST_CASE("MathFuncPow2", "[util][math]")
 
 TEST_CASE("LUSolve", "[util][math]")
 {
-#if TINKER_HOST
+#if TINKER_CUDART
+#else
    //  1  2  3                      1.5      8
    //  *  5  5  matrix-vector-dot  -0.5  =  13
    //  *  * 12                      2.5     32

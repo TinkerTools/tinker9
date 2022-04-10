@@ -34,7 +34,7 @@ void nData(RcOp op)
 #if TINKER_CUDART
       nelem_buffer = gpuMaxNParallel(idevice);
       nelem_buffer = pow2Ge(nelem_buffer);
-#elif TINKER_HOST
+#else
       nelem_buffer = 1;
 #endif
 

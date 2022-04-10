@@ -514,9 +514,8 @@ elseif (PREC STREQUAL "s")
 elseif (PREC STREQUAL "d")
    list (APPEND T9_DEFS TINKER_DOUBLE_PRECISION)
 endif ()
-## macro: HOST
+## macro: TINKER_CUDART
 if (HOST)
-   list (APPEND T9_DEFS TINKER_HOST)
 else ()
    list (APPEND T9_DEFS TINKER_CUDART)
    if (GPU_LANG STREQUAL "CUDA")
