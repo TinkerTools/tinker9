@@ -65,6 +65,7 @@ struct Box
 namespace tinker {
 /// \ingroup box
 void boxData(RcOp);
+void boxDataP1(RcOp);
 /// \ingroup box
 void boxExtent(double newExtent);
 /// \ingroup box

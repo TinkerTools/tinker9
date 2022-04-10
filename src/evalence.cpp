@@ -6,9 +6,8 @@ TINKER_F2EXTN(cu, 1, acc, 0, void, evalence, int);
 void evalence(int vers)
 {
 #if TINKER_CUDART
-   TINKER_F1CALL(cu, evalence, vers);
-#else
-   TINKER_F1CALL(acc, evalence, vers);
+   if (pltfm_config & Platform::CUDA)
+      TINKER_F1CALL(cu, evalence, vers);
 #endif
 }
 }

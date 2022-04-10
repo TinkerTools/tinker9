@@ -130,7 +130,7 @@ namespace tinker {
 TINKER_F2EXTN(cu, 0, acc, 1, void, copyPosToXyz);
 void copyPosToXyz()
 {
-   TINKER_F2PICK(cu, acc, copyPosToXyz);
+   TINKER_F1CALL(acc, copyPosToXyz);
 }
 
 void copyPosToXyz(bool refreshNBList)
@@ -141,17 +141,12 @@ void copyPosToXyz(bool refreshNBList)
 }
 
 TINKER_F2EXTN(cu, 0, acc, 1, void, boundsP1);
-static void boundsP1()
-{
-   TINKER_F2PICK(cu, acc, boundsP1);
-}
-
 void bounds()
 {
    if (not bound::use_bounds)
       return;
 
-   boundsP1();
+   TINKER_F1CALL(acc, boundsP1);
    copyPosToXyz();
 }
 
