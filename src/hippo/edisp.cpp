@@ -4,6 +4,7 @@
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/disp.hh>
 #include <tinker/detail/dsppot.hh>
@@ -151,31 +152,18 @@ void edispData(RcOp op)
 }
 
 namespace tinker {
-extern void edispNonEwald_acc(int vers);
-extern void edispNonEwald_cu(int vers);
+TINKER_F2VOID(cu, 1, acc, 1, edispNonEwald, int);
 static void edispNonEwald(int vers)
 {
-#if TINKER_CUDART
-   if (dsplistVersion() & Nbl::SPATIAL)
-      edispNonEwald_cu(vers);
-   else
-#endif
-      edispNonEwald_acc(vers);
+   TINKER_F2CALL(cu, 1, acc, 1, edispNonEwald, vers);
 }
 
-extern void edispEwaldReal_acc(int vers);
-extern void edispEwaldReal_cu(int vers);
-extern void edispEwaldRecipSelf_acc(int vers);
-extern void edispEwaldRecipSelf_cu(int vers);
-extern void dispPmeConv_acc(int vers);
+TINKER_F2VOID(cu, 1, acc, 1, edispEwaldReal, int);
+TINKER_F2VOID(cu, 1, acc, 1, edispEwaldRecipSelf, int);
+TINKER_F2VOID(cu, 0, acc, 1, pmeConvDisp, int);
 static void edispEwald(int vers)
 {
-#if TINKER_CUDART
-   if (dsplistVersion() & Nbl::SPATIAL)
-      edispEwaldReal_cu(vers);
-   else
-#endif
-      edispEwaldReal_acc(vers);
+   TINKER_F2CALL(cu, 1, acc, 1, edispEwaldReal, vers);
 
    // recip and self
    bool do_e = vers & calc::energy;
@@ -185,16 +173,11 @@ static void edispEwald(int vers)
 
    gridDisp(u, csix);
    fftfront(u);
-   dispPmeConv_acc(vers);
+   TINKER_F2CALL(cu, 0, acc, 1, pmeConvDisp, vers);
    if (do_g) {
       fftback(u);
    }
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      edispEwaldRecipSelf_cu(vers);
-   else
-#endif
-      edispEwaldRecipSelf_acc(vers);
+   TINKER_F2CALL(cu, 1, acc, 1, edispEwaldRecipSelf, vers);
 
    // account for the total energy and virial correction term
    if CONSTEXPR (do_e || do_v) {

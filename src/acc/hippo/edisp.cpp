@@ -10,7 +10,7 @@
 
 namespace tinker {
 template <bool DO_E, bool DO_V>
-static void dispPmeConv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
+static void pmeConvDisp_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
@@ -102,20 +102,20 @@ static void dispPmeConv_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu
    }
 }
 
-void dispPmeConv_acc(int vers)
+void pmeConvDisp_acc(int vers)
 {
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    PMEUnit u = dpme_unit;
 
    if (do_e && do_v)
-      dispPmeConv_acc1<true, true>(u, edsp, vir_edsp);
+      pmeConvDisp_acc1<true, true>(u, edsp, vir_edsp);
    else if (do_e && !do_v)
-      dispPmeConv_acc1<true, false>(u, edsp, nullptr);
+      pmeConvDisp_acc1<true, false>(u, edsp, nullptr);
    else if (!do_e && do_v)
-      dispPmeConv_acc1<false, true>(u, nullptr, vir_edsp);
+      pmeConvDisp_acc1<false, true>(u, nullptr, vir_edsp);
    else if (!do_e && !do_v)
-      dispPmeConv_acc1<false, false>(u, nullptr, nullptr);
+      pmeConvDisp_acc1<false, false>(u, nullptr, nullptr);
 }
 
 template <class Ver, class DTYP>

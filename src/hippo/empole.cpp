@@ -8,6 +8,7 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/mplpot.hh>
 
 namespace tinker {
@@ -52,36 +53,24 @@ void empoleChgpenData(RcOp op)
 }
 
 namespace tinker {
-extern void empoleChgpenNonEwald_acc(int vers, int use_cf);
-extern void empoleChgpenNonEwald_cu(int vers, int use_cf);
+TINKER_F2VOID(cu, 1, acc, 1, empoleChgpenNonEwald, int, int);
 static void empoleChgpenNonEwald(int vers, int use_cf)
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      empoleChgpenNonEwald_cu(vers, use_cf);
-   else
-#endif
-      empoleChgpenNonEwald_acc(vers, use_cf);
+   TINKER_F2CALL(cu, 1, acc, 1, empoleChgpenNonEwald, vers, use_cf);
 }
 }
 
 namespace tinker {
-extern void empoleChgpenEwaldRealSelf_acc(int vers, int use_cf);
-extern void empoleChgpenEwaldRealSelf_cu(int vers, int use_cf);
+TINKER_F2VOID(cu, 1, acc, 1, empoleChgpenEwaldRealSelf, int, int);
 static void empoleChgpenEwaldRealSelf(int vers, int use_cf)
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      empoleChgpenEwaldRealSelf_cu(vers, use_cf);
-   else
-#endif
-      empoleChgpenEwaldRealSelf_acc(vers, use_cf);
+   TINKER_F2CALL(cu, 1, acc, 1, empoleChgpenEwaldRealSelf, vers, use_cf);
 }
 
-extern void empoleChgpenEwaldRecip_acc(int vers, int use_cf);
+TINKER_F2VOID(cu, 0, acc, 1, empoleChgpenEwaldRecip, int, int);
 void empoleChgpenEwaldRecip(int vers, int use_cf)
 {
-   empoleChgpenEwaldRecip_acc(vers, use_cf);
+   TINKER_F2CALL(cu, 0, acc, 1, empoleChgpenEwaldRecip, vers, use_cf);
 }
 
 static void empoleChgpenEwald(int vers, int use_cf)

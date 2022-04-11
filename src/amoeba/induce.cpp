@@ -1,58 +1,48 @@
 #include "ff/atom.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "tool/externfunc.h"
 #include "tool/ioprint.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-extern void diagPrecond_acc(const real (*rsd)[3], const real (*rsdp)[3], //
-   real (*zrsd)[3], real (*zrsdp)[3]);
+TINKER_F2VOID(
+   cu, 0, acc, 1, diagPrecond, const real (*)[3], const real (*)[3], real (*)[3], real (*)[3]);
 void diagPrecond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
-   diagPrecond_acc(rsd, rsdp, zrsd, zrsdp);
+   TINKER_F2CALL(cu, 0, acc, 1, diagPrecond, rsd, rsdp, zrsd, zrsdp);
 }
 
 void sparsePrecondBuild() {}
 
-extern void sparsePrecondApply_acc(const real (*)[3], const real (*)[3], real (*)[3], real (*)[3]);
-extern void sparsePrecondApply_cu(const real (*)[3], const real (*)[3], real (*)[3], real (*)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, sparsePrecondApply, const real (*)[3], const real (*)[3], real (*)[3],
+   real (*)[3]);
 void sparsePrecondApply(
    const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
-#if TINKER_CUDART
-   if (ulistVersion() & Nbl::SPATIAL)
-      sparsePrecondApply_cu(rsd, rsdp, zrsd, zrsdp);
-   else
-#endif
-      sparsePrecondApply_acc(rsd, rsdp, zrsd, zrsdp);
+   TINKER_F2CALL(cu, 1, acc, 1, sparsePrecondApply, rsd, rsdp, zrsd, zrsdp);
 }
 
-extern void ulspredSave_acc(const real (*)[3], const real (*)[3]);
+TINKER_F2VOID(cu, 0, acc, 1, ulspredSave, const real (*)[3], const real (*)[3]);
 void ulspredSave(const real (*uind)[3], const real (*uinp)[3])
 {
-   ulspredSave_acc(uind, uinp);
+   TINKER_F2CALL(cu, 0, acc, 1, ulspredSave, uind, uinp);
 }
 
-extern void ulspredSum_acc(real (*)[3], real (*)[3]);
+TINKER_F2VOID(cu, 0, acc, 1, ulspredSum, real (*)[3], real (*)[3]);
 void ulspredSum(real (*uind)[3], real (*uinp)[3])
 {
-   ulspredSum_acc(uind, uinp);
+   TINKER_F2CALL(cu, 0, acc, 1, ulspredSum, uind, uinp);
 }
 }
 
 namespace tinker {
-extern void induceMutualPcg1_acc(real (*uind)[3], real (*uinp)[3]);
-extern void induceMutualPcg1_cu(real (*uind)[3], real (*uinp)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, induceMutualPcg1, real (*)[3], real (*)[3]);
 static void induceMutualPcg1(real (*uind)[3], real (*uinp)[3])
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      induceMutualPcg1_cu(uind, uinp);
-   else
-#endif
-      induceMutualPcg1_acc(uind, uinp);
+   TINKER_F2CALL(cu, 1, acc, 1, induceMutualPcg1, uind, uinp);
 }
 
 void inducePrint(const real (*ud)[3])

@@ -1,24 +1,19 @@
 #include "ff/elec.h"
 #include "ff/hippo/induce.h"
 #include "ff/nblist.h"
+#include "tool/externfunc.h"
 
 namespace tinker {
-extern void dfieldEwaldRecipSelf_acc(real (*field)[3]);
+TINKER_F2VOID(cu, 0, acc, 1, dfieldEwaldRecipSelf, real (*)[3]);
 static void dfieldAplusEwaldRecipSelf(real (*field)[3])
 {
-   dfieldEwaldRecipSelf_acc(field);
+   TINKER_F2CALL(cu, 0, acc, 1, dfieldEwaldRecipSelf, field);
 }
 
-extern void dfieldAplusEwaldReal_acc(real (*field)[3]);
-extern void dfieldAplusEwaldReal_cu(real (*field)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, dfieldAplusEwaldReal, real (*)[3]);
 static void dfieldAplusEwaldReal(real (*field)[3])
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      dfieldAplusEwaldReal_cu(field);
-   else
-#endif
-      dfieldAplusEwaldReal_acc(field);
+   TINKER_F2CALL(cu, 1, acc, 1, dfieldAplusEwaldReal, field);
 }
 
 static void dfieldAplusEwald(real (*field)[3])
@@ -29,16 +24,10 @@ static void dfieldAplusEwald(real (*field)[3])
 }
 
 namespace tinker {
-extern void dfieldAplusNonEwald_acc(real (*field)[3]);
-extern void dfieldAplusNonEwald_cu(real (*field)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, dfieldAplusNonEwald, real (*)[3]);
 static void dfieldAplusNonEwald(real (*field)[3])
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      dfieldAplusNonEwald_cu(field);
-   else
-#endif
-      dfieldAplusNonEwald_acc(field);
+   TINKER_F2CALL(cu, 1, acc, 1, dfieldAplusNonEwald, field);
 }
 
 void dfieldAplus(real (*field)[3])
@@ -56,16 +45,10 @@ static void ufieldAplusEwaldRecipSelf(const real (*uind)[3], real (*field)[3])
    ufieldChgpenEwaldRecipSelf(uind, field);
 }
 
-extern void ufieldAplusEwaldReal_acc(const real (*uind)[3], real (*field)[3]);
-extern void ufieldAplusEwaldReal_cu(const real (*uind)[3], real (*field)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, ufieldAplusEwaldReal, const real (*)[3], real (*)[3]);
 static void ufieldAplusEwaldReal(const real (*uind)[3], real (*field)[3])
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      ufieldAplusEwaldReal_cu(uind, field);
-   else
-#endif
-      ufieldAplusEwaldReal_acc(uind, field);
+   TINKER_F2CALL(cu, 1, acc, 1, ufieldAplusEwaldReal, uind, field);
 }
 
 static void ufieldAplusEwald(const real (*uind)[3], real (*field)[3])
@@ -76,16 +59,10 @@ static void ufieldAplusEwald(const real (*uind)[3], real (*field)[3])
 }
 
 namespace tinker {
-extern void ufieldAplusNonEwald_acc(const real (*uind)[3], real (*field)[3]);
-extern void ufieldAplusNonEwald_cu(const real (*uind)[3], real (*field)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, ufieldAplusNonEwald, const real (*)[3], real (*)[3]);
 static void ufieldAplusNonEwald(const real (*uind)[3], real (*field)[3])
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      ufieldAplusNonEwald_cu(uind, field);
-   else
-#endif
-      ufieldAplusNonEwald_acc(uind, field);
+   TINKER_F2CALL(cu, 1, acc, 1, ufieldAplusNonEwald, uind, field);
 }
 
 void ufieldAplus(const real (*uind)[3], real (*field)[3])
