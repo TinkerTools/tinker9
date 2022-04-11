@@ -3,6 +3,7 @@
 #include "ff/hippomod.h"
 #include "ff/potent.h"
 #include "tool/darray.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/atmlst.hh>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/cflux.hh>
@@ -56,10 +57,10 @@ void cfluxData(RcOp op)
    }
 }
 
-extern void alterchg_acc();
+TINKER_F2VOID(cu, 0, acc, 1, alterchg);
 void alterchg()
 {
-   alterchg_acc();
+   TINKER_F2CALL(cu, 0, acc, 1, alterchg);
 }
 
 void cfluxZeroPot()
@@ -67,9 +68,9 @@ void cfluxZeroPot()
    darray::zero(g::q0, n, pot);
 }
 
-extern void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, VirialBuffer vir);
+TINKER_F2VOID(cu, 0, acc, 1, dcflux, int, grad_prec*, grad_prec*, grad_prec*, VirialBuffer);
 void dcflux(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, VirialBuffer v)
 {
-   dcflux_acc(vers, gx, gy, gz, v);
+   TINKER_F2CALL(cu, 0, acc, 1, dcflux, vers, gx, gy, gz, v);
 }
 }

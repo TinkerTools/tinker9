@@ -3,6 +3,7 @@
 #include "ff/energybuffer.h"
 #include "ff/nblist.h"
 #include "tool/darray.h"
+#include "tool/error.h"
 #include "tool/externfunc.h"
 #include "tool/gpucard.h"
 #include <cassert>

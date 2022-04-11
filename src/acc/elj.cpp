@@ -6,6 +6,7 @@
 #include "math/switch.h"
 #include "seq/add.h"
 #include "seq/pair_lj.h"
+#include "tool/externfunc.h"
 #include "tool/gpucard.h"
 
 namespace tinker {
@@ -270,7 +271,18 @@ void elj_acc(int vers)
       elj_acc1<calc::V6>();
 }
 
-void ebuck_acc(int) {}
-void emm3hb_acc(int) {}
-void egauss_acc(int) {}
+void ebuck_acc(int)
+{
+   TINKER_F1CALL_ERROR__(ebuck, acc);
+}
+
+void emm3hb_acc(int)
+{
+   TINKER_F1CALL_ERROR__(emm3hb, acc);
+}
+
+void egauss_acc(int)
+{
+   TINKER_F1CALL_ERROR__(egauss, acc);
+}
 }

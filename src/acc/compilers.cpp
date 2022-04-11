@@ -2,7 +2,7 @@
 #include "tool/ioprint.h"
 
 namespace tinker {
-#if TINKER_CUDART
+#if TINKER_GPULANG_OPENACC
 std::string accCompilerName()
 {
    if (__PGIC__ <= 19)

@@ -1,5 +1,4 @@
 #pragma once
-#include "tool/error.h"
 #include "tool/macro.h"
 
 namespace tinker {

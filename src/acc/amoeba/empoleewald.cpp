@@ -230,22 +230,4 @@ void empoleEwaldRealSelf_acc(int vers)
    else if (vers == calc::v6)
       empoleEwaldRealSelf_acc1<calc::V6>();
 }
-
-template <class Ver, int CFLX>
-extern void empoleEwaldRecipGeneric_acc();
-void empoleEwaldRecip_acc(int vers)
-{
-   if (vers == calc::v0)
-      empoleEwaldRecipGeneric_acc<calc::V0, 0>();
-   else if (vers == calc::v1)
-      empoleEwaldRecipGeneric_acc<calc::V1, 0>();
-   else if (vers == calc::v3)
-      empoleEwaldRecipGeneric_acc<calc::V3, 0>();
-   else if (vers == calc::v4)
-      empoleEwaldRecipGeneric_acc<calc::V4, 0>();
-   else if (vers == calc::v5)
-      empoleEwaldRecipGeneric_acc<calc::V5, 0>();
-   else if (vers == calc::v6)
-      empoleEwaldRecipGeneric_acc<calc::V6, 0>();
-}
 }

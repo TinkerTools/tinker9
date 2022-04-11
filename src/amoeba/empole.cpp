@@ -2,6 +2,7 @@
 #include "ff/amoebamod.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
+#include "ff/hippo/empole.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
@@ -74,10 +75,10 @@ static void empoleEwaldRealSelf(int vers)
       empoleEwaldRealSelf_acc(vers);
 }
 
-extern void empoleEwaldRecip_acc(int vers);
 void empoleEwaldRecip(int vers)
 {
-   empoleEwaldRecip_acc(vers);
+   int use_cf = 0;
+   empoleChgpenEwaldRecip(vers, use_cf);
 }
 
 static void empoleEwald(int vers)

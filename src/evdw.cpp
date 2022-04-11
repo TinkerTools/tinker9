@@ -3,6 +3,7 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include "tool/iotext.h"
 #include <cassert>
@@ -490,30 +491,28 @@ void elj(int vers)
       elj_acc(vers);
 }
 
-extern void elj14_cu(int);
+TINKER_F2VOID(cu, 1, acc, 0, elj14, int);
 void elj14(int vers)
 {
-#if TINKER_CUDART
-   elj14_cu(vers);
-#endif
+   TINKER_F2CALL(cu, 1, acc, 0, elj14, vers);
 }
 
-extern void ebuck_acc(int);
+TINKER_F2VOID(cu, 0, acc, 1, ebuck, int);
 void ebuck(int vers)
 {
-   ebuck_acc(vers);
+   TINKER_F2CALL(cu, 0, acc, 1, ebuck, vers);
 }
 
-extern void emm3hb_acc(int);
+TINKER_F2VOID(cu, 0, acc, 1, emm3hb, int);
 void emm3hb(int vers)
 {
-   emm3hb_acc(vers);
+   TINKER_F2CALL(cu, 0, acc, 1, emm3hb, vers);
 }
 
-extern void egauss_acc(int);
+TINKER_F2VOID(cu, 0, acc, 1, egauss, int);
 void egauss(int vers)
 {
-   egauss_acc(vers);
+   TINKER_F2CALL(cu, 0, acc, 1, egauss, vers);
 }
 
 extern void ehal_acc(int);
@@ -528,15 +527,15 @@ void ehal(int vers)
       ehal_acc(vers);
 }
 
-extern void ehalReduceXyz_acc();
+TINKER_F2VOID(cu, 0, acc, 1, ehalReduceXyz);
 void ehalReduceXyz()
 {
-   ehalReduceXyz_acc();
+   TINKER_F2CALL(cu, 0, acc, 1, ehalReduceXyz);
 }
 
-extern void ehalResolveGradient_acc();
+TINKER_F2VOID(cu, 0, acc, 1, ehalResolveGradient);
 void ehalResolveGradient()
 {
-   ehalResolveGradient_acc();
+   TINKER_F2CALL(cu, 0, acc, 1, ehalResolveGradient);
 }
 }

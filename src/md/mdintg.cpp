@@ -4,6 +4,7 @@
 #include "md/intg.h"
 #include "md/pt.h"
 #include "tool/error.h"
+#include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include <cassert>
 #include <tinker/detail/inform.hh>
@@ -124,10 +125,10 @@ void mdIntegrateData(RcOp op)
 }
 
 namespace tinker {
-extern void mdrest_acc(int istep);
+TINKER_F2VOID(cu, 0, acc, 1, mdrest, int);
 void mdrest(int istep)
 {
-   mdrest_acc(istep);
+   TINKER_F2CALL(cu, 0, acc, 1, mdrest, istep);
 }
 
 /// \ingroup mdpq
