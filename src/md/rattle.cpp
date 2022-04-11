@@ -1,6 +1,7 @@
 #include "md/rattle.h"
 #include "ff/energy.h"
 #include "md/pt.h"
+#include "tool/externfunc.h"
 #include <algorithm>
 #include <cassert>
 #include <set>
@@ -479,23 +480,6 @@ extern void rattle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_pr
 extern void rattleSettle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
 extern void rattleCH_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
 extern void rattleMethyl_cu(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-
-extern void rattle2_acc(time_prec, bool);
-extern void rattle2Settle_acc(time_prec, bool);
-extern void rattle2CH_acc(time_prec, bool);
-extern void rattle2Methyl_cu(time_prec, bool);
-
-extern void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
-extern void shakeSettle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
-extern void shakeCH_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
-extern void shakeMethyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
-}
-
-namespace tinker {
 void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    rattleSettle_acc(dt, xold, yold, zold);
@@ -506,7 +490,13 @@ void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_
 #endif
    rattle_acc(dt, xold, yold, zold);
 }
+}
 
+namespace tinker {
+extern void rattle2_acc(time_prec, bool);
+extern void rattle2Settle_acc(time_prec, bool);
+extern void rattle2CH_acc(time_prec, bool);
+extern void rattle2Methyl_cu(time_prec, bool);
 void rattle2(time_prec dt, bool do_v)
 {
    if (do_v) {
@@ -529,7 +519,17 @@ void rattle2(time_prec dt, bool do_v)
       }
    }
 }
+}
 
+namespace tinker {
+extern void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+extern void shakeSettle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+extern void shakeCH_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+extern void shakeMethyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
 void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
    const pos_prec* yold, const pos_prec* zold)
 {
@@ -550,53 +550,46 @@ void hcKinetic()
    kineticEnergy(hc_eksum, hc_ekin, m.nmol, m.molmass, ratcom_vx, ratcom_vy, ratcom_vz);
 }
 
-extern void hcVirial_acc();
-extern void hcVirial_cu();
+TINKER_F2VOID(cu, 1, acc, 1, hcVirial);
 void hcVirial()
 {
    for (int iv = 0; iv < 9; ++iv)
       hc_vir[iv] = 0;
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      hcVirial_cu();
-   else
-#endif
-      hcVirial_acc();
+
+   TINKER_F2CALL(cu, 1, acc, 1, hcVirial);
 }
 
-extern void hcCenterOfMass_acc(const pos_prec*, const pos_prec*, const pos_prec*, //
+TINKER_F2VOID(cu, 0, acc, 1, hcCenterOfMass, const pos_prec*, const pos_prec*, const pos_prec*,
    pos_prec*, pos_prec*, pos_prec*);
 void hcCenterOfMass(const pos_prec* atomx, const pos_prec* atomy, const pos_prec* atomz,
    pos_prec* molx, pos_prec* moly, pos_prec* molz)
 {
    static_assert(std::is_same<pos_prec, vel_prec>::value, //
       "pos_prec and vel_prec must be the same type.");
-   hcCenterOfMass_acc(atomx, atomy, atomz, molx, moly, molz);
+   TINKER_F2CALL(cu, 0, acc, 1, hcCenterOfMass, atomx, atomy, atomz, molx, moly, molz);
 }
 
-extern void hcVelIso_acc(vel_prec);
+TINKER_F2VOID(cu, 0, acc, 1, hcVelIso, vel_prec);
 void hcVelIso(vel_prec scal)
 {
-   hcVelIso_acc(scal);
+   TINKER_F2CALL(cu, 0, acc, 1, hcVelIso, scal);
 }
 
-extern void hcVelAn_acc(vel_prec scal[3][3]);
+TINKER_F2VOID(cu, 0, acc, 1, hcVelAn, vel_prec scal[3][3]);
 void hcVelAn(vel_prec scal[3][3])
 {
-   hcVelAn_acc(scal);
+   TINKER_F2CALL(cu, 0, acc, 1, hcVelAn, scal);
 }
 
-/// \ingroup mdpq
-extern void hcPosIso_acc(pos_prec s);
+TINKER_F2VOID(cu, 0, acc, 1, hcPosIso, pos_prec);
 void hcPosIso(pos_prec s)
 {
-   hcPosIso_acc(s);
+   TINKER_F2CALL(cu, 0, acc, 1, hcPosIso, s);
 }
 
-/// \ingroup mdpq
-extern void hcPosAn_acc(pos_prec (*scal)[3]);
+TINKER_F2VOID(cu, 0, acc, 1, hcPosAn, pos_prec (*)[3]);
 void hcPosAn(pos_prec (*scal)[3])
 {
-   hcPosAn_acc(scal);
+   TINKER_F2CALL(cu, 0, acc, 1, hcPosAn, scal);
 }
 }
