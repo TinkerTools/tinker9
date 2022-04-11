@@ -3,18 +3,13 @@
 #include "ff/hippo/epolar.h"
 #include "ff/hippo/induce.h"
 #include "ff/nblist.h"
+#include "tool/externfunc.h"
 
 namespace tinker {
-extern void epolarAplusEwaldReal_acc(int vers, int use_cf, const real (*d)[3]);
-extern void epolarAplusEwaldReal_cu(int vers, int use_cf, const real (*d)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, epolarAplusEwaldReal, int, int, const real (*)[3]);
 static void epolarAplusEwaldReal(int vers, int use_cf)
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      epolarAplusEwaldReal_cu(vers, use_cf, uind);
-   else
-#endif
-      epolarAplusEwaldReal_acc(vers, use_cf, uind);
+   TINKER_F2CALL(cu, 1, acc, 1, epolarAplusEwaldReal, vers, use_cf, uind);
 }
 
 static void epolarAplusEwaldRecipSelf(int vers, int use_cf)
@@ -42,8 +37,7 @@ void epolarAplusEwald(int vers, int use_cf)
 }
 
 namespace tinker {
-extern void epolarAplusNonEwald_acc(int vers, int use_cf, const real (*d)[3]);
-extern void epolarAplusNonEwald_cu(int vers, int use_cf, const real (*d)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, epolarAplusNonEwald, int, int, const real (*)[3]);
 void epolarAplusNonEwald(int vers, int use_cf)
 {
    bool edot = vers & calc::energy; // if not do_e, edot = false
@@ -56,13 +50,7 @@ void epolarAplusNonEwald(int vers, int use_cf)
    induce2(uind);
    if (edot)
       epolar0DotProd(uind, udir);
-   if (vers != calc::v0) {
-#if TINKER_CUDART
-      if (mlistVersion() & Nbl::SPATIAL)
-         epolarAplusNonEwald_cu(ver2, use_cf, uind);
-      else
-#endif
-         epolarAplusNonEwald_acc(ver2, use_cf, uind);
-   }
+   if (vers != calc::v0)
+      TINKER_F2CALL(cu, 1, acc, 1, epolarAplusNonEwald, ver2, use_cf, uind);
 }
 }

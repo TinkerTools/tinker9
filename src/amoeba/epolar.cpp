@@ -10,6 +10,7 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include "tool/ioprint.h"
 #include <tinker/detail/couple.hh>
@@ -504,8 +505,7 @@ void epolarData(RcOp op)
 }
 
 namespace tinker {
-extern void epolarNonEwald_acc(int vers, const real (*d)[3], const real (*p)[3]);
-extern void epolarNonEwald_cu(int vers, const real (*d)[3], const real (*p)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, epolarNonEwald, int, const real (*)[3], const real (*)[3]);
 static void epolarNonEwald(int vers)
 {
    // v0: E_dot
@@ -524,32 +524,20 @@ static void epolarNonEwald(int vers)
    induce(uind, uinp);
    if (edot)
       epolar0DotProd(uind, udirp);
-   if (vers != calc::v0) {
-#if TINKER_CUDART
-      if (mlistVersion() & Nbl::SPATIAL)
-         epolarNonEwald_cu(ver2, uind, uinp);
-      else
-#endif
-         epolarNonEwald_acc(ver2, uind, uinp);
-   }
+   if (vers != calc::v0)
+      TINKER_F2CALL(cu, 1, acc, 1, epolarNonEwald, ver2, uind, uinp);
 }
 
-extern void epolarEwaldRecipSelf_acc(int vers, const real (*d)[3], const real (*p)[3]);
+TINKER_F2VOID(cu, 0, acc, 1, epolarEwaldRecipSelf, int, const real (*)[3], const real (*)[3]);
 void epolarEwaldRecipSelf(int vers)
 {
-   epolarEwaldRecipSelf_acc(vers, uind, uinp);
+   TINKER_F2CALL(cu, 0, acc, 1, epolarEwaldRecipSelf, vers, uind, uinp);
 }
 
-extern void epolarEwaldReal_acc(int vers, const real (*d)[3], const real (*p)[3]);
-extern void epolarEwaldReal_cu(int vers, const real (*d)[3], const real (*p)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, epolarEwaldReal, int, const real (*)[3], const real (*)[3]);
 static void epolarEwaldReal(int vers)
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      epolarEwaldReal_cu(vers, uind, uinp);
-   else
-#endif
-      epolarEwaldReal_acc(vers, uind, uinp);
+   TINKER_F2CALL(cu, 1, acc, 1, epolarEwaldReal, vers, uind, uinp);
 }
 
 static void epolarEwald(int vers)
@@ -652,9 +640,9 @@ void epolar(int vers)
    }
 }
 
-extern void epolar0DotProd_acc(const real (*uind)[3], const real (*udirp)[3]);
+TINKER_F2VOID(cu, 0, acc, 1, epolar0DotProd, const real (*)[3], const real (*)[3]);
 void epolar0DotProd(const real (*uind)[3], const real (*udirp)[3])
 {
-   return epolar0DotProd_acc(uind, udirp);
+   TINKER_F2CALL(cu, 0, acc, 1, epolar0DotProd, uind, udirp);
 }
 }

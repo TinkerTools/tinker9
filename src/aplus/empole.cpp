@@ -1,17 +1,12 @@
 #include "ff/hippo/empole.h"
 #include "ff/nblist.h"
+#include "tool/externfunc.h"
 
 namespace tinker {
-extern void empoleAplusEwaldRealSelf_acc(int vers, int useCF);
-extern void empoleAplusEwaldRealSelf_cu(int vers, int useCF);
+TINKER_F2VOID(cu, 1, acc, 1, empoleAplusEwaldRealSelf, int, int);
 static void empoleAplusEwaldRealSelf(int vers, int useCF)
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      empoleAplusEwaldRealSelf_cu(vers, useCF);
-   else
-#endif
-      empoleAplusEwaldRealSelf_acc(vers, useCF);
+   TINKER_F2CALL(cu, 1, acc, 1, empoleAplusEwaldRealSelf, vers, useCF);
 }
 
 static void empoleAplusEwaldRecip(int vers, int useCF)
@@ -27,15 +22,9 @@ void empoleAplusEwald(int vers, int useCF)
 }
 
 namespace tinker {
-extern void empoleAplusNonEwald_acc(int, int);
-extern void empoleAplusNonEwald_cu(int, int);
+TINKER_F2VOID(cu, 1, acc, 1, empoleAplusNonEwald, int, int);
 void empoleAplusNonEwald(int vers, int useCF)
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      empoleAplusNonEwald_cu(vers, useCF);
-   else
-#endif
-      empoleAplusNonEwald_acc(vers, useCF);
+   TINKER_F2CALL(cu, 1, acc, 1, empoleAplusNonEwald, vers, useCF);
 }
 }

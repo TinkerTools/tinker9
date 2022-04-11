@@ -8,6 +8,7 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
@@ -136,8 +137,7 @@ void epolarChgpenData(RcOp op)
 }
 
 namespace tinker {
-extern void epolarChgpenNonEwald_acc(int vers, int use_cf, const real (*d)[3]);
-extern void epolarChgpenNonEwald_cu(int vers, int use_cf, const real (*d)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, epolarChgpenNonEwald, int, int, const real (*)[3]);
 static void epolarChgpenNonEwald(int vers, int use_cf)
 {
    // v0: E_dot
@@ -156,34 +156,22 @@ static void epolarChgpenNonEwald(int vers, int use_cf)
    induce2(uind);
    if (edot)
       epolar0DotProd(uind, udir);
-   if (vers != calc::v0) {
-#if TINKER_CUDART
-      if (mlistVersion() & Nbl::SPATIAL)
-         epolarChgpenNonEwald_cu(ver2, use_cf, uind);
-      else
-#endif
-         epolarChgpenNonEwald_acc(ver2, use_cf, uind);
-   }
+   if (vers != calc::v0)
+      TINKER_F2CALL(cu, 1, acc, 1, epolarChgpenNonEwald, ver2, use_cf, uind);
 }
 }
 
 namespace tinker {
-extern void epolarChgpenEwaldReal_acc(int vers, int use_cf, const real (*d)[3]);
-extern void epolarChgpenEwaldReal_cu(int vers, int use_cf, const real (*d)[3]);
+TINKER_F2VOID(cu, 1, acc, 1, epolarChgpenEwaldReal, int, int, const real (*)[3]);
 static void epolarChgpenEwaldReal(int vers, int use_cf)
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      epolarChgpenEwaldReal_cu(vers, use_cf, uind);
-   else
-#endif
-      epolarChgpenEwaldReal_acc(vers, use_cf, uind);
+   TINKER_F2CALL(cu, 1, acc, 1, epolarChgpenEwaldReal, vers, use_cf, uind);
 }
 
-extern void epolarChgpenEwaldRecipSelf_acc(int vers, int use_cf, const real (*d)[3]);
+TINKER_F2VOID(cu, 0, acc, 1, epolarChgpenEwaldRecipSelf, int, int, const real (*)[3]);
 void epolarChgpenEwaldRecipSelf(int vers, int use_cf)
 {
-   epolarChgpenEwaldRecipSelf_acc(vers, use_cf, uind);
+   TINKER_F2CALL(cu, 0, acc, 1, epolarChgpenEwaldRecipSelf, vers, use_cf, uind);
 }
 
 static void epolarChgpenEwald(int vers, int use_cf)

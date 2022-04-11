@@ -3,6 +3,7 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include <tinker/detail/chgtrn.hh>
 #include <tinker/detail/ctrpot.hh>
@@ -68,10 +69,8 @@ void echgtrnData(RcOp op)
    }
 }
 
-extern void echgtrn_acc(int);
-extern void echgtrn_cu(int);
-extern void echgtrnAplus_acc(int);
-extern void echgtrnAplus_cu(int);
+TINKER_F2VOID(cu, 1, acc, 1, echgtrn, int);
+TINKER_F2VOID(cu, 1, acc, 1, echgtrnAplus, int);
 void echgtrn(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -93,18 +92,11 @@ void echgtrn(int vers)
          darray::zero(g::q0, n, dectx, decty, dectz);
    }
 
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      if (ctrntyp == Chgtrn::SEPARATE)
-         echgtrn_cu(vers);
-      else
-         echgtrnAplus_cu(vers);
-   else
-#endif
-      if (ctrntyp == Chgtrn::SEPARATE)
-      echgtrn_acc(vers);
-   else if (ctrntyp == Chgtrn::COMBINED)
-      echgtrnAplus_acc(vers);
+   if (ctrntyp == Chgtrn::SEPARATE) {
+      TINKER_F2CALL(cu, 1, acc, 1, echgtrn, vers);
+   } else if (ctrntyp == Chgtrn::COMBINED) {
+      TINKER_F2CALL(cu, 1, acc, 1, echgtrnAplus, vers);
+   }
 
    if (rc_a) {
       if (do_e) {

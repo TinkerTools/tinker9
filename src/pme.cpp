@@ -8,6 +8,7 @@
 #include "ff/switch.h"
 #include "math/maxmin.h"
 #include "tool/error.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/ewald.hh>
 #include <tinker/detail/pme.hh>
@@ -87,8 +88,7 @@ static void pmeOpCopyin(PMEUnit unit)
 
    auto& st = *unit;
 
-   // This code assumes that the FFT grids of an energy term will not change in
-   // a calculation.
+   // This code assumes that the FFT grids of an energy term will not change in a calculation.
    int maxfft = maxOf(st.nfft1, st.nfft2, st.nfft3);
    std::vector<double> array(st.bsorder);
    std::vector<double> bsarray(maxfft);
@@ -219,34 +219,6 @@ void pmeData(RcOp op)
 
 namespace tinker {
 extern void bsplineFill_cu(PMEUnit, int level);
-
-extern void gridPchg_acc(PMEUnit, real*);
-extern void gridPchg_cu(PMEUnit, real*);
-extern void gridDisp_acc(PMEUnit, real*);
-extern void gridDisp_cu(PMEUnit, real*);
-extern void gridMpole_acc(PMEUnit, real (*)[10]);
-extern void gridMpole_cu(PMEUnit, real (*)[10]);
-extern void gridUind_acc(PMEUnit, real (*)[3], real (*)[3]);
-extern void gridUind_cu(PMEUnit, real (*)[3], real (*)[3]);
-
-extern void pmeConv_acc(PMEUnit, EnergyBuffer, VirialBuffer);
-extern void pmeConv_cu(PMEUnit, EnergyBuffer, VirialBuffer);
-
-extern void fphiMpole_acc(PMEUnit, real (*)[20]);
-extern void fphiMpole_cu(PMEUnit, real (*)[20]);
-extern void fphiUind_acc(PMEUnit, real (*)[10], real (*)[10], real (*)[20]);
-extern void fphiUind_cu(PMEUnit, real (*)[10], real (*)[10], real (*)[20]);
-extern void fphiUind2_acc(PMEUnit, real (*)[10], real (*)[10]);
-extern void fphiUind2_cu(PMEUnit, real (*)[10], real (*)[10]);
-
-extern void rpoleToCmp_acc();
-extern void cmpToFmp_acc(PMEUnit, const real (*)[10], real (*)[10]);
-extern void cuindToFuind_acc(PMEUnit, const real (*)[3], const real (*)[3], //
-   real (*)[3], real (*)[3]);
-extern void fphiToCphi_acc(PMEUnit, const real (*)[20], real (*)[10]);
-}
-
-namespace tinker {
 void bsplineFill(PMEUnit pme_u, int level)
 {
 #if TINKER_CUDART
@@ -257,163 +229,130 @@ void bsplineFill(PMEUnit pme_u, int level)
    (void)level;
 #endif
 }
+}
 
+namespace tinker {
+TINKER_F2VOID(cu, 1, acc, 1, gridPchg, PMEUnit, real*);
 void gridPchg(PMEUnit pme_u, real* pchg)
 {
    int bso = pme_u->bsorder;
    if (bso != 5 and bso != 4)
       TINKER_THROW(format("gridPchg(): bsorder is %d; must be 4 or 5.\n", bso));
 
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      gridPchg_cu(pme_u, pchg);
-   else
-#endif
-      gridPchg_acc(pme_u, pchg);
+   TINKER_F2CALL(cu, 1, acc, 1, gridPchg, pme_u, pchg);
 }
 
+TINKER_F2VOID(cu, 1, acc, 1, gridMpole, PMEUnit, real (*)[10]);
 void gridMpole(PMEUnit pme_u, real (*fmp)[10])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("gridMpole(): bsorder is %d; must be 5.\n", bso));
 
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      gridMpole_cu(pme_u, fmp);
-   else
-#endif
-      gridMpole_acc(pme_u, fmp);
+   TINKER_F2CALL(cu, 1, acc, 1, gridMpole, pme_u, fmp);
 }
 
+TINKER_F2VOID(cu, 1, acc, 1, gridUind, PMEUnit, real (*)[3], real (*)[3]);
 void gridUind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("gridUind(): bsorder is %d; must be 5.\n", bso));
 
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      gridUind_cu(pme_u, fuind, fuinp);
-   else
-#endif
-      gridUind_acc(pme_u, fuind, fuinp);
+   TINKER_F2CALL(cu, 1, acc, 1, gridUind, pme_u, fuind, fuinp);
 }
 
+TINKER_F2VOID(cu, 1, acc, 1, gridDisp, PMEUnit, real*);
 void gridDisp(PMEUnit pme_u, real* csix)
 {
    int bso = pme_u->bsorder;
    if (bso != 4)
       TINKER_THROW(format("gridDisp(): bsorder is %d; must be 4.\n", bso));
 
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      gridDisp_cu(pme_u, csix);
-   else
-#endif
-      gridDisp_acc(pme_u, csix);
+   TINKER_F2CALL(cu, 1, acc, 1, gridDisp, pme_u, csix);
 }
+}
+
+namespace tinker {
+TINKER_F2VOID(cu, 1, acc, 1, pmeConv, PMEUnit, EnergyBuffer, VirialBuffer);
 
 void pmeConv(PMEUnit pme_u)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      pmeConv_cu(pme_u, nullptr, nullptr);
-   else
-#endif
-      pmeConv_acc(pme_u, nullptr, nullptr);
+   TINKER_F2CALL(cu, 1, acc, 1, pmeConv, pme_u, nullptr, nullptr);
 }
 
 void pmeConv(PMEUnit pme_u, VirialBuffer gpu_vir)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      pmeConv_cu(pme_u, nullptr, gpu_vir);
-   else
-#endif
-      pmeConv_acc(pme_u, nullptr, gpu_vir);
+   TINKER_F2CALL(cu, 1, acc, 1, pmeConv, pme_u, nullptr, gpu_vir);
 }
 
 void pmeConv(PMEUnit pme_u, EnergyBuffer gpu_e)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      pmeConv_cu(pme_u, gpu_e, nullptr);
-   else
-#endif
-      pmeConv_acc(pme_u, gpu_e, nullptr);
+   TINKER_F2CALL(cu, 1, acc, 1, pmeConv, pme_u, gpu_e, nullptr);
 }
 
 void pmeConv(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      pmeConv_cu(pme_u, gpu_e, gpu_vir);
-   else
-#endif
-      pmeConv_acc(pme_u, gpu_e, gpu_vir);
+   TINKER_F2CALL(cu, 1, acc, 1, pmeConv, pme_u, gpu_e, gpu_vir);
+}
 }
 
+namespace tinker {
+TINKER_F2VOID(cu, 1, acc, 1, fphiMpole, PMEUnit, real (*)[20]);
 void fphiMpole(PMEUnit pme_u)
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("fphiMpole(): bsorder is %d; must be 5.\n", bso));
 
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      fphiMpole_cu(pme_u, fphi);
-   else
-#endif
-      fphiMpole_acc(pme_u, fphi);
+   TINKER_F2CALL(cu, 1, acc, 1, fphiMpole, pme_u, fphi);
 }
 
+TINKER_F2VOID(cu, 1, acc, 1, fphiUind, PMEUnit, real (*)[10], real (*)[10], real (*)[20]);
 void fphiUind(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10], real (*fdip_sum_phi)[20])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("fphiUind(): bsorder is %d; must be 5.\n", bso));
 
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      fphiUind_cu(pme_u, fdip_phi1, fdip_phi2, fdip_sum_phi);
-   else
-#endif
-      fphiUind_acc(pme_u, fdip_phi1, fdip_phi2, fdip_sum_phi);
+   TINKER_F2CALL(cu, 1, acc, 1, fphiUind, pme_u, fdip_phi1, fdip_phi2, fdip_sum_phi);
 }
 
+TINKER_F2VOID(cu, 1, acc, 1, fphiUind2, PMEUnit, real (*)[10], real (*)[10]);
 void fphiUind2(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
 {
    int bso = pme_u->bsorder;
    if (bso != 5)
       TINKER_THROW(format("fphiUind2(): bsorder is %d; must be 5.\n", bso));
 
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      fphiUind2_cu(pme_u, fdip_phi1, fdip_phi2);
-   else
-#endif
-      fphiUind2_acc(pme_u, fdip_phi1, fdip_phi2);
+   TINKER_F2CALL(cu, 1, acc, 1, fphiUind2, pme_u, fdip_phi1, fdip_phi2);
+}
 }
 
+namespace tinker {
+TINKER_F2VOID(cu, 0, acc, 1, rpoleToCmp);
 void rpoleToCmp()
 {
-   rpoleToCmp_acc();
+   TINKER_F2CALL(cu, 0, acc, 1, rpoleToCmp);
 }
 
+TINKER_F2VOID(cu, 0, acc, 1, cmpToFmp, PMEUnit, const real (*)[10], real (*)[10]);
 void cmpToFmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
 {
-   cmpToFmp_acc(pme_u, cmp, fmp);
+   TINKER_F2CALL(cu, 0, acc, 1, cmpToFmp, pme_u, cmp, fmp);
 }
 
+TINKER_F2VOID(cu, 0, acc, 1, cuindToFuind, PMEUnit, const real (*)[3], const real (*)[3],
+   real (*)[3], real (*)[3]);
 void cuindToFuind(
    PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3], real (*fuind)[3], real (*fuinp)[3])
 {
-   cuindToFuind_acc(pme_u, cind, cinp, fuind, fuinp);
+   TINKER_F2CALL(cu, 0, acc, 1, cuindToFuind, pme_u, cind, cinp, fuind, fuinp);
 }
 
+TINKER_F2VOID(cu, 0, acc, 1, fphiToCphi, PMEUnit, const real (*)[20], real (*)[10]);
 void fphiToCphi(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
 {
-   fphiToCphi_acc(pme_u, fphi, cphi);
+   TINKER_F2CALL(cu, 0, acc, 1, fphiToCphi, pme_u, fphi, cphi);
 }
 }
