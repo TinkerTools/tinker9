@@ -45,6 +45,8 @@ Nbl vlistVersion()
 #endif
          u = Nbl::VERLET;
    }
+   if (u != Nbl::UNDEFINED and u != Nbl::SPATIAL)
+      pltfm_config = Platform::ACC;
    return u;
 }
 
@@ -85,6 +87,8 @@ Nbl clistVersion()
 #endif
          u = Nbl::VERLET;
    }
+   if (u != Nbl::UNDEFINED and u != Nbl::SPATIAL)
+      pltfm_config = Platform::ACC;
    return u;
 }
 
@@ -106,6 +110,8 @@ Nbl mlistVersion()
 #endif
          u = Nbl::VERLET;
    }
+   if (u != Nbl::UNDEFINED and u != Nbl::SPATIAL)
+      pltfm_config = Platform::ACC;
    return u;
 }
 
@@ -126,6 +132,8 @@ Nbl ulistVersion()
 #endif
          u = Nbl::VERLET;
    }
+   if (u != Nbl::UNDEFINED and u != Nbl::SPATIAL)
+      pltfm_config = Platform::ACC;
    return u;
 }
 
@@ -146,6 +154,8 @@ Nbl dsplistVersion()
 #endif
          u = Nbl::VERLET;
    }
+   if (u != Nbl::UNDEFINED and u != Nbl::SPATIAL)
+      pltfm_config = Platform::ACC;
    return u;
 }
 }
