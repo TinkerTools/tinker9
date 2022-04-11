@@ -127,26 +127,26 @@ void xyzData(RcOp op)
 }
 
 namespace tinker {
-TINKER_F2EXTN(cu, 0, acc, 1, void, copyPosToXyz);
+TINKER_F2VOID(cu, 0, acc, 1, copyPosToXyz);
 void copyPosToXyz()
 {
-   TINKER_F1CALL(acc, copyPosToXyz);
+   TINKER_F2CALL(cu, 0, acc, 1, copyPosToXyz);
 }
 
 void copyPosToXyz(bool refreshNBList)
 {
-   copyPosToXyz_acc();
+   copyPosToXyz();
    if (refreshNBList)
       nblistRefresh();
 }
 
-TINKER_F2EXTN(cu, 0, acc, 1, void, boundsP1);
+TINKER_F2VOID(cu, 0, acc, 1, bounds);
 void bounds()
 {
    if (not bound::use_bounds)
       return;
 
-   TINKER_F1CALL(acc, boundsP1);
+   TINKER_F2CALL(cu, 0, acc, 1, bounds);
    copyPosToXyz();
 }
 

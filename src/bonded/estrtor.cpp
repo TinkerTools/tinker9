@@ -51,7 +51,7 @@ void estrtorData(RcOp op)
    }
 }
 
-TINKER_F2EXTN(cu, 0, acc, 1, void, estrtor, int);
+TINKER_F2VOID(cu, 0, acc, 1, estrtor, int);
 void estrtor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -70,7 +70,7 @@ void estrtor(int vers)
          darray::zero(g::q0, n, debtx, debty, debtz);
    }
 
-   TINKER_F1CALL(acc, estrtor, vers);
+   TINKER_F2CALL(cu, 0, acc, 1, estrtor, vers);
 
    if (rc_a) {
       if (do_e) {

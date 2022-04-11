@@ -41,7 +41,7 @@ void eimpropData(RcOp op)
    }
 }
 
-TINKER_F2EXTN(cu, 0, acc, 1, void, eimprop, int);
+TINKER_F2VOID(cu, 0, acc, 1, eimprop, int);
 void eimprop(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -60,7 +60,7 @@ void eimprop(int vers)
          darray::zero(g::q0, n, deidx, deidy, deidz);
    }
 
-   TINKER_F1CALL(acc, eimprop, vers);
+   TINKER_F2CALL(cu, 0, acc, 1, eimprop, vers);
 
    if (rc_a) {
       if (do_e) {

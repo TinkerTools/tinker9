@@ -54,7 +54,7 @@ void estrbndData(RcOp op)
    }
 }
 
-TINKER_F2EXTN(cu, 0, acc, 1, void, estrbnd, int);
+TINKER_F2VOID(cu, 0, acc, 1, estrbnd, int);
 void estrbnd(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -73,7 +73,7 @@ void estrbnd(int vers)
          darray::zero(g::q0, n, debax, debay, debaz);
    }
 
-   TINKER_F1CALL(acc, estrbnd, vers);
+   TINKER_F2CALL(cu, 0, acc, 1, estrbnd, vers);
 
    if (rc_a) {
       if (do_e) {

@@ -1,6 +1,7 @@
 #include "ff/atom.h"
 #include "ff/box.h"
 #include "tool/darray.h"
+#include "tool/error.h"
 #include <tinker/detail/atoms.hh>
 #include <tinker/routines.h>
 
@@ -15,5 +16,12 @@ void printError()
    darray::copyout(g::q0, n, atoms::z, zpos);
    waitFor(g::q0);
    tinker_f_prterr();
+}
+}
+
+namespace tinker {
+void throwExceptionMissingFunction(const char* func)
+{
+   TINKER_THROW(format("Function void %s(...) is not implemented.\n", func));
 }
 }

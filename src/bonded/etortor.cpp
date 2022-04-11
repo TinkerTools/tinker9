@@ -136,7 +136,7 @@ void etortorData(RcOp op)
    }
 }
 
-TINKER_F2EXTN(cu, 0, acc, 1, void, etortor, int);
+TINKER_F2VOID(cu, 0, acc, 1, etortor, int);
 void etortor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -155,7 +155,7 @@ void etortor(int vers)
          darray::zero(g::q0, n, dettx, detty, dettz);
    }
 
-   TINKER_F1CALL(acc, etortor, vers);
+   TINKER_F2CALL(cu, 0, acc, 1, etortor, vers);
 
    if (rc_a) {
       if (do_e) {

@@ -243,12 +243,14 @@ void nblistUpdate_acc(NBListUnit nu)
    }
 }
 
-int spatialCheck_acc(int n, real lbuf, int* restrict update, const real* restrict x,
+void spatialCheck_acc(int& result, int n, real lbuf, int* restrict update, const real* restrict x,
    const real* restrict y, const real* restrict z, real* restrict xold, real* restrict yold,
    real* restrict zold)
 {
-   if (lbuf == 0)
-      return 1;
+   if (lbuf == 0) {
+      result = 1;
+      return;
+   }
 
    // 0: do not rebuild; 1: rebuild
    const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
@@ -269,6 +271,6 @@ int spatialCheck_acc(int n, real lbuf, int* restrict update, const real* restric
    int ans;
    darray::copyout(g::q0, 1, &ans, &update[0]);
    waitFor(g::q0);
-   return ans;
+   result = ans;
 }
 }

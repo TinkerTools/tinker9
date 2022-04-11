@@ -2,12 +2,9 @@
 #include "tool/platform.h"
 
 namespace tinker {
-TINKER_F2EXTN(cu, 1, acc, 0, void, evalence, int);
+TINKER_F2VOID(cu, 1, acc, 0, evalence, int);
 void evalence(int vers)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      TINKER_F1CALL(cu, evalence, vers);
-#endif
+   TINKER_F2CALL(cu, 1, acc, 0, evalence, vers);
 }
 }

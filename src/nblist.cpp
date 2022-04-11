@@ -440,14 +440,15 @@ static void nblistUpdate(NBListUnit u)
    nblistUpdate_acc(u);
 }
 
-extern int spatialCheck_acc(
-   int, real, int*, const real*, const real*, const real*, real*, real*, real*);
+extern void spatialCheck_acc(
+   int&, int, real, int*, const real*, const real*, const real*, real*, real*, real*);
 static void spatialUpdate(SpatialUnit unt)
 {
 #if TINKER_CUDART
    auto& st = *unt;
-   int answer =
-      spatialCheck_acc(st.n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold, st.zold);
+   int answer;
+   spatialCheck_acc(
+      answer, st.n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold, st.zold);
    if (answer) {
       spatialDataInit(unt);
    } else {
