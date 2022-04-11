@@ -11,9 +11,9 @@
 #endif
 
 namespace tinker {
-void cudalibData(RcOp op)
+void cudalibData_acc(RcOp op)
 {
-#if TINKER_CUDART && TINKER_GPULANG_OPENACC
+#if TINKER_GPULANG_OPENACC
    if (op & RcOp::DEALLOC) {
       check_rt(cudaProfilerStop());
 

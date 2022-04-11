@@ -70,7 +70,13 @@ void xInfo(int, char**)
    auto fm2 = "       %-33s %s\n";
    auto f2d = "       %-33s %d\n";
 
-   print(out, fmt, "Platform:", "CUDA and OpenACC");
+   print(out, fmt, "Platform:",
+#   if TINKER_GPULANG_OPENACC
+      "OpenACC and CUDA"
+#   elif TINKER_GPULANG_CUDA
+      "CUDA"
+#   endif
+   );
    if (pltfm_config & Platform::CUDA)
       print(out, fmt, "Primary GPU package:", "CUDA");
    else if (pltfm_config & Platform::ACC)
@@ -79,7 +85,15 @@ void xInfo(int, char**)
    print(out, fmt, "CUDA runtime version:", gpuCudaRuntimeVersion());
    print(out, fmt, "Thrust version:", gpuThrustVersion());
    print(out, fmt, "CUDA compiler:", cudaCompilerName());
-   print(out, fmt, "OpenACC compiler:", accCompilerName());
+
+   print(out, fmt, "OpenACC compiler:",
+#   if TINKER_GPULANG_OPENACC
+      accCompilerName()
+#   else
+      "Unused"
+#   endif
+   );
+
    if (ndevice > 0) {
       print(out, fmd, "GPU detected:", ndevice);
       const auto& attribs = gpuDeviceAttributes();

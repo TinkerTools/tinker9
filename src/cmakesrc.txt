@@ -26,6 +26,7 @@ bonded/etortor.cpp
 bonded/eurey.cpp
 box.cpp
 compilers.cpp
+cudalib.cpp
 echarge.cpp
 echglj.cpp
 egvop.cpp
