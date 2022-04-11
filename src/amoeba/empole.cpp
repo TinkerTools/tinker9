@@ -6,6 +6,7 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/mplpot.hh>
 
 namespace tinker {
@@ -49,30 +50,18 @@ void empoleData(RcOp op)
 }
 
 namespace tinker {
-extern void empoleNonEwald_acc(int vers);
-extern void empoleNonEwald_cu(int vers);
+TINKER_F2VOID(cu, 1, acc, 1, empoleNonEwald, int);
 static void empoleNonEwald(int vers)
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      empoleNonEwald_cu(vers);
-   else
-#endif
-      empoleNonEwald_acc(vers);
+   TINKER_F2CALL(cu, 1, acc, 1, empoleNonEwald, vers);
 }
 }
 
 namespace tinker {
-extern void empoleEwaldRealSelf_acc(int vers);
-extern void empoleEwaldRealSelf_cu(int vers);
+TINKER_F2VOID(cu, 1, acc, 1, empoleEwaldRealSelf, int);
 static void empoleEwaldRealSelf(int vers)
 {
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      empoleEwaldRealSelf_cu(vers);
-   else
-#endif
-      empoleEwaldRealSelf_acc(vers);
+   TINKER_F2CALL(cu, 1, acc, 1, empoleEwaldRealSelf, vers);
 }
 
 void empoleEwaldRecip(int vers)

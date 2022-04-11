@@ -479,16 +479,10 @@ void evdw(int vers)
 }
 
 namespace tinker {
-extern void elj_acc(int);
-extern void elj_cu(int);
+TINKER_F2VOID(cu, 1, acc, 1, elj, int);
 void elj(int vers)
 {
-#if TINKER_CUDART
-   if (clistVersion() & Nbl::SPATIAL)
-      elj_cu(vers);
-   else
-#endif
-      elj_acc(vers);
+   TINKER_F2CALL(cu, 1, acc, 1, elj, vers);
 }
 
 TINKER_F2VOID(cu, 1, acc, 0, elj14, int);
@@ -515,16 +509,10 @@ void egauss(int vers)
    TINKER_F2CALL(cu, 0, acc, 1, egauss, vers);
 }
 
-extern void ehal_acc(int);
-extern void ehal_cu(int);
+TINKER_F2VOID(cu, 1, acc, 1, ehal, int);
 void ehal(int vers)
 {
-#if TINKER_CUDART
-   if (vlistVersion() & Nbl::SPATIAL)
-      ehal_cu(vers);
-   else
-#endif
-      ehal_acc(vers);
+   TINKER_F2CALL(cu, 1, acc, 1, ehal, vers);
 }
 
 TINKER_F2VOID(cu, 0, acc, 1, ehalReduceXyz);
