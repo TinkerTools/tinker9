@@ -6,6 +6,7 @@
 #include "ff/pmestream.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/chgpot.hh>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/sizes.hh>
@@ -126,25 +127,15 @@ void echargeData(RcOp op)
 }
 
 namespace tinker {
-extern void echargeNonEwald_acc(int);
-extern void echargeNonEwald_cu(int);
-extern void echargeEwaldReal_acc(int);
-extern void echargeEwaldReal_cu(int);
-extern void echargeEwaldFphiSelf_acc(int);
-extern void echargeEwaldFphiSelf_cu(int);
-
+TINKER_F2VOID(cu, 1, acc, 1, echargeNonEwald, int);
 static void echargeNonEwald(int vers)
 {
-#if TINKER_CUDART
-   if (clistVersion() & Nbl::SPATIAL)
-      echargeNonEwald_cu(vers);
-   else
-#endif
-      echargeNonEwald_acc(vers);
+   TINKER_F2CALL(cu, 1, acc, 1, echargeNonEwald, vers);
 }
 }
 
 namespace tinker {
+TINKER_F2VOID(cu, 1, acc, 1, echargeEwaldFphiSelf, int);
 void echargeEwaldRecipSelf(int vers)
 {
    pmeStreamStartWait(use_pme_stream);
@@ -174,16 +165,12 @@ void echargeEwaldRecipSelf(int vers)
 
    // fphi_pchg, recip, self
 
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      echargeEwaldFphiSelf_cu(vers);
-   else
-#endif
-      echargeEwaldFphiSelf_acc(vers);
+   TINKER_F2CALL(cu, 1, acc, 1, echargeEwaldFphiSelf, vers);
 
    pmeStreamFinishRecord(use_pme_stream);
 }
 
+TINKER_F2VOID(cu, 1, acc, 1, echargeEwaldReal, int);
 void echarge(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -207,12 +194,7 @@ void echarge(int vers)
 
    if (useEwald()) {
       echargeEwaldRecipSelf(vers);
-#if TINKER_CUDART
-      if (clistVersion() & Nbl::SPATIAL)
-         echargeEwaldReal_cu(vers);
-      else
-#endif
-         echargeEwaldReal_acc(vers);
+      TINKER_F2CALL(cu, 1, acc, 1, echargeEwaldReal, vers);
       pmeStreamFinishWait(use_pme_stream and (vers & calc::analyz));
    } else
       echargeNonEwald(vers);

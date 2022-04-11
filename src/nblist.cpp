@@ -34,19 +34,17 @@ Nbl vlistVersion()
    } else if (vdwtyp != Vdw::HAL) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_vlist) {
-      u = Nbl::DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
    } else if (!bound::use_bounds) {
-      u = Nbl::VERLET;
+      u = Nbl::VERLET, pltfm_config = Platform::ACC;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
          u = Nbl::SPATIAL;
       else
 #endif
-         u = Nbl::VERLET;
+         u = Nbl::VERLET, pltfm_config = Platform::ACC;
    }
-   if (u != Nbl::UNDEFINED and u != Nbl::SPATIAL)
-      pltfm_config = Platform::ACC;
    return u;
 }
 
@@ -57,16 +55,16 @@ Nbl clistVersion()
    if (not use(Potent::CHARGE) /* and not use(Potent::SOLV) */) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_clist) {
-      u = Nbl::DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
    } else if (!bound::use_bounds) {
-      u = Nbl::VERLET;
+      u = Nbl::VERLET, pltfm_config = Platform::ACC;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
          u = Nbl::SPATIAL;
       else
 #endif
-         u = Nbl::VERLET;
+         u = Nbl::VERLET, pltfm_config = Platform::ACC;
    }
    if (u != Nbl::UNDEFINED)
       return u;
@@ -76,19 +74,17 @@ Nbl clistVersion()
    } else if (vdwtyp == Vdw::HAL) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_vlist) {
-      u = Nbl::DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
    } else if (!bound::use_bounds) {
-      u = Nbl::VERLET;
+      u = Nbl::VERLET, pltfm_config = Platform::ACC;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
          u = Nbl::SPATIAL;
       else
 #endif
-         u = Nbl::VERLET;
+         u = Nbl::VERLET, pltfm_config = Platform::ACC;
    }
-   if (u != Nbl::UNDEFINED and u != Nbl::SPATIAL)
-      pltfm_config = Platform::ACC;
    return u;
 }
 
@@ -99,19 +95,17 @@ Nbl mlistVersion()
       not use(Potent::REPULS) /* and not use(Potent::SOLV) */) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_mlist) {
-      u = Nbl::DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
    } else if (!bound::use_bounds) {
-      u = Nbl::VERLET;
+      u = Nbl::VERLET, pltfm_config = Platform::ACC;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
          u = Nbl::SPATIAL;
       else
 #endif
-         u = Nbl::VERLET;
+         u = Nbl::VERLET, pltfm_config = Platform::ACC;
    }
-   if (u != Nbl::UNDEFINED and u != Nbl::SPATIAL)
-      pltfm_config = Platform::ACC;
    return u;
 }
 
@@ -121,19 +115,17 @@ Nbl ulistVersion()
    if (not use(Potent::POLAR)) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_ulist) {
-      u = Nbl::DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
    } else if (!bound::use_bounds) {
-      u = Nbl::VERLET;
+      u = Nbl::VERLET, pltfm_config = Platform::ACC;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
          u = Nbl::SPATIAL;
       else
 #endif
-         u = Nbl::VERLET;
+         u = Nbl::VERLET, pltfm_config = Platform::ACC;
    }
-   if (u != Nbl::UNDEFINED and u != Nbl::SPATIAL)
-      pltfm_config = Platform::ACC;
    return u;
 }
 
@@ -143,19 +135,17 @@ Nbl dsplistVersion()
    if (not use(Potent::DISP)) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_dlist) {
-      u = Nbl::DOUBLE_LOOP;
+      u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
    } else if (!bound::use_bounds) {
-      u = Nbl::VERLET;
+      u = Nbl::VERLET, pltfm_config = Platform::ACC;
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
          u = Nbl::SPATIAL;
       else
 #endif
-         u = Nbl::VERLET;
+         u = Nbl::VERLET, pltfm_config = Platform::ACC;
    }
-   if (u != Nbl::UNDEFINED and u != Nbl::SPATIAL)
-      pltfm_config = Platform::ACC;
    return u;
 }
 }

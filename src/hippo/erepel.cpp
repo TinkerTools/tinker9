@@ -6,6 +6,7 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "tool/externfunc.h"
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/repel.hh>
 #include <tinker/detail/reppot.hh>
@@ -133,8 +134,7 @@ void erepelData(RcOp op)
    }
 }
 
-extern void erepel_acc(int);
-extern void erepel_cu(int);
+TINKER_F2VOID(cu, 1, acc, 1, erepel, int);
 void erepel(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -157,12 +157,8 @@ void erepel(int vers)
    }
 
    mpoleInit(vers);
-#if TINKER_CUDART
-   if (mlistVersion() & Nbl::SPATIAL)
-      erepel_cu(vers);
-   else
-#endif
-      erepel_acc(vers);
+
+   TINKER_F2CALL(cu, 1, acc, 1, erepel, vers);
 
    torque(vers, derx, dery, derz);
    if (do_v) {

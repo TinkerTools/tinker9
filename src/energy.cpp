@@ -115,7 +115,7 @@ static bool amoeba_echglj(int vers)
       return false;
    if (not use(Potent::CHARGE) or not use(Potent::VDW))
       return false;
-   if (!(clistVersion() & Nbl::SPATIAL))
+   if (not(clistVersion() & Nbl::SPATIAL))
       return false;
    if (ebuffer != 0)
       return false;
