@@ -2,19 +2,18 @@
 #include "ff/amoebamod.h"
 #include "ff/energy.h"
 #include "math/zero.h"
-#include "tool/error.h"
+#include "tool/externfunc.h"
 
 namespace tinker {
-extern void emplar_cu(int);
+TINKER_F2VOID(cu, 1, acc, 0, emplar, int);
 void emplar(int vers)
 {
-#if TINKER_CUDART
    bool do_v = vers & calc::virial;
 
    zeroOnHost(energy_em, virial_em);
 
    mpoleInit(vers);
-   emplar_cu(vers);
+   TINKER_F2CALL(cu, 1, acc, 0, emplar, vers);
    torque(vers, demx, demy, demz);
    if (do_v) {
       VirialBuffer u2 = vir_trq;
@@ -23,9 +22,5 @@ void emplar(int vers)
       for (int iv = 0; iv < 9; ++iv)
          virial_elec[iv] += v2[iv];
    }
-#else
-   (void)vers;
-   TINKER_THROW("EMPLAR is only available for PBC systems in CUDA.\n");
-#endif
 }
 }

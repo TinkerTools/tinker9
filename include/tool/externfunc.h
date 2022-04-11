@@ -20,10 +20,10 @@ void throwExceptionMissingFunction(const char* functionName);
 #elif TINKER_GPULANG_CUDA // pure cuda
 
 #   define TINKER_F1EXTN__(S, H, R, F, ...) TINKER_F1EXTN_##S##H##__(R, F, __VA_ARGS__)
-#   define TINKER_F1EXTN_acc1__(R, F, ...)  TINKER_F1EXTN_ERROR__
+#   define TINKER_F1EXTN_acc1__(R, F, ...)  TINKER_F1EXTN_EMPTY__
 #   define TINKER_F1EXTN_acc0__(R, F, ...)  TINKER_F1EXTN_EMPTY__
 #   define TINKER_F1EXTN_cu1__(R, F, ...)   TINKER_F1EXTN_NORMAL_(R, F, cu, __VA_ARGS__)
-#   define TINKER_F1EXTN_cu0__(R, F, ...)   TINKER_F1EXTN_ERROR__
+#   define TINKER_F1EXTN_cu0__(R, F, ...)   TINKER_F1EXTN_EMPTY__
 
 #   define TINKER_F2CALL_cu0_acc1__(F, ...) TINKER_F1CALL_ERROR__(F, cu)
 #   define TINKER_F2CALL_cu1_acc0__(F, ...) TINKER_F1CALL_NORMAL_(F, cu, __VA_ARGS__)
@@ -34,7 +34,7 @@ void throwExceptionMissingFunction(const char* functionName);
 #   define TINKER_F1EXTN__(S, H, R, F, ...) TINKER_F1EXTN_##S##H##__(R, F, __VA_ARGS__)
 #   define TINKER_F1EXTN_acc1__(R, F, ...)  TINKER_F1EXTN_NORMAL_(R, F, acc, __VA_ARGS__)
 #   define TINKER_F1EXTN_acc0__(R, F, ...)  TINKER_F1EXTN_EMPTY__
-#   define TINKER_F1EXTN_cu1__(R, F, ...)   TINKER_F1EXTN_ERROR__
+#   define TINKER_F1EXTN_cu1__(R, F, ...)   TINKER_F1EXTN_EMPTY__
 #   define TINKER_F1EXTN_cu0__(R, F, ...)   TINKER_F1EXTN_EMPTY__
 
 #   define TINKER_F2CALL_cu1_acc0__(F, ...) TINKER_F1CALL_ERROR__(F, cu)
@@ -59,7 +59,6 @@ void throwExceptionMissingFunction(const char* functionName);
 
 #define TINKER_F1EXTN_EMPTY__
 #define TINKER_F1EXTN_NORMAL_(R, F, S, ...) extern R F##_##S(__VA_ARGS__)
-#define TINKER_F1EXTN_ERROR__               extern void throwExceptionMissingFunction(const char*)
 
 #define TINKER_F1CALL_ERROR__(F, S)      throwExceptionMissingFunction(#F "_" #S)
 #define TINKER_F1CALL_NORMAL_(F, S, ...) F##_##S(__VA_ARGS__)

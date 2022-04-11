@@ -1,6 +1,7 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "tool/argkey.h"
+#include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include "tool/ioprint.h"
 #include "tool/ioread.h"
@@ -14,18 +15,18 @@
 namespace tinker {
 static std::vector<double> grx, gry, grz;
 
-extern void xMinimizeSetPos_acc(int, const double*, const double*);
+TINKER_F2VOID(cu, 0, acc, 1, xMinimizeSetPos, int, const double*, const double*);
 static void xMinimizeSetXyz(int n, const double* xx, const double* scale)
 {
-   xMinimizeSetPos_acc(n, xx, scale);
+   TINKER_F2CALL(cu, 0, acc, 1, xMinimizeSetPos, n, xx, scale);
    copyPosToXyz();
    nblistRefresh();
 }
 
-extern void xMinimizeSetXxByPos_acc(int, double*, const double*);
+TINKER_F2VOID(cu, 0, acc, 1, xMinimizeSetXxByPos, int, double*, const double*);
 static void xMinimizeSetXx(int n, double* xx, const double* scale)
 {
-   xMinimizeSetXxByPos_acc(n, xx, scale);
+   TINKER_F2CALL(cu, 0, acc, 1, xMinimizeSetXxByPos, n, xx, scale);
 }
 
 static double minimiz1(double* xx, double* g)

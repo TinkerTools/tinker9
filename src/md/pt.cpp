@@ -1,23 +1,17 @@
 #include "md/pt.h"
 #include "md/pq.h"
+#include "tool/externfunc.h"
 #include "tool/platform.h"
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-extern void kineticEnergy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
-   const double* mass, const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
-extern void kineticEnergy_cu(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
-   const double* mass, const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
+TINKER_F2VOID(cu, 1, acc, 1, kineticEnergy, energy_prec&, energy_prec (&)[3][3], int n,
+   const double*, const vel_prec*, const vel_prec*, const vel_prec*);
 void kineticEnergy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n, const double* mass,
    const vel_prec* vx, const vel_prec* vy, const vel_prec* vz)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      kineticEnergy_cu(eksum_out, ekin_out, n, mass, vx, vy, vz);
-   else
-#endif
-      kineticEnergy_acc(eksum_out, ekin_out, n, mass, vx, vy, vz);
+   TINKER_F2CALL(cu, 1, acc, 1, kineticEnergy, eksum_out, ekin_out, n, mass, vx, vy, vz);
 }
 
 void kineticExplicit(T_prec& temp_out, energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
@@ -34,21 +28,21 @@ void kinetic(T_prec& temp)
 }
 
 namespace tinker {
-extern void bussiThermostat_acc(time_prec dt, T_prec temp);
+TINKER_F2VOID(cu, 0, acc, 1, bussiThermostat, time_prec, T_prec);
 void bussiThermostat(time_prec dt, T_prec temp)
 {
-   bussiThermostat_acc(dt, temp);
+   TINKER_F2CALL(cu, 0, acc, 1, bussiThermostat, dt, temp);
 }
 
-extern void monteCarloBarostat_acc(energy_prec epot, T_prec temp);
+TINKER_F2VOID(cu, 0, acc, 1, monteCarloBarostat, energy_prec, T_prec);
 void monteCarloBarostat(energy_prec epot, T_prec temp)
 {
-   monteCarloBarostat_acc(epot, temp);
+   TINKER_F2CALL(cu, 0, acc, 1, monteCarloBarostat, epot, temp);
 }
 
-extern void berendsenBarostat_acc(time_prec);
+TINKER_F2VOID(cu, 0, acc, 1, berendsenBarostat, time_prec);
 void berendsenBarostat(time_prec dt)
 {
-   berendsenBarostat_acc(dt);
+   TINKER_F2CALL(cu, 0, acc, 1, berendsenBarostat, dt);
 }
 }
