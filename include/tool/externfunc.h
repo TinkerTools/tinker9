@@ -1,5 +1,6 @@
 #pragma once
 #include "tool/macro.h"
+#include "tool/platform.h"
 
 namespace tinker {
 void throwExceptionMissingFunction(const char* functionName, const char* file, int lineNum);
