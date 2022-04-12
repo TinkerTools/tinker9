@@ -1,7 +1,6 @@
 #include "md/pt.h"
 #include "md/pq.h"
 #include "tool/externfunc.h"
-#include "tool/platform.h"
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 

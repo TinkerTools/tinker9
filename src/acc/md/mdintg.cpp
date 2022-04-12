@@ -1,7 +1,6 @@
 #include "md/pq.h"
 #include "tool/externfunc.h"
 #include "tool/ioprint.h"
-#include "tool/platform.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>

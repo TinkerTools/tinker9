@@ -3,7 +3,6 @@
 #include "math/parallelcu.h"
 #include "tool/externfunc.h"
 #include "tool/macro.h"
-#include "tool/platform.h"
 
 namespace tinker {
 /// \ingroup math_parallel

@@ -1,5 +1,4 @@
 #include "tool/externfunc.h"
-#include "tool/platform.h"
 
 namespace tinker {
 TINKER_FVOID2(cu, 1, acc, 0, evalence, int);

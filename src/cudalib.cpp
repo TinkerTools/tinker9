@@ -1,15 +1,17 @@
 #include "tool/cudalib.h"
 #include "tool/accasync.h"
-#include "tool/externfunc.h"
 #if TINKER_CUDART
 #   include "tool/error.h"
+#   include "tool/externfunc.h"
 #   include "tool/gpucard.h"
-#   include "tool/platform.h"
 #   include <cuda_profiler_api.h>
-#endif
 
 namespace tinker {
 TINKER_FVOID2(cu, 1, acc, 1, cudalibDataStreamAndQ, RcOp);
+}
+#endif
+
+namespace tinker {
 void cudalibData(RcOp op)
 {
    use_pme_stream = false;
