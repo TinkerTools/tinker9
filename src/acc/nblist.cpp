@@ -262,11 +262,13 @@ void spatialCheck_acc(int& result, int n, real lbuf, int* restrict update, const
       real yr = y[i] - yold[i];
       real zr = z[i] - zold[i];
       real r2 = imagen2(xr, yr, zr);
-      int rebuild = (r2 >= lbuf2 ? 1 : 0);
-      update[i] = rebuild;
-      if (rebuild) {
+      update[i] = (r2 >= lbuf2 ? 1 : 0);
+   }
+   #pragma acc parallel loop independent async deviceptr(update)
+   for (int i = 0; i < n; ++i) {
+      auto rebuild = update[i];
+      if (rebuild)
          update[0] = 1;
-      }
    }
    int ans;
    darray::copyout(g::q0, 1, &ans, &update[0]);

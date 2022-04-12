@@ -33,6 +33,7 @@ void throwExceptionMissingFunction(const char* functionName, const char* file, i
          s3 = s3.substr(1);
    }
 
+   printBacktrace();
    auto err = FatalError(
       format("Function void %s(...) is not implemented at %s:%d", functionName, s3, lineNum));
    throw err;

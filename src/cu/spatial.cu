@@ -871,3 +871,49 @@ void spatialDataUpdateSorted_cu(SpatialUnit u)
       TINKER_IMAGE_ARGS, u->cutoff, u->akc, u->half);
 }
 }
+
+namespace tinker {
+// 0: do not rebuild; 1: rebuild
+__global__
+void spatialCheck_cu1(int n, real lbuf2, int* restrict update, const real* restrict x,
+   const real* restrict y, const real* restrict z, const real* restrict xold,
+   const real* restrict yold, const real* restrict zold, TINKER_IMAGE_PARAMS)
+{
+   for (int i = ITHREAD; i < n; i += STRIDE) {
+      auto xr = x[i] - xold[i];
+      auto yr = y[i] - yold[i];
+      auto zr = z[i] - zold[i];
+      auto r2 = imagen2(xr, yr, zr);
+      update[i] = (r2 >= lbuf2 ? 1 : 0);
+   }
+}
+
+__global__
+void spatialCheck_cu2(int n, int* restrict update)
+{
+   for (int i = ITHREAD; i < n; i += STRIDE) {
+      auto rebuild = update[i];
+      if (rebuild)
+         update[0] = 1;
+   }
+}
+
+void spatialCheck_cu(int& result, int n, real lbuf, int* update, const real* x, const real* y,
+   const real* z, real* xold, real* yold, real* zold)
+{
+   if (lbuf == 0) {
+      result = 1;
+      return;
+   }
+
+   const real lbuf2 = (0.5f * lbuf) * (0.5f * lbuf);
+   launch_k1s(g::s0, n, spatialCheck_cu1, //
+      n, lbuf2, update, x, y, z, xold, yold, zold, TINKER_IMAGE_ARGS);
+   launch_k1s(g::s0, n, spatialCheck_cu2, //
+      n, update);
+   int ans;
+   darray::copyout(g::q0, 1, &ans, &update[0]);
+   waitFor(g::q0);
+   result = ans;
+}
+}

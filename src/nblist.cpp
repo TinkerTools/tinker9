@@ -437,13 +437,13 @@ static void nblistUpdate(NBListUnit u)
    TINKER_FCALL2(cu, 0, acc, 1, nblistUpdate, u);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, spatialCheck, int&, int, real, int*, const real*, const real*,
+TINKER_FVOID2(cu, 1, acc, 1, spatialCheck, int&, int, real, int*, const real*, const real*,
    const real*, real*, real*, real*);
 static void spatialUpdate(SpatialUnit unt)
 {
    MAYBE_UNUSED auto& st = *unt;
    int answer = 0;
-   TINKER_FCALL2(cu, 0, acc, 1, spatialCheck, answer, st.n, st.buffer, st.update, st.x, st.y, st.z,
+   TINKER_FCALL2(cu, 1, acc, 1, spatialCheck, answer, st.n, st.buffer, st.update, st.x, st.y, st.z,
       st.xold, st.yold, st.zold);
    if (answer) {
       spatialDataInit(unt);

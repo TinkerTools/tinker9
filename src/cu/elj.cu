@@ -1,4 +1,3 @@
-#include "ff/atom.h"
 #include "ff/evdw.h"
 #include "ff/image.h"
 #include "ff/spatial.h"

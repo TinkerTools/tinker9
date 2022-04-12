@@ -1,4 +1,3 @@
-#include "ff/atom.h"
 #include "ff/evdw.h"
 #include "ff/image.h"
 #include "ff/spatial.h"
@@ -16,8 +15,8 @@ void ehalReduceXyz_cu1(int n, const int* restrict ired, const real* restrict kre
    real* restrict yred, real* restrict zred)
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
-      int iv = ired[i];
-      real rdn = kred[i];
+      auto iv = ired[i];
+      auto rdn = kred[i];
       auto xi = x[i], xiv = x[iv];
       auto yi = y[i], yiv = y[iv];
       auto zi = z[i], ziv = z[iv];
@@ -42,7 +41,7 @@ void ehalResolveGradient_cu1(int n, const int* restrict ired, const real* restri
       auto grx = gxred[ii];
       auto gry = gyred[ii];
       auto grz = gzred[ii];
-      int iv = ired[ii];
+      auto iv = ired[ii];
       if (ii == iv) {
          atomic_add(grx, devx, ii);
          atomic_add(gry, devy, ii);
@@ -51,8 +50,8 @@ void ehalResolveGradient_cu1(int n, const int* restrict ired, const real* restri
          auto fx = toFltGrad<real>(grx);
          auto fy = toFltGrad<real>(gry);
          auto fz = toFltGrad<real>(grz);
-         real redii = kred[ii];
-         real rediv = 1 - redii;
+         auto redii = kred[ii];
+         auto rediv = 1 - redii;
          atomic_add(fx * redii, devx, ii);
          atomic_add(fy * redii, devy, ii);
          atomic_add(fz * redii, devz, ii);
