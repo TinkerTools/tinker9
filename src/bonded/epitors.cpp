@@ -52,7 +52,7 @@ void epitorsData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, epitors, int);
+TINKER_FVOID1(cu, 0, acc, 1, epitors, int);
 void epitors(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

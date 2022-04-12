@@ -491,22 +491,22 @@ void elj14(int vers)
    TINKER_FCALL2(cu, 1, acc, 0, elj14, vers);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, ebuck, int);
+TINKER_FVOID2(cu, 1, acc, 1, ebuck, int);
 void ebuck(int vers)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, ebuck, vers);
+   TINKER_FCALL2(cu, 1, acc, 1, ebuck, vers);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, emm3hb, int);
+TINKER_FVOID2(cu, 1, acc, 1, emm3hb, int);
 void emm3hb(int vers)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, emm3hb, vers);
+   TINKER_FCALL2(cu, 1, acc, 1, emm3hb, vers);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, egauss, int);
+TINKER_FVOID2(cu, 1, acc, 1, egauss, int);
 void egauss(int vers)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, egauss, vers);
+   TINKER_FCALL2(cu, 1, acc, 1, egauss, vers);
 }
 
 TINKER_FVOID2(cu, 1, acc, 1, ehal, int);

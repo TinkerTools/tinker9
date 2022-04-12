@@ -54,7 +54,7 @@ void estrbndData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, estrbnd, int);
+TINKER_FVOID1(cu, 0, acc, 1, estrbnd, int);
 void estrbnd(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

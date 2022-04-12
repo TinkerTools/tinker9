@@ -56,6 +56,8 @@ void throwExceptionMissingFunction(const char* functionName);
 #define TINKER_FVOID2(SUFFIX1, HAS_IMPL1, SUFFIX2, HAS_IMPL2, FUNC, ...)                           \
    TINKER_FEXTN2__(SUFFIX1, HAS_IMPL1, SUFFIX2, HAS_IMPL2, void, FUNC, __VA_ARGS__)
 
+#define TINKER_FVOID1 TINKER_FVOID2
+
 #define TINKER_FCALL2(SUFFIX1, HAS_IMPL1, SUFFIX2, HAS_IMPL2, FUNC, ...)                           \
    TINKER_FCALL2_##SUFFIX1##HAS_IMPL1##_##SUFFIX2##HAS_IMPL2##__(FUNC, __VA_ARGS__)
 

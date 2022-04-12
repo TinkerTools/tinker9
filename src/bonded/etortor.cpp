@@ -136,7 +136,7 @@ void etortorData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, etortor, int);
+TINKER_FVOID1(cu, 0, acc, 1, etortor, int);
 void etortor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

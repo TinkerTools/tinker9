@@ -63,7 +63,7 @@ void ebondData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, ebond, int);
+TINKER_FVOID1(cu, 0, acc, 1, ebond, int);
 void ebond(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

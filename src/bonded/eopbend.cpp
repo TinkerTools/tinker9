@@ -65,7 +65,7 @@ void eopbendData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, eopbend, int);
+TINKER_FVOID1(cu, 0, acc, 1, eopbend, int);
 void eopbend(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

@@ -51,7 +51,7 @@ void eangtorData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, eangtor, int);
+TINKER_FVOID1(cu, 0, acc, 1, eangtor, int);
 void eangtor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

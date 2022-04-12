@@ -41,7 +41,7 @@ void eimpropData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, eimprop, int);
+TINKER_FVOID1(cu, 0, acc, 1, eimprop, int);
 void eimprop(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

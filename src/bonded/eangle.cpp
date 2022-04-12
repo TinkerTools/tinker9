@@ -78,7 +78,7 @@ void eangleData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, eangle, int);
+TINKER_FVOID1(cu, 0, acc, 1, eangle, int);
 void eangle(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

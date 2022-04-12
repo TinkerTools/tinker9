@@ -91,7 +91,7 @@ void egeomData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, egeom, int);
+TINKER_FVOID1(cu, 0, acc, 1, egeom, int);
 void egeom(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

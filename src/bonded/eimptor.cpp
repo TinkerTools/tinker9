@@ -51,7 +51,7 @@ void eimptorData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, eimptor, int);
+TINKER_FVOID1(cu, 0, acc, 1, eimptor, int);
 void eimptor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;

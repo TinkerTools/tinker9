@@ -26,8 +26,25 @@ void cudalibDataStreamAndQ_cu(RcOp op)
 }
 }
 
+#include "tool/externfunc.h"
+
 namespace tinker {
 void boxDataP1_cu(RcOp) {}
 
 void boxCopyin_cu() {}
+
+void ebuck_cu(int)
+{
+   TINKER_FCALL1_ERROR__(ebuck, cu);
+}
+
+void emm3hb_cu(int)
+{
+   TINKER_FCALL1_ERROR__(emm3hb, cu);
+}
+
+void egauss_cu(int)
+{
+   TINKER_FCALL1_ERROR__(egauss, cu);
+}
 }
