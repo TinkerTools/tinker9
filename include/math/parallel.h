@@ -1,6 +1,7 @@
 #pragma once
 #include "math/parallelacc.h"
 #include "math/parallelcu.h"
+#include "tool/externfunc.h"
 #include "tool/macro.h"
 #include "tool/platform.h"
 
@@ -13,12 +14,8 @@ namespace tinker {
 template <class T>
 T reduceSum(const T* gpu_a, size_t nelem, int queue)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      return reduceSum_cu(gpu_a, nelem, queue);
-   else
-#endif
-      return reduceSum_acc(gpu_a, nelem, queue);
+   // TINKER_F2EXTN__(cu, 1, acc, 1, T, reduceSum, const T*, size_t, int);
+   return TINKER_F2CALL(cu, 1, acc, 1, reduceSum, gpu_a, nelem, queue);
 }
 
 /// \ingroup math_parallel
@@ -31,12 +28,8 @@ T reduceSum(const T* gpu_a, size_t nelem, int queue)
 template <class HT, size_t HN, class DPTR>
 void reduceSum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int queue)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      reduceSum2_cu(h_ans, v, nelem, queue);
-   else
-#endif
-      reduceSum2_acc(h_ans, v, nelem, queue);
+   // TINKER_F2VOID(cu, 1, acc, 1, HT (&)[HN], DPTR, size_t, int);
+   TINKER_F2CALL(cu, 1, acc, 1, reduceSum2, h_ans, v, nelem, queue);
 }
 
 /// \ingroup math_parallel
@@ -53,12 +46,8 @@ void reduceSum2(HT (&h_ans)[HN], DPTR v, size_t nelem, int queue)
 template <class T>
 void reduceSumOnDevice(T* dp_ans, const T* a, size_t nelem, int queue)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      reduceSumOnDevice_cu(dp_ans, a, nelem, queue);
-   else
-#endif
-      reduceSumOnDevice_acc(dp_ans, a, nelem, queue);
+   // TINKER_F2VOID(cu, 1, acc, 1, reduceSumOnDevice, T*, const T*, size_t, int);
+   TINKER_F2CALL(cu, 1, acc, 1, reduceSumOnDevice, dp_ans, a, nelem, queue);
 }
 
 /// \ingroup math_parallel
@@ -81,12 +70,8 @@ void reduceSumOnDevice(T* dp_ans, const T* a, size_t nelem, int queue)
 template <class HT, size_t HN, class DPTR>
 void reduceSum2OnDevice(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      reduceSum2OnDevice_cu(dref, v, nelem, queue);
-   else
-#endif
-      reduceSum2OnDevice_acc(dref, v, nelem, queue);
+   // TINKER_F2VOID(cu, 1, acc, 1 reduceSum2OnDevice, HT(&)[HN], DPTR, size_t, int);
+   TINKER_F2CALL(cu, 1, acc, 1, reduceSum2OnDevice, dref, v, nelem, queue);
 }
 
 /// \ingroup math_parallel
@@ -97,7 +82,8 @@ void reduceSum2OnDevice(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
 template <class T>
 T dotProd(const T* a, const T* b, size_t nelem, int queue)
 {
-   return dotProd_acc(a, b, nelem, queue);
+   // TINKER_F2EXTN__(cu, 0, acc, 1, T, dotProd, const T*, const T*, size_t, int);
+   return TINKER_F2CALL(cu, 0, acc, 1, dotProd, a, b, nelem, queue);
 }
 
 /// \ingroup math_parallel
@@ -105,12 +91,8 @@ T dotProd(const T* a, const T* b, size_t nelem, int queue)
 template <class T>
 void dotProd(T* ans, const T* a, const T* b, size_t nelem, int queue)
 {
-#if TINKER_CUDART
-   if (pltfm_config & Platform::CUDA)
-      dotProd_cu(ans, a, b, nelem, queue);
-   else
-#endif
-      dotProd_acc(ans, a, b, nelem, queue);
+   // TINKER_F2VOID(cu, 1, acc, 1, dotProd, T*, const T*, const T*, size_t, int);
+   TINKER_F2CALL(cu, 1, acc, 1, dotProd, ans, a, b, nelem, queue);
 }
 
 /// \ingroup math_parallel
@@ -120,6 +102,7 @@ void dotProd(T* ans, const T* a, const T* b, size_t nelem, int queue)
 template <class T>
 void scaleArray(T* dst, T scal, size_t nelem, int queue)
 {
-   return scaleArray_acc(dst, scal, nelem, queue);
+   // TINKER_F2VOID(cu, 0, acc, 1, scaleArray, T*, T, size_t, int);
+   TINKER_F2CALL(cu, 0, acc, 1, scaleArray, dst, scal, nelem, queue);
 }
 }

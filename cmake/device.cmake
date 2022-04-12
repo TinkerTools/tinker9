@@ -10,7 +10,7 @@ if (GPU_LANG STREQUAL "OPENACC")
    set (__T9_ACC_LIB_STR tinker9_acc)
 elseif (GPU_LANG STREQUAL "CUDA")
    set (__T9_EXTRA_LINK_FLAGS "")
-   set (__T9_ACC_LIB_STR tinker9_acc)
+   # set (__T9_ACC_LIB_STR tinker9_acc)
 endif ()
 
 

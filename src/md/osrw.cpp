@@ -8,6 +8,7 @@
 #include "ff/potent.h"
 #include "math/zero.h"
 #include "tool/argkey.h"
+#include "tool/externfunc.h"
 
 namespace tinker {
 static grad_prec *osrw_gx, *osrw_gy, *osrw_gz;
@@ -199,14 +200,16 @@ double osrw_lam_expr2(int form, double lam)
    return ans;
 }
 
+TINKER_F2VOID(cu, 0, acc, 1, osrw_altele, double);
 void osrw_altele(double el)
 {
-   osrw_altele_acc(el);
+   TINKER_F2CALL(cu, 0, acc, 1, osrw_altele, el);
 }
 
+TINKER_F2VOID(cu, 0, acc, 1, osrw_alttor, double);
 void osrw_alttor(double tl)
 {
-   osrw_alttor_acc(tl);
+   TINKER_F2CALL(cu, 0, acc, 1, osrw_alttor, tl);
 }
 
 void osrw_altvdw(double vl)

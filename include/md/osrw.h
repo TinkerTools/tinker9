@@ -13,8 +13,6 @@ double osrw_lam_expr2(int form, double lam);
 void osrw_altele(double);
 void osrw_alttor(double);
 void osrw_altvdw(double);
-void osrw_altele_acc(double);
-void osrw_alttor_acc(double);
 void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig);
 void osrw_energy(int vers);
 }
