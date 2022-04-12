@@ -11,8 +11,7 @@ void platformData(RcOp op)
    }
 
    if (op & RcOp::INIT) {
-#if TINKER_CUDART
-#   if TINKER_GPULANG_OPENACC
+#if TINKER_GPULANG_OPENACC
       // Feature: If the platform has been hard-coded, do not change it.
       if (pltfm_config == Platform::UNSET) {
          std::string gpu_package = "";
@@ -35,9 +34,8 @@ void platformData(RcOp op)
             print(stdout, " Primary GPU package :  OpenACC\n");
          }
       }
-#   elif TINKER_GPULANG_CUDA
+#elif TINKER_GPULANG_CUDA
       pltfm_config = Platform::CUDA;
-#   endif
 #else
       pltfm_config = Platform::ACC;
 #endif

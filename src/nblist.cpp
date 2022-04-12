@@ -11,6 +11,7 @@
 #include "ff/potent.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
+#include "tool/externfunc.h"
 #include "tool/thrustcache.h"
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/limits.hh>
@@ -232,24 +233,20 @@ static void spatialAlloc( //
    spatialDataAlloc(unt, n, cut, buf, x, y, z, nstype, //
       ns1, js1, ns2, js2, ns3, js3, ns4, js4);
    alloc_thrust_cache = true;
-#else
 #endif
 }
 
 // RcOp::INIT
-extern void nblistBuild_acc(NBListUnit);
+TINKER_F2VOID(cu, 0, acc, 1, nblistBuild, NBListUnit);
 static void nblistBuild(NBListUnit u)
 {
-   nblistBuild_acc(u);
+   TINKER_F2CALL(cu, 0, acc, 1, nblistBuild, u);
 }
 
 // RcOp::INIT
 static void spatialBuild(SpatialUnit unt)
 {
-#if TINKER_CUDART
    spatialDataInit(unt);
-#else
-#endif
 }
 
 void nblistData(RcOp op)
@@ -434,27 +431,25 @@ void nblistData(RcOp op)
 }
 
 namespace tinker {
-extern void nblistUpdate_acc(NBListUnit);
+TINKER_F2VOID(cu, 0, acc, 1, nblistUpdate, NBListUnit);
 static void nblistUpdate(NBListUnit u)
 {
-   nblistUpdate_acc(u);
+   TINKER_F2CALL(cu, 0, acc, 1, nblistUpdate, u);
 }
 
-extern void spatialCheck_acc(
-   int&, int, real, int*, const real*, const real*, const real*, real*, real*, real*);
+TINKER_F2VOID(cu, 0, acc, 1, spatialCheck, int&, int, real, int*, const real*, const real*,
+   const real*, real*, real*, real*);
 static void spatialUpdate(SpatialUnit unt)
 {
-#if TINKER_CUDART
-   auto& st = *unt;
-   int answer;
-   spatialCheck_acc(
-      answer, st.n, st.buffer, st.update, st.x, st.y, st.z, st.xold, st.yold, st.zold);
+   MAYBE_UNUSED auto& st = *unt;
+   int answer = 0;
+   TINKER_F2CALL(cu, 0, acc, 1, spatialCheck, answer, st.n, st.buffer, st.update, st.x, st.y, st.z,
+      st.xold, st.yold, st.zold);
    if (answer) {
       spatialDataInit(unt);
    } else {
       spatialDataUpdateSorted(unt);
    }
-#endif
 }
 
 void nblistRefresh()

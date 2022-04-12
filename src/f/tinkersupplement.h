@@ -5,7 +5,7 @@
 #define TINKER_SUPPL_DECL
 
 #ifdef __cplusplus
-TINKER_DECL_C_NAME
+TINKER_DECL_EXTN("C")
 {
 #endif
 

@@ -102,11 +102,11 @@
 #   define TINKER_EXTERN extern
 #endif
 
-/// \def TINKER_DECL_C_NAME
+/// \def TINKER_DECL_EXTN
 /// \ingroup cpp_syntax
-/// \brief Expands to `extern "C"`. This macro is defined to help grep
-/// other `extern` declarations in the source code.
-#define TINKER_DECL_C_NAME extern "C"
+/// \brief Expands to `extern "C"`, `extern void`, etc.
+/// This macro is defined to help grep other `extern` declarations in the source code.
+#define TINKER_DECL_EXTN(S) extern S
 
 /// \ingroup cpp_syntax
 /// \brief Expands to 0 if the macro `NDEBUG` was predefined.

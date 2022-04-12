@@ -2,7 +2,7 @@
 #include "tool/macro.h"
 #include <cuda_runtime.h>
 
-TINKER_DECL_C_NAME
+TINKER_DECL_EXTN("C")
 {
    struct cublasStatus_t
    {

@@ -476,40 +476,38 @@ void rattleData(RcOp op)
 }
 
 namespace tinker {
-extern void rattle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-extern void rattleSettle_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-extern void rattleCH_acc(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-extern void rattleMethyl_cu(time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+TINKER_F2VOID(cu, 0, acc, 1, rattle, time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+TINKER_F2VOID(
+   cu, 0, acc, 1, rattleSettle, time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+TINKER_F2VOID(
+   cu, 0, acc, 1, rattleCH, time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+TINKER_F2VOID(
+   cu, 1, acc, 0, rattleMethyl, time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
 void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
-   rattleSettle_acc(dt, xold, yold, zold);
-   rattleCH_acc(dt, xold, yold, zold);
-#if TINKER_CUDART
+   TINKER_F2CALL(cu, 0, acc, 1, rattleSettle, dt, xold, yold, zold);
+   TINKER_F2CALL(cu, 0, acc, 1, rattleCH, dt, xold, yold, zold);
    if (pltfm_config & Platform::CUDA)
-      rattleMethyl_cu(dt, xold, yold, zold);
-#endif
-   rattle_acc(dt, xold, yold, zold);
+      TINKER_F2CALL(cu, 1, acc, 0, rattleMethyl, dt, xold, yold, zold);
+   TINKER_F2CALL(cu, 0, acc, 1, rattle, dt, xold, yold, zold);
 }
 }
 
 namespace tinker {
-extern void rattle2_acc(time_prec, bool);
-extern void rattle2Settle_acc(time_prec, bool);
-extern void rattle2CH_acc(time_prec, bool);
-extern void rattle2Methyl_cu(time_prec, bool);
+TINKER_F2VOID(cu, 0, acc, 1, rattle2, time_prec, bool);
+TINKER_F2VOID(cu, 0, acc, 1, rattle2Settle, time_prec, bool);
+TINKER_F2VOID(cu, 0, acc, 1, rattle2CH, time_prec, bool);
+TINKER_F2VOID(cu, 1, acc, 0, rattle2Methyl, time_prec, bool);
 void rattle2(time_prec dt, bool do_v)
 {
-   if (do_v) {
+   if (do_v)
       darray::zero(g::q0, bufferSize(), vir_buf);
-   }
 
-   rattle2Settle_acc(dt, do_v);
-   rattle2CH_acc(dt, do_v);
-#if TINKER_CUDART
+   TINKER_F2CALL(cu, 0, acc, 1, rattle2Settle, dt, do_v);
+   TINKER_F2CALL(cu, 0, acc, 1, rattle2CH, dt, do_v);
    if (pltfm_config & Platform::CUDA)
-      rattle2Methyl_cu(dt, do_v);
-#endif
-   rattle2_acc(dt, do_v);
+      TINKER_F2CALL(cu, 1, acc, 0, rattle2Methyl, dt, do_v);
+   TINKER_F2CALL(cu, 0, acc, 1, rattle2, dt, do_v);
 
    if (do_v) {
       virial_prec v[9];
@@ -522,24 +520,22 @@ void rattle2(time_prec dt, bool do_v)
 }
 
 namespace tinker {
-extern void shake_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
-extern void shakeSettle_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
-extern void shakeCH_acc(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
-extern void shakeMethyl_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
-   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold);
+TINKER_F2VOID(cu, 0, acc, 1, shake, time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
+   const pos_prec*, const pos_prec*);
+TINKER_F2VOID(cu, 0, acc, 1, shakeSettle, time_prec, pos_prec*, pos_prec*, pos_prec*,
+   const pos_prec*, const pos_prec*, const pos_prec*);
+TINKER_F2VOID(cu, 0, acc, 1, shakeCH, time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
+   const pos_prec*, const pos_prec*);
+TINKER_F2VOID(cu, 1, acc, 0, shakeMethyl, time_prec, pos_prec*, pos_prec*, pos_prec*,
+   const pos_prec*, const pos_prec*, const pos_prec*);
 void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
    const pos_prec* yold, const pos_prec* zold)
 {
-   shakeSettle_acc(dt, xnew, ynew, znew, xold, yold, zold);
-   shakeCH_acc(dt, xnew, ynew, znew, xold, yold, zold);
-#if TINKER_CUDART
+   TINKER_F2CALL(cu, 0, acc, 1, shakeSettle, dt, xnew, ynew, znew, xold, yold, zold);
+   TINKER_F2CALL(cu, 0, acc, 1, shakeCH, dt, xnew, ynew, znew, xold, yold, zold);
    if (pltfm_config & Platform::CUDA)
-      shakeMethyl_cu(dt, xnew, ynew, znew, xold, yold, zold);
-#endif
-   shake_acc(dt, xnew, ynew, znew, xold, yold, zold);
+      TINKER_F2CALL(cu, 1, acc, 0, shakeMethyl, dt, xnew, ynew, znew, xold, yold, zold);
+   TINKER_F2CALL(cu, 0, acc, 1, shake, dt, xnew, ynew, znew, xold, yold, zold);
 }
 }
 

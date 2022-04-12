@@ -4,7 +4,7 @@
 
 /// \todo Implement buck, mm3hb, gauss.
 
-TINKER_DECL_C_NAME
+TINKER_DECL_EXTN("C")
 {
    struct LJ
    {

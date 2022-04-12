@@ -218,16 +218,11 @@ void pmeData(RcOp op)
 }
 
 namespace tinker {
-extern void bsplineFill_cu(PMEUnit, int level);
+TINKER_F2VOID(cu, 1, acc, 0, bsplineFill, PMEUnit, int);
 void bsplineFill(PMEUnit pme_u, int level)
 {
-#if TINKER_CUDART
    if (pltfm_config & Platform::CUDA)
-      bsplineFill_cu(pme_u, level);
-#else
-   (void)pme_u;
-   (void)level;
-#endif
+      TINKER_F2CALL(cu, 1, acc, 0, bsplineFill, pme_u, level);
 }
 }
 

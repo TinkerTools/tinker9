@@ -1,4 +1,5 @@
 #include "md/pq.h"
+#include "tool/externfunc.h"
 #include "tool/ioprint.h"
 #include "tool/platform.h"
 #include <tinker/detail/bound.hh>
@@ -9,8 +10,7 @@
 #include <tinker/routines.h>
 
 namespace tinker {
-extern void mdrestRemovePbcMomentum_cu(
-   bool copyout, vel_prec& vtot1, vel_prec& vtot2, vel_prec& vtot3);
+TINKER_F2VOID(cu, 1, acc, 0, mdrestRemovePbcMomentum, bool, vel_prec&, vel_prec&, vel_prec&);
 void mdrest_acc(int istep)
 {
    if (not mdstuf::dorest)
@@ -29,7 +29,7 @@ void mdrest_acc(int istep)
 #if TINKER_CUDART
    if (pltfm_config & Platform::CUDA) {
       bool copyout = inform::debug or not bound::use_bounds;
-      mdrestRemovePbcMomentum_cu(copyout, vtot1, vtot2, vtot3);
+      TINKER_F2CALL(cu, 1, acc, 0, mdrestRemovePbcMomentum, copyout, vtot1, vtot2, vtot3);
    } else
 #endif
    {
