@@ -11,6 +11,7 @@ aplus/epolar.cu
 aplus/field.cu
 aplus/pcg.cu
 compilers.cu
+cudalib.cu
 echarge.cu
 echglj.cu
 ehal.cu

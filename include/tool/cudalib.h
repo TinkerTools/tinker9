@@ -3,7 +3,9 @@
 #include "tool/rcman.h"
 
 namespace tinker {
-/// \ingroup cuda_syntax
+/// \ingroup platform
+/// \brief Sets up the CUDA variables including but not limited to CUDA streams,
+/// CUDA library handles, and CUDA memory buffers, and integer units for the queues.
 void cudalibData(RcOp);
 }
 

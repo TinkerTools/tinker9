@@ -22,6 +22,6 @@ void printError()
 namespace tinker {
 void throwExceptionMissingFunction(const char* func)
 {
-   TINKER_THROW(format("Function void %s(...) is not implemented.\n", func));
+   TINKER_THROW(format("Function void %s(...) is not implemented\n", func));
 }
 }

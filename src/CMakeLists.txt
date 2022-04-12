@@ -47,9 +47,8 @@ if (HOST)
 else ()
    target_include_directories (tinker9_cpp PUBLIC "${CUDA_DIR}/include")
 endif ()
-target_include_directories (tinker9_cpp     PUBLIC  "${PROJECT_SOURCE_DIR}/include")
-target_include_directories (tinker9_cpp     PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/acc")
-target_include_directories (tinker9_version PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/acc")
+target_include_directories (tinker9_cpp PUBLIC  "${PROJECT_SOURCE_DIR}/include")
+target_include_directories (tinker9_cpp PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/acc")
 # lib
 target_link_libraries (tinker9_cpp PUBLIC tinkerFToCpp)
 # FFTW

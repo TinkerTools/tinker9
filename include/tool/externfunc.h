@@ -11,6 +11,8 @@ void throwExceptionMissingFunction(const char* functionName);
 #   define TINKER_F1EXTN_1__(R, F, S, ...)  TINKER_F1EXTN_NORMAL_(R, F, S, __VA_ARGS__)
 #   define TINKER_F1EXTN_0__(R, F, S, ...)  TINKER_F1EXTN_EMPTY__
 
+#   define TINKER_F0CALL(F, ...) F##_acc(__VA_ARGS__)
+
 #   define TINKER_F2CALL_cu0_acc1__(F, ...) TINKER_F1CALL_NORMAL_(F, acc, __VA_ARGS__)
 #   define TINKER_F2CALL_cu1_acc0__(F, ...) TINKER_F1CALL_NORMAL_(F, cu, __VA_ARGS__)
 #   define TINKER_F2CALL_cu1_acc1__(F, ...)                                                        \
@@ -25,6 +27,8 @@ void throwExceptionMissingFunction(const char* functionName);
 #   define TINKER_F1EXTN_cu1__(R, F, ...)   TINKER_F1EXTN_NORMAL_(R, F, cu, __VA_ARGS__)
 #   define TINKER_F1EXTN_cu0__(R, F, ...)   TINKER_F1EXTN_EMPTY__
 
+#   define TINKER_F0CALL(F, ...) F##_cu(__VA_ARGS__)
+
 #   define TINKER_F2CALL_cu0_acc1__(F, ...) TINKER_F1CALL_ERROR__(F, cu)
 #   define TINKER_F2CALL_cu1_acc0__(F, ...) TINKER_F1CALL_NORMAL_(F, cu, __VA_ARGS__)
 #   define TINKER_F2CALL_cu1_acc1__(F, ...) TINKER_F1CALL_NORMAL_(F, cu, __VA_ARGS__)
@@ -36,6 +40,8 @@ void throwExceptionMissingFunction(const char* functionName);
 #   define TINKER_F1EXTN_acc0__(R, F, ...)  TINKER_F1EXTN_EMPTY__
 #   define TINKER_F1EXTN_cu1__(R, F, ...)   TINKER_F1EXTN_EMPTY__
 #   define TINKER_F1EXTN_cu0__(R, F, ...)   TINKER_F1EXTN_EMPTY__
+
+#   define TINKER_F0CALL(F, ...) F##_acc(__VA_ARGS__)
 
 #   define TINKER_F2CALL_cu1_acc0__(F, ...) TINKER_F1CALL_ERROR__(F, cu)
 #   define TINKER_F2CALL_cu0_acc1__(F, ...) TINKER_F1CALL_NORMAL_(F, acc, __VA_ARGS__)
