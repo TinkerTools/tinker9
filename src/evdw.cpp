@@ -515,15 +515,15 @@ void ehal(int vers)
    TINKER_FCALL2(cu, 1, acc, 1, ehal, vers);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, ehalReduceXyz);
+TINKER_FVOID2(cu, 1, acc, 1, ehalReduceXyz);
 void ehalReduceXyz()
 {
-   TINKER_FCALL2(cu, 0, acc, 1, ehalReduceXyz);
+   TINKER_FCALL2(cu, 1, acc, 1, ehalReduceXyz);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, ehalResolveGradient);
+TINKER_FVOID2(cu, 1, acc, 1, ehalResolveGradient);
 void ehalResolveGradient()
 {
-   TINKER_FCALL2(cu, 0, acc, 1, ehalResolveGradient);
+   TINKER_FCALL2(cu, 1, acc, 1, ehalResolveGradient);
 }
 }

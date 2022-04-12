@@ -9,6 +9,67 @@
 #include "seq/pair_hal.h"
 #include "seq/triangle.h"
 
+namespace tinker {
+__global__
+void ehalReduceXyz_cu1(int n, const int* restrict ired, const real* restrict kred,
+   const real* restrict x, const real* restrict y, const real* restrict z, real* restrict xred,
+   real* restrict yred, real* restrict zred)
+{
+   for (int i = ITHREAD; i < n; i += STRIDE) {
+      int iv = ired[i];
+      real rdn = kred[i];
+      auto xi = x[i], xiv = x[iv];
+      auto yi = y[i], yiv = y[iv];
+      auto zi = z[i], ziv = z[iv];
+      xred[i] = rdn * (xi - xiv) + xiv;
+      yred[i] = rdn * (yi - yiv) + yiv;
+      zred[i] = rdn * (zi - ziv) + ziv;
+   }
+}
+
+void ehalReduceXyz_cu()
+{
+   launch_k1s(g::s0, n, ehalReduceXyz_cu1, n, ired, kred, x, y, z, xred, yred, zred);
+}
+
+__global__
+void ehalResolveGradient_cu1(int n, const int* restrict ired, const real* restrict kred,
+   const grad_prec* restrict gxred, const grad_prec* restrict gyred,
+   const grad_prec* restrict gzred, grad_prec* restrict devx, grad_prec* restrict devy,
+   grad_prec* restrict devz)
+{
+   for (int ii = ITHREAD; ii < n; ii += STRIDE) {
+      auto grx = gxred[ii];
+      auto gry = gyred[ii];
+      auto grz = gzred[ii];
+      int iv = ired[ii];
+      if (ii == iv) {
+         atomic_add(grx, devx, ii);
+         atomic_add(gry, devy, ii);
+         atomic_add(grz, devz, ii);
+      } else {
+         auto fx = toFltGrad<real>(grx);
+         auto fy = toFltGrad<real>(gry);
+         auto fz = toFltGrad<real>(grz);
+         real redii = kred[ii];
+         real rediv = 1 - redii;
+         atomic_add(fx * redii, devx, ii);
+         atomic_add(fy * redii, devy, ii);
+         atomic_add(fz * redii, devz, ii);
+         atomic_add(fx * rediv, devx, iv);
+         atomic_add(fy * rediv, devy, iv);
+         atomic_add(fz * rediv, devz, iv);
+      }
+   }
+}
+
+void ehalResolveGradient_cu()
+{
+   launch_k1s(g::s0, n, ehalResolveGradient_cu1, //
+      n, ired, kred, gxred, gyred, gzred, devx, devy, devz);
+}
+}
+
 /**
  * Overheads:
  *    - Different vcouple methods.

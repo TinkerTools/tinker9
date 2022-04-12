@@ -96,6 +96,28 @@ inline T fixedTo(fixed val)
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
 }
 
+/// \brief Converts a gradient to a floating-point value.
+template <class T>
+__device__
+inline T toFltGrad(fixed g)
+{
+   return fixedTo<T>(g);
+}
+
+template <class T>
+__device__
+inline T toFltGrad(double g)
+{
+   return g;
+}
+
+template <class T>
+__device__
+inline T toFltGrad(float g)
+{
+   return g;
+}
+
 /// \ingroup cuda_syntax
 /// \brief Used as `eq<T1,T2>()` for two type identifiers.
 template <class T, class U>

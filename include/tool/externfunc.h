@@ -2,7 +2,7 @@
 #include "tool/macro.h"
 
 namespace tinker {
-void throwExceptionMissingFunction(const char* functionName);
+void throwExceptionMissingFunction(const char* functionName, const char* file, int lineNum);
 }
 
 #if TINKER_GPULANG_OPENACC // mixed source code: openacc and cuda
@@ -68,5 +68,5 @@ void throwExceptionMissingFunction(const char* functionName);
 #define TINKER_FEXTN1_EMPTY__
 #define TINKER_FEXTN1_NORMAL_(R, F, S, ...) extern R F##_##S(__VA_ARGS__)
 
-#define TINKER_FCALL1_ERROR__(F, S)      throwExceptionMissingFunction(#F "_" #S)
+#define TINKER_FCALL1_ERROR__(F, S)      throwExceptionMissingFunction(#F "_" #S, __FILE__, __LINE__)
 #define TINKER_FCALL1_NORMAL_(F, S, ...) F##_##S(__VA_ARGS__)

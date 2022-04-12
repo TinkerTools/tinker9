@@ -20,8 +20,21 @@ void printError()
 }
 
 namespace tinker {
-void throwExceptionMissingFunction(const char* func)
+void throwExceptionMissingFunction(const char* functionName, const char* file, int lineNum)
 {
-   TINKER_THROW(format("Function void %s(...) is not implemented\n", func));
+   std::string s1 = file;
+   std::string s2 = TINKER9_DIRSTR;
+   std::string s3;
+   if (s1.substr(0, s2.length()) != s2) {
+      s3 = s1;
+   } else {
+      s3 = s1.substr(s2.length());
+      if (s3[0] == '/')
+         s3 = s3.substr(1);
+   }
+
+   auto err = FatalError(
+      format("Function void %s(...) is not implemented at %s:%d", functionName, s3, lineNum));
+   throw err;
 }
 }

@@ -14,7 +14,7 @@ void symlusolve(const R* aUpRowMajor, R* b)
 #if TINKER_GPULANG_OPENACC
    symlusolve_acc<n, R>(aUpRowMajor, b);
 #elif TINKER_GPULANG_CUDA
-   throwExceptionMissingFunction("symlusolve_cu<...>");
+   throwExceptionMissingFunction("symlusolve_cu<...>", __FILE__, __LINE__);
 #else
    symlusolve_acc<n, R>(aUpRowMajor, b);
 #endif
