@@ -1,5 +1,6 @@
 #include "seq/launch.h"
 #include "seq/reduce.h"
+#include "tool/error.h"
 #include <tinker/detail/units.hh>
 
 namespace tinker {

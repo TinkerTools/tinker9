@@ -5,6 +5,7 @@
 #include "seq/imagefc.h"
 #include "seq/launch.h"
 #include "seq/triangle.h"
+#include "tool/error.h"
 #include "tool/thrustcache.h"
 // Eventually thrust will drop c++11 support.
 #define THRUST_IGNORE_DEPRECATED_CPP_DIALECT

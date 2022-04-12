@@ -7,6 +7,7 @@
 #include "seq/add.h"
 #include "seq/bsplgen.h"
 #include "seq/launch.h"
+#include "tool/error.h"
 
 namespace tinker {
 // compute theta values on the fly

@@ -1,6 +1,7 @@
 #include "ff/amoebamod.h"
 #include "ff/aplus/induce.h"
 #include "seq/launch.h"
+#include "tool/error.h"
 #include "tool/ioprint.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
@@ -8,9 +9,6 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-#define ITHREAD threadIdx.x + blockIdx.x* blockDim.x
-#define STRIDE  blockDim.x* gridDim.x
-
 __global__
 void pcgUdirAplus(
    int n, const real* restrict polarity, real (*restrict udir)[3], const real (*restrict field)[3])

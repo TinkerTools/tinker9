@@ -128,10 +128,13 @@ void xyzData(RcOp op)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, copyPosToXyz);
+TINKER_FVOID2(cu, 1, acc, 1, copyPosToXyz);
 void copyPosToXyz()
 {
-   TINKER_FCALL2(cu, 0, acc, 1, copyPosToXyz);
+   if CONSTEXPR (sizeof(pos_prec) == sizeof(real))
+      return;
+
+   TINKER_FCALL2(cu, 1, acc, 1, copyPosToXyz);
 }
 
 void copyPosToXyz(bool refreshNBList)

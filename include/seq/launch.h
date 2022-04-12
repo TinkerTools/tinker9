@@ -1,7 +1,6 @@
 #pragma once
 #include "ff/energy.h"
 #include "tool/cudalib.h"
-#include "tool/error.h"
 #include "tool/gpucard.h"
 
 namespace tinker {
@@ -92,4 +91,7 @@ void launch_k1b(cudaStream_t st, int np, K k, Ts&&... a)
    const int bs = BLOCK_DIM;
    launch_k2b(st, bs, np, k, std::forward<Ts>(a)...);
 }
+
+#define ITHREAD threadIdx.x + blockIdx.x* blockDim.x
+#define STRIDE  blockDim.x* gridDim.x
 }
