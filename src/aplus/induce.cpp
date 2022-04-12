@@ -11,10 +11,10 @@ void diagPrecond3(const real (*rsd)[3], real (*zrsd)[3])
 
 void sparsePrecondBuild3() {}
 
-TINKER_F2VOID(cu, 1, acc, 1, sparsePrecondApply3, const real (*)[3], real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, sparsePrecondApply3, const real (*)[3], real (*)[3]);
 void sparsePrecondApply3(const real (*rsd)[3], real (*zrsd)[3])
 {
-   TINKER_F2CALL(cu, 1, acc, 1, sparsePrecondApply3, rsd, zrsd);
+   TINKER_FCALL2(cu, 1, acc, 1, sparsePrecondApply3, rsd, zrsd);
 }
 
 void ulspredSave3(const real (*uind)[3])

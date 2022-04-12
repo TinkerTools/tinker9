@@ -4,83 +4,83 @@
 #include <tinker/detail/moldyn.hh>
 
 namespace tinker {
-TINKER_F2VOID(cu, 0, acc, 1, mdPos, time_prec, pos_prec*, pos_prec*, pos_prec*, const vel_prec*,
+TINKER_FVOID2(cu, 0, acc, 1, mdPos, time_prec, pos_prec*, pos_prec*, pos_prec*, const vel_prec*,
    const vel_prec*, const vel_prec*);
 void mdPos(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,
    const vel_prec* vly, const vel_prec* vlz)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, mdPos, dt, qx, qy, qz, vlx, vly, vlz);
+   TINKER_FCALL2(cu, 0, acc, 1, mdPos, dt, qx, qy, qz, vlx, vly, vlz);
 }
 
 void mdPos(time_prec dt)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, mdPos, dt, xpos, ypos, zpos, vx, vy, vz);
+   TINKER_FCALL2(cu, 0, acc, 1, mdPos, dt, xpos, ypos, zpos, vx, vy, vz);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, mdPosAxbv, pos_prec, pos_prec);
+TINKER_FVOID2(cu, 0, acc, 1, mdPosAxbv, pos_prec, pos_prec);
 void mdPosAxbv(pos_prec a, pos_prec b)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, mdPosAxbv, a, b);
+   TINKER_FCALL2(cu, 0, acc, 1, mdPosAxbv, a, b);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, mdPosAxbvAn, pos_prec (*)[3], pos_prec (*)[3]);
+TINKER_FVOID2(cu, 0, acc, 1, mdPosAxbvAn, pos_prec (*)[3], pos_prec (*)[3]);
 void mdPosAxbvAn(pos_prec (*a)[3], pos_prec (*b)[3])
 {
-   TINKER_F2CALL(cu, 0, acc, 1, mdPosAxbvAn, a, b);
+   TINKER_FCALL2(cu, 0, acc, 1, mdPosAxbvAn, a, b);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, mdDebugPosNorm, pos_prec, time_prec, const vel_prec*, const vel_prec*,
+TINKER_FVOID2(cu, 0, acc, 1, mdDebugPosNorm, pos_prec, time_prec, const vel_prec*, const vel_prec*,
    const vel_prec*);
 void mdDebugPosNorm(pos_prec poseps, time_prec dt, //
    const vel_prec* vx, const vel_prec* vy, const vel_prec* vz)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, mdDebugPosNorm, poseps, dt, vx, vy, vz);
+   TINKER_FCALL2(cu, 0, acc, 1, mdDebugPosNorm, poseps, dt, vx, vy, vz);
 }
 }
 
 namespace tinker {
-TINKER_F2VOID(cu, 0, acc, 1, mdVel, time_prec, vel_prec*, vel_prec*, vel_prec*, const grad_prec*,
+TINKER_FVOID2(cu, 0, acc, 1, mdVel, time_prec, vel_prec*, vel_prec*, vel_prec*, const grad_prec*,
    const grad_prec*, const grad_prec*);
 void mdVel(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, mdVel, dt, vx, vy, vz, grx, gry, grz);
+   TINKER_FCALL2(cu, 0, acc, 1, mdVel, dt, vx, vy, vz, grx, gry, grz);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, mdVelB, time_prec, vel_prec*, vel_prec*, vel_prec*, //
+TINKER_FVOID2(cu, 0, acc, 1, mdVelB, time_prec, vel_prec*, vel_prec*, vel_prec*, //
    const vel_prec*, const vel_prec*, const vel_prec*,                            //
    const grad_prec*, const grad_prec*, const grad_prec*);
 void mdVelB(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, //
    const vel_prec* vlx0, const vel_prec* vly0, const vel_prec* vlz0,   //
    const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, mdVelB, dt, vlx, vly, vlz, vlx0, vly0, vlz0, grx, gry, grz);
+   TINKER_FCALL2(cu, 0, acc, 1, mdVelB, dt, vlx, vly, vlz, vlx0, vly0, vlz0, grx, gry, grz);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, mdVel2, time_prec, const grad_prec*, const grad_prec*,
+TINKER_FVOID2(cu, 0, acc, 1, mdVel2, time_prec, const grad_prec*, const grad_prec*,
    const grad_prec*, time_prec, const grad_prec*, const grad_prec*, const grad_prec*);
 void mdVel2(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz,
    time_prec dt2, const grad_prec* grx2, const grad_prec* gry2, const grad_prec* grz2)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, mdVel2, dt, grx, gry, grz, dt2, grx2, gry2, grz2);
+   TINKER_FCALL2(cu, 0, acc, 1, mdVel2, dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, mdVelAvbf, int, vel_prec, vel_prec, vel_prec*, vel_prec*, vel_prec*,
+TINKER_FVOID2(cu, 0, acc, 1, mdVelAvbf, int, vel_prec, vel_prec, vel_prec*, vel_prec*, vel_prec*,
    const grad_prec*, const grad_prec*, const grad_prec*, const grad_prec*, const grad_prec*,
    const grad_prec*);
 void mdVelAvbf(int nrespa, vel_prec a, vel_prec b, const grad_prec* gx1, const grad_prec* gy1,
    const grad_prec* gz1, const grad_prec* gx2, const grad_prec* gy2, const grad_prec* gz2)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, mdVelAvbf, nrespa, a, b, vx, vy, vz, gx1, gy1, gz1, gx2, gy2, gz2);
+   TINKER_FCALL2(cu, 0, acc, 1, mdVelAvbf, nrespa, a, b, vx, vy, vz, gx1, gy1, gz1, gx2, gy2, gz2);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, mdVelAvbfAn, int, vel_prec (*)[3], vel_prec (*)[3], vel_prec*,
+TINKER_FVOID2(cu, 0, acc, 1, mdVelAvbfAn, int, vel_prec (*)[3], vel_prec (*)[3], vel_prec*,
    vel_prec*, vel_prec*, const grad_prec*, const grad_prec*, const grad_prec*, const grad_prec*,
    const grad_prec*, const grad_prec*);
 void mdVelAvbfAn(int nrespa, vel_prec a[3][3], vel_prec b[3][3], const grad_prec* gx1,
    const grad_prec* gy1, const grad_prec* gz1, const grad_prec* gx2, const grad_prec* gy2,
    const grad_prec* gz2)
 {
-   TINKER_F2CALL(
+   TINKER_FCALL2(
       cu, 0, acc, 1, mdVelAvbfAn, nrespa, a, b, vx, vy, vz, gx1, gy1, gz1, gx2, gy2, gz2);
 }
 }

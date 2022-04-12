@@ -200,16 +200,16 @@ double osrw_lam_expr2(int form, double lam)
    return ans;
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, osrw_altele, double);
+TINKER_FVOID2(cu, 0, acc, 1, osrw_altele, double);
 void osrw_altele(double el)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, osrw_altele, el);
+   TINKER_FCALL2(cu, 0, acc, 1, osrw_altele, el);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, osrw_alttor, double);
+TINKER_FVOID2(cu, 0, acc, 1, osrw_alttor, double);
 void osrw_alttor(double tl)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, osrw_alttor, tl);
+   TINKER_FCALL2(cu, 0, acc, 1, osrw_alttor, tl);
 }
 
 void osrw_altvdw(double vl)

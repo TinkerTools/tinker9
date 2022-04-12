@@ -6,12 +6,12 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-TINKER_F2VOID(cu, 1, acc, 1, kineticEnergy, energy_prec&, energy_prec (&)[3][3], int n,
+TINKER_FVOID2(cu, 1, acc, 1, kineticEnergy, energy_prec&, energy_prec (&)[3][3], int n,
    const double*, const vel_prec*, const vel_prec*, const vel_prec*);
 void kineticEnergy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n, const double* mass,
    const vel_prec* vx, const vel_prec* vy, const vel_prec* vz)
 {
-   TINKER_F2CALL(cu, 1, acc, 1, kineticEnergy, eksum_out, ekin_out, n, mass, vx, vy, vz);
+   TINKER_FCALL2(cu, 1, acc, 1, kineticEnergy, eksum_out, ekin_out, n, mass, vx, vy, vz);
 }
 
 void kineticExplicit(T_prec& temp_out, energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
@@ -28,21 +28,21 @@ void kinetic(T_prec& temp)
 }
 
 namespace tinker {
-TINKER_F2VOID(cu, 0, acc, 1, bussiThermostat, time_prec, T_prec);
+TINKER_FVOID2(cu, 0, acc, 1, bussiThermostat, time_prec, T_prec);
 void bussiThermostat(time_prec dt, T_prec temp)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, bussiThermostat, dt, temp);
+   TINKER_FCALL2(cu, 0, acc, 1, bussiThermostat, dt, temp);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, monteCarloBarostat, energy_prec, T_prec);
+TINKER_FVOID2(cu, 0, acc, 1, monteCarloBarostat, energy_prec, T_prec);
 void monteCarloBarostat(energy_prec epot, T_prec temp)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, monteCarloBarostat, epot, temp);
+   TINKER_FCALL2(cu, 0, acc, 1, monteCarloBarostat, epot, temp);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, berendsenBarostat, time_prec);
+TINKER_FVOID2(cu, 0, acc, 1, berendsenBarostat, time_prec);
 void berendsenBarostat(time_prec dt)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, berendsenBarostat, dt);
+   TINKER_FCALL2(cu, 0, acc, 1, berendsenBarostat, dt);
 }
 }

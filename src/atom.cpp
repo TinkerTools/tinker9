@@ -128,10 +128,10 @@ void xyzData(RcOp op)
 }
 
 namespace tinker {
-TINKER_F2VOID(cu, 0, acc, 1, copyPosToXyz);
+TINKER_FVOID2(cu, 0, acc, 1, copyPosToXyz);
 void copyPosToXyz()
 {
-   TINKER_F2CALL(cu, 0, acc, 1, copyPosToXyz);
+   TINKER_FCALL2(cu, 0, acc, 1, copyPosToXyz);
 }
 
 void copyPosToXyz(bool refreshNBList)
@@ -141,13 +141,13 @@ void copyPosToXyz(bool refreshNBList)
       nblistRefresh();
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, bounds);
+TINKER_FVOID2(cu, 0, acc, 1, bounds);
 void bounds()
 {
    if (not bound::use_bounds)
       return;
 
-   TINKER_F2CALL(cu, 0, acc, 1, bounds);
+   TINKER_FCALL2(cu, 0, acc, 1, bounds);
    copyPosToXyz();
 }
 

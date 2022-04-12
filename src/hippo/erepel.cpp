@@ -134,7 +134,7 @@ void erepelData(RcOp op)
    }
 }
 
-TINKER_F2VOID(cu, 1, acc, 1, erepel, int);
+TINKER_FVOID2(cu, 1, acc, 1, erepel, int);
 void erepel(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -158,7 +158,7 @@ void erepel(int vers)
 
    mpoleInit(vers);
 
-   TINKER_F2CALL(cu, 1, acc, 1, erepel, vers);
+   TINKER_FCALL2(cu, 1, acc, 1, erepel, vers);
 
    torque(vers, derx, dery, derz);
    if (do_v) {

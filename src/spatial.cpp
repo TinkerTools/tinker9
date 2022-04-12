@@ -184,15 +184,15 @@ void spatialDataAlloc(SpatialUnit& u, int n, double cutoff, double buffer, const
 }
 
 namespace tinker {
-TINKER_F2VOID(cu, 1, acc, 0, spatialDataInit, SpatialUnit);
+TINKER_FVOID2(cu, 1, acc, 0, spatialDataInit, SpatialUnit);
 void spatialDataInit(SpatialUnit u)
 {
-   TINKER_F2CALL(cu, 1, acc, 0, spatialDataInit, u);
+   TINKER_FCALL2(cu, 1, acc, 0, spatialDataInit, u);
 }
 
-TINKER_F2VOID(cu, 1, acc, 0, spatialDataUpdateSorted, SpatialUnit);
+TINKER_FVOID2(cu, 1, acc, 0, spatialDataUpdateSorted, SpatialUnit);
 void spatialDataUpdateSorted(SpatialUnit u)
 {
-   TINKER_F2CALL(cu, 1, acc, 0, spatialDataUpdateSorted, u);
+   TINKER_FCALL2(cu, 1, acc, 0, spatialDataUpdateSorted, u);
 }
 }

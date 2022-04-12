@@ -15,18 +15,18 @@
 namespace tinker {
 static std::vector<double> grx, gry, grz;
 
-TINKER_F2VOID(cu, 0, acc, 1, xMinimizeSetPos, int, const double*, const double*);
+TINKER_FVOID2(cu, 0, acc, 1, xMinimizeSetPos, int, const double*, const double*);
 static void xMinimizeSetXyz(int n, const double* xx, const double* scale)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, xMinimizeSetPos, n, xx, scale);
+   TINKER_FCALL2(cu, 0, acc, 1, xMinimizeSetPos, n, xx, scale);
    copyPosToXyz();
    nblistRefresh();
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, xMinimizeSetXxByPos, int, double*, const double*);
+TINKER_FVOID2(cu, 0, acc, 1, xMinimizeSetXxByPos, int, double*, const double*);
 static void xMinimizeSetXx(int n, double* xx, const double* scale)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, xMinimizeSetXxByPos, n, xx, scale);
+   TINKER_FCALL2(cu, 0, acc, 1, xMinimizeSetXxByPos, n, xx, scale);
 }
 
 static double minimiz1(double* xx, double* g)

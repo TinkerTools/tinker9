@@ -28,7 +28,7 @@ void zeroEGV()
 }
 
 namespace tinker {
-TINKER_F2VOID(cu, 0, acc, 1, scaleGradient, double, grad_prec*, grad_prec*, grad_prec*);
+TINKER_FVOID2(cu, 0, acc, 1, scaleGradient, double, grad_prec*, grad_prec*, grad_prec*);
 void scaleGradient(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z)
 {
    if (scale == 1)
@@ -36,23 +36,23 @@ void scaleGradient(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z)
    else if (scale == 0) {
       darray::zero(g::q0, n, g0x, g0y, g0z);
    } else
-      TINKER_F2CALL(cu, 0, acc, 1, scaleGradient, scale, g0x, g0y, g0z);
+      TINKER_FCALL2(cu, 0, acc, 1, scaleGradient, scale, g0x, g0y, g0z);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, sumGradient, grad_prec*, grad_prec*, grad_prec*, const grad_prec*,
+TINKER_FVOID2(cu, 0, acc, 1, sumGradient, grad_prec*, grad_prec*, grad_prec*, const grad_prec*,
    const grad_prec*, const grad_prec*);
 void sumGradient(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
    const grad_prec* g1y, const grad_prec* g1z)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, sumGradient, g0x, g0y, g0z, g1x, g1y, g1z);
+   TINKER_FCALL2(cu, 0, acc, 1, sumGradient, g0x, g0y, g0z, g1x, g1y, g1z);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, sumGradient, double, grad_prec*, grad_prec*, grad_prec*,
+TINKER_FVOID2(cu, 0, acc, 1, sumGradient, double, grad_prec*, grad_prec*, grad_prec*,
    const grad_prec*, const grad_prec*, const grad_prec*);
 void sumGradient(double s, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
    const grad_prec* g1y, const grad_prec* g1z)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, sumGradient, s, g0x, g0y, g0z, g1x, g1y, g1z);
+   TINKER_FCALL2(cu, 0, acc, 1, sumGradient, s, g0x, g0y, g0z, g1x, g1y, g1z);
 }
 }
 

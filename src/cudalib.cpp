@@ -9,7 +9,7 @@
 #endif
 
 namespace tinker {
-TINKER_F2VOID(cu, 1, acc, 1, cudalibDataStreamAndQ, RcOp);
+TINKER_FVOID2(cu, 1, acc, 1, cudalibDataStreamAndQ, RcOp);
 void cudalibData(RcOp op)
 {
    use_pme_stream = false;
@@ -17,7 +17,7 @@ void cudalibData(RcOp op)
    if (op & RcOp::DEALLOC) {
       check_rt(cudaProfilerStop());
 
-      TINKER_F0CALL(cudalibDataStreamAndQ, RcOp::DEALLOC);
+      TINKER_FCALL0(cudalibDataStreamAndQ, RcOp::DEALLOC);
 
       check_rt(cublasDestroy(g::h0));
       check_rt(cublasDestroy(g::h1));
@@ -30,7 +30,7 @@ void cudalibData(RcOp op)
    }
 
    if (op & RcOp::ALLOC) {
-      TINKER_F0CALL(cudalibDataStreamAndQ, RcOp::ALLOC);
+      TINKER_FCALL0(cudalibDataStreamAndQ, RcOp::ALLOC);
 
       check_rt(cublasCreate(&g::h0)); // calls cudaMemcpy [sync] here
       check_rt(cublasCreate(&g::h1)); // calls cudaMemcpy [sync] here

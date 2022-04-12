@@ -57,10 +57,10 @@ void cfluxData(RcOp op)
    }
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, alterchg);
+TINKER_FVOID2(cu, 0, acc, 1, alterchg);
 void alterchg()
 {
-   TINKER_F2CALL(cu, 0, acc, 1, alterchg);
+   TINKER_FCALL2(cu, 0, acc, 1, alterchg);
 }
 
 void cfluxZeroPot()
@@ -68,9 +68,9 @@ void cfluxZeroPot()
    darray::zero(g::q0, n, pot);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, dcflux, int, grad_prec*, grad_prec*, grad_prec*, VirialBuffer);
+TINKER_FVOID2(cu, 0, acc, 1, dcflux, int, grad_prec*, grad_prec*, grad_prec*, VirialBuffer);
 void dcflux(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, VirialBuffer v)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, dcflux, vers, gx, gy, gz, v);
+   TINKER_FCALL2(cu, 0, acc, 1, dcflux, vers, gx, gy, gz, v);
 }
 }

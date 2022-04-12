@@ -6,10 +6,10 @@
 #include "tool/externfunc.h"
 
 namespace tinker {
-TINKER_F2VOID(cu, 1, acc, 1, epolarAplusEwaldReal, int, int, const real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, epolarAplusEwaldReal, int, int, const real (*)[3]);
 static void epolarAplusEwaldReal(int vers, int use_cf)
 {
-   TINKER_F2CALL(cu, 1, acc, 1, epolarAplusEwaldReal, vers, use_cf, uind);
+   TINKER_FCALL2(cu, 1, acc, 1, epolarAplusEwaldReal, vers, use_cf, uind);
 }
 
 static void epolarAplusEwaldRecipSelf(int vers, int use_cf)
@@ -37,7 +37,7 @@ void epolarAplusEwald(int vers, int use_cf)
 }
 
 namespace tinker {
-TINKER_F2VOID(cu, 1, acc, 1, epolarAplusNonEwald, int, int, const real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, epolarAplusNonEwald, int, int, const real (*)[3]);
 void epolarAplusNonEwald(int vers, int use_cf)
 {
    bool edot = vers & calc::energy; // if not do_e, edot = false
@@ -51,6 +51,6 @@ void epolarAplusNonEwald(int vers, int use_cf)
    if (edot)
       epolar0DotProd(uind, udir);
    if (vers != calc::v0)
-      TINKER_F2CALL(cu, 1, acc, 1, epolarAplusNonEwald, ver2, use_cf, uind);
+      TINKER_FCALL2(cu, 1, acc, 1, epolarAplusNonEwald, ver2, use_cf, uind);
 }
 }

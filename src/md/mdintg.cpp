@@ -125,10 +125,10 @@ void mdIntegrateData(RcOp op)
 }
 
 namespace tinker {
-TINKER_F2VOID(cu, 0, acc, 1, mdrest, int);
+TINKER_FVOID2(cu, 0, acc, 1, mdrest, int);
 void mdrest(int istep)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, mdrest, istep);
+   TINKER_FCALL2(cu, 0, acc, 1, mdrest, istep);
 }
 
 /// \ingroup mdpq

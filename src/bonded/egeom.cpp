@@ -91,7 +91,7 @@ void egeomData(RcOp op)
    }
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, egeom, int);
+TINKER_FVOID2(cu, 0, acc, 1, egeom, int);
 void egeom(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -110,7 +110,7 @@ void egeom(int vers)
          darray::zero(g::q0, n, degx, degy, degz);
    }
 
-   TINKER_F2CALL(cu, 0, acc, 1, egeom, vers);
+   TINKER_FCALL2(cu, 0, acc, 1, egeom, vers);
 
    if (rc_a) {
       if (do_e) {

@@ -137,7 +137,7 @@ void epolarChgpenData(RcOp op)
 }
 
 namespace tinker {
-TINKER_F2VOID(cu, 1, acc, 1, epolarChgpenNonEwald, int, int, const real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, epolarChgpenNonEwald, int, int, const real (*)[3]);
 static void epolarChgpenNonEwald(int vers, int use_cf)
 {
    // v0: E_dot
@@ -157,21 +157,21 @@ static void epolarChgpenNonEwald(int vers, int use_cf)
    if (edot)
       epolar0DotProd(uind, udir);
    if (vers != calc::v0)
-      TINKER_F2CALL(cu, 1, acc, 1, epolarChgpenNonEwald, ver2, use_cf, uind);
+      TINKER_FCALL2(cu, 1, acc, 1, epolarChgpenNonEwald, ver2, use_cf, uind);
 }
 }
 
 namespace tinker {
-TINKER_F2VOID(cu, 1, acc, 1, epolarChgpenEwaldReal, int, int, const real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, epolarChgpenEwaldReal, int, int, const real (*)[3]);
 static void epolarChgpenEwaldReal(int vers, int use_cf)
 {
-   TINKER_F2CALL(cu, 1, acc, 1, epolarChgpenEwaldReal, vers, use_cf, uind);
+   TINKER_FCALL2(cu, 1, acc, 1, epolarChgpenEwaldReal, vers, use_cf, uind);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, epolarChgpenEwaldRecipSelf, int, int, const real (*)[3]);
+TINKER_FVOID2(cu, 0, acc, 1, epolarChgpenEwaldRecipSelf, int, int, const real (*)[3]);
 void epolarChgpenEwaldRecipSelf(int vers, int use_cf)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, epolarChgpenEwaldRecipSelf, vers, use_cf, uind);
+   TINKER_FCALL2(cu, 0, acc, 1, epolarChgpenEwaldRecipSelf, vers, use_cf, uind);
 }
 
 static void epolarChgpenEwald(int vers, int use_cf)

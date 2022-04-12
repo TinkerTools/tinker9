@@ -5,24 +5,24 @@
 #include "tool/externfunc.h"
 
 namespace tinker {
-TINKER_F2VOID(cu, 0, acc, 1, torque, int, grad_prec*, grad_prec*, grad_prec*);
+TINKER_FVOID2(cu, 0, acc, 1, torque, int, grad_prec*, grad_prec*, grad_prec*);
 void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz)
 {
-   TINKER_F2CALL(cu, 0, acc, 1, torque, vers, dx, dy, dz);
+   TINKER_FCALL2(cu, 0, acc, 1, torque, vers, dx, dy, dz);
 }
 }
 
 namespace tinker {
-TINKER_F2VOID(cu, 0, acc, 1, chkpole);
+TINKER_FVOID2(cu, 0, acc, 1, chkpole);
 static void chkpole()
 {
-   TINKER_F2CALL(cu, 0, acc, 1, chkpole);
+   TINKER_FCALL2(cu, 0, acc, 1, chkpole);
 }
 
-TINKER_F2VOID(cu, 0, acc, 1, rotpole);
+TINKER_FVOID2(cu, 0, acc, 1, rotpole);
 static void rotpole()
 {
-   TINKER_F2CALL(cu, 0, acc, 1, rotpole);
+   TINKER_FCALL2(cu, 0, acc, 1, rotpole);
 }
 
 void mpoleInit(int vers)

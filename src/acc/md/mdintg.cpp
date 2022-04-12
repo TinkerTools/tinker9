@@ -10,7 +10,7 @@
 #include <tinker/routines.h>
 
 namespace tinker {
-TINKER_F2VOID(cu, 1, acc, 0, mdrestRemovePbcMomentum, bool, vel_prec&, vel_prec&, vel_prec&);
+TINKER_FVOID2(cu, 1, acc, 0, mdrestRemovePbcMomentum, bool, vel_prec&, vel_prec&, vel_prec&);
 void mdrest_acc(int istep)
 {
    if (not mdstuf::dorest)
@@ -29,7 +29,7 @@ void mdrest_acc(int istep)
 #if TINKER_CUDART
    if (pltfm_config & Platform::CUDA) {
       bool copyout = inform::debug or not bound::use_bounds;
-      TINKER_F2CALL(cu, 1, acc, 0, mdrestRemovePbcMomentum, copyout, vtot1, vtot2, vtot3);
+      TINKER_FCALL2(cu, 1, acc, 0, mdrestRemovePbcMomentum, copyout, vtot1, vtot2, vtot3);
    } else
 #endif
    {
