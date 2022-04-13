@@ -1,15 +1,10 @@
+#include "ff/amoeba/induce.h"
 #include "ff/elec.h"
 #include "ff/hippo/induce.h"
 #include "ff/nblist.h"
 #include "tool/externfunc.h"
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, dfieldEwaldRecipSelf, real (*)[3]);
-static void dfieldAplusEwaldRecipSelf(real (*field)[3])
-{
-   TINKER_FCALL2(cu, 0, acc, 1, dfieldEwaldRecipSelf, field);
-}
-
 TINKER_FVOID2(cu, 1, acc, 1, dfieldAplusEwaldReal, real (*)[3]);
 static void dfieldAplusEwaldReal(real (*field)[3])
 {
@@ -18,7 +13,7 @@ static void dfieldAplusEwaldReal(real (*field)[3])
 
 static void dfieldAplusEwald(real (*field)[3])
 {
-   dfieldAplusEwaldRecipSelf(field);
+   dfieldEwaldRecipSelfP1(field);
    dfieldAplusEwaldReal(field);
 }
 }

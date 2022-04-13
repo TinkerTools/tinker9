@@ -8,6 +8,7 @@ namespace tinker {
 void dfield(real (*field)[3], real (*fieldp)[3]);
 void dfieldNonEwald(real (*field)[3], real (*fieldp)[3]);
 void dfieldEwald(real (*field)[3], real (*fieldp)[3]);
+void dfieldEwaldRecipSelfP1(real (*field)[3]);
 
 // mutual electrostatic field due to induced dipole moments
 // -Tu operator

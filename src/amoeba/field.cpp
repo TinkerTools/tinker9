@@ -1,6 +1,7 @@
 #include "ff/atom.h"
 #include "ff/elec.h"
 #include "ff/nblist.h"
+#include "ff/pme.h"
 #include "tool/externfunc.h"
 
 namespace tinker {
@@ -12,10 +13,29 @@ void dfieldNonEwald(real (*field)[3], real (*fieldp)[3])
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, dfieldEwaldRecipSelf, real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, dfieldEwaldRecipSelfP2, real (*)[3]);
+void dfieldEwaldRecipSelfP1(real (*field)[3])
+{
+   darray::zero(g::q0, n, field);
+
+   const PMEUnit pu = ppme_unit;
+   cmpToFmp(pu, cmp, fmp);
+   gridMpole(pu, fmp);
+   fftfront(pu);
+   if (vir_m)
+      pmeConv(pu, vir_m);
+   else
+      pmeConv(pu);
+   fftback(pu);
+   fphiMpole(pu);
+   fphiToCphi(pu, fphi, cphi);
+
+   TINKER_FCALL2(cu, 1, acc, 1, dfieldEwaldRecipSelfP2, field);
+}
+
 static void dfieldEwaldRecipSelf(real (*field)[3], real (*fieldp)[3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, dfieldEwaldRecipSelf, field);
+   dfieldEwaldRecipSelfP1(field);
    darray::copy(g::q0, n, fieldp, field);
 }
 
@@ -27,7 +47,7 @@ static void dfieldEwaldReal(real (*field)[3], real (*fieldp)[3])
 
 void dfieldEwald(real (*field)[3], real (*fieldp)[3])
 {
-   dfieldEwaldRecipSelf(field, fieldp);
+   dfieldEwaldRecipSelf(field, fieldp); // must be calculated before real space ewald
    dfieldEwaldReal(field, fieldp);
 }
 }

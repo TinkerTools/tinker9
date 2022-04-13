@@ -1055,3 +1055,27 @@ void pmeConv_cu(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
    }
 }
 }
+
+namespace tinker {
+__global__
+void rpoleToCmp_cu1(int n, real (*restrict cmp)[10], const real (*restrict rpole)[MPL_TOTAL])
+{
+   for (int i = ITHREAD; i < n; i += STRIDE) {
+      cmp[i][0] = rpole[i][MPL_PME_0];
+      cmp[i][1] = rpole[i][MPL_PME_X];
+      cmp[i][2] = rpole[i][MPL_PME_Y];
+      cmp[i][3] = rpole[i][MPL_PME_Z];
+      cmp[i][4] = rpole[i][MPL_PME_XX];
+      cmp[i][5] = rpole[i][MPL_PME_YY];
+      cmp[i][6] = rpole[i][MPL_PME_ZZ];
+      cmp[i][7] = 2 * rpole[i][MPL_PME_XY];
+      cmp[i][8] = 2 * rpole[i][MPL_PME_XZ];
+      cmp[i][9] = 2 * rpole[i][MPL_PME_YZ];
+   }
+}
+
+void rpoleToCmp_cu()
+{
+   launch_k1s(g::s0, n, rpoleToCmp_cu1, n, cmp, rpole);
+}
+}

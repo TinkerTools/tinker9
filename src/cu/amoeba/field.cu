@@ -8,6 +8,31 @@
 #include "seq/triangle.h"
 
 namespace tinker {
+__global__
+void dfieldEwaldRecipSelfP2_cu1(int n, real (*restrict field)[3], real term,
+   const real (*restrict rpole)[MPL_TOTAL], const real (*restrict cphi)[10])
+{
+   for (int i = ITHREAD; i < n; i += STRIDE) {
+      real dix = rpole[i][MPL_PME_X];
+      real diy = rpole[i][MPL_PME_Y];
+      real diz = rpole[i][MPL_PME_Z];
+      field[i][0] += (-cphi[i][1] + term * dix);
+      field[i][1] += (-cphi[i][2] + term * diy);
+      field[i][2] += (-cphi[i][3] + term * diz);
+   }
+}
+
+void dfieldEwaldRecipSelfP2_cu(real (*field)[3])
+{
+   const PMEUnit pu = ppme_unit;
+   const real aewald = pu->aewald;
+   const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
+
+   launch_k1s(g::s0, n, dfieldEwaldRecipSelfP2_cu1, n, field, term, rpole, cphi);
+}
+}
+
+namespace tinker {
 // ck.py Version 2.0.2
 template <class ETYP>
 __global__

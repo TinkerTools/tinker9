@@ -9,24 +9,11 @@
 
 namespace tinker {
 // see also subroutine udirect1 in induce.f
-void dfieldEwaldRecipSelf_acc(real (*field)[3])
+void dfieldEwaldRecipSelfP2_acc(real (*field)[3])
 {
-   darray::zero(g::q0, n, field);
-
    const PMEUnit pu = ppme_unit;
    const real aewald = pu->aewald;
    const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
-
-   cmpToFmp(pu, cmp, fmp);
-   gridMpole(pu, fmp);
-   fftfront(pu);
-   if (vir_m)
-      pmeConv(pu, vir_m);
-   else
-      pmeConv(pu);
-   fftback(pu);
-   fphiMpole(pu);
-   fphiToCphi(pu, fphi, cphi);
 
    #pragma acc parallel loop independent async deviceptr(field,cphi,rpole)
    for (int i = 0; i < n; ++i) {

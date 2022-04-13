@@ -325,10 +325,10 @@ void fphiUind2(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, rpoleToCmp);
+TINKER_FVOID2(cu, 1, acc, 1, rpoleToCmp);
 void rpoleToCmp()
 {
-   TINKER_FCALL2(cu, 0, acc, 1, rpoleToCmp);
+   TINKER_FCALL2(cu, 1, acc, 1, rpoleToCmp);
 }
 
 TINKER_FVOID2(cu, 0, acc, 1, cmpToFmp, PMEUnit, const real (*)[10], real (*)[10]);
