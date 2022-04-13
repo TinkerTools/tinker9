@@ -423,7 +423,7 @@ static void epolarChgpenEwaldRecipSelf_acc1(const real (*gpu_uind)[3])
    // recip and self torques
 
    real term = f * aewald * aewald * aewald * 4 / 3 / sqrtpi;
-   real fterm_term = -2 * f * aewald * aewald * aewald / 3 / sqrtpi;
+   real fterm = -2 * f * aewald * aewald * aewald / 3 / sqrtpi;
    #pragma acc parallel loop independent async\
                deviceptr(ep,nep,trqx,trqy,trqz,\
                rpole,cmp,gpu_uind,cphidp,pot)
@@ -453,9 +453,9 @@ static void epolarChgpenEwaldRecipSelf_acc1(const real (*gpu_uind)[3])
          tep2 += term * (diz * uix - dix * uiz);
          tep3 += term * (dix * uiy - diy * uix);
 
-         trqx[i] += tep1;
-         trqy[i] += tep2;
-         trqz[i] += tep3;
+         atomic_add(tep1, trqx, i);
+         atomic_add(tep2, trqy, i);
+         atomic_add(tep3, trqz, i);
 
          if CONSTEXPR (CFLX)
             atomic_add(cphidp[i][0], pot, i);
@@ -466,7 +466,7 @@ static void epolarChgpenEwaldRecipSelf_acc1(const real (*gpu_uind)[3])
          uiy = gpu_uind[i][1];
          uiz = gpu_uind[i][2];
          real uii = dix * uix + diy * uiy + diz * uiz;
-         atomic_add(fterm_term * uii, ep, offset);
+         atomic_add(fterm * uii, ep, offset);
       }
       if CONSTEXPR (do_a)
          atomic_add(1, nep, offset);

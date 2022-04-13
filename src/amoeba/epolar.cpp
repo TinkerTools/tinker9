@@ -528,10 +528,10 @@ static void epolarNonEwald(int vers)
       TINKER_FCALL2(cu, 1, acc, 1, epolarNonEwald, ver2, uind, uinp);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, epolarEwaldRecipSelf, int, const real (*)[3], const real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, epolarEwaldRecipSelf, int, const real (*)[3], const real (*)[3]);
 void epolarEwaldRecipSelf(int vers)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, epolarEwaldRecipSelf, vers, uind, uinp);
+   TINKER_FCALL2(cu, 1, acc, 1, epolarEwaldRecipSelf, vers, uind, uinp);
 }
 
 TINKER_FVOID2(cu, 1, acc, 1, epolarEwaldReal, int, const real (*)[3], const real (*)[3]);
