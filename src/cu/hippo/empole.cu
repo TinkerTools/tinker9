@@ -642,7 +642,7 @@ void empoleEwaldRecipGenericAddVirM_cu(
 
 template <bool do_e, bool do_g, bool do_v, int CFLX>
 __global__
-void empoleEwaldRecipGeneric_cu1(int n, size_t bufsize, real f,                  //
+void empoleEwaldRecipGeneric_cu1(int n, real f,                                  //
    EnergyBuffer restrict em, VirialBuffer restrict vir_em,                       //
    grad_prec* restrict demx, grad_prec* restrict demy, grad_prec* restrict demz, //
    real* restrict trqx, real* restrict trqy, real* restrict trqz,                //
@@ -651,12 +651,12 @@ void empoleEwaldRecipGeneric_cu1(int n, size_t bufsize, real f,                 
    const real (*restrict cphi)[10], const real (*restrict fphi)[20],             //
    int nfft1, int nfft2, int nfft3, TINKER_IMAGE_PARAMS)
 {
-   for (int i = ITHREAD; i < n; i += STRIDE) {
+   int ithread = ITHREAD;
+   for (int i = ithread; i < n; i += STRIDE) {
       constexpr int deriv1[] = {2, 5, 8, 9, 11, 16, 18, 14, 15, 20};
       constexpr int deriv2[] = {3, 8, 6, 10, 14, 12, 19, 16, 20, 17};
       constexpr int deriv3[] = {4, 9, 10, 7, 15, 17, 13, 20, 18, 19};
 
-      int offset = i & (bufsize - 1);
       real e = 0;
       real f1 = 0;
       real f2 = 0;
@@ -675,7 +675,7 @@ void empoleEwaldRecipGeneric_cu1(int n, size_t bufsize, real f,                 
       // increment the permanent multipole energy and gradient
 
       if CONSTEXPR (do_e)
-         atomic_add(0.5f * e * f, em, offset);
+         atomic_add(0.5f * e * f, em, ithread);
 
       if CONSTEXPR (do_g) {
          f1 *= nfft1;
@@ -732,7 +732,7 @@ void empoleEwaldRecipGeneric_cu1(int n, size_t bufsize, real f,                 
             vyz *= f;
             vzz *= f;
 
-            atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, offset);
+            atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_em, ithread);
          } // end if (do_v)
          if CONSTEXPR (CFLX) {
             atomic_add(f * cphi[i][0], pot, i);
@@ -747,8 +747,6 @@ static void empoleEwaldRecipGeneric_cu()
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
-
-   auto bufsize = bufferSize();
 
    const PMEUnit pu = epme_unit;
    cmpToFmp(pu, cmp, fmp);
@@ -775,14 +773,9 @@ static void empoleEwaldRecipGeneric_cu()
    const int nfft3 = st.nfft3;
    const real f = electric / dielec;
 
-   launch_k1s(g::s0, n, empoleEwaldRecipGeneric_cu1<do_e, do_g, do_v, CFLX>, //
-      n, bufsize, f,                                                         //
-      em, vir_em,                                                            //
-      demx, demy, demz,                                                      //
-      trqx, trqy, trqz,                                                      //
-      pot,                                                                   //
-      cmp, fmp,                                                              //
-      cphi, fphi,                                                            //
+   launch_k1b(g::s0, n, empoleEwaldRecipGeneric_cu1<do_e, do_g, do_v, CFLX>, //
+      n, f, em, vir_em, demx, demy, demz, trqx, trqy, trqz, pot,             //
+      cmp, fmp, cphi, fphi,                                                  //
       nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS);
 }
 
