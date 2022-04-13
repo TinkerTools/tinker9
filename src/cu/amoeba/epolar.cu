@@ -9,6 +9,27 @@
 #include "seq/triangle.h"
 
 namespace tinker {
+__global__
+void epolar0DotProd_cu1(int n, real f, EnergyBuffer restrict ep, const real (*restrict gpu_uind)[3],
+   const real (*restrict gpu_udirp)[3], const real* restrict polarity_inv)
+{
+   int ithread = ITHREAD;
+   for (int i = ithread; i < n; i += STRIDE) {
+      real e = polarity_inv[i] *
+         (gpu_uind[i][0] * gpu_udirp[i][0] + gpu_uind[i][1] * gpu_udirp[i][1] +
+            gpu_uind[i][2] * gpu_udirp[i][2]);
+      atomic_add(f * e, ep, ithread);
+   }
+}
+
+void epolar0DotProd_cu(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
+{
+   const real f = -0.5 * electric / dielec;
+   launch_k1b(g::s0, n, epolar0DotProd_cu1, n, f, ep, gpu_uind, gpu_udirp, polarity_inv);
+}
+}
+
+namespace tinker {
 // ck.py Version 2.0.2
 template <class Ver, class ETYP>
 __global__

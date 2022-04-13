@@ -1,7 +1,6 @@
 set (__T9_ACC_SRC
 amoeba/empoleewald.cpp
 amoeba/empolenonewald.cpp
-amoeba/epolardot.cpp
 amoeba/epolarewald.cpp
 amoeba/epolarnonewald.cpp
 amoeba/fieldewald.cpp

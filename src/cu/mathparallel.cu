@@ -145,4 +145,24 @@ void dotProd_cu<double>(double* ans, const double* a, const double* b, size_t ne
 // #else
 //    check_rt(cublasSdot(hd, nelem, a, 1, b, 1, ans));
 // #endif
+
+template <class T>
+__global__
+void scaleArray_cu1(T* dst, T scal, size_t nelem)
+{
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < nelem; i += blockDim.x * gridDim.x) {
+      dst[i] *= scal;
+   }
+}
+
+template <class T>
+void scaleArray_cu(T* dst, T scal, size_t nelem, int queue)
+{
+   cudaStream_t st = queue == g::q1 ? g::s1 : g::s0;
+   int gs = (nelem + BLOCK_DIM - 1) / BLOCK_DIM;
+   auto ker = scaleArray_cu1<T>;
+   ker<<<gs, BLOCK_DIM, 0, st>>>(dst, scal, nelem);
+}
+template void scaleArray_cu(float*, float, size_t, int);
+template void scaleArray_cu(double*, double, size_t, int);
 }

@@ -101,7 +101,7 @@ void dotProd(T* ans, const T* a, const T* b, size_t nelem, int queue)
 template <class T>
 void scaleArray(T* dst, T scal, size_t nelem, int queue)
 {
-   // TINKER_FVOID2(cu, 0, acc, 1, scaleArray, T*, T, size_t, int);
-   TINKER_FCALL2(cu, 0, acc, 1, scaleArray, dst, scal, nelem, queue);
+   // TINKER_FVOID2(cu, 1, acc, 1, scaleArray, T*, T, size_t, int);
+   TINKER_FCALL2(cu, 1, acc, 1, scaleArray, dst, scal, nelem, queue);
 }
 }

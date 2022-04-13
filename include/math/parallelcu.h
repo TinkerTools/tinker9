@@ -16,4 +16,7 @@ void reduceSum2OnDevice_cu(HT (&)[HN], DPTR, size_t, int);
 
 template <class T>
 void dotProd_cu(T* ans, const T* a, const T* b, size_t nelem, int queue);
+
+template <class T>
+void scaleArray_cu(T* dst, T scal, size_t nelem, int queue);
 }

@@ -640,9 +640,9 @@ void epolar(int vers)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, epolar0DotProd, const real (*)[3], const real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, epolar0DotProd, const real (*)[3], const real (*)[3]);
 void epolar0DotProd(const real (*uind)[3], const real (*udirp)[3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, epolar0DotProd, uind, udirp);
+   TINKER_FCALL2(cu, 1, acc, 1, epolar0DotProd, uind, udirp);
 }
 }
