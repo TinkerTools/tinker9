@@ -13,16 +13,16 @@ void torque(int vers, grad_prec* dx, grad_prec* dy, grad_prec* dz)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, chkpole);
+TINKER_FVOID2(cu, 1, acc, 1, chkpole);
 static void chkpole()
 {
-   TINKER_FCALL2(cu, 0, acc, 1, chkpole);
+   TINKER_FCALL2(cu, 1, acc, 1, chkpole);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, rotpole);
+TINKER_FVOID2(cu, 1, acc, 1, rotpole);
 static void rotpole()
 {
-   TINKER_FCALL2(cu, 0, acc, 1, rotpole);
+   TINKER_FCALL2(cu, 1, acc, 1, rotpole);
 }
 
 void mpoleInit(int vers)
