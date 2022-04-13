@@ -337,12 +337,12 @@ void cmpToFmp(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
    TINKER_FCALL2(cu, 1, acc, 1, cmpToFmp, pme_u, cmp, fmp);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, cuindToFuind, PMEUnit, const real (*)[3], const real (*)[3],
+TINKER_FVOID2(cu, 1, acc, 1, cuindToFuind, PMEUnit, const real (*)[3], const real (*)[3],
    real (*)[3], real (*)[3]);
 void cuindToFuind(
    PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3], real (*fuind)[3], real (*fuinp)[3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, cuindToFuind, pme_u, cind, cinp, fuind, fuinp);
+   TINKER_FCALL2(cu, 1, acc, 1, cuindToFuind, pme_u, cind, cinp, fuind, fuinp);
 }
 
 TINKER_FVOID2(cu, 1, acc, 1, fphiToCphi, PMEUnit, const real (*)[20], real (*)[10]);

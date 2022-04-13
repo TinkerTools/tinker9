@@ -841,8 +841,8 @@ void cmpToFmp_acc(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
    }
 }
 
-void cuindToFuind_acc(
-   PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3], real (*fuind)[3], real (*fuinp)[3])
+void cuindToFuind_acc(PMEUnit pme_u, const real (*cind)[3], const real (*cinp)[3], //
+   real (*fuind)[3], real (*fuinp)[3])
 {
    auto& st = *pme_u;
    int nfft1 = st.nfft1;
