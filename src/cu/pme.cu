@@ -1078,4 +1078,216 @@ void rpoleToCmp_cu()
 {
    launch_k1s(g::s0, n, rpoleToCmp_cu1, n, cmp, rpole);
 }
+
+__global__
+void cmpToFmp_cu1(int n, const real (*restrict cmp)[10], real (*restrict fmp)[10], int nfft1,
+   int nfft2, int nfft3, TINKER_IMAGE_PARAMS)
+{
+   for (int iatom = ITHREAD; iatom < n; iatom += STRIDE) {
+      real a[3][3];
+      // see also subroutine cart_to_frac in pmestuf.f
+      // set the reciprocal vector transformation matrix
+      a[0][0] = nfft1 * recipa.x;
+      a[0][1] = nfft2 * recipb.x;
+      a[0][2] = nfft3 * recipc.x;
+      a[1][0] = nfft1 * recipa.y;
+      a[1][1] = nfft2 * recipb.y;
+      a[1][2] = nfft3 * recipc.y;
+      a[2][0] = nfft1 * recipa.z;
+      a[2][1] = nfft2 * recipb.z;
+      a[2][2] = nfft3 * recipc.z;
+
+      // data qi1  / 1, 2, 3, 1, 1, 2 /
+      // data qi2  / 1, 2, 3, 2, 3, 3 /
+      constexpr int qi1[] = {0, 1, 2, 0, 0, 1};
+      constexpr int qi2[] = {0, 1, 2, 1, 2, 2};
+      real ctf6[6][6];
+      // get the Cartesian to fractional conversion matrix
+      #pragma unroll 1
+      for (int i1 = 0; i1 < 3; ++i1) {
+         int k = qi1[i1];
+         #pragma unroll 1
+         for (int i2 = 0; i2 < 6; ++i2) {
+            int i = qi1[i2];
+            int j = qi2[i2];
+            ctf6[i2][i1] = a[i][k] * a[j][k];
+         }
+      }
+      #pragma unroll 1
+      for (int i1 = 3; i1 < 6; ++i1) {
+         int k = qi1[i1];
+         int m = qi2[i1];
+         #pragma unroll 1
+         for (int i2 = 0; i2 < 6; ++i2) {
+            int i = qi1[i2];
+            int j = qi2[i2];
+            ctf6[i2][i1] = a[i][k] * a[j][m] + a[j][k] * a[i][m];
+         }
+      }
+
+      // apply the transformation to get the fractional multipoles
+      real cmpi[10], fmpi[10];
+      cmpi[0] = cmp[iatom][0];
+      cmpi[1] = cmp[iatom][1];
+      cmpi[2] = cmp[iatom][2];
+      cmpi[3] = cmp[iatom][3];
+      cmpi[4] = cmp[iatom][4];
+      cmpi[5] = cmp[iatom][5];
+      cmpi[6] = cmp[iatom][6];
+      cmpi[7] = cmp[iatom][7];
+      cmpi[8] = cmp[iatom][8];
+      cmpi[9] = cmp[iatom][9];
+
+      fmpi[0] = cmpi[0];
+      #pragma unroll 1
+      for (int j = 1; j < 4; ++j) {
+         fmpi[j] = 0;
+         #pragma unroll 1
+         for (int k = 1; k < 4; ++k) {
+            fmpi[j] += a[k - 1][j - 1] * cmpi[k];
+         }
+      }
+      #pragma unroll 1
+      for (int j = 4; j < 10; ++j) {
+         fmpi[j] = 0;
+         #pragma unroll 1
+         for (int k = 4; k < 10; ++k) {
+            fmpi[j] += ctf6[k - 4][j - 4] * cmpi[k];
+         }
+      }
+
+      fmp[iatom][0] = fmpi[0];
+      fmp[iatom][1] = fmpi[1];
+      fmp[iatom][2] = fmpi[2];
+      fmp[iatom][3] = fmpi[3];
+      fmp[iatom][4] = fmpi[4];
+      fmp[iatom][5] = fmpi[5];
+      fmp[iatom][6] = fmpi[6];
+      fmp[iatom][7] = fmpi[7];
+      fmp[iatom][8] = fmpi[8];
+      fmp[iatom][9] = fmpi[9];
+   }
+}
+
+void cmpToFmp_cu(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
+{
+   auto& st = *pme_u;
+   int nfft1 = st.nfft1;
+   int nfft2 = st.nfft2;
+   int nfft3 = st.nfft3;
+
+   launch_k1s(g::s0, n, cmpToFmp_cu1, n, cmp, fmp, nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS);
+}
+
+__global__
+void fphiToCphi_cu1(int n, const real (*fphi)[20], real (*cphi)[10], int nfft1, int nfft2,
+   int nfft3, TINKER_IMAGE_PARAMS)
+{
+   for (int iatom = ITHREAD; iatom < n; iatom += STRIDE) {
+      real a[3][3];
+      // see also subroutine frac_to_cart in pmestuf.f
+      // set the reciprocal vector transformation matrix
+      a[0][0] = nfft1 * recipa.x;
+      a[1][0] = nfft2 * recipb.x;
+      a[2][0] = nfft3 * recipc.x;
+      a[0][1] = nfft1 * recipa.y;
+      a[1][1] = nfft2 * recipb.y;
+      a[2][1] = nfft3 * recipc.y;
+      a[0][2] = nfft1 * recipa.z;
+      a[1][2] = nfft2 * recipb.z;
+      a[2][2] = nfft3 * recipc.z;
+
+      // data qi1  / 1, 2, 3, 1, 1, 2 /
+      // data qi2  / 1, 2, 3, 2, 3, 3 /
+      constexpr int qi1[] = {0, 1, 2, 0, 0, 1};
+      constexpr int qi2[] = {0, 1, 2, 1, 2, 2};
+
+      real ftc6[6][6];
+      // get the fractional to Cartesian conversion matrix
+      #pragma unroll 1
+      for (int i1 = 0; i1 < 3; ++i1) {
+         int k = qi1[i1];
+         #pragma unroll 1
+         for (int i2 = 0; i2 < 3; ++i2) {
+            int i = qi1[i2];
+            ftc6[i2][i1] = a[i][k] * a[i][k];
+         }
+         #pragma unroll 1
+         for (int i2 = 3; i2 < 6; ++i2) {
+            int i = qi1[i2];
+            int j = qi2[i2];
+            ftc6[i2][i1] = 2 * a[i][k] * a[j][k];
+         }
+      }
+
+      #pragma unroll 1
+      for (int i1 = 3; i1 < 6; ++i1) {
+         int k = qi1[i1];
+         int m = qi2[i1];
+         #pragma unroll 1
+         for (int i2 = 0; i2 < 3; ++i2) {
+            int i = qi1[i2];
+            ftc6[i2][i1] = a[i][k] * a[i][m];
+         }
+         #pragma unroll 1
+         for (int i2 = 3; i2 < 6; ++i2) {
+            int i = qi1[i2];
+            int j = qi2[i2];
+            ftc6[i2][i1] = a[i][k] * a[j][m] + a[i][m] * a[j][k];
+         }
+      }
+
+      // apply the transformation to get the Cartesian potential
+      real fphii[10], cphii[10];
+      fphii[0] = fphi[iatom][0];
+      fphii[1] = fphi[iatom][1];
+      fphii[2] = fphi[iatom][2];
+      fphii[3] = fphi[iatom][3];
+      fphii[4] = fphi[iatom][4];
+      fphii[5] = fphi[iatom][5];
+      fphii[6] = fphi[iatom][6];
+      fphii[7] = fphi[iatom][7];
+      fphii[8] = fphi[iatom][8];
+      fphii[9] = fphi[iatom][9];
+
+      cphii[0] = fphii[0];
+      #pragma unroll 1
+      for (int j = 1; j < 4; ++j) {
+         cphii[j] = 0;
+         #pragma unroll 1
+         for (int k = 1; k < 4; ++k) {
+            cphii[j] += a[k - 1][j - 1] * fphii[k];
+         }
+      }
+      #pragma unroll 1
+      for (int j = 4; j < 10; ++j) {
+         cphii[j] = 0;
+         #pragma unroll 1
+         for (int k = 4; k < 10; ++k) {
+            cphii[j] += ftc6[k - 4][j - 4] * fphii[k];
+         }
+      }
+
+      cphi[iatom][0] = cphii[0];
+      cphi[iatom][1] = cphii[1];
+      cphi[iatom][2] = cphii[2];
+      cphi[iatom][3] = cphii[3];
+      cphi[iatom][4] = cphii[4];
+      cphi[iatom][5] = cphii[5];
+      cphi[iatom][6] = cphii[6];
+      cphi[iatom][7] = cphii[7];
+      cphi[iatom][8] = cphii[8];
+      cphi[iatom][9] = cphii[9];
+   }
+}
+
+void fphiToCphi_cu(PMEUnit pme_u, const real (*fphi)[20], real (*cphi)[10])
+{
+   auto& st = *pme_u;
+   int nfft1 = st.nfft1;
+   int nfft2 = st.nfft2;
+   int nfft3 = st.nfft3;
+
+   launch_k1s(g::s0, n, fphiToCphi_cu1, n, fphi, cphi, nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS);
+}
 }
