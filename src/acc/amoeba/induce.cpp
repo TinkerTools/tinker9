@@ -444,41 +444,9 @@ void sparsePrecondApply_acc(
    }
 }
 
-void ulspredSave_acc(const real (*restrict uind)[3], const real (*restrict uinp)[3])
+void ulspredSaveP1_acc(real (*ud)[3], real (*up)[3], const real (*uind)[3], const real (*uinp)[3])
 {
-   if (polpred == UPred::NONE)
-      return;
-
-   // clang-format off
-   real(*ud)[3];
-   real(*up)[3];
-   int pos = nualt % maxualt;
-   switch (pos) {
-      case  0: ud = udalt_00; up = upalt_00; break;
-      case  1: ud = udalt_01; up = upalt_01; break;
-      case  2: ud = udalt_02; up = upalt_02; break;
-      case  3: ud = udalt_03; up = upalt_03; break;
-      case  4: ud = udalt_04; up = upalt_04; break;
-      case  5: ud = udalt_05; up = upalt_05; break;
-      case  6: ud = udalt_06; up = upalt_06; break;
-      case  7: ud = udalt_07; up = upalt_07; break;
-      case  8: ud = udalt_08; up = upalt_08; break;
-      case  9: ud = udalt_09; up = upalt_09; break;
-      case 10: ud = udalt_10; up = upalt_10; break;
-      case 11: ud = udalt_11; up = upalt_11; break;
-      case 12: ud = udalt_12; up = upalt_12; break;
-      case 13: ud = udalt_13; up = upalt_13; break;
-      case 14: ud = udalt_14; up = upalt_14; break;
-      case 15: ud = udalt_15; up = upalt_15; break;
-      default: ud =  nullptr; up =  nullptr; break;
-   }
-   nualt = nualt + 1;
-   // clang-format on
-   if (nualt > 2 * maxualt)
-      nualt = nualt - maxualt;
-
-   #pragma acc parallel loop independent async\
-               deviceptr(uind,uinp,ud,up)
+   #pragma acc parallel loop independent async deviceptr(uind,uinp,ud,up)
    for (int i = 0; i < n; ++i) {
       ud[i][0] = uind[i][0];
       ud[i][1] = uind[i][1];

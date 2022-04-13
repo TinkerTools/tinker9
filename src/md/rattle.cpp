@@ -477,12 +477,12 @@ void rattleData(RcOp op)
 
 namespace tinker {
 TINKER_FVOID2(cu, 0, acc, 1, rattle, time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-TINKER_FVOID2(
-   cu, 0, acc, 1, rattleSettle, time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-TINKER_FVOID2(
-   cu, 0, acc, 1, rattleCH, time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-TINKER_FVOID2(
-   cu, 1, acc, 0, rattleMethyl, time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+TINKER_FVOID2(cu, 0, acc, 1, rattleSettle, time_prec, //
+   const pos_prec*, const pos_prec*, const pos_prec*);
+TINKER_FVOID2(cu, 0, acc, 1, rattleCH, time_prec, //
+   const pos_prec*, const pos_prec*, const pos_prec*);
+TINKER_FVOID2(cu, 1, acc, 0, rattleMethyl, time_prec, //
+   const pos_prec*, const pos_prec*, const pos_prec*);
 void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
    TINKER_FCALL2(cu, 0, acc, 1, rattleSettle, dt, xold, yold, zold);

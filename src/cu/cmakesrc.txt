@@ -6,6 +6,7 @@ amoeba/field.cu
 amoeba/pcg.cu
 amoeba/precond.cu
 amoeba/rotpole.cu
+amoeba/upred.cu
 aplus/echgtrn.cu
 aplus/empole.cu
 aplus/epolar.cu
