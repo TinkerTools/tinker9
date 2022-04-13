@@ -67,10 +67,10 @@ static void empoleChgpenEwaldRealSelf(int vers, int use_cf)
    TINKER_FCALL2(cu, 1, acc, 1, empoleChgpenEwaldRealSelf, vers, use_cf);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, empoleChgpenEwaldRecip, int, int);
+TINKER_FVOID2(cu, 1, acc, 1, empoleChgpenEwaldRecip, int, int);
 void empoleChgpenEwaldRecip(int vers, int use_cf)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, empoleChgpenEwaldRecip, vers, use_cf);
+   TINKER_FCALL2(cu, 1, acc, 1, empoleChgpenEwaldRecip, vers, use_cf);
 }
 
 static void empoleChgpenEwald(int vers, int use_cf)

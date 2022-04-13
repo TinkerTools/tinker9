@@ -262,7 +262,7 @@ static void empoleChgpen_acc1()
 }
 
 template <class Ver, int CFLX>
-void empoleEwaldRecipGeneric_acc()
+static void empoleEwaldRecipGeneric_acc()
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
