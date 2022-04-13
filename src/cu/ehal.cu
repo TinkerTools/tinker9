@@ -47,9 +47,9 @@ void ehalResolveGradient_cu1(int n, const int* restrict ired, const real* restri
          atomic_add(gry, devy, ii);
          atomic_add(grz, devz, ii);
       } else {
-         auto fx = toFltGrad<real>(grx);
-         auto fy = toFltGrad<real>(gry);
-         auto fz = toFltGrad<real>(grz);
+         auto fx = toFloatGrad<real>(grx);
+         auto fy = toFloatGrad<real>(gry);
+         auto fz = toFloatGrad<real>(grz);
          auto redii = kred[ii];
          auto rediv = 1 - redii;
          atomic_add(fx * redii, devx, ii);

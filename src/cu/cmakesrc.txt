@@ -18,6 +18,7 @@ compilers.cu
 cudalib.cu
 echarge.cu
 echglj.cu
+egvop.cu
 ehal.cu
 elj.cu
 evalence.cu

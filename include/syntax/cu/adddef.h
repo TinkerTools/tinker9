@@ -99,21 +99,21 @@ inline T fixedTo(fixed val)
 /// \brief Converts a gradient to a floating-point value.
 template <class T>
 __device__
-inline T toFltGrad(fixed g)
+inline T toFloatGrad(fixed g)
 {
    return fixedTo<T>(g);
 }
 
 template <class T>
 __device__
-inline T toFltGrad(double g)
+inline T toFloatGrad(double g)
 {
    return g;
 }
 
 template <class T>
 __device__
-inline T toFltGrad(float g)
+inline T toFloatGrad(float g)
 {
    return g;
 }

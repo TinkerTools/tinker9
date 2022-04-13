@@ -27,7 +27,7 @@ void scaleGradient_acc(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* 
 #endif
 }
 
-void sumGradient_acc(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
+void sumGradientV1_acc(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_prec* g1x,
    const grad_prec* g1y, const grad_prec* g1z)
 {
    #pragma acc parallel loop independent async\
@@ -39,7 +39,7 @@ void sumGradient_acc(grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const grad_
    }
 }
 
-void sumGradient_acc(double ss, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
+void sumGradientV2_acc(double ss, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z,
    const grad_prec* g1x, const grad_prec* g1y, const grad_prec* g1z)
 {
    real s = ss;
