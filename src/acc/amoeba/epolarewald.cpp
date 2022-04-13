@@ -368,41 +368,41 @@ static void epolarEwaldRecipSelf_acc1(const real (*gpu_uind)[3], const real (*gp
 
    // increment the dipole polarization gradient contributions
 
-   #pragma acc parallel loop independent async deviceptr(depx,depy,depz,\
+   if CONSTEXPR (do_g) {
+      #pragma acc parallel loop independent async deviceptr(depx,depy,depz,\
                fmp,fphi,fuind,fuinp,fphid,fphip,fphidp)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)
-   for (int i = 0; i < n; ++i) {
-      // data deriv1  / 2, 5,  8,  9, 11, 16, 18, 14, 15, 20 /
-      // data deriv2  / 3, 8,  6, 10, 14, 12, 19, 16, 20, 17 /
-      // data deriv3  / 4, 9, 10,  7, 15, 17, 13, 20, 18, 19 /
-      constexpr int deriv1[10] = {1, 4, 7, 8, 10, 15, 17, 13, 14, 19};
-      constexpr int deriv2[10] = {2, 7, 5, 9, 13, 11, 18, 15, 19, 16};
-      constexpr int deriv3[10] = {3, 8, 9, 6, 14, 16, 12, 19, 17, 18};
+      for (int i = 0; i < n; ++i) {
+         // data deriv1  / 2, 5,  8,  9, 11, 16, 18, 14, 15, 20 /
+         // data deriv2  / 3, 8,  6, 10, 14, 12, 19, 16, 20, 17 /
+         // data deriv3  / 4, 9, 10,  7, 15, 17, 13, 20, 18, 19 /
+         constexpr int deriv1[10] = {1, 4, 7, 8, 10, 15, 17, 13, 14, 19};
+         constexpr int deriv2[10] = {2, 7, 5, 9, 13, 11, 18, 15, 19, 16};
+         constexpr int deriv3[10] = {3, 8, 9, 6, 14, 16, 12, 19, 17, 18};
 
-      real f1 = 0;
-      real f2 = 0;
-      real f3 = 0;
-      #pragma acc loop seq
-      for (int k = 0; k < 3; ++k) {
-         int j1 = deriv1[k + 1];
-         int j2 = deriv2[k + 1];
-         int j3 = deriv3[k + 1];
-         f1 += (fuind[i][k] + fuinp[i][k]) * fphi[i][j1];
-         f2 += (fuind[i][k] + fuinp[i][k]) * fphi[i][j2];
-         f3 += (fuind[i][k] + fuinp[i][k]) * fphi[i][j3];
-         // if poltyp .eq. 'MUTUAL'
-         f1 += fuind[i][k] * fphip[i][j1] + fuinp[i][k] * fphid[i][j1];
-         f2 += fuind[i][k] * fphip[i][j2] + fuinp[i][k] * fphid[i][j2];
-         f3 += fuind[i][k] * fphip[i][j3] + fuinp[i][k] * fphid[i][j3];
-         // end if
-      }
-      #pragma acc loop seq
-      for (int k = 0; k < 10; ++k) {
-         f1 += fmp[i][k] * fphidp[i][deriv1[k]];
-         f2 += fmp[i][k] * fphidp[i][deriv2[k]];
-         f3 += fmp[i][k] * fphidp[i][deriv3[k]];
-      }
-      if CONSTEXPR (do_g) {
+         real f1 = 0;
+         real f2 = 0;
+         real f3 = 0;
+         #pragma acc loop seq
+         for (int k = 0; k < 3; ++k) {
+            int j1 = deriv1[k + 1];
+            int j2 = deriv2[k + 1];
+            int j3 = deriv3[k + 1];
+            f1 += (fuind[i][k] + fuinp[i][k]) * fphi[i][j1];
+            f2 += (fuind[i][k] + fuinp[i][k]) * fphi[i][j2];
+            f3 += (fuind[i][k] + fuinp[i][k]) * fphi[i][j3];
+            // if poltyp .eq. 'MUTUAL'
+            f1 += fuind[i][k] * fphip[i][j1] + fuinp[i][k] * fphid[i][j1];
+            f2 += fuind[i][k] * fphip[i][j2] + fuinp[i][k] * fphid[i][j2];
+            f3 += fuind[i][k] * fphip[i][j3] + fuinp[i][k] * fphid[i][j3];
+            // end if
+         }
+         #pragma acc loop seq
+         for (int k = 0; k < 10; ++k) {
+            f1 += fmp[i][k] * fphidp[i][deriv1[k]];
+            f2 += fmp[i][k] * fphidp[i][deriv2[k]];
+            f3 += fmp[i][k] * fphidp[i][deriv3[k]];
+         }
          f1 *= 0.5f * nfft1;
          f2 *= 0.5f * nfft2;
          f3 *= 0.5f * nfft3;
@@ -412,8 +412,8 @@ static void epolarEwaldRecipSelf_acc1(const real (*gpu_uind)[3], const real (*gp
          atomic_add(h1 * f, depx, i);
          atomic_add(h2 * f, depy, i);
          atomic_add(h3 * f, depz, i);
-      }
-   } // end for (int i)
+      } // end for (int i)
+   }
 
    // set the potential to be the induced dipole average
 
