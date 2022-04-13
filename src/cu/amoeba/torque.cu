@@ -1,26 +1,17 @@
-#include "seq/torque.h"
 #include "ff/amoebamod.h"
-#include "ff/atom.h"
 #include "math/libfunc.h"
 #include "seq/add.h"
+#include "seq/launch.h"
+#include "seq/torque.h"
 
 namespace tinker {
-// This commit `09beaa8b0215913c1b658b0b2d8ecdf97bda8c15` had a weird segfault
-// in the OpenACC torque kernel. Running this command will show the segfault
-// \code
-// GPU_PACKAGE=OPENACC PGI_ACC_NOTIFY=31 PGI_ACC_DEBUG=1 ./all.tests local-frame-3,nacl-2 -d yes -a
-// \endcode
-//
-// This kernel has a lot of float[3] arrays private to each thread, and the PGI
-// compiler decided not to use the "local memory" for two of them, ws[3] and
-// vs[3], which resulted in 24 bytes memory copyin at the beginning and copyout
-// at the end of the routine. When I have rewritten the torque kernel to force
-// everything in the "local memory", the segfault would disappear.
 template <bool DO_V>
-static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad_prec* gz)
+__global__
+void torque_cu1(int n, VirialBuffer restrict gpu_vir, //
+   grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, const real* restrict x,
+   const real* restrict y, const real* restrict z, const LocalFrame* restrict zaxis,
+   const real* restrict trqx, const real* restrict trqy, const real* restrict trqz)
 {
-   auto bufsize = bufferSize();
-
    real trq[3], frcz[3], frcx[3], frcy[3];
    real deia[3], deib[3], deic[3], deid[3];
    real u[3], v[3], w[3];
@@ -31,14 +22,9 @@ static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad
    real r[3], s[3], ur[3], us[3], vs[3], ws[3], t1[3], t2[3];
    // 3 fold
    real p[3], del[3], eps[3];
-   #pragma acc parallel loop independent async private(\
-               trq[3],frcz[3],frcx[3],frcy[3],\
-               deia[3],deib[3],deic[3],deid[3],\
-               u[3],v[3],w[3],uv[3],uw[3],vw[3],\
-               r[3],s[3],ur[3],us[3],vs[3],ws[3],t1[3],t2[3],\
-               p[3],del[3],eps[3])\
-               deviceptr(x,y,z,gx,gy,gz,zaxis,trqx,trqy,trqz,gpu_vir)
-   for (int i = 0; i < n; ++i) {
+
+   int ithread = ITHREAD;
+   for (int i = ithread; i < n; i += STRIDE) {
       auto axetyp = zaxis[i].polaxe;
       if (axetyp == LFRM_NONE)
          continue;
@@ -125,7 +111,6 @@ static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad
          real uvsin1 = REAL_RSQRT(1 - uvcos * uvcos);
 
          if (axetyp == LFRM_Z_ONLY) {
-            #pragma acc loop seq
             for (int j = 0; j < 3; ++j) {
                real du = uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
                deia[j] += du;
@@ -135,7 +120,6 @@ static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad
                }
             }
          } else if (axetyp == LFRM_Z_THEN_X) {
-            #pragma acc loop seq
             for (int j = 0; j < 3; ++j) {
                real du = uv[j] * dphidv * usiz1 * uvsin1 + uw[j] * dphidw * usiz1;
                real dv = -uv[j] * dphidu * vsiz1 * uvsin1;
@@ -154,7 +138,6 @@ static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad
             vwsiz1 = REAL_RSQRT(torqueDot(vw, vw));
             torqueNormal(vw, vwsiz1);
 
-            #pragma acc loop seq
             for (int j = 0; j < 3; ++j) {
                real du = uv[j] * dphidv * usiz1 * uvsin1 + 0.5f * uw[j] * dphidw * usiz1;
                real dv = -uv[j] * dphidu * vsiz1 * uvsin1 + 0.5f * vw[j] * dphidw * vsiz1;
@@ -237,7 +220,6 @@ static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad
          real dphidr = -torqueDot(trq, r);
          real dphids = -torqueDot(trq, s);
 
-         #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
             real du = ur[j] * dphidr * usiz1 * ursin1 + us[j] * dphids * usiz1;
             real dv = (vssin * s[j] - vscos * t1[j]) * dphidu * vsiz1 * _1_ut1sin_ut2sin;
@@ -281,7 +263,6 @@ static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad
          torqueNormal(del, delsiz1);
          dphiddel = -torqueDot(trq, del);
          torqueCross(eps, del, w);
-         #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
             real dw = del[j] * dphidr * wsiz1 * rwsin1 + eps[j] * dphiddel * wpcos * wsiz1 * psiz1;
             deid[j] += dw;
@@ -304,7 +285,6 @@ static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad
          torqueNormal(del, delsiz1);
          dphiddel = -torqueDot(trq, del);
          torqueCross(eps, del, u);
-         #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
             real du = del[j] * dphidr * usiz1 * rusin1 + eps[j] * dphiddel * upcos * usiz1 * psiz1;
             deia[j] += du;
@@ -327,7 +307,6 @@ static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad
          torqueNormal(del, delsiz1);
          dphiddel = -torqueDot(trq, del);
          torqueCross(eps, del, v);
-         #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
             real dv = del[j] * dphidr * vsiz1 * rvsin1 + eps[j] * dphiddel * vpcos * vsiz1 * psiz1;
             deic[j] += dv;
@@ -385,16 +364,23 @@ static void torque_acc1(VirialBuffer gpu_vir, grad_prec* gx, grad_prec* gy, grad
                yiz * frcz[2]);
          real vzz = zix * frcx[2] + ziy * frcy[2] + ziz * frcz[2];
 
-         atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir, i & (bufsize - 1));
+         atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, gpu_vir, ithread);
       } // end if CONSTEXPR (DO_V)
-   }    // end for (int i)
+   }
 }
 
-void torque_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz)
+void torque_cu(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz)
 {
-   if (vers & calc::virial)
-      torque_acc1<true>(vir_trq, gx, gy, gz);
-   else if (vers & calc::grad)
-      torque_acc1<false>(nullptr, gx, gy, gz);
+   if (vers & calc::virial) {
+      auto ker = torque_cu1<true>;
+      launch_k1b(g::s0, n, ker,  //
+         n, vir_trq, gx, gy, gz, //
+         x, y, z, zaxis, trqx, trqy, trqz);
+   } else if (vers & calc::grad) {
+      auto ker = torque_cu1<false>;
+      launch_k1s(g::s0, n, ker,  //
+         n, nullptr, gx, gy, gz, //
+         x, y, z, zaxis, trqx, trqy, trqz);
+   }
 }
 }
