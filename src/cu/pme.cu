@@ -1103,21 +1103,17 @@ void cmpToFmp_cu1(int n, const real (*restrict cmp)[10], real (*restrict fmp)[10
       constexpr int qi2[] = {0, 1, 2, 1, 2, 2};
       real ctf6[6][6];
       // get the Cartesian to fractional conversion matrix
-      #pragma unroll 1
       for (int i1 = 0; i1 < 3; ++i1) {
          int k = qi1[i1];
-         #pragma unroll 1
          for (int i2 = 0; i2 < 6; ++i2) {
             int i = qi1[i2];
             int j = qi2[i2];
             ctf6[i2][i1] = a[i][k] * a[j][k];
          }
       }
-      #pragma unroll 1
       for (int i1 = 3; i1 < 6; ++i1) {
          int k = qi1[i1];
          int m = qi2[i1];
-         #pragma unroll 1
          for (int i2 = 0; i2 < 6; ++i2) {
             int i = qi1[i2];
             int j = qi2[i2];
@@ -1139,18 +1135,14 @@ void cmpToFmp_cu1(int n, const real (*restrict cmp)[10], real (*restrict fmp)[10
       cmpi[9] = cmp[iatom][9];
 
       fmpi[0] = cmpi[0];
-      #pragma unroll 1
       for (int j = 1; j < 4; ++j) {
          fmpi[j] = 0;
-         #pragma unroll 1
          for (int k = 1; k < 4; ++k) {
             fmpi[j] += a[k - 1][j - 1] * cmpi[k];
          }
       }
-      #pragma unroll 1
       for (int j = 4; j < 10; ++j) {
          fmpi[j] = 0;
-         #pragma unroll 1
          for (int k = 4; k < 10; ++k) {
             fmpi[j] += ctf6[k - 4][j - 4] * cmpi[k];
          }
@@ -1204,15 +1196,12 @@ void fphiToCphi_cu1(int n, const real (*fphi)[20], real (*cphi)[10], int nfft1, 
 
       real ftc6[6][6];
       // get the fractional to Cartesian conversion matrix
-      #pragma unroll 1
       for (int i1 = 0; i1 < 3; ++i1) {
          int k = qi1[i1];
-         #pragma unroll 1
          for (int i2 = 0; i2 < 3; ++i2) {
             int i = qi1[i2];
             ftc6[i2][i1] = a[i][k] * a[i][k];
          }
-         #pragma unroll 1
          for (int i2 = 3; i2 < 6; ++i2) {
             int i = qi1[i2];
             int j = qi2[i2];
@@ -1220,16 +1209,13 @@ void fphiToCphi_cu1(int n, const real (*fphi)[20], real (*cphi)[10], int nfft1, 
          }
       }
 
-      #pragma unroll 1
       for (int i1 = 3; i1 < 6; ++i1) {
          int k = qi1[i1];
          int m = qi2[i1];
-         #pragma unroll 1
          for (int i2 = 0; i2 < 3; ++i2) {
             int i = qi1[i2];
             ftc6[i2][i1] = a[i][k] * a[i][m];
          }
-         #pragma unroll 1
          for (int i2 = 3; i2 < 6; ++i2) {
             int i = qi1[i2];
             int j = qi2[i2];
@@ -1251,18 +1237,14 @@ void fphiToCphi_cu1(int n, const real (*fphi)[20], real (*cphi)[10], int nfft1, 
       fphii[9] = fphi[iatom][9];
 
       cphii[0] = fphii[0];
-      #pragma unroll 1
       for (int j = 1; j < 4; ++j) {
          cphii[j] = 0;
-         #pragma unroll 1
          for (int k = 1; k < 4; ++k) {
             cphii[j] += a[k - 1][j - 1] * fphii[k];
          }
       }
-      #pragma unroll 1
       for (int j = 4; j < 10; ++j) {
          cphii[j] = 0;
-         #pragma unroll 1
          for (int k = 4; k < 10; ++k) {
             cphii[j] += ftc6[k - 4][j - 4] * fphii[k];
          }

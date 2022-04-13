@@ -86,16 +86,11 @@ inline void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpol
    rpole[isite][1] = 0;
    rpole[isite][2] = 0;
    rpole[isite][3] = 0;
-#if __CUDA_ARCH__
-   #pragma unroll
-   for (int i = 1; i < 4; ++i)
-      #pragma unroll
-      for (int j = 1; j < 4; ++j)
-#else
-   #pragma acc loop seq collapse(2)
-   for (int i = 1; i < 4; ++i)
-      for (int j = 1; j < 4; ++j)
+#if _OPENACC
+#pragma acc loop seq collapse(2)
 #endif
+   for (int i = 1; i < 4; ++i)
+      for (int j = 1; j < 4; ++j)
          rpole[isite][i] += pole[isite][j] * a[j - 1][i - 1];
 
    // quadrupole
@@ -110,32 +105,22 @@ inline void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpol
    mp[2][0] = pole[isite][MPL_PME_ZX];
    mp[2][1] = pole[isite][MPL_PME_ZY];
    mp[2][2] = pole[isite][MPL_PME_ZZ];
-#if __CUDA_ARCH__
-#pragma unroll 1
-#else
-#pragma acc loop seq
+#if _OPENACC
+   #pragma acc loop seq
 #endif
    for (int i = 0; i < 3; ++i) {
-#if __CUDA_ARCH__
-#pragma unroll 1
-#else
+#if _OPENACC
 #pragma acc loop seq
 #endif
       for (int j = 0; j <= i; ++j) {
          // if (j < i) {
          //  rp[j][i] = rp[i][j];
          // } else {
-#if __CUDA_ARCH__
-         #pragma unroll
-         for (int k = 0; k < 3; ++k)
-            #pragma unroll
-            for (int m = 0; m < 3; ++m)
-#else
-         #pragma acc loop seq collapse(2)
-         for (int k = 0; k < 3; ++k)
-            for (int m = 0; m < 3; ++m)
+#if _OPENACC
+#pragma acc loop seq collapse(2)
 #endif
-
+         for (int k = 0; k < 3; ++k)
+            for (int m = 0; m < 3; ++m)
                rp[j][i] += a[k][i] * a[m][j] * mp[m][k];
          // }
       }
