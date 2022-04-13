@@ -32,9 +32,10 @@ hippo/pcg.cu
 hippo/precond.cu
 mathparallel.cu
 mathzero.cu
-md/mdintg.cu
-md/pt.cu
-md/rattle.cu
+mdintg.cu
+mdpq.cu
+mdpt.cu
 pme.cu
+rattle.cu
 spatial.cu
 )
