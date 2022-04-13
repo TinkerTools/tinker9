@@ -1172,8 +1172,8 @@ void cmpToFmp_cu(PMEUnit pme_u, const real (*cmp)[10], real (*fmp)[10])
 }
 
 __global__
-void fphiToCphi_cu1(int n, const real (*fphi)[20], real (*cphi)[10], int nfft1, int nfft2,
-   int nfft3, TINKER_IMAGE_PARAMS)
+void fphiToCphi_cu1(int n, const real (*restrict fphi)[20], real (*restrict cphi)[10], int nfft1,
+   int nfft2, int nfft3, TINKER_IMAGE_PARAMS)
 {
    for (int iatom = ITHREAD; iatom < n; iatom += STRIDE) {
       real a[3][3];

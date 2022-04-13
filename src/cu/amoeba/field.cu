@@ -30,9 +30,7 @@ void dfieldEwaldRecipSelfP2_cu(real (*field)[3])
 
    launch_k1s(g::s0, n, dfieldEwaldRecipSelfP2_cu1, n, field, term, rpole, cphi);
 }
-}
 
-namespace tinker {
 // ck.py Version 2.0.2
 template <class ETYP>
 __global__
@@ -401,6 +399,51 @@ void dfieldNonEwald_cu(real (*field)[3], real (*fieldp)[3])
       st.n, TINKER_IMAGE_ARGS, off, st.si3.bit0, ndpexclude, dpexclude, dpexclude_scale, st.x, st.y,
       st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, field, fieldp, rpole, thole,
       pdamp, 0);
+}
+}
+
+namespace tinker {
+__global__
+void ufieldEwaldRecipSelfP1_cu1(int n, const real (*restrict uind)[3],
+   const real (*restrict uinp)[3], real (*restrict field)[3], real (*restrict fieldp)[3],
+   const real (*restrict fdip_phi1)[10], const real (*restrict fdip_phi2)[10], real term, int nfft1,
+   int nfft2, int nfft3, TINKER_IMAGE_PARAMS)
+{
+   for (int i = ITHREAD; i < n; i += STRIDE) {
+      real a[3][3];
+      a[0][0] = nfft1 * recipa.x;
+      a[1][0] = nfft2 * recipb.x;
+      a[2][0] = nfft3 * recipc.x;
+      a[0][1] = nfft1 * recipa.y;
+      a[1][1] = nfft2 * recipb.y;
+      a[2][1] = nfft3 * recipc.y;
+      a[0][2] = nfft1 * recipa.z;
+      a[1][2] = nfft2 * recipb.z;
+      a[2][2] = nfft3 * recipc.z;
+
+      for (int j = 0; j < 3; ++j) {
+         real df1 =
+            a[0][j] * fdip_phi1[i][1] + a[1][j] * fdip_phi1[i][2] + a[2][j] * fdip_phi1[i][3];
+         real df2 =
+            a[0][j] * fdip_phi2[i][1] + a[1][j] * fdip_phi2[i][2] + a[2][j] * fdip_phi2[i][3];
+         field[i][j] += (term * uind[i][j] - df1);
+         fieldp[i][j] += (term * uinp[i][j] - df2);
+      }
+   }
+}
+
+void ufieldEwaldRecipSelfP1_cu(const real (*uind)[3], const real (*uinp)[3], //
+   real (*field)[3], real (*fieldp)[3])
+{
+   const PMEUnit pu = ppme_unit;
+   const real aewald = pu->aewald;
+   const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
+   const int nfft1 = pu->nfft1;
+   const int nfft2 = pu->nfft2;
+   const int nfft3 = pu->nfft3;
+
+   launch_k1s(g::s0, n, ufieldEwaldRecipSelfP1_cu1, n, uind, uinp, field, fieldp, fdip_phi1,
+      fdip_phi2, term, nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS);
 }
 
 // ck.py Version 2.0.2

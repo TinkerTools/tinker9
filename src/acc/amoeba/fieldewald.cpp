@@ -173,27 +173,15 @@ void dfieldEwaldReal_acc(real (*field)[3], real (*fieldp)[3])
 }
 
 // see also subroutine umutual1 in induce.f
-void ufieldEwaldRecipSelf_acc(
-   const real (*uind)[3], const real (*uinp)[3], real (*field)[3], real (*fieldp)[3])
+void ufieldEwaldRecipSelfP1_acc(const real (*uind)[3], const real (*uinp)[3], //
+   real (*field)[3], real (*fieldp)[3])
 {
-   darray::zero(g::q0, n, field, fieldp);
-
    const PMEUnit pu = ppme_unit;
-   const auto& st = *pu;
-   const int nfft1 = st.nfft1;
-   const int nfft2 = st.nfft2;
-   const int nfft3 = st.nfft3;
-   const real aewald = st.aewald;
-
-   cuindToFuind(pu, uind, uinp, fuind, fuinp);
-   gridUind(pu, fuind, fuinp);
-   fftfront(pu);
-   // TODO: store vs. recompute qfac
-   pmeConv(pu);
-   fftback(pu);
-   fphiUind2(pu, fdip_phi1, fdip_phi2);
-
+   const real aewald = pu->aewald;
    const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
+   const int nfft1 = pu->nfft1;
+   const int nfft2 = pu->nfft2;
+   const int nfft3 = pu->nfft3;
 
    #pragma acc parallel loop independent async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\

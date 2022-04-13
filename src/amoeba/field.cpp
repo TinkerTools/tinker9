@@ -73,12 +73,23 @@ void ufieldNonEwald(
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, ufieldEwaldRecipSelf, const real (*)[3], const real (*)[3],
+TINKER_FVOID2(cu, 1, acc, 1, ufieldEwaldRecipSelfP1, const real (*)[3], const real (*)[3],
    real (*)[3], real (*)[3]);
 static void ufieldEwaldRecipSelf(const real (*uind)[3], const real (*uinp)[3], //
    real (*field)[3], real (*fieldp)[3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, ufieldEwaldRecipSelf, uind, uinp, field, fieldp);
+   darray::zero(g::q0, n, field, fieldp);
+
+   const PMEUnit pu = ppme_unit;
+   cuindToFuind(pu, uind, uinp, fuind, fuinp);
+   gridUind(pu, fuind, fuinp);
+   fftfront(pu);
+   // TODO: store vs. recompute qfac
+   pmeConv(pu);
+   fftback(pu);
+   fphiUind2(pu, fdip_phi1, fdip_phi2);
+
+   TINKER_FCALL2(cu, 1, acc, 1, ufieldEwaldRecipSelfP1, uind, uinp, field, fieldp);
 }
 
 TINKER_FVOID2(
