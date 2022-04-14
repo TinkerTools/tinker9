@@ -133,8 +133,6 @@ void NhcDevice::scaleVelocityAtomic(double velsc)
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          ekin[i][j] *= s2;
-   darray::scale(g::q0, n, velsc, vx);
-   darray::scale(g::q0, n, velsc, vy);
-   darray::scale(g::q0, n, velsc, vz);
+   mdVelScale(velsc, n, vx, vy, vz);
 }
 }

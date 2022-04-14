@@ -45,45 +45,6 @@ void kineticEnergy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], in
 
 //====================================================================//
 
-void bussiThermostat_acc(time_prec dt_prec, T_prec temp_prec)
-{
-   double dt = dt_prec;
-   double temp = temp_prec;
-
-   double tautemp = bath::tautemp;
-   double kelvin = bath::kelvin;
-   int nfree = mdstuf::nfree;
-   double& eta = bath::eta;
-
-   if (temp == 0)
-      temp = 0.1;
-
-   double c = std::exp(-dt / tautemp);
-   double d = (1 - c) * (kelvin / temp) / nfree;
-   double r = normal<double>();
-   double s = chiSquared<double>(nfree - 1);
-   double scale = c + (s + r * r) * d + 2 * r * std::sqrt(c * d);
-   scale = std::sqrt(scale);
-   if (r + std::sqrt(c / d) < 0)
-      scale = -scale;
-   eta *= scale;
-
-   vel_prec sc = scale;
-   #pragma acc parallel loop independent async deviceptr(vx,vy,vz)
-   for (int i = 0; i < n; ++i) {
-      vx[i] *= sc;
-      vy[i] *= sc;
-      vz[i] *= sc;
-   }
-   for (int i = 0; i < 3; ++i) {
-      for (int j = 0; j < 3; ++j) {
-         ekin[i][j] *= scale * scale;
-      }
-   }
-}
-
-//====================================================================//
-
 void berendsenBarostat_acc(time_prec dt)
 {
    if (not bound::use_bounds)

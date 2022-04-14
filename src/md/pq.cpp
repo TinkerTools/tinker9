@@ -64,6 +64,12 @@ void mdVel2(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad
    TINKER_FCALL2(cu, 1, acc, 1, mdVel2, dt, grx, gry, grz, dt2, grx2, gry2, grz2);
 }
 
+TINKER_FVOID2(cu, 1, acc, 1, mdVelScale, vel_prec, int, vel_prec*, vel_prec*, vel_prec*);
+void mdVelScale(vel_prec scal, int nelem, vel_prec* vx, vel_prec* vy, vel_prec* vz)
+{
+   TINKER_FCALL2(cu, 1, acc, 1, mdVelScale, scal, nelem, vx, vy, vz);
+}
+
 TINKER_FVOID2(cu, 0, acc, 1, mdVelAvbf, int, vel_prec, vel_prec, vel_prec*, vel_prec*, vel_prec*,
    const grad_prec*, const grad_prec*, const grad_prec*, const grad_prec*, const grad_prec*,
    const grad_prec*);

@@ -38,6 +38,9 @@ void mdVel2(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad
    time_prec dt2, const grad_prec* grx2, const grad_prec* gry2, const grad_prec* grz2);
 
 /// \ingroup mdpq
+void mdVelScale(vel_prec scal, int nelem, vel_prec* vx, vel_prec* vy, vel_prec* vz);
+
+/// \ingroup mdpq
 /// \brief Update velocities via `v = a v + b (g1/nrespa + g2)/m t` (isotropic).
 /// If \p nrespa equals 1, the 2nd set of gradients are ignored.
 void mdVelAvbf(int nrespa, vel_prec a, vel_prec b,                   //

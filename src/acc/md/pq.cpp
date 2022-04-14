@@ -140,6 +140,16 @@ void mdVel2_acc(time_prec dt, const grad_prec* grx, const grad_prec* gry, const 
    }
 }
 
+void mdVelScale_acc(vel_prec sc, int nelem, vel_prec* vx0, vel_prec* vy0, vel_prec* vz0)
+{
+   #pragma acc parallel loop independent async deviceptr(vx0,vy0,vz0)
+   for (int i = 0; i < nelem; ++i) {
+      vx0[i] *= sc;
+      vy0[i] *= sc;
+      vz0[i] *= sc;
+   }
+}
+
 #pragma acc routine seq
 static inline vel_prec
 #if TINKER_DETERMINISTIC_FORCE

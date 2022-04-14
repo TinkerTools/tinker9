@@ -79,4 +79,19 @@ void mdVel2_cu(time_prec dt, const grad_prec* grx, const grad_prec* gry, const g
       dt, grx, gry, grz,            //
       dt2, grx2, gry2, grz2);
 }
+
+__global__
+void mdVelScale_cu1(int nelem, vel_prec sc, vel_prec* vx0, vel_prec* vy0, vel_prec* vz0)
+{
+   for (int i = ITHREAD; i < nelem; i += STRIDE) {
+      vx0[i] *= sc;
+      vy0[i] *= sc;
+      vz0[i] *= sc;
+   }
+}
+
+void mdVelScale_cu(vel_prec sc, int nelem, vel_prec* vx0, vel_prec* vy0, vel_prec* vz0)
+{
+   launch_k1s(g::s0, nelem, mdVelScale_cu1, nelem, sc, vx0, vy0, vz0);
+}
 }

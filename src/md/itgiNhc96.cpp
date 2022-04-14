@@ -98,9 +98,7 @@ static void hoover(time_prec dt, virial_prec press)
 
    // use scale factor to update the atomic velocities
    // eq. 41 velocities
-   darray::scale(g::q0, n, scale, vx);
-   darray::scale(g::q0, n, scale, vy);
-   darray::scale(g::q0, n, scale, vz);
+   mdVelScale(scale, n, vx, vy, vz);
 }
 
 static void nhc_npt(int istep, time_prec dt)
