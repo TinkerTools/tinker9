@@ -144,13 +144,13 @@ void copyPosToXyz(bool refreshNBList)
       nblistRefresh();
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, bounds);
+TINKER_FVOID2(cu, 1, acc, 1, bounds);
 void bounds()
 {
    if (not bound::use_bounds)
       return;
 
-   TINKER_FCALL2(cu, 0, acc, 1, bounds);
+   TINKER_FCALL2(cu, 1, acc, 1, bounds);
    copyPosToXyz();
 }
 
