@@ -1,3 +1,4 @@
+#include "md/intg.h"
 #include "md/pq.h"
 #include "tool/externfunc.h"
 #include "tool/ioprint.h"
@@ -62,16 +63,7 @@ void mdrest_acc(int istep)
 
    // print the translational velocity of the overall system
 
-   if (inform::debug) {
-      // compute translational kinetic energy of overall system
-      etrans = vtot1 * vtot1 + vtot2 * vtot2 + vtot3 * vtot3;
-      etrans *= 0.5f * totmass / ekcal;
-
-      print(stdout,
-         " System Linear Velocity :  %12.2e%12.2e%12.2e\n"
-         " Translational Kinetic Energy :%10s%12.4f Kcal/mole\n",
-         vtot1, vtot2, vtot3, "", etrans);
-   }
+   mdrestPrintP1(inform::debug, vtot1, vtot2, vtot3, totmass);
 
    if (not bound::use_bounds) {
       energy_prec erot = 0;

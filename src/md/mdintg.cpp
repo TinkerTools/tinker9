@@ -9,6 +9,7 @@
 #include <cassert>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
+#include <tinker/detail/units.hh>
 
 namespace tinker {
 void mdData(RcOp op)
@@ -125,10 +126,24 @@ void mdIntegrateData(RcOp op)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, mdrest, int);
+TINKER_FVOID2(cu, 1, acc, 1, mdrest, int);
 void mdrest(int istep)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, mdrest, istep);
+   TINKER_FCALL2(cu, 1, acc, 1, mdrest, istep);
+}
+
+void mdrestPrintP1(bool prints, double vtot1, double vtot2, double vtot3, double totmass)
+{
+   if (prints) {
+      // compute translational kinetic energy of overall system
+      auto etrans = vtot1 * vtot1 + vtot2 * vtot2 + vtot3 * vtot3;
+      etrans *= 0.5 * totmass / units::ekcal;
+
+      print(stdout,
+         " System Linear Velocity :  %12.2e%12.2e%12.2e\n"
+         " Translational Kinetic Energy :%10s%12.4f Kcal/mole\n",
+         vtot1, vtot2, vtot3, "", etrans);
+   }
 }
 
 /// \ingroup mdpq

@@ -1,7 +1,13 @@
+#include "md/intg.h"
 #include "md/pq.h"
 #include "seq/launch.h"
 #include "seq/reduce.h"
+#include "tool/externfunc.h"
+#include <tinker/detail/bound.hh>
+#include <tinker/detail/inform.hh>
+#include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/molcul.hh>
+#include <tinker/detail/units.hh>
 
 namespace tinker {
 template <unsigned int B>
@@ -102,6 +108,33 @@ void mdrestRemovePbcMomentum_cu(bool copyout, vel_prec& vtot1, vel_prec& vtot2, 
       vtot1 = v[0];
       vtot2 = v[1];
       vtot3 = v[2];
+   }
+}
+
+void mdrest_cu(int istep)
+{
+   if (not mdstuf::dorest)
+      return;
+   if ((istep % mdstuf::irest) != 0)
+      return;
+
+   // const energy_prec ekcal = units::ekcal;
+
+   // zero out the total mass and overall linear velocity
+
+   auto totmass = molcul::totmass;
+   vel_prec vtot1 = 0, vtot2 = 0, vtot3 = 0;
+   // energy_prec etrans = 0;
+
+   bool copyout = inform::debug or not bound::use_bounds;
+   mdrestRemovePbcMomentum_cu(copyout, vtot1, vtot2, vtot3);
+
+   // print the translational velocity of the overall system
+
+   mdrestPrintP1(inform::debug, vtot1, vtot2, vtot3, totmass);
+
+   if (not bound::use_bounds) {
+      throwExceptionMissingFunction("mdrestRemoveAngularMomentum_cu", __FILE__, __LINE__);
    }
 }
 }

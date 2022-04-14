@@ -8,6 +8,7 @@ void mdData(RcOp);
 void mdIntegrateData(RcOp);
 
 void mdrest(int istep);
+void mdrestPrintP1(bool prints, double e1, double e2, double e3, double totmass);
 void mdPropagate(int nsteps, time_prec dt_ps);
 
 constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.
