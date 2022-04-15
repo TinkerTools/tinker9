@@ -15,21 +15,28 @@ elif [ $OS == Darwin ]; then
    SED='perl -i -pe'
 fi
 
-pragmaDetected() {
-   if grep -q pragma "$1"; then
-      if grep -q "pragma once" "$1"; then
+PragmaDetected() {
+   x=$(grep "#pragma" "$1")
+   y=$(grep "#pragma once" "$1")
+   if [ -z "$x" ]; then
+      # no match
+      return 1
+   else
+      nx=$(echo "$x" | wc -l)
+      ny=$(echo "$y" | wc -l)
+      if [ $ny -eq 1 ] && [ $nx -eq 1 ]; then
+         # pragma once
          return 1
       else
+         # found
          return 0
       fi
-   else
-      return 1
    fi
 }
 
 for x in "$@"; do
 
-if pragmaDetected "$x"; then
+if PragmaDetected "$x"; then
    $SED 's/#pragma /\/\/#prag /g' "$x"
    clang-format -i -style=file "$x"
    $SED 's/\/\/ *#prag /#pragma /g' "$x"
