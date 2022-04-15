@@ -5,7 +5,6 @@
 #include <tinker/detail/bath.hh>
 
 namespace tinker {
-/// \ingroup mdintg
 class IntegratorStaticData
 {
 protected:
@@ -25,7 +24,6 @@ protected:
 
 //====================================================================//
 
-/// \ingroup mdintg
 enum class PropagatorEnum
 {
    Respa,
@@ -37,7 +35,6 @@ enum class PropagatorEnum
 class BasicPropagator;
 BasicPropagator* create(PropagatorEnum pe);
 
-/// \ingroup mdintg
 /// \brief The interface class of a Verlet or an RESPA-Verlet MD step.
 class BasicPropagator : virtual public IntegratorStaticData
 {

@@ -386,7 +386,7 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             real pota, potb;
-            pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                           //
+            pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                                //
                r2, xr, yr, zr, 1, 1, ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], //
                qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],                  //
                uix[klane], uiy[klane], uiz[klane],                                               //
@@ -548,7 +548,7 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             real pota, potb;
-            pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                           //
+            pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                                //
                r2, xr, yr, zr, 1, 1, ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], //
                qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],                  //
                uix[klane], uiy[klane], uiz[klane],                                               //

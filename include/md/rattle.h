@@ -35,19 +35,23 @@ void hcVirial();
 
 void hcCenterOfMass(const pos_prec* atomx, const pos_prec* atomy, const pos_prec* atomz,
    pos_prec* molx, pos_prec* moly, pos_prec* molz);
+/// \}
 
+/// \ingroup mdhc
 /// \brief Update velocities by
-/// \f$ \boldsymbol{v}_{ui}(t) = \boldsymbol{v}_{ui}(0) + s \boldsymbol{V}_{u}(0) \f$.
+/// \f$ v_{ui}(t) = v_{ui}(0) + s V_{u}(0) \f$.
 void hcVelIso(vel_prec s);
 
+/// \ingroup mdhc
 /// \brief Update velocities by
 /// \f$ \boldsymbol{v}_{ui}(t) = \boldsymbol{v}_{ui}(0) + \boldsymbol{S} \boldsymbol{V}_{u}(0) \f$.
 void hcVelAn(vel_prec s[3][3]);
 
+/// \ingroup mdhc
 void hcPosIso(pos_prec s);
 
+/// \ingroup mdhc
 void hcPosAn(pos_prec (*scal)[3]);
-/// \}
 }
 
 //====================================================================//

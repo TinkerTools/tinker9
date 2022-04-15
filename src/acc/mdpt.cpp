@@ -16,7 +16,7 @@ void kineticEnergy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], in
 {
    const energy_prec ekcal_inv = 1.0 / units::ekcal;
    energy_prec exx = 0, eyy = 0, ezz = 0, exy = 0, eyz = 0, ezx = 0;
-#pragma acc parallel loop independent async\
+   #pragma acc parallel loop independent async\
                copy(exx,eyy,ezz,exy,eyz,ezx)\
                reduction(+:exx,eyy,ezz,exy,eyz,ezx)\
                deviceptr(mass,vx,vy,vz)
@@ -29,7 +29,7 @@ void kineticEnergy_acc(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], in
       eyz += term * vy[i] * vz[i];
       ezx += term * vz[i] * vx[i];
    }
-#pragma acc wait
+   #pragma acc wait
 
    ekin_out[0][0] = exx;
    ekin_out[0][1] = exy;
@@ -117,8 +117,9 @@ void berendsenBarostat_acc(time_prec dt)
       boxLattice(newbox, box_shape, l0, l1, l2, a0, a1, a2);
       boxSetCurrent(newbox);
 
-#pragma acc parallel loop independent async deviceptr(xpos, ypos, zpos)                            \
-   firstprivate(ascale [0:3] [0:3])
+      #pragma acc parallel loop independent async\
+                  deviceptr(xpos,ypos,zpos)\
+                  firstprivate(ascale[0:3][0:3])
       for (int i = 0; i < n; ++i) {
          pos_prec xk = xpos[i];
          pos_prec yk = ypos[i];
@@ -137,7 +138,7 @@ void berendsenBarostat_acc(time_prec dt)
       lvec3 *= scale;
       boxSetCurrentRecip();
 
-#pragma acc parallel loop independent async deviceptr(xpos, ypos, zpos)
+      #pragma acc parallel loop independent async deviceptr(xpos,ypos,zpos)
       for (int i = 0; i < n; ++i) {
          xpos[i] *= scale;
          ypos[i] *= scale;
@@ -192,12 +193,13 @@ void monteCarloBarostat_acc(energy_prec epot, T_prec temp)
          const auto* kmol = molecule.kmol;
          const auto* molmass = molecule.molmass;
          pos_prec pos_scale = scale - 1;
-#pragma acc parallel loop independent async deviceptr(imol, kmol, mass, molmass, xpos, ypos, zpos)
+         #pragma acc parallel loop independent async\
+                     deviceptr(imol,kmol,mass,molmass,xpos,ypos,zpos)
          for (int i = 0; i < nmol; ++i) {
             pos_prec xcm = 0, ycm = 0, zcm = 0;
             int start = imol[i][0];
             int stop = imol[i][1];
-#pragma acc loop seq
+            #pragma acc loop seq
             for (int j = start; j < stop; ++j) {
                int k = kmol[j];
                auto weigh = mass[k];
@@ -210,7 +212,7 @@ void monteCarloBarostat_acc(energy_prec epot, T_prec temp)
             xmove = term * xcm;
             ymove = term * ycm;
             zmove = term * zcm;
-#pragma acc loop seq
+            #pragma acc loop seq
             for (int j = start; j < stop; ++j) {
                int k = kmol[j];
                xpos[k] += xmove;

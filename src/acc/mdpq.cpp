@@ -97,27 +97,6 @@ void mdVel_acc(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, const 
    }
 }
 
-void mdVelB_acc(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, const vel_prec* vlx0,
-   const vel_prec* vly0, const vel_prec* vlz0, const grad_prec* grx, const grad_prec* gry,
-   const grad_prec* grz)
-{
-   const vel_prec ekcal = units::ekcal;
-   #pragma acc parallel loop independent async\
-               deviceptr(massinv,vlx,vly,vlz,vlx0,vly0,vlz0,grx,gry,grz)
-   for (int i = 0; i < n; ++i) {
-      vel_prec coef = -ekcal * massinv[i] * dt;
-#if TINKER_DETERMINISTIC_FORCE
-      vlx[i] = vlx0[i] + coef * fixedTo<vel_prec>(grx[i]);
-      vly[i] = vly0[i] + coef * fixedTo<vel_prec>(gry[i]);
-      vlz[i] = vlz0[i] + coef * fixedTo<vel_prec>(grz[i]);
-#else
-      vlx[i] = vlx0[i] + coef * grx[i];
-      vly[i] = vly0[i] + coef * gry[i];
-      vlz[i] = vlz0[i] + coef * grz[i];
-#endif
-   }
-}
-
 void mdVel2_acc(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz,
    time_prec dt2, const grad_prec* grx2, const grad_prec* gry2, const grad_prec* grz2)
 {

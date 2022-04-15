@@ -1,7 +1,7 @@
-#include "ff/atom.h"
 #include "math/pow2.h"
 #include "md/integrator.h"
 #include "md/misc.h"
+#include "md/pq.h"
 #include "tool/error.h"
 #include "tool/externfunc.h"
 #include "tool/iofortstr.h"

@@ -46,16 +46,6 @@ void mdVel(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_
    TINKER_FCALL2(cu, 1, acc, 1, mdVel, dt, vx, vy, vz, grx, gry, grz);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, mdVelB, time_prec, vel_prec*, vel_prec*, vel_prec*, //
-   const vel_prec*, const vel_prec*, const vel_prec*,                            //
-   const grad_prec*, const grad_prec*, const grad_prec*);
-void mdVelB(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, //
-   const vel_prec* vlx0, const vel_prec* vly0, const vel_prec* vlz0,   //
-   const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
-{
-   TINKER_FCALL2(cu, 0, acc, 1, mdVelB, dt, vlx, vly, vlz, vlx0, vly0, vlz0, grx, gry, grz);
-}
-
 TINKER_FVOID2(cu, 1, acc, 1, mdVel2, time_prec, const grad_prec*, const grad_prec*,
    const grad_prec*, time_prec, const grad_prec*, const grad_prec*, const grad_prec*);
 void mdVel2(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz,

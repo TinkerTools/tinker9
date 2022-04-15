@@ -35,7 +35,7 @@ void mdrest_acc(int istep)
       // compute linear velocity of the system center of mass
 
       vtot1 = 0, vtot2 = 0, vtot3 = 0;
-#pragma acc parallel loop independent async\
+      #pragma acc parallel loop independent async\
                   copy(vtot1,vtot2,vtot3) reduction(+:vtot1,vtot2,vtot3)\
                   deviceptr(mass,vx,vy,vz)
       for (int i = 0; i < n; ++i) {
@@ -44,7 +44,7 @@ void mdrest_acc(int istep)
          vtot2 += vy[i] * weigh;
          vtot3 += vz[i] * weigh;
       }
-#pragma acc wait
+      #pragma acc wait
 
       vtot1 /= totmass;
       vtot2 /= totmass;
@@ -52,7 +52,7 @@ void mdrest_acc(int istep)
 
       // eliminate any translation of the overall system
 
-#pragma acc parallel loop independent async deviceptr(vx, vy, vz)
+      #pragma acc parallel loop independent async deviceptr(vx,vy,vz)
       for (int i = 0; i < n; ++i) {
          vx[i] -= vtot1;
          vy[i] -= vtot2;
@@ -74,7 +74,7 @@ void mdrest_acc(int istep)
 
       vel_prec mang1 = 0, mang2 = 0, mang3 = 0;
 
-#pragma acc parallel loop independent async\
+      #pragma acc parallel loop independent async\
                   copy(xtot,ytot,ztot,mang1,mang2,mang3)\
                   reduction(+:xtot,ytot,ztot,mang1,mang2,mang3)\
                   deviceptr(mass,xpos,ypos,zpos,vx,vy,vz)
@@ -87,7 +87,7 @@ void mdrest_acc(int istep)
          mang2 += (zpos[i] * vx[i] - xpos[i] * vz[i]) * weigh;
          mang3 += (xpos[i] * vy[i] - ypos[i] * vx[i]) * weigh;
       }
-#pragma acc wait
+      #pragma acc wait
       xtot /= totmass;
       ytot /= totmass;
       ztot /= totmass;
@@ -99,7 +99,7 @@ void mdrest_acc(int istep)
 
       pos_prec xx = 0, xy = 0, xz = 0, yy = 0, yz = 0, zz = 0;
 
-#pragma acc parallel loop independent async\
+      #pragma acc parallel loop independent async\
                   copy(xx,xy,xz,yy,yz,zz) reduction(+:xx,xy,xz,yy,yz,zz)\
                   deviceptr(mass,xpos,ypos,zpos)
       for (int i = 0; i < n; ++i) {
@@ -114,7 +114,7 @@ void mdrest_acc(int istep)
          yz += ydel * zdel * weigh;
          zz += zdel * zdel * weigh;
       }
-#pragma acc wait
+      #pragma acc wait
 
       double tensor[3][3];
       double eps = (n <= 2 ? 0.000001 : 0);
@@ -141,8 +141,9 @@ void mdrest_acc(int istep)
 
       // eliminate any rotation about the system center of mass
 
-#pragma acc parallel loop independent async deviceptr(xpos, ypos, zpos, vx, vy, vz)                \
-   copyin(vang [0:3])
+      #pragma acc parallel loop independent async\
+                  deviceptr(xpos,ypos,zpos,vx,vy,vz)\
+                  copyin(vang[0:3])
       for (int i = 0; i < n; ++i) {
          pos_prec xdel = xpos[i] - xtot;
          pos_prec ydel = ypos[i] - ytot;

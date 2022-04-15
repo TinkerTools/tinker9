@@ -130,7 +130,7 @@
 
 #ifdef TINKER_GPULANG_CUDA
 #   undef TINKER_GPULANG_CUDA
-#   define TINKER_GPULANG_CUDA   1
+#   define TINKER_GPULANG_CUDA 1
 #else
 #   define TINKER_GPULANG_CUDA 0
 #endif

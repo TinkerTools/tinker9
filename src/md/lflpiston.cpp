@@ -109,6 +109,17 @@ static void swap_velocity(vel_prec* vxnew, vel_prec* vynew, vel_prec* vznew, vel
 {
    TINKER_FCALL2(cu, 0, acc, 1, swap_velocity, vxnew, vynew, vznew, vxold, vyold, vzold);
 }
+
+// Updates velocities via `v = v0 -g/m dt`.
+TINKER_FVOID2(cu, 0, acc, 1, mdVelB, time_prec, vel_prec*, vel_prec*, vel_prec*, //
+   const vel_prec*, const vel_prec*, const vel_prec*,                            //
+   const grad_prec*, const grad_prec*, const grad_prec*);
+void mdVelB(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, //
+   const vel_prec* vlx0, const vel_prec* vly0, const vel_prec* vlz0,   //
+   const grad_prec* grx, const grad_prec* gry, const grad_prec* grz)
+{
+   TINKER_FCALL2(cu, 0, acc, 1, mdVelB, dt, vlx, vly, vlz, vlx0, vly0, vlz0, grx, gry, grz);
+}
 }
 
 namespace tinker {
