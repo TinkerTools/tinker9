@@ -1,8 +1,8 @@
 #include "ff/box.h"
 #include "ff/energy.h"
 #include "md/integrator.h"
+#include "md/misc.h"
 #include "md/pq.h"
-#include "md/pt.h"
 #include "md/rattle.h"
 #include "tool/error.h"
 #include <tinker/detail/inform.hh>

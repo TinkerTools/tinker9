@@ -38,7 +38,7 @@ void finish()
 #include "ff/energy.h"
 #include "ff/molecule.h"
 #include "ff/nblist.h"
-#include "md/intg.h"
+#include "md/misc.h"
 #include "md/osrw.h"
 #include "md/pq.h"
 #include "md/rattle.h"

@@ -1,5 +1,5 @@
-#include "md/pt.h"
 #include "math/random.h"
+#include "md/misc.h"
 #include "md/pq.h"
 #include "tool/externfunc.h"
 #include <tinker/detail/bath.hh>

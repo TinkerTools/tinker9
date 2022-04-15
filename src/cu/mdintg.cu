@@ -1,4 +1,4 @@
-#include "md/intg.h"
+#include "md/misc.h"
 #include "md/pq.h"
 #include "seq/launch.h"
 #include "seq/reduce.h"
@@ -124,7 +124,6 @@ void mdrest_cu(int istep)
 
    auto totmass = molcul::totmass;
    vel_prec vtot1 = 0, vtot2 = 0, vtot3 = 0;
-   // energy_prec etrans = 0;
 
    bool copyout = inform::debug or not bound::use_bounds;
    mdrestRemovePbcMomentum_cu(copyout, vtot1, vtot2, vtot3);

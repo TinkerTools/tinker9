@@ -3,7 +3,7 @@
 #include "math/ou.h"
 #include "math/random.h"
 #include "md/integrator.h"
-#include "md/pt.h"
+#include "md/misc.h"
 #include "md/rattle.h"
 #include "tool/ioprint.h"
 #include <tinker/detail/bath.hh>

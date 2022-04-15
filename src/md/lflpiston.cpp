@@ -1,8 +1,8 @@
 #include "md/lflpiston.h"
 #include "ff/energy.h"
 #include "math/random.h"
+#include "md/misc.h"
 #include "md/pq.h"
-#include "md/pt.h"
 #include "md/rattle.h"
 #include "tool/externfunc.h"
 #include <tinker/detail/bath.hh>

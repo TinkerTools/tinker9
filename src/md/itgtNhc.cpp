@@ -1,7 +1,7 @@
 #include "ff/energy.h"
 #include "md/integrator.h"
+#include "md/misc.h"
 #include "md/pq.h"
-#include "md/pt.h"
 #include "tool/darray.h"
 #include "tool/ioprint.h"
 #include <algorithm>

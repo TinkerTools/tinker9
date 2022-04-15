@@ -1,5 +1,5 @@
 #include "ff/atom.h"
-#include "md/intg.h"
+#include "md/misc.h"
 #include "tool/argkey.h"
 #include "tool/iofortstr.h"
 #include "tool/ioprint.h"

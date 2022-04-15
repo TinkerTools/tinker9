@@ -1,8 +1,8 @@
 #include "ff/amoebamod.h"
 #include "ff/energy.h"
 #include "ff/potent.h"
+#include "md/misc.h"
 #include "md/pq.h"
-#include "md/pt.h"
 #include "tool/execq.h"
 #include <condition_variable>
 #include <future>

@@ -1,5 +1,5 @@
 #include "md/integrator.h"
-#include "md/intg.h"
+#include "md/misc.h"
 #include "md/pq.h"
 #include "tool/darray.h"
 #include <tinker/detail/mdstuf.hh>

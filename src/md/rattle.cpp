@@ -1,6 +1,6 @@
 #include "md/rattle.h"
 #include "ff/energy.h"
-#include "md/pt.h"
+#include "md/misc.h"
 #include "tool/externfunc.h"
 #include <algorithm>
 #include <cassert>

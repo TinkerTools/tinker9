@@ -1,6 +1,6 @@
 #include "ff/energy.h"
 #include "md/integrator.h"
-#include "md/intg.h"
+#include "md/misc.h"
 #include "md/pq.h"
 #include "md/rattle.h"
 #include "tool/ioprint.h"

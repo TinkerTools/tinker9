@@ -19,11 +19,10 @@
 #include "ff/pme.h"
 #include "ff/spatial.h"
 
-#include "md/intg.h"
 #include "md/lflpiston.h"
+#include "md/misc.h"
 #include "md/osrw.h"
 #include "md/pq.h"
-#include "md/pt.h"
 #include "md/rattle.h"
 
 #include "tool/accasync.h"

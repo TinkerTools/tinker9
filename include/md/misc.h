@@ -1,5 +1,7 @@
 #pragma once
 #include "ff/precision.h"
+#include "ff/timescale.h"
+#include "tool/rcman.h"
 
 namespace tinker {
 void kineticEnergy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n, const double* mass,
@@ -38,6 +40,23 @@ void monteCarloBarostat(energy_prec epot, T_prec temp);
 void berendsenBarostat(time_prec dt);
 }
 
+namespace tinker {
+void mdData(RcOp);
+void mdIntegrateData(RcOp);
+
+void mdrest(int istep);
+void mdrestPrintP1(bool prints, double e1, double e2, double e3, double totmass);
+void mdPropagate(int nsteps, time_prec dt_ps);
+
+constexpr unsigned RESPA_FAST = 1; // 2**0, fast group shall be 0.
+constexpr unsigned RESPA_SLOW = 2; // 2**1, slow group shall be 1.
+const TimeScaleConfig& respaTSConfig();
+
+void mdsaveAsync(int istep, time_prec dt);
+void mdsaveSynchronize();
+void mdsaveData(RcOp);
+}
+
 //====================================================================//
 //                                                                    //
 //                          Global Variables                          //
@@ -66,4 +85,24 @@ TINKER_EXTERN pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
 TINKER_EXTERN double qbar;
 TINKER_EXTERN double vbar;
 TINKER_EXTERN double vbar_matrix[3][3];
+}
+
+namespace tinker {
+/// \ingroup mdintg
+/// \{
+/// \var gx1
+/// \brief Gradient for the fast RESPA energy terms.
+/// \var gy1
+/// \copydoc gx1
+/// \var gz1
+/// \copydoc gx1
+/// \var gx2
+/// \brief Gradient for the slow RESPA energy terms.
+/// \var gy2
+/// \copydoc gx2
+/// \var gz2
+/// \copydoc gx2
+/// \}
+TINKER_EXTERN grad_prec *gx1, *gy1, *gz1;
+TINKER_EXTERN grad_prec *gx2, *gy2, *gz2;
 }

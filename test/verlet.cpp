@@ -1,5 +1,5 @@
 #include "md/integrator.h"
-#include "md/pt.h"
+#include "md/misc.h"
 #include <tinker/detail/inform.hh>
 
 #include "test.h"
