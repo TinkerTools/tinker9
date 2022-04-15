@@ -30,94 +30,94 @@ void mdIntegrateData(RcOp op)
    }
 
    if (op & RcOp::INIT) {
-      ThermostatEnum thermostat = ThermostatEnum::Null;
+      ThermostatEnum thermostat = ThermostatEnum::NONE;
       if (bath::isothermal) {
          FstrView th = bath::thermostat;
          if (th == "ANDERSEN")
-            thermostat = ThermostatEnum::Andersen;
+            thermostat = ThermostatEnum::ANDERSEN;
          else if (th == "BERENDSEN")
-            thermostat = ThermostatEnum::Berendsen;
+            thermostat = ThermostatEnum::BERENDSEN;
          else if (th == "BUSSI")
-            thermostat = ThermostatEnum::Bussi;
+            thermostat = ThermostatEnum::BUSSI;
          else if (th == "NOSE-HOOVER")
-            thermostat = ThermostatEnum::Nhc;
+            thermostat = ThermostatEnum::NHC;
          else if (th == "LPISTON")
-            thermostat = ThermostatEnum::m_LeapFrogLP;
+            thermostat = ThermostatEnum::m_LEAPFROGLP;
          else
             assert(false);
       }
 
-      BarostatEnum barostat = BarostatEnum::Null;
+      BarostatEnum barostat = BarostatEnum::NONE;
       if (bath::isobaric) {
          FstrView br = bath::barostat;
          if (br == "BERENDSEN")
-            barostat = BarostatEnum::Berendsen;
+            barostat = BarostatEnum::BERENDSEN;
          else if (br == "BUSSI")
-            barostat = BarostatEnum::Bussi;
+            barostat = BarostatEnum::BUSSI;
          else if (br == "LANGEVIN")
             barostat = BarostatEnum::LP2022;
          else if (br == "MONTECARLO")
-            barostat = BarostatEnum::MonteCarlo;
+            barostat = BarostatEnum::MONTECARLO;
          else if (br == "NHC06")
-            barostat = BarostatEnum::Nhc2006;
+            barostat = BarostatEnum::NHC2006;
          else if (br == "LPISTON")
-            barostat = BarostatEnum::m_LeapFrogLP;
+            barostat = BarostatEnum::m_LEAPFROGLP;
          else if (br == "NOSE-HOOVER")
-            barostat = BarostatEnum::m_Nhc1996;
+            barostat = BarostatEnum::m_NHC1996;
          else
             assert(false);
       }
 
-      IntegratorEnum integrator = IntegratorEnum::Beeman;
-      if (thermostat == ThermostatEnum::m_LeapFrogLP and barostat == BarostatEnum::m_LeapFrogLP)
-         integrator = IntegratorEnum::LeapFrogLP;
-      else if (thermostat == ThermostatEnum::Nhc and barostat == BarostatEnum::m_Nhc1996)
-         integrator = IntegratorEnum::Nhc1996;
+      IntegratorEnum integrator = IntegratorEnum::BEEMAN;
+      if (thermostat == ThermostatEnum::m_LEAPFROGLP and barostat == BarostatEnum::m_LEAPFROGLP)
+         integrator = IntegratorEnum::LEAPFROGLP;
+      else if (thermostat == ThermostatEnum::NHC and barostat == BarostatEnum::m_NHC1996)
+         integrator = IntegratorEnum::NHC1996;
 
       FstrView itg = mdstuf::integrate;
       if (itg == "RESPA") {
-         integrator = IntegratorEnum::Respa;
+         integrator = IntegratorEnum::RESPA;
       } else if (itg == "VERLET") {
-         integrator = IntegratorEnum::Verlet;
+         integrator = IntegratorEnum::VERLET;
       } else if (itg == "LPISTON") {
-         integrator = IntegratorEnum::LeapFrogLP;
-         thermostat = ThermostatEnum::m_LeapFrogLP;
-         barostat = BarostatEnum::m_LeapFrogLP;
+         integrator = IntegratorEnum::LEAPFROGLP;
+         thermostat = ThermostatEnum::m_LEAPFROGLP;
+         barostat = BarostatEnum::m_LEAPFROGLP;
       } else if (itg == "NOSE-HOOVER") {
-         integrator = IntegratorEnum::Nhc1996;
-         thermostat = ThermostatEnum::m_Nhc1996;
-         barostat = BarostatEnum::m_Nhc1996;
+         integrator = IntegratorEnum::NHC1996;
+         thermostat = ThermostatEnum::m_NHC1996;
+         barostat = BarostatEnum::m_NHC1996;
       }
 
       bool isNRespa1 = true;
-      if (integrator == IntegratorEnum::Verlet or integrator == IntegratorEnum::Respa) {
+      if (integrator == IntegratorEnum::VERLET or integrator == IntegratorEnum::RESPA) {
          if (barostat == BarostatEnum::LP2022) {
-            if (integrator == IntegratorEnum::Respa)
+            if (integrator == IntegratorEnum::RESPA)
                isNRespa1 = false;
             integrator = IntegratorEnum::LP2022;
             thermostat = ThermostatEnum::m_LP2022;
-         } else if (barostat == BarostatEnum::Nhc2006) {
-            if (integrator == IntegratorEnum::Respa)
+         } else if (barostat == BarostatEnum::NHC2006) {
+            if (integrator == IntegratorEnum::RESPA)
                isNRespa1 = false;
-            integrator = IntegratorEnum::Nhc2006;
-            thermostat = ThermostatEnum::m_Nhc2006;
+            integrator = IntegratorEnum::NHC2006;
+            thermostat = ThermostatEnum::m_NHC2006;
          }
       }
 
       intg = nullptr;
-      if (integrator == IntegratorEnum::Respa)
+      if (integrator == IntegratorEnum::RESPA)
          intg = new RespaIntegrator(thermostat, barostat);
-      else if (integrator == IntegratorEnum::Verlet)
+      else if (integrator == IntegratorEnum::VERLET)
          intg = new VerletIntegrator(thermostat, barostat);
-      else if (integrator == IntegratorEnum::LeapFrogLP)
+      else if (integrator == IntegratorEnum::LEAPFROGLP)
          intg = new LeapFrogLPIntegrator;
       else if (integrator == IntegratorEnum::LP2022)
          intg = new LP22Integrator(isNRespa1);
-      else if (integrator == IntegratorEnum::Nhc1996)
+      else if (integrator == IntegratorEnum::NHC1996)
          intg = new Nhc96Integrator;
-      else if (integrator == IntegratorEnum::Nhc2006)
+      else if (integrator == IntegratorEnum::NHC2006)
          intg = new Nhc06Integrator(isNRespa1);
-      else if (integrator == IntegratorEnum::Beeman)
+      else if (integrator == IntegratorEnum::BEEMAN)
          TINKER_THROW("Beeman integrator is not available.");
       intg->printDetail(stdout);
    }

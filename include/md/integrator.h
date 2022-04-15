@@ -26,10 +26,9 @@ protected:
 
 enum class PropagatorEnum
 {
-   Respa,
-   Verlet,
-
-   m_LogV,
+   RESPA,
+   VERLET,
+   m_LOGV,
 };
 
 class BasicPropagator;
@@ -112,16 +111,16 @@ public:
 
 enum class ThermostatEnum
 {
-   Null,
-   Andersen,  // empty
-   Berendsen, // empty
-   Bussi,
-   Nhc,
+   NONE,
+   ANDERSEN,  // empty
+   BERENDSEN, // empty
+   BUSSI,
+   NHC,
 
-   m_LeapFrogLP,
+   m_LEAPFROGLP,
    m_LP2022,
-   m_Nhc1996,
-   m_Nhc2006,
+   m_NHC1996,
+   m_NHC2006,
 };
 
 class BasicThermostat;
@@ -212,17 +211,16 @@ public:
 
 enum class BarostatEnum
 {
-   Null,
-   Berendsen,
-   Bussi, // empty
+   NONE,
+   BERENDSEN,
+   BUSSI, // empty
    LP2022,
-   MonteCarlo,
-   Nhc2006,
-
-   m_LeapFrogLP,
-   m_LogVIso,
-   m_LogVAniso,
-   m_Nhc1996,
+   MONTECARLO,
+   NHC2006,
+   m_LEAPFROGLP,
+   m_LOGVISO,
+   m_LOGVANISO,
+   m_NHC1996,
 };
 
 class BasicBarostat;
@@ -348,14 +346,13 @@ public:
 
 enum class IntegratorEnum
 {
-   Beeman,
-   Respa,
-   Verlet,
-
-   LeapFrogLP,
+   BEEMAN,
+   RESPA,
+   VERLET,
+   LEAPFROGLP,
    LP2022,
-   Nhc1996,
-   Nhc2006, // J. Phys. A, 39 5629 (2006), https://doi.org/10.1088/0305-4470/39/19/S18
+   NHC1996,
+   NHC2006, // J. Phys. A, 39 5629 (2006), https://doi.org/10.1088/0305-4470/39/19/S18
 };
 
 class BasicIntegrator : virtual public IntegratorStaticData

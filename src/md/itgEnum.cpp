@@ -5,7 +5,7 @@ BasicPropagator* create(PropagatorEnum pe)
 {
    BasicPropagator* p = nullptr;
    switch (pe) {
-   case PropagatorEnum::Respa:
+   case PropagatorEnum::RESPA:
       p = new RespaDevice;
       break;
    default:
@@ -22,10 +22,10 @@ BasicThermostat* create(ThermostatEnum te)
 {
    BasicThermostat* t = nullptr;
    switch (te) {
-   case ThermostatEnum::Bussi:
+   case ThermostatEnum::BUSSI:
       t = new BussiThermostat;
       break;
-   case ThermostatEnum::Nhc:
+   case ThermostatEnum::NHC:
       t = new NhcDevice(5, 5, static_cast<double>(mdstuf::nfree), //
          NhcDevice::kineticAtomic,                                //
          NhcDevice::scaleVelocityAtomic,                          //
@@ -44,16 +44,16 @@ BasicBarostat* create(BarostatEnum be)
 {
    BasicBarostat* b = nullptr;
    switch (be) {
-   case BarostatEnum::Berendsen:
+   case BarostatEnum::BERENDSEN:
       b = new BerendsenBarostat;
       break;
    case BarostatEnum::LP2022:
       b = new LP22Barostat;
       break;
-   case BarostatEnum::MonteCarlo:
+   case BarostatEnum::MONTECARLO:
       b = new MonteCarloBarostat;
       break;
-   case BarostatEnum::Nhc2006:
+   case BarostatEnum::NHC2006:
       b = new Nhc06Barostat;
       break;
    default:

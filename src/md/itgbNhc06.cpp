@@ -24,7 +24,7 @@ void Nhc06Barostat::printDetail(FILE* o)
 
 BarostatEnum Nhc06Barostat::getBarostatEnum() const
 {
-   return BarostatEnum::Nhc2006;
+   return BarostatEnum::NHC2006;
 }
 
 void Nhc06Barostat::control1(time_prec dt)

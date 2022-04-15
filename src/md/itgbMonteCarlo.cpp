@@ -29,7 +29,7 @@ void MonteCarloBarostat::printDetail(FILE* o)
 
 BarostatEnum MonteCarloBarostat::getBarostatEnum() const
 {
-   return BarostatEnum::MonteCarlo;
+   return BarostatEnum::MONTECARLO;
 }
 
 void MonteCarloBarostat::control4(time_prec)

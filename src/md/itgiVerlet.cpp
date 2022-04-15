@@ -13,7 +13,7 @@ void VerletIntegrator::kickoff()
 }
 
 VerletIntegrator::VerletIntegrator(ThermostatEnum te, BarostatEnum be)
-   : BasicIntegrator(PropagatorEnum::Verlet, te, be)
+   : BasicIntegrator(PropagatorEnum::VERLET, te, be)
 {
    this->kickoff();
 }

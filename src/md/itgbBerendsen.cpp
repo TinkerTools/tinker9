@@ -12,7 +12,7 @@ void BerendsenBarostat::printDetail(FILE* o)
 
 BarostatEnum BerendsenBarostat::getBarostatEnum() const
 {
-   return BarostatEnum::Berendsen;
+   return BarostatEnum::BERENDSEN;
 }
 
 void BerendsenBarostat::control2(time_prec dt)

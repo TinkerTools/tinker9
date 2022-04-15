@@ -15,7 +15,7 @@ void RespaIntegrator::kickoff()
 }
 
 RespaIntegrator::RespaIntegrator(ThermostatEnum te, BarostatEnum be)
-   : BasicIntegrator(PropagatorEnum::Respa, te, be)
+   : BasicIntegrator(PropagatorEnum::RESPA, te, be)
 {
    this->kickoff();
 }

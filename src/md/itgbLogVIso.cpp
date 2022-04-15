@@ -60,7 +60,7 @@ IsoBaroDevice::IsoBaroDevice(double fric)
 
 BarostatEnum IsoBaroDevice::getBarostatEnum() const
 {
-   return BarostatEnum::m_LogVIso;
+   return BarostatEnum::m_LOGVISO;
 }
 
 void IsoBaroDevice::printDetail(FILE* o)

@@ -68,7 +68,7 @@ TEST_CASE("NVE-Verlet-ArBox", "[ff][nve][verlet][arbox]")
    std::vector<double> epots, eksums;
    int old = inform::iwrite;
    inform::iwrite = 1;
-   VerletIntegrator vvi(ThermostatEnum::Null, BarostatEnum::Null);
+   VerletIntegrator vvi(ThermostatEnum::NONE, BarostatEnum::NONE);
    for (int i = 1; i <= nsteps; ++i) {
       vvi.dynamic(i, dt_ps);
       epots.push_back(esum);

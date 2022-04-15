@@ -112,7 +112,7 @@ AnisoBaroDevice::AnisoBaroDevice(double fric)
 
 BarostatEnum AnisoBaroDevice::getBarostatEnum() const
 {
-   return BarostatEnum::m_LogVAniso;
+   return BarostatEnum::m_LOGVANISO;
 }
 
 void AnisoBaroDevice::printDetail(FILE* o)

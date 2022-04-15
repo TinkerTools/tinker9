@@ -30,7 +30,7 @@ void BasicBarostat::printDetail(FILE* o) {}
 
 BarostatEnum BasicBarostat::getBarostatEnum() const
 {
-   return BarostatEnum::Null;
+   return BarostatEnum::NONE;
 }
 
 bool BasicBarostat::ifApply(int istep)

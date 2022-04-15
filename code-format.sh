@@ -15,10 +15,28 @@ elif [ $OS == Darwin ]; then
    SED='perl -i -pe'
 fi
 
+pragmaDetected() {
+   if grep -q pragma "$1"; then
+      if grep -q "pragma once" "$1"; then
+         return 1
+      else
+         return 0
+      fi
+   else
+      return 1
+   fi
+}
+
 for x in "$@"; do
+
+if pragmaDetected "$x"; then
    $SED 's/#pragma /\/\/#prag /g' "$x"
    clang-format -i -style=file "$x"
    $SED 's/\/\/ *#prag /#pragma /g' "$x"
+else
+   clang-format -i -style=file "$x"
+fi
+
 done
 
 # clang-tidy

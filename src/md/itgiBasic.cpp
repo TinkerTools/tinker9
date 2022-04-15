@@ -14,7 +14,7 @@ void BasicIntegrator::plan(int istep)
    save = m_prop->ifSave(istep);
    bool mcbaro = false;
    if (m_baro->ifApply(istep))
-      if (m_baro->getBarostatEnum() == BarostatEnum::MonteCarlo)
+      if (m_baro->getBarostatEnum() == BarostatEnum::MONTECARLO)
          mcbaro = true;
    // toggle off virial if !applyBaro
    if (not applyBaro)
