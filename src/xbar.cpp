@@ -378,7 +378,7 @@ static void xBarCalc()
       "\n"
       " Enter Potential Energy BAR File Name :  ",
       std::string(""), invalid_barfile);
-   std::string barfile = string;
+   std::string barfile = str;
 
    auto invalid_frames = [](const std::string& s) {
       std::istringstream iss(s);
