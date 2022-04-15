@@ -2,7 +2,7 @@
 #include "ff/energybuffer.h"
 #include "tool/rcman.h"
 
-TINKER_DECL_EXTN("C")
+extern "C"
 {
    struct HARMONIC
    {

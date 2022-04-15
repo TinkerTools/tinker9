@@ -145,10 +145,6 @@ void mdrestPrintP1(bool prints, double vtot1, double vtot2, double vtot3, double
    }
 }
 
-/// \ingroup mdpq
-/// \brief Call #bounds() at least every x steps in MD.
-constexpr int BOUNDS_EVERY_X_STEPS = 500;
-
 void mdPropagate(int nsteps, time_prec dt_ps)
 {
    for (int istep = 1; istep <= nsteps; ++istep) {

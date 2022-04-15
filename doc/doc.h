@@ -51,10 +51,14 @@
 ///    \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
-/// \defgroup mdpq  Atom Number, Momentum (p), and Coordinates (q)
-/// \ingroup md
-/// \defgroup mdintg  Integrators
-/// \ingroup md
+///    \defgroup mdpq  Positions and Velocities
+///    \ingroup md
+///    \defgroup mdpt  Kinetic Energy, Thermostats, and Barostats
+///    \ingroup md
+///    \defgroup mdintg  Integrators
+///    \ingroup md
+///    \defgroup mdhc  Holonomic Constriaints
+///    \ingroup md
 
 /// \defgroup tool  Tools and Utilities
 ///    \defgroup io_read  Input
@@ -75,12 +79,6 @@
 /// \defgroup async  Asynchronous Flow Control
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
 /// \defgroup fft  Fast Fourier Transform
-
-/*
-/// \defgroup mdsave  Saving MD Trajectory Snapshots
-/// \defgroup mdpt  Thermostats (T) and Barostats (P)
-/// \defgroup osrw  OSRW
-*/
 
 //====================================================================//
 

@@ -5,7 +5,6 @@
 #include "tool/iofortstr.h"
 #include "tool/ioprint.h"
 #include "tool/ioread.h"
-#include <fstream>
 #include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/keys.hh>
@@ -14,6 +13,9 @@
 #include <tinker/routines.h>
 
 #include "tinker9.h"
+
+#include <array>
+#include <fstream>
 
 namespace tinker {
 static constexpr int MAX_NCHAR = 240;

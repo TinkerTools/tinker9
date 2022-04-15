@@ -33,21 +33,16 @@ TINKER_EXTERN int osrw_vdw;
 TINKER_EXTERN int osrw_ele;
 TINKER_EXTERN int osrw_tor;
 
-/**
- * \ingroup osrw
- * \{
- * \var osrw_du1
- * \brief Partial derivative of potential energy w.r.t. lambda.
- * \var osrw_dv1
- * \brief Partial derivative of virial tensor w.r.t. lambda.
- * \var osrw_dgx
- * \brief Partial derivative of energy gradient w.r.t. lambda.
- * \var osrw_dgy
- * \copydoc osrw_dgx
- * \var osrw_dgz
- * \copydoc osrw_dgx
- * \}
- */
+// \var osrw_du1
+// \brief Partial derivative of potential energy w.r.t. lambda.
+// \var osrw_dv1
+// \brief Partial derivative of virial tensor w.r.t. lambda.
+// \var osrw_dgx
+// \brief Partial derivative of energy gradient w.r.t. lambda.
+// \var osrw_dgy
+// \copydoc osrw_dgx
+// \var osrw_dgz
+// \copydoc osrw_dgx
 TINKER_EXTERN energy_prec osrw_du1;
 TINKER_EXTERN virial_prec osrw_dv1[9];
 TINKER_EXTERN grad_prec *osrw_dgx, *osrw_dgy, *osrw_dgz;

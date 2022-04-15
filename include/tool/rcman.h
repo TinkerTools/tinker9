@@ -96,7 +96,7 @@ void finish();
 void deviceData(RcOp);
 }
 
-TINKER_DECL_EXTN("C")
+extern "C"
 {
    struct Eng;
    struct EngGradVir;
@@ -160,7 +160,7 @@ struct calc
 };
 }
 
-TINKER_DECL_EXTN("C")
+extern "C"
 {
    struct Eng : public tinker::calc::Vers<tinker::calc::v0>
    {};
