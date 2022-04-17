@@ -7,8 +7,7 @@ namespace tinker {
 void mdPos_acc(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,
    const vel_prec* vly, const vel_prec* vlz)
 {
-   #pragma acc parallel loop independent async\
-               deviceptr(qx,qy,qz,vlx,vly,vlz)
+   #pragma acc parallel loop independent async deviceptr(qx,qy,qz,vlx,vly,vlz)
    for (int i = 0; i < n; ++i) {
       qx[i] += dt * vlx[i];
       qy[i] += dt * vly[i];
@@ -19,8 +18,7 @@ void mdPos_acc(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel
 void mdPosAxbv_acc(pos_prec a, pos_prec b)
 {
    pos_prec sa = a, sb = b;
-   #pragma acc parallel loop independent async\
-               deviceptr(xpos,ypos,zpos,vx,vy,vz)
+   #pragma acc parallel loop independent async deviceptr(xpos,ypos,zpos,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
       xpos[i] = sa * xpos[i] + sb * vx[i];
       ypos[i] = sa * ypos[i] + sb * vy[i];

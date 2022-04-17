@@ -82,6 +82,27 @@ inline T fixedTo(fixed val)
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
 }
 
+#pragma acc routine seq
+template <class T>
+inline T toFloatGrad(fixed g)
+{
+   return fixedTo<T>(g);
+}
+
+#pragma acc routine seq
+template <class T>
+inline T toFloatGrad(double g)
+{
+   return g;
+}
+
+#pragma acc routine seq
+template <class T>
+inline T toFloatGrad(float g)
+{
+   return g;
+}
+
 /// \ingroup acc_syntax
 /// \brief Used as `eq<T1,T2>()` for two type identifiers.
 template <class T, class U>

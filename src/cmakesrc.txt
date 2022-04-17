@@ -59,7 +59,6 @@ md/biso.cpp
 md/blp22.cpp
 md/bmc.cpp
 md/bnhc06.cpp
-md/enum.cpp
 md/ibasic.cpp
 md/ileapfroglp.cpp
 md/ilp22.cpp

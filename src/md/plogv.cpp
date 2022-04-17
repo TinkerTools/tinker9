@@ -14,7 +14,7 @@ namespace tinker {
 // R0    0       1
 // R1    1     nsp
 // R2    2     nsp
-void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
+void LogVDevice::velImpl(time_prec t, int idx, int nrespa)
 {
    if (not applyBaro) {
       if (nrespa == 1)
@@ -22,10 +22,7 @@ void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
       else
          mdVel2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2); // R1, R2
       return;
-   }
-
-   // if (applyBaro)
-   if (atomic) {
+   } else if (atomic) {
       if (aniso) {
          double a[3][3];
          double b[3][3];
@@ -110,28 +107,24 @@ void LogVDevice::updateVelocityImpl(time_prec t, int idx, int nrespa)
 
 LogVDevice::LogVDevice(bool isNRespa1)
    : BasicPropagator()
-   , m_respa(nullptr)
 {
-   if (not isNRespa1) {
+   if (isNRespa1)
+      nrespa = 1;
+   else
       nrespa = mdstuf::nrespa;
-      m_respa = new RespaDevice;
-   }
 }
 
 LogVDevice::~LogVDevice()
 {
-   if (m_respa) {
-      delete m_respa;
-      m_respa = nullptr;
-   }
+   nrespa = 0;
 }
 
-void LogVDevice::updatePosition(time_prec t)
+void LogVDevice::pos(time_prec t)
 {
-   if (atomic) {
-      if (not applyBaro) {
-         mdPos(t);
-      } else if (aniso) {
+   if (not applyBaro) {
+      mdPos(t);
+   } else if (atomic) {
+      if (aniso) {
          double a[3][3], b[3][3];
          trimatExp(a, vbar_matrix, t);
          trimatTExpm1c(b, vbar_matrix, t);
@@ -144,47 +137,43 @@ void LogVDevice::updatePosition(time_prec t)
          mdPosAxbv(a, b);
       }
    } else {
-      if (not applyBaro) {
-         mdPos(t);
-      } else if (aniso) {
-         hcCenterOfMass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
+      hcCenterOfMass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
+      if (aniso) {
          double scal[3][3];
          trimatExp(scal, vbar_matrix, t);
          for (int i = 0; i < 3; ++i)
             scal[i][i] -= 1;
          hcPosAn(scal);
-         mdPos(t);
       } else {
-         hcCenterOfMass(xpos, ypos, zpos, ratcom_x, ratcom_y, ratcom_z);
          double scal = std::exp(vbar * t) - 1;
          hcPosIso(scal);
-         mdPos(t);
       }
+      mdPos(t);
    }
 }
 
-void LogVDevice::updateVelocity1(time_prec t)
+void LogVDevice::vel1(time_prec t)
 {
-   updateVelocityImpl(t, 1, 1);
+   velImpl(t, 1, 1);
 }
 
-void LogVDevice::updateVelocity2(time_prec t)
+void LogVDevice::vel2(time_prec t)
 {
-   updateVelocityImpl(t, 2, 1);
+   velImpl(t, 2, 1);
 }
 
-void LogVDevice::updateVelocityR0(time_prec t)
+void LogVDevice::velR0(time_prec t)
 {
-   updateVelocityImpl(t, 0, 1);
+   velImpl(t, 0, 1);
 }
 
-void LogVDevice::updateVelocityR1(time_prec t, int nrespa)
+void LogVDevice::velR1(time_prec t, int nrespa)
 {
-   updateVelocityImpl(t, 1, nrespa);
+   velImpl(t, 1, nrespa);
 }
 
-void LogVDevice::updateVelocityR2(time_prec t, int nrespa)
+void LogVDevice::velR2(time_prec t, int nrespa)
 {
-   updateVelocityImpl(t, 2, nrespa);
+   velImpl(t, 2, nrespa);
 }
 }

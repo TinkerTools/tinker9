@@ -1,7 +1,7 @@
 #include "md/integrator.h"
 #include "md/misc.h"
 #include "tool/ioprint.h"
-#include <tinker/detail/bath.hh>
+#include <tinker/detail/mdstuf.hh>
 
 namespace tinker {
 void BasicThermostat::printBasic(FILE* o)
@@ -24,5 +24,25 @@ void BasicThermostat::control2(time_prec, bool save)
       T_prec temp;
       kinetic(temp);
    }
+}
+
+BasicThermostat* BasicThermostat::create(ThermostatEnum te)
+{
+   BasicThermostat* t = nullptr;
+   switch (te) {
+   case ThermostatEnum::BUSSI:
+      t = new BussiThermostat;
+      break;
+   case ThermostatEnum::NHC:
+      t = new NhcDevice(5, 5, static_cast<double>(mdstuf::nfree), //
+         NhcDevice::kineticAtomic,                                //
+         NhcDevice::scaleVelocityAtomic,                          //
+         std::string("NHC"));
+      break;
+   default:
+      t = new BasicThermostat;
+      break;
+   }
+   return t;
 }
 }

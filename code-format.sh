@@ -16,15 +16,14 @@ elif [ $OS == Darwin ]; then
 fi
 
 PragmaDetected() {
-   x=$(grep "#pragma" "$1")
-   y=$(grep "#pragma once" "$1")
+   local x=$(grep "#pragma" "$1")
    if [ -z "$x" ]; then
-      # no match
+      # if x is empty: no match
       return 1
    else
-      nx=$(echo "$x" | wc -l)
-      ny=$(echo "$y" | wc -l)
-      if [ $ny -eq 1 ] && [ $nx -eq 1 ]; then
+      # if x is not empty
+      local nx=$(echo "$x" | wc -l)
+      if [ $nx -eq 1 ] && grep -q "#pragma once" "$1"; then
          # pragma once
          return 1
       else
@@ -35,15 +34,25 @@ PragmaDetected() {
 }
 
 for x in "$@"; do
-
 if PragmaDetected "$x"; then
-   $SED 's/#pragma /\/\/#prag /g' "$x"
-   clang-format -i -style=file "$x"
-   $SED 's/\/\/ *#prag /#pragma /g' "$x"
+   # copy x to y
+   y="$x"-save-for-clang-format
+   cp "$x" "$y"
+   # format y
+   $SED 's/#pragma /\/\/#prag /g' "$y"
+   clang-format -i -style=file "$y"
+   $SED 's/\/\/ *#prag /#pragma /g' "$y"
+   # compare x and y
+   if cmp --silent "$x" "$y"; then
+      # x and y are identical
+      rm "$y"
+   else
+      # x and y are different
+      mv "$y" "$x"
+   fi
 else
    clang-format -i -style=file "$x"
 fi
-
 done
 
 # clang-tidy

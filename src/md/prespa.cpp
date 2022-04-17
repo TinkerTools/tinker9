@@ -1,3 +1,4 @@
+#include "ff/energy.h"
 #include "md/integrator.h"
 #include "md/misc.h"
 #include "md/pq.h"
@@ -16,13 +17,18 @@ RespaDevice::~RespaDevice()
    darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 }
 
-void RespaDevice::updateVelocityR1(time_prec t, int nrespa)
+void RespaDevice::velR0(time_prec t)
+{
+   mdVel(t, gx, gy, gz);
+}
+
+void RespaDevice::velR1(time_prec t, int nrespa)
 {
    mdVel2(t / nrespa, gx1, gy1, gz1, t, gx2, gy2, gz2);
 }
 
-void RespaDevice::updateVelocityR2(time_prec t, int nrespa)
+void RespaDevice::velR2(time_prec t, int nrespa)
 {
-   this->updateVelocityR1(t, nrespa);
+   this->velR1(t, nrespa);
 }
 }

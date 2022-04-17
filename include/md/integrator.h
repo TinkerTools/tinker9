@@ -5,14 +5,15 @@
 #include <tinker/detail/bath.hh>
 
 namespace tinker {
+/// \ingroup mdintg
 class IntegratorStaticData
 {
 protected:
-   static int nrespa;
    static bool applyBaro;
    static bool atomic;
    static bool aniso;
    static bool semiiso;
+   static int nrespa;
    static double dofP;
    static int anisoArrayLength;
    static const int anisoArray[6][2];
@@ -24,6 +25,7 @@ protected:
 
 //====================================================================//
 
+/// \ingroup mdintg
 enum class PropagatorEnum
 {
    RESPA,
@@ -31,84 +33,83 @@ enum class PropagatorEnum
    m_LOGV,
 };
 
-class BasicPropagator;
-BasicPropagator* create(PropagatorEnum pe);
-
+/// \ingroup mdintg
 /// \brief The interface class of a Verlet or an RESPA-Verlet MD step.
 class BasicPropagator : virtual public IntegratorStaticData
 {
 public:
-   /// \brief Logical flag governing saving an MD step.
-   /// \param istep  Current number of MD step, started from 1.
-   bool ifSave(int istep) const;
    BasicPropagator();
    virtual ~BasicPropagator();
 
+   /// \brief Logical flag governing saving an MD step.
+   /// \param istep  Current number of MD step, starting from 1.
+   bool ifSave(int istep) const;
+
    /// \brief Position update.
    /// \param t  Actual time interval.
-   virtual void updatePosition(time_prec t);
+   virtual void pos(time_prec t);
 
    /// \brief The first half-step velocity update.
    /// \param t  Actual time interval, i.e., half-step.
-   virtual void updateVelocity1(time_prec t);
+   virtual void vel1(time_prec t);
    /// \brief The second half-step velocity update.
    /// \param t  Actual time interval, i.e., half-step.
-   virtual void updateVelocity2(time_prec t);
+   virtual void vel2(time_prec t);
 
    /// \brief Velocity update for the inner RESPA time steps.
    /// \param t  Actual time interval, i.e., time-step/nrespa.
-   virtual void updateVelocityR0(time_prec t);
+   virtual void velR0(time_prec t) {}
    /// \brief The first half-step velocity update for RESPA.
    /// \param t  Actual time interval, i.e., half-step.
    /// \param nrespa  Number of inner RESPA steps per time-step.
-   virtual void updateVelocityR1(time_prec t, int nrespa);
+   virtual void velR1(time_prec t, int nrespa) {}
    /// \brief The second half-step velocity update for RESPA.
    /// \param t       Actual time interval, i.e., half-step.
    /// \param nrespa  Number of inner RESPA steps per time-step.
-   virtual void updateVelocityR2(time_prec t, int nrespa);
+   virtual void velR2(time_prec t, int nrespa) {}
 
    virtual void rattleSave();
    virtual void rattle(time_prec dt);
    virtual void rattle2(time_prec dt, bool useVirial);
-};
 
+   static BasicPropagator* create(PropagatorEnum pe);
+};
+/// \ingroup mdintg
 typedef BasicPropagator VerletDevice;
 
+/// \ingroup mdintg
 class RespaDevice : public BasicPropagator
 {
 public:
    RespaDevice();
    ~RespaDevice();
 
-   void updateVelocityR1(time_prec t, int nrespa) override;
-   void updateVelocityR2(time_prec t, int nrespa) override;
+   void velR0(time_prec t) override;
+   void velR1(time_prec t, int nrespa) override;
+   void velR2(time_prec t, int nrespa) override;
 };
 
+/// \ingroup mdintg
 class LogVDevice : public BasicPropagator
 {
 protected:
-   typedef BasicPropagator base_t;
-
-   RespaDevice* m_respa;
-
-   void updateVelocityImpl(time_prec t, int idx, int nrespa);
+   void velImpl(time_prec t, int idx, int nrespa);
 
 public:
    LogVDevice(bool isNRespa1);
    ~LogVDevice();
 
-   void updatePosition(time_prec t) override;
-   void updateVelocity1(time_prec t) override;
-   void updateVelocity2(time_prec t) override;
-
-   void updateVelocityR0(time_prec t) override;
-   void updateVelocityR1(time_prec t, int nrespa) override;
-   void updateVelocityR2(time_prec t, int nrespa) override;
+   void pos(time_prec t) override;
+   void vel1(time_prec t) override;
+   void vel2(time_prec t) override;
+   void velR0(time_prec t) override;
+   void velR1(time_prec t, int nrespa) override;
+   void velR2(time_prec t, int nrespa) override;
 };
 
 //====================================================================//
-// generic thermostat
 
+/// \ingroup mdpt
 enum class ThermostatEnum
 {
    NONE,
@@ -116,16 +117,13 @@ enum class ThermostatEnum
    BERENDSEN, // empty
    BUSSI,
    NHC,
-
    m_LEAPFROGLP,
    m_LP2022,
    m_NHC1996,
    m_NHC2006,
 };
 
-class BasicThermostat;
-BasicThermostat* create(ThermostatEnum);
-
+/// \ingroup mdpt
 class BasicThermostat : virtual public IntegratorStaticData
 {
 protected:
@@ -137,8 +135,11 @@ public:
    virtual void printDetail(FILE*);
    virtual void control1(time_prec timeStep);
    virtual void control2(time_prec timeStep, bool save);
+
+   static BasicThermostat* create(ThermostatEnum);
 };
 
+/// \ingroup mdpt
 class BussiThermostat : public BasicThermostat
 {
 public:
@@ -146,6 +147,7 @@ public:
    void control2(double timeStep, bool) override;
 };
 
+/// \ingroup mdpt
 /// \brief Maximum length of the NH chain.
 constexpr int maxnose = bath::maxnose;
 
@@ -183,6 +185,7 @@ public:
    static void scaleVelocityAtomic(double scale);
 };
 
+/// \ingroup mdpt
 class Nhc06Thermostat : public BasicThermostat
 {
 protected:
@@ -207,8 +210,8 @@ public:
 };
 
 //====================================================================//
-// generic barostat
 
+/// \ingroup mdpt
 enum class BarostatEnum
 {
    NONE,
@@ -223,9 +226,7 @@ enum class BarostatEnum
    m_NHC1996,
 };
 
-class BasicBarostat;
-BasicBarostat* create(BarostatEnum);
-
+/// \ingroup mdpt
 class BasicBarostat : virtual public IntegratorStaticData
 {
 protected:
@@ -245,8 +246,11 @@ public:
 
    virtual bool ifApply(int istep);
    bool ifApply() const;
+
+   static BasicBarostat* create(BarostatEnum);
 };
 
+/// \ingroup mdpt
 class MonteCarloBarostat : public BasicBarostat
 {
 public:
@@ -258,6 +262,7 @@ public:
    bool ifApply(int istep) override;
 };
 
+/// \ingroup mdpt
 class BerendsenBarostat : public BasicBarostat
 {
 public:
@@ -266,6 +271,7 @@ public:
    void control2(time_prec timeStep) override;
 };
 
+/// \ingroup mdpt
 class IsoBaroDevice : public BasicBarostat
 {
 protected:
@@ -287,6 +293,7 @@ public:
    void control3(time_prec dt) override;
 };
 
+/// \ingroup mdpt
 class AnisoBaroDevice : public BasicBarostat
 {
 protected:
@@ -309,6 +316,7 @@ public:
    void control3(time_prec dt) override;
 };
 
+/// \ingroup mdpt
 class Nhc06Barostat : public BasicBarostat
 {
 protected:
@@ -325,6 +333,7 @@ public:
    void control3(time_prec timeStep) override;
 };
 
+/// \ingroup mdpt
 class LP22Barostat : public BasicBarostat
 {
 protected:
@@ -342,8 +351,8 @@ public:
 };
 
 //====================================================================//
-// integrator
 
+/// \ingroup mdintg
 enum class IntegratorEnum
 {
    BEEMAN,
@@ -355,6 +364,7 @@ enum class IntegratorEnum
    NHC2006, // J. Phys. A, 39 5629 (2006), https://doi.org/10.1088/0305-4470/39/19/S18
 };
 
+/// \ingroup mdintg
 class BasicIntegrator : virtual public IntegratorStaticData
 {
 protected:
@@ -377,6 +387,7 @@ public:
    virtual void dynamic(int istep, time_prec dt);
 };
 
+/// \ingroup mdintg
 class VerletIntegrator : public BasicIntegrator
 {
 protected:
@@ -388,6 +399,7 @@ public:
    static void KickOff();
 };
 
+/// \ingroup mdintg
 class RespaIntegrator : public BasicIntegrator
 {
 protected:
@@ -399,6 +411,7 @@ public:
    static void KickOff();
 };
 
+/// \ingroup mdintg
 class Nhc96Integrator : public BasicIntegrator
 {
 protected:
@@ -421,6 +434,7 @@ public:
    Nhc06Integrator(bool isNRespa1);
 };
 
+/// \ingroup mdintg
 class LP22Integrator : public BasicIntegrator
 {
 protected:
@@ -432,6 +446,7 @@ public:
    LP22Integrator(bool isNRespa1);
 };
 
+/// \ingroup mdintg
 class LeapFrogLPIntegrator : public BasicIntegrator
 {
 protected:

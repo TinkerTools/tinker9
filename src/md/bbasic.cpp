@@ -43,4 +43,27 @@ bool BasicBarostat::ifApply() const
 {
    return applyBaro;
 }
+
+BasicBarostat* BasicBarostat::create(BarostatEnum be)
+{
+   BasicBarostat* b = nullptr;
+   switch (be) {
+   case BarostatEnum::BERENDSEN:
+      b = new BerendsenBarostat;
+      break;
+   case BarostatEnum::LP2022:
+      b = new LP22Barostat;
+      break;
+   case BarostatEnum::MONTECARLO:
+      b = new MonteCarloBarostat;
+      break;
+   case BarostatEnum::NHC2006:
+      b = new Nhc06Barostat;
+      break;
+   default:
+      b = new BasicBarostat;
+      break;
+   }
+   return b;
+}
 }

@@ -1,4 +1,3 @@
-#include "md/osrw.h"
 #include "ff/amoebamod.h"
 #include "ff/echarge.h"
 #include "ff/energy.h"
@@ -7,6 +6,7 @@
 #include "ff/hippomod.h"
 #include "ff/potent.h"
 #include "math/zero.h"
+#include "md/osrw.h"
 #include "tool/argkey.h"
 #include "tool/externfunc.h"
 

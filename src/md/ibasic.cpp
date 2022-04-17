@@ -28,9 +28,9 @@ void BasicIntegrator::plan(int istep)
 }
 
 BasicIntegrator::BasicIntegrator(PropagatorEnum pe, ThermostatEnum te, BarostatEnum be)
-   : m_prop(create(pe))
-   , m_thermo(create(te))
-   , m_baro(create(be))
+   : m_prop(BasicPropagator::create(pe))
+   , m_thermo(BasicThermostat::create(te))
+   , m_baro(BasicBarostat::create(be))
 {
    this->plan(0);
 }
@@ -68,16 +68,16 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
    m_thermo->control1(dt);
 
    if (nrespa == 1)
-      m_prop->updateVelocity1(dt2);
+      m_prop->vel1(dt2);
    else
-      m_prop->updateVelocityR1(dt2, nrespa);
+      m_prop->velR1(dt2, nrespa);
    m_prop->rattleSave();
 
    m_baro->control3(dt);
 
    this->plan(istep);
    if (nrespa == 1) {
-      m_prop->updatePosition(dt);
+      m_prop->pos(dt);
       m_prop->rattle(dt);
       copyPosToXyz(true);
       energy(vers1);
@@ -90,10 +90,10 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
       time_prec dta = dt / nrespa;
 
       for (int ifast = 1; ifast < nrespa; ++ifast) {
-         m_prop->updatePosition(dta);
+         m_prop->pos(dta);
          copyPosToXyz(false);
          energy(vers1, RESPA_FAST, respaTSConfig());
-         m_prop->updateVelocityR0(dta);
+         m_prop->velR0(dta);
          if (vers1 & calc::virial) {
             if (atomic) {
                for (int iv = 0; iv < 9; ++iv)
@@ -105,7 +105,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
             }
          }
       }
-      m_prop->updatePosition(dta);
+      m_prop->pos(dta);
       m_prop->rattle(dt);
       copyPosToXyz(true);
 
@@ -148,9 +148,9 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
    m_baro->control4(dt);
 
    if (nrespa == 1)
-      m_prop->updateVelocity2(dt2);
+      m_prop->vel2(dt2);
    else
-      m_prop->updateVelocityR2(dt2, nrespa);
+      m_prop->velR2(dt2, nrespa);
    // rattle2 does not change the molecular virial
    m_prop->rattle2(dt, (vers1 & calc::virial) and atomic);
 
