@@ -3,7 +3,7 @@ Parallelization
 
 .. include:: ../replace.rst
 
-**CUDA-DEIVCE [integer]**
+**CUDA-DEVICE [integer]**
 
 .. index:: CUDA-DEVICE
 .. index:: CUDA_DEVICE
