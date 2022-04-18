@@ -26,7 +26,7 @@ ConfigData = {
         kUbuntu: '20.04',
         kDevelUbuntu: '11.2.2-devel-ubuntu20.04',
         kRuntimeUbuntu: '11.2.2-runtime-ubuntu20.04',
-        kNvhpc: '22.2'
+        kNvhpc: '22.3'
     }
 }
 
@@ -85,9 +85,9 @@ class Nvhpc:
             c += '''RUN wget https://developer.download.nvidia.com/hpc-sdk/20.9/nvhpc-20-9_20.9_amd64.deb https://developer.download.nvidia.com/hpc-sdk/20.9/nvhpc-2020_20.9_amd64.deb
 RUN apt install -y ./nvhpc-20-9_20.9_amd64.deb ./nvhpc-2020_20.9_amd64.deb
 RUN rm ./nvhpc-20-9_20.9_amd64.deb ./nvhpc-2020_20.9_amd64.deb'''
-        elif version == '22.2':
+        elif version == '22.3':
             c += '''RUN echo 'deb [trusted=yes] https://developer.download.nvidia.com/hpc-sdk/ubuntu/amd64 /' | tee /etc/apt/sources.list.d/nvhpc.list
-RUN apt update -y && apt install -y nvhpc-22-2-cuda-multi'''
+RUN apt update -y && apt install -y nvhpc-22-3-cuda-multi'''
         else:
             raise Exception('Unknown Nvhpc version %s' % version)
         return c
@@ -96,7 +96,7 @@ RUN apt update -y && apt install -y nvhpc-22-2-cuda-multi'''
     def cmakeArgComputeCapacity(cls, version: str) -> str:
         if version == '20.9':
             c = '50,60,70,75'
-        elif version == '22.2':
+        elif version == '22.3':
             c = '50,60,70,75,80'
         else:
             raise Exception('Unknown Nvhpc version %s' % version)
@@ -155,7 +155,7 @@ class DevelFile(DockerFile):
         # install packages
         c += NewLine
         c += NewLine
-        c += 'RUN export DEBIAN_FRONTEND=noninteractive'
+        c += 'ARG DEBIAN_FRONTEND=noninteractive'
         c += NewLine
         c += 'RUN apt update -y && apt install -y ca-certificates libssl-dev gfortran git'
         c += NewLine
@@ -195,7 +195,7 @@ FROM nvidia/cuda:%s''' % (develFile.tag(), self.config[kRuntimeUbuntu])
         c += NewLine
         c += NewLine
         c += '''# git and cmake are no longer necessary
-RUN export DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update -y && apt install -y ca-certificates libssl-dev gfortran
 
 ARG LibPath=/opt/nvidia/hpc_sdk/Linux_x86_64/%s/compilers/lib

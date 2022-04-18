@@ -59,7 +59,7 @@ void mdDebugPosNorm_acc(pos_prec poseps, time_prec dt, //
       y1 = dt * vly[i];
       z1 = dt * vlz[i];
       norm2 = x1 * x1 + y1 * y1 + z1 * z1;
-      bool big = norm2 > tol2;
+      bool big = (norm2 > tol2) or (norm2 != norm2); // big or NaN
       int flag = big ? i : -1;
       which = which > flag ? which : flag;
    }

@@ -93,6 +93,7 @@ public:
 class LogVDevice : public BasicPropagator
 {
 protected:
+   RespaDevice m_respa__; // to allocate and deallocate the respa arrays
    void velImpl(time_prec t, int idx, int nrespa);
 
 public:

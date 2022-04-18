@@ -84,7 +84,7 @@ double Nhc06Thermostat::kineticVbar()
       for (k = 0; k < anisoArrayLength; ++k) {
          i = anisoArray[k][0];
          j = anisoArray[k][1];
-         ekvbar += 0.5 * qbar * vbar_matrix[i][j];
+         ekvbar += 0.5 * qbar * vbar_matrix[i][j] * vbar_matrix[i][j];
       }
       break;
    default:
