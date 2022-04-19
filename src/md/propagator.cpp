@@ -30,6 +30,22 @@ BasicPropagator::BasicPropagator()
    getKV("SEMIISO-PRESSURE", semiiso, false);
    if (semiiso)
       aniso = true;
+
+   if (aniso) {
+      switch (box_shape) {
+      case BoxShape::TRI:
+         anisoArrayLength = Tri;
+         break;
+      case BoxShape::MONO:
+         anisoArrayLength = Mono;
+         break;
+      default:
+         anisoArrayLength = OrthoOrOct;
+         break;
+      }
+      if (semiiso)
+         anisoArrayLength = SemiIso;
+   }
 }
 
 BasicPropagator::~BasicPropagator() {}

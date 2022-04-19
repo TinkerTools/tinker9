@@ -1,15 +1,11 @@
 #include "md/integrator.h"
-#include "ff/box.h"
 #include "ff/energy.h"
-#include "md/integrator.h"
 #include "md/lflpiston.h"
 #include "md/misc.h"
 #include "md/pq.h"
 #include "md/rattle.h"
-#include "tool/darray.h"
 #include "tool/error.h"
 #include "tool/ioprint.h"
-#include <tinker/detail/bath.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>

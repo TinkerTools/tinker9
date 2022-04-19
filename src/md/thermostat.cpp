@@ -156,15 +156,16 @@ NhcDevice::NhcDevice(
 
 void NhcDevice::printDetail(FILE* o)
 {
+   auto tau2 = units::gasconst * bath::kelvin * bath::tautemp * bath::tautemp;
    print(o, "\n");
    print(o, " %s\n", name.c_str());
-   print(o, " DOF                %12.1lf\n", g0);
+   print(o, " DOF                %12ld\n", std::lround(g0));
    print(o, " NHC N              %12d\n", nnose);
    print(o, " NHC NC             %12d\n", nhc_nc);
    int nsy = nhc_nsy;
    print(o, " NHC NSY            %12d\n", nsy);
    for (int i = 0; i < nnose; ++i) {
-      print(o, " NHC %2d Mass        %12.4lf\n", i + 1, qnh[i]);
+      print(o, " NHC %2d Mass        %12.1lf kT*tau(T)**2\n", i + 1, qnh[i] / tau2);
    }
    printBasic(o);
 }

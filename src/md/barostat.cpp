@@ -189,7 +189,7 @@ IsoBaroDevice::IsoBaroDevice(double fric)
    dofP = mdstuf::nfree;
 
    double kt = units::gasconst * bath::kelvin;
-   qbar = kt * bath::taupres * bath::taupres * dofP;
+   qbar = kt * bath::taupres * bath::taupres * (dofP + 3.0);
    vbar = 0;
 }
 
@@ -200,7 +200,8 @@ BarostatEnum IsoBaroDevice::getBarostatEnum() const
 
 void IsoBaroDevice::printDetail(FILE* o)
 {
-   print(o, " VBar Mass          %12.2lf\n", qbar);
+   auto tau2 = units::gasconst * bath::kelvin * bath::taupres * bath::taupres;
+   print(o, " VBar Mass          %12.1lf kT*tau(P)**2\n", qbar / tau2);
    printBasic(o);
 }
 
@@ -291,20 +292,6 @@ AnisoBaroDevice::AnisoBaroDevice(double fric)
    , m_rdn()
    , m_langevin(fric != 0.0)
 {
-   switch (box_shape) {
-   case BoxShape::TRI:
-      anisoArrayLength = Tri;
-      break;
-   case BoxShape::MONO:
-      anisoArrayLength = Mono;
-      break;
-   default:
-      anisoArrayLength = OrthoOrOct;
-      break;
-   }
-   if (semiiso)
-      anisoArrayLength = SemiIso;
-
    if (atomic) {
       m_vir = vir;
       m_eksum = &eksum;
@@ -325,7 +312,7 @@ AnisoBaroDevice::AnisoBaroDevice(double fric)
 
    dofP = mdstuf::nfree;
    double kt = units::gasconst * bath::kelvin;
-   qbar = kt * bath::taupres * bath::taupres * dofP;
+   qbar = kt * bath::taupres * bath::taupres * (dofP + 3.0) / 3.0;
    vbar = 0;
    for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
@@ -341,7 +328,8 @@ BarostatEnum AnisoBaroDevice::getBarostatEnum() const
 
 void AnisoBaroDevice::printDetail(FILE* o)
 {
-   print(o, " VBar Mass          %12.2lf\n", qbar);
+   auto tau2 = units::gasconst * bath::kelvin * bath::taupres * bath::taupres;
+   print(o, " VBar Mass          %12.1lf kT*tau(P)**2\n", qbar / tau2);
    printBasic(o);
 }
 
