@@ -201,7 +201,10 @@ BarostatEnum IsoBaroDevice::getBarostatEnum() const
 void IsoBaroDevice::printDetail(FILE* o)
 {
    auto tau2 = units::gasconst * bath::kelvin * bath::taupres * bath::taupres;
+   print(o, "\n");
    print(o, " VBar Mass          %12.1lf kT*tau(P)**2\n", qbar / tau2);
+   if (m_langevin)
+      print(o, " Friction           %12.1lf /ps\n", m_fric);
    printBasic(o);
 }
 
@@ -329,7 +332,10 @@ BarostatEnum AnisoBaroDevice::getBarostatEnum() const
 void AnisoBaroDevice::printDetail(FILE* o)
 {
    auto tau2 = units::gasconst * bath::kelvin * bath::taupres * bath::taupres;
+   print(o, "\n");
    print(o, " VBar Mass          %12.1lf kT*tau(P)**2\n", qbar / tau2);
+   if (m_langevin)
+      print(o, " Friction           %12.1lf /ps\n", m_fric);
    printBasic(o);
 }
 
