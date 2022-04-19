@@ -107,9 +107,9 @@ public:
    void velR1(time_prec t, int nrespa) override;
    void velR2(time_prec t, int nrespa) override;
 };
+}
 
-//====================================================================//
-
+namespace tinker {
 /// \ingroup mdpt
 enum class ThermostatEnum
 {
@@ -209,9 +209,9 @@ public:
 
    static double dofVbar();
 };
+}
 
-//====================================================================//
-
+namespace tinker {
 /// \ingroup mdpt
 enum class BarostatEnum
 {
@@ -350,9 +350,9 @@ public:
    void control2(time_prec timeStep) override;
    void control3(time_prec timeStep) override;
 };
+}
 
-//====================================================================//
-
+namespace tinker {
 /// \ingroup mdintg
 enum class IntegratorEnum
 {

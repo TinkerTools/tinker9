@@ -1,6 +1,6 @@
+#include "md/lflpiston.h"
 #include "ff/energy.h"
 #include "math/random.h"
-#include "md/lflpiston.h"
 #include "md/misc.h"
 #include "md/pq.h"
 #include "md/rattle.h"
