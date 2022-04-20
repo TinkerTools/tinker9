@@ -1064,8 +1064,6 @@ void erepel1a_();
 #define tinker_f_erepel1a erepel1a_
 void erepel1b_();
 #define tinker_f_erepel1b erepel1b_
-void erepel1c_();
-#define tinker_f_erepel1c erepel1c_
 
 // erepel2.f
 void erepel2_(int* i);
@@ -1868,10 +1866,10 @@ void molecule_();
 #define tinker_f_molecule molecule_
 
 // moments.f
-void moments_();
-#define tinker_f_moments moments_
-void momfull_();
-#define tinker_f_momfull momfull_
+void moments_(char* mode, tinker_fchar_len_t mode_cap);
+inline void tinker_f_moments(tinker_fchars mode) {
+    return moments_(mode.string, mode.capacity);
+}
 
 // mutate.f
 void mutate_();
@@ -2104,6 +2102,10 @@ inline void tinker_f_prmkey(tinker_fchars text) {
 }
 void potoff_();
 #define tinker_f_potoff potoff_
+void valoff_();
+#define tinker_f_valoff valoff_
+void nbondoff_();
+#define tinker_f_nbondoff nbondoff_
 
 // promo.f
 void promo_();
@@ -2364,6 +2366,10 @@ void setacceleration_(int* n, double* ax, double* ay, double* az);
 #define tinker_f_setacceleration setacceleration_
 void setinduced_(int* n, double* ux, double* uy, double* uz);
 #define tinker_f_setinduced setinduced_
+
+// setprm.f
+void setprm_();
+#define tinker_f_setprm setprm_
 
 // shakeup.f
 void shakeup_();

@@ -71,12 +71,12 @@ void etortorData(RcOp op)
       for (int i = 0; i < ktrtor::maxntt; ++i)
          ibuf[i] = ktrtor::tny[i];
       darray::copyin(g::q0, ktrtor::maxntt, tny, ibuf.data());
-      darray::copyin(g::q0, ktrtor::maxntt, ttx, &ktrtor::ttx[0][0]);
-      darray::copyin(g::q0, ktrtor::maxntt, tty, &ktrtor::tty[0][0]);
-      darray::copyin(g::q0, ktrtor::maxntt, tbf, &ktrtor::tbf[0][0]);
-      darray::copyin(g::q0, ktrtor::maxntt, tbx, &ktrtor::tbx[0][0]);
-      darray::copyin(g::q0, ktrtor::maxntt, tby, &ktrtor::tby[0][0]);
-      darray::copyin(g::q0, ktrtor::maxntt, tbxy, &ktrtor::tbxy[0][0]);
+      darray::copyin(g::q0, ktrtor::maxntt, ttx, &ktrtor::ttx[0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tty, &ktrtor::tty[0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tbf, &ktrtor::tbf[0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tbx, &ktrtor::tbx[0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tby, &ktrtor::tby[0]);
+      darray::copyin(g::q0, ktrtor::maxntt, tbxy, &ktrtor::tbxy[0]);
       waitFor(g::q0);
 
       ttorunit = torpot::ttorunit;
