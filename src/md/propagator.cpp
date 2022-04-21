@@ -16,8 +16,11 @@ bool IntegratorStaticData::aniso = false;
 bool IntegratorStaticData::semiiso = false;
 int IntegratorStaticData::nrespa = 0;
 double IntegratorStaticData::dofP = 1.0;
-int IntegratorStaticData::anisoArrayLength = 0;
-const int IntegratorStaticData::anisoArray[6][2] = {{2, 2}, {1, 1}, {0, 0}, {0, 2}, {0, 1}, {1, 2}};
+
+int IntegratorStaticData::arrayLength = 0;
+const int (*IntegratorStaticData::indexArray)[2] = nullptr;
+const int IntegratorStaticData::AnisoArray[6][2] = {{2, 2}, {1, 1}, {0, 0}, {0, 2}, {1, 2}, {0, 1}};
+const int IntegratorStaticData::SemiArray[4][2] = {{2, 2}, {1, 1}, {0, 2}, {1, 2}};
 }
 
 namespace tinker {
@@ -26,25 +29,25 @@ BasicPropagator::BasicPropagator()
    nrespa = 1;
 
    atomic = not useRattle();
-   aniso = bath::anisotrop;
    getKV("SEMIISO-PRESSURE", semiiso, false);
    if (semiiso)
       aniso = true;
+   else
+      aniso = bath::anisotrop;
 
    if (aniso) {
+      indexArray = semiiso ? SemiArray : AnisoArray;
       switch (box_shape) {
       case BoxShape::TRI:
-         anisoArrayLength = Tri;
+         arrayLength = semiiso ? SemiTri : AnisoTri;
          break;
       case BoxShape::MONO:
-         anisoArrayLength = Mono;
+         arrayLength = semiiso ? SemiMono : AnisoMono;
          break;
       default:
-         anisoArrayLength = OrthoOrOct;
+         arrayLength = semiiso ? SemiOrthoOrOct : AnisoOrthoOrOct;
          break;
       }
-      if (semiiso)
-         anisoArrayLength = SemiIso;
    }
 }
 

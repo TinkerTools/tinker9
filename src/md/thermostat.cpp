@@ -267,73 +267,43 @@ void Nhc06Thermostat::scaleVelocityRattleGroup(double scale)
 
 double Nhc06Thermostat::kineticVbar()
 {
-   double ekvbar;
-   int i, j, k;
-   ekvbar = 0;
-   switch (anisoArrayLength) {
-   case Tri:
-   case Mono:
-   case OrthoOrOct:
-   case SemiIso:
-      for (k = 0; k < anisoArrayLength; ++k) {
-         i = anisoArray[k][0];
-         j = anisoArray[k][1];
+   double ekvbar = 0;
+   if (aniso) { // including semiiso
+      for (int k = 0; k < arrayLength; ++k) {
+         int i = indexArray[k][0];
+         int j = indexArray[k][1];
          ekvbar += 0.5 * qbar * vbar_matrix[i][j] * vbar_matrix[i][j];
       }
-      break;
-   default:
+   } else {
       ekvbar += 0.5 * qbar * vbar * vbar;
-      break;
    }
    return ekvbar;
 }
 
 void Nhc06Thermostat::scaleVelocityVbar(double scale)
 {
-   int i, j, k;
-   switch (anisoArrayLength) {
-   case Tri:
-   case Mono:
-   case OrthoOrOct:
-      for (k = 0; k < anisoArrayLength; ++k) {
-         i = anisoArray[k][0];
-         j = anisoArray[k][1];
+   if (aniso) { // including semiiso
+      for (int k = 0; k < arrayLength; ++k) {
+         int i = indexArray[k][0];
+         int j = indexArray[k][1];
          vbar_matrix[i][j] *= scale;
       }
-      break;
-   case SemiIso:
-      for (k = 0; k < OrthoOrOct; ++k) {
-         i = anisoArray[k][0];
-         j = anisoArray[k][1];
-         vbar_matrix[i][j] *= scale;
+      if (semiiso) {
+         // copy yy to xx
+         vbar_matrix[0][0] = vbar_matrix[1][1];
       }
-      break;
-   default:
+   } else {
       vbar *= scale;
-      break;
    }
 }
 
 double Nhc06Thermostat::dofVbar()
 {
    double dof;
-   switch (anisoArrayLength) {
-   case Tri:
-      dof = static_cast<double>(Tri);
-      break;
-   case Mono:
-      dof = static_cast<double>(Mono);
-      break;
-   case OrthoOrOct:
-      dof = static_cast<double>(OrthoOrOct);
-      break;
-   case SemiIso:
-      dof = static_cast<double>(SemiIso);
-      break;
-   default:
+   if (aniso)
+      dof = static_cast<double>(arrayLength);
+   else
       dof = 1.0;
-      break;
-   }
    return dof;
 }
 }

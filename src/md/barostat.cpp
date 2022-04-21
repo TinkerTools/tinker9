@@ -256,13 +256,13 @@ void AnisoBaroDevice::control_1_2(time_prec dt)
    double c_ekin[3][3] = {0};
    double c_vir[9] = {0};
    // copy 6 elements
-   for (int k = 0; k < Tri; ++k) {
-      int i = anisoArray[k][0];
-      int j = anisoArray[k][1];
+   for (int k = 0; k < AnisoTri; ++k) {
+      int i = AnisoArray[k][0];
+      int j = AnisoArray[k][1];
       c_ekin[i][j] = m_ekin[i][j];
       c_vir[3 * i + j] = m_vir[3 * i + j];
    }
-   if (anisoArrayLength == SemiIso) {
+   if (semiiso) {
       // average xx and yy
       c_ekin[0][0] = 0.5 * (m_ekin[0][0] + m_ekin[1][1]);
       c_ekin[1][1] = c_ekin[0][0];
@@ -270,9 +270,9 @@ void AnisoBaroDevice::control_1_2(time_prec dt)
       c_vir[3 * 1 + 1] = c_vir[3 * 0 + 0];
    }
 
-   for (int k = 0; k < anisoArrayLength; ++k) {
-      int i = anisoArray[k][0];
-      int j = anisoArray[k][1];
+   for (int k = 0; k < arrayLength; ++k) {
+      int i = indexArray[k][0];
+      int j = indexArray[k][1];
       gbar[i][j] += (2 * c_ekin[i][j] - c_vir[3 * i + j]);
       gbar[i][j] /= qbar;
       if (m_langevin)
@@ -280,7 +280,7 @@ void AnisoBaroDevice::control_1_2(time_prec dt)
       else
          vbar_matrix[i][j] += gbar[i][j] * dt2;
    }
-   if (anisoArrayLength == SemiIso) {
+   if (semiiso) {
       // copy yy to xx
       vbar_matrix[0][0] = vbar_matrix[1][1];
    }
@@ -306,9 +306,9 @@ AnisoBaroDevice::AnisoBaroDevice(double fric)
    }
 
    if (m_langevin) {
-      for (int k = 0; k < anisoArrayLength; ++k) {
-         int i = anisoArray[k][0];
-         int j = anisoArray[k][1];
+      for (int k = 0; k < arrayLength; ++k) {
+         int i = indexArray[k][0];
+         int j = indexArray[k][1];
          m_rdn[i][j] = normal<double>();
       }
    }
@@ -351,9 +351,9 @@ void AnisoBaroDevice::control2(time_prec dt)
    if (not applyBaro)
       return;
 
-   for (int k = 0; k < anisoArrayLength; ++k) {
-      int i = anisoArray[k][0];
-      int j = anisoArray[k][1];
+   for (int k = 0; k < arrayLength; ++k) {
+      int i = indexArray[k][0];
+      int j = indexArray[k][1];
       m_rdn[i][j] = normal<double>();
    }
    control_1_2(dt);

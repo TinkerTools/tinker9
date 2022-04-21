@@ -15,12 +15,19 @@ protected:
    static bool semiiso;
    static int nrespa;
    static double dofP;
-   static int anisoArrayLength;
-   static const int anisoArray[6][2];
-   static constexpr int SemiIso = 2;
-   static constexpr int OrthoOrOct = 3;
-   static constexpr int Mono = 4;
-   static constexpr int Tri = 6;
+
+   static int arrayLength;
+   static const int (*indexArray)[2];
+
+   static const int AnisoArray[6][2];
+   static constexpr int AnisoOrthoOrOct = 3;
+   static constexpr int AnisoMono = 4;
+   static constexpr int AnisoTri = 6;
+
+   static const int SemiArray[4][2];
+   static constexpr int SemiOrthoOrOct = 2;
+   static constexpr int SemiMono = 3;
+   static constexpr int SemiTri = 4;
 };
 
 //====================================================================//
