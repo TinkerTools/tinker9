@@ -6,6 +6,7 @@
 #include "md/pq.h"
 #include "md/rattle.h"
 #include "tool/argkey.h"
+#include "tool/ioprint.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
 
@@ -24,9 +25,9 @@ const int IntegratorStaticData::SemiArray[4][2] = {{2, 2}, {1, 1}, {0, 2}, {1, 2
 }
 
 namespace tinker {
-BasicPropagator::BasicPropagator()
+BasicPropagator::BasicPropagator(int nrspa)
 {
-   nrespa = 1;
+   nrespa = nrspa;
 
    atomic = not useRattle();
    getKV("SEMIISO-PRESSURE", semiiso, false);
@@ -49,9 +50,32 @@ BasicPropagator::BasicPropagator()
          break;
       }
    }
+
+   if (not atomic) {
+      auto o = stdout;
+      const char* fmt = " %-40s %8d\n";
+      print(o, "\n");
+      print(o, fmt, "Number of X-H Constraint Groups", nratch);
+      print(o, fmt, "Number of X-H2 Constraint Groups", nratch2);
+      print(o, fmt, "Number of X-H3 Constraint Groups", nratch3);
+      print(o, fmt, "Number of Rigid Water", nratwt);
+      print(o, fmt, "Number of Other Constraints", nrat);
+      print(o, fmt, "Number of Constraints in Total",
+         nratch + nratch2 * 2 + nratch3 * 3 + nratwt * 3 + nrat);
+      print(o, fmt, "Number of Atom Groups", rattle_dmol.nmol);
+
+      darray::allocate(bufferSize(), &hc_vir_buf);
+   }
 }
 
-BasicPropagator::~BasicPropagator() {}
+BasicPropagator::~BasicPropagator()
+{
+   nrespa = 0;
+
+   if (not atomic) {
+      darray::deallocate(hc_vir_buf);
+   }
+}
 
 bool BasicPropagator::ifSave(int istep) const
 {
@@ -99,15 +123,18 @@ void BasicPropagator::rattle2(time_prec timeStep, bool useVirial)
    tinker::rattle2(timeStep, useVirial);
 }
 
-BasicPropagator* BasicPropagator::create(PropagatorEnum pe)
+BasicPropagator* BasicPropagator::create(int nRespaLogV, PropagatorEnum pe)
 {
    BasicPropagator* p = nullptr;
    switch (pe) {
+   case PropagatorEnum::m_LOGV:
+      p = new LogVDevice(nRespaLogV);
+      break;
    case PropagatorEnum::RESPA:
       p = new RespaDevice;
       break;
    default:
-      p = new BasicPropagator;
+      p = new VerletDevice;
       break;
    }
    return p;
@@ -115,15 +142,30 @@ BasicPropagator* BasicPropagator::create(PropagatorEnum pe)
 }
 
 namespace tinker {
-RespaDevice::RespaDevice()
+VerletDevice::VerletDevice()
+   : BasicPropagator(1)
+{}
+
+VerletDevice::~VerletDevice() {}
+
+RespaDevice::RespaDevice(int nrspa)
+   : BasicPropagator(nrspa)
 {
-   darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
-   nrespa = mdstuf::nrespa;
+   if (nrespa > 1)
+      darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
+}
+
+RespaDevice::RespaDevice()
+   : BasicPropagator(mdstuf::nrespa)
+{
+   if (nrespa > 1)
+      darray::allocate(n, &gx1, &gy1, &gz1, &gx2, &gy2, &gz2);
 }
 
 RespaDevice::~RespaDevice()
 {
-   darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
+   if (nrespa > 1)
+      darray::deallocate(gx1, gy1, gz1, gx2, gy2, gz2);
 }
 
 void RespaDevice::velR0(time_prec t)
@@ -240,19 +282,11 @@ void LogVDevice::velImpl(time_prec t, int idx, int nrespa)
    }
 }
 
-LogVDevice::LogVDevice(bool isNRespa1)
-   : BasicPropagator()
-{
-   if (isNRespa1)
-      nrespa = 1;
-   else
-      nrespa = mdstuf::nrespa;
-}
+LogVDevice::LogVDevice(int nrspa)
+   : RespaDevice(nrspa)
+{}
 
-LogVDevice::~LogVDevice()
-{
-   nrespa = 0;
-}
+LogVDevice::~LogVDevice() {}
 
 void LogVDevice::pos(time_prec t)
 {

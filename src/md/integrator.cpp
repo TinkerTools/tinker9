@@ -32,8 +32,9 @@ void BasicIntegrator::plan(int istep)
       vers1 &= ~calc::energy;
 }
 
-BasicIntegrator::BasicIntegrator(PropagatorEnum pe, ThermostatEnum te, BarostatEnum be)
-   : m_prop(BasicPropagator::create(pe))
+BasicIntegrator::BasicIntegrator(int nRespaLogV, PropagatorEnum pe, //
+   ThermostatEnum te, BarostatEnum be)
+   : m_prop(BasicPropagator::create(nRespaLogV, pe))
    , m_thermo(BasicThermostat::create(te))
    , m_baro(BasicBarostat::create(be))
 {
@@ -41,7 +42,7 @@ BasicIntegrator::BasicIntegrator(PropagatorEnum pe, ThermostatEnum te, BarostatE
 }
 
 BasicIntegrator::BasicIntegrator()
-   : m_prop(new BasicPropagator)
+   : m_prop(new VerletDevice)
    , m_thermo(new BasicThermostat)
    , m_baro(new BasicBarostat)
 {
@@ -176,7 +177,7 @@ void VerletIntegrator::kickoff()
 }
 
 VerletIntegrator::VerletIntegrator(ThermostatEnum te, BarostatEnum be)
-   : BasicIntegrator(PropagatorEnum::VERLET, te, be)
+   : BasicIntegrator(0, PropagatorEnum::VERLET, te, be)
 {
    this->kickoff();
 }
@@ -199,7 +200,7 @@ void RespaIntegrator::kickoff()
 }
 
 RespaIntegrator::RespaIntegrator(ThermostatEnum te, BarostatEnum be)
-   : BasicIntegrator(PropagatorEnum::RESPA, te, be)
+   : BasicIntegrator(0, PropagatorEnum::RESPA, te, be)
 {
    this->kickoff();
 }
@@ -421,24 +422,21 @@ const char* Nhc06Integrator::name() const
 
 void Nhc06Integrator::kickoff()
 {
-   if (m_isNRespa1)
+   if (nrespa == 1)
       VerletIntegrator::KickOff();
    else
       RespaIntegrator::KickOff();
 }
 
-Nhc06Integrator::Nhc06Integrator(bool isNRespa1)
-   : BasicIntegrator(PropagatorEnum::VERLET, ThermostatEnum::m_NHC2006, BarostatEnum::NHC2006)
-   , m_isNRespa1(isNRespa1)
+Nhc06Integrator::Nhc06Integrator(int nrspa)
+   : BasicIntegrator(nrspa, PropagatorEnum::m_LOGV, //
+        ThermostatEnum::m_NHC2006, BarostatEnum::NHC2006)
 {
    if (useRattle())
       TINKER_THROW("Constraints under NH-NPT require the ROLL algorithm.");
 
    if (bath::anisotrop)
       TINKER_THROW("Cannot use ANISO-PRESSURE in Nhc06Integrator.");
-
-   delete m_prop;
-   m_prop = new LogVDevice(isNRespa1);
 
    this->kickoff();
 }
@@ -452,7 +450,7 @@ const char* LP22Integrator::name() const
 
 void LP22Integrator::kickoff()
 {
-   if (m_isNRespa1)
+   if (nrespa == 1)
       VerletIntegrator::KickOff();
    else
       RespaIntegrator::KickOff();
@@ -461,13 +459,10 @@ void LP22Integrator::kickoff()
       hcVirial();
 }
 
-LP22Integrator::LP22Integrator(bool isNRespa1)
-   : BasicIntegrator(PropagatorEnum::VERLET, ThermostatEnum::m_LP2022, BarostatEnum::LP2022)
-   , m_isNRespa1(isNRespa1)
+LP22Integrator::LP22Integrator(int nrspa)
+   : BasicIntegrator(nrspa, PropagatorEnum::m_LOGV, //
+        ThermostatEnum::m_LP2022, BarostatEnum::LP2022)
 {
-   delete m_prop;
-   m_prop = new LogVDevice(isNRespa1);
-
    this->kickoff();
 }
 }

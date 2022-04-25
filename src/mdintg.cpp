@@ -89,16 +89,16 @@ void mdIntegrateData(RcOp op)
          barostat = BarostatEnum::m_NHC1996;
       }
 
-      bool isNRespa1 = true;
+      int nrspa = 1;
       if (integrator == IntegratorEnum::VERLET or integrator == IntegratorEnum::RESPA) {
          if (barostat == BarostatEnum::LP2022) {
             if (integrator == IntegratorEnum::RESPA)
-               isNRespa1 = false;
+               nrspa = mdstuf::nrespa;
             integrator = IntegratorEnum::LP2022;
             thermostat = ThermostatEnum::m_LP2022;
          } else if (barostat == BarostatEnum::NHC2006) {
             if (integrator == IntegratorEnum::RESPA)
-               isNRespa1 = false;
+               nrspa = mdstuf::nrespa;
             integrator = IntegratorEnum::NHC2006;
             thermostat = ThermostatEnum::m_NHC2006;
          }
@@ -112,11 +112,11 @@ void mdIntegrateData(RcOp op)
       else if (integrator == IntegratorEnum::LEAPFROGLP)
          intg = new LeapFrogLPIntegrator;
       else if (integrator == IntegratorEnum::LP2022)
-         intg = new LP22Integrator(isNRespa1);
+         intg = new LP22Integrator(nrspa);
       else if (integrator == IntegratorEnum::NHC1996)
          intg = new Nhc96Integrator;
       else if (integrator == IntegratorEnum::NHC2006)
-         intg = new Nhc06Integrator(isNRespa1);
+         intg = new Nhc06Integrator(nrspa);
       else if (integrator == IntegratorEnum::BEEMAN)
          TINKER_THROW("Beeman integrator is not available.");
       intg->printDetail(stdout);

@@ -44,8 +44,10 @@ enum class PropagatorEnum
 /// \brief The interface class of a Verlet or an RESPA-Verlet MD step.
 class BasicPropagator : virtual public IntegratorStaticData
 {
+protected:
+   BasicPropagator(int nrspa);
+
 public:
-   BasicPropagator();
    virtual ~BasicPropagator();
 
    /// \brief Logical flag governing saving an MD step.
@@ -79,14 +81,23 @@ public:
    virtual void rattle(time_prec dt);
    virtual void rattle2(time_prec dt, bool useVirial);
 
-   static BasicPropagator* create(PropagatorEnum pe);
+   static BasicPropagator* create(int nRespaLogV, PropagatorEnum pe);
 };
+
 /// \ingroup mdintg
-typedef BasicPropagator VerletDevice;
+class VerletDevice : public BasicPropagator
+{
+public:
+   VerletDevice();
+   ~VerletDevice();
+};
 
 /// \ingroup mdintg
 class RespaDevice : public BasicPropagator
 {
+protected:
+   RespaDevice(int nrspa);
+
 public:
    RespaDevice();
    ~RespaDevice();
@@ -97,14 +108,13 @@ public:
 };
 
 /// \ingroup mdintg
-class LogVDevice : public BasicPropagator
+class LogVDevice : public RespaDevice
 {
 protected:
-   RespaDevice m_respa__; // to allocate and deallocate the respa arrays
    void velImpl(time_prec t, int idx, int nrespa);
 
 public:
-   LogVDevice(bool isNRespa1);
+   LogVDevice(int nrspa);
    ~LogVDevice();
 
    void pos(time_prec t) override;
@@ -389,7 +399,7 @@ protected:
 
 public:
    void printDetail(FILE*);
-   BasicIntegrator(PropagatorEnum pe, ThermostatEnum te, BarostatEnum be);
+   BasicIntegrator(int nRespaLogV, PropagatorEnum pe, ThermostatEnum te, BarostatEnum be);
    BasicIntegrator();
    virtual ~BasicIntegrator();
    virtual void dynamic(int istep, time_prec dt);
@@ -434,24 +444,22 @@ public:
 class Nhc06Integrator : public BasicIntegrator
 {
 protected:
-   bool m_isNRespa1;
    const char* name() const override;
    void kickoff() override;
 
 public:
-   Nhc06Integrator(bool isNRespa1);
+   Nhc06Integrator(int nrspa);
 };
 
 /// \ingroup mdintg
 class LP22Integrator : public BasicIntegrator
 {
 protected:
-   bool m_isNRespa1;
    const char* name() const override;
    void kickoff() override;
 
 public:
-   LP22Integrator(bool isNRespa1);
+   LP22Integrator(int nrspa);
 };
 
 /// \ingroup mdintg

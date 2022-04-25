@@ -12,6 +12,10 @@ docker/*.dockerfile
 *.wiki
 *.wiki/*
 
+# example
+example/*.arc
+example/*.dyn
+
 # Manual
 doc/manual/_build/*
 
