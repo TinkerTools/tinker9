@@ -115,9 +115,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = ../doc ../include ../test
 INPUT_ENCODING         = UTF-8
-FILE_PATTERNS          = \
-                         *.h \
-                         *.svg
+FILE_PATTERNS          = *.h
 RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
@@ -251,7 +249,7 @@ MAN_LINKS              = NO
 #---------------------------------------------------------------------------
 # Configuration options related to the XML output
 #---------------------------------------------------------------------------
-GENERATE_XML           = NO
+GENERATE_XML           = YES
 XML_OUTPUT             = xml
 XML_PROGRAMLISTING     = YES
 #---------------------------------------------------------------------------

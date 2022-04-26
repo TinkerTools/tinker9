@@ -50,4 +50,5 @@ add_custom_target (doc
       doxygen "${PROJECT_SOURCE_DIR}/doc/Doxyfile" ENV_GIT_HEAD="${__T9_GIT_HEAD}"
    BYPRODUCTS
       "${CMAKE_BINARY_DIR}/html"
+      "${CMAKE_BINARY_DIR}/xml"
 )
