@@ -79,6 +79,7 @@
 /// \defgroup async  Asynchronous Flow Control
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
 /// \defgroup fft  Fast Fourier Transform
+/// \defgroup test  Unit Tests
 
 //====================================================================//
 
@@ -156,8 +157,6 @@
  *       calculated.
  *    5. Swap the atoms as the box numbers are being sorted.
  *
- * \image  html doc/spatial_a.svg "Fig. 1  SortedAtoms and Box-AtomBlock-Flags"
- *
  * ###C. Nearby boxes (near and nearby[nx])
  * These two work together as a "template" to find the nearby boxes.
  *
@@ -176,8 +175,6 @@
  * section will generate a data structure that is similar to `igrp(2,*)` in
  * Tinker `group` module so that we can easily find the `[begin,end)` interval
  * of atoms for any box `i`.
- *
- * \image  html doc/spatial_x.svg "Fig. 2  Boxes and Atom-Box-Scan"
  *
  * Suppose there are three temporary arrays `nax[nx]`, `escan[nx]`, and
  * `iscan[nx]`. `nax` stores that there are `nax[i]` atoms belong to box `i`.

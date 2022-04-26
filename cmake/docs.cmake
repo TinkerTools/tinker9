@@ -47,19 +47,7 @@ add_custom_target (pdf
 ## Developer Guides
 add_custom_target (doc
    COMMAND
-      ${CMAKE_COMMAND} -E copy
-         "${PROJECT_SOURCE_DIR}/README.md" "${CMAKE_BINARY_DIR}"
-   COMMAND
-      ${CMAKE_COMMAND} -E copy_directory
-         "${PROJECT_SOURCE_DIR}/doc" "${CMAKE_BINARY_DIR}/doc"
-   COMMAND
-      ${CMAKE_COMMAND} -E copy_directory
-         "${PROJECT_SOURCE_DIR}/include" "${CMAKE_BINARY_DIR}/include"
-   COMMAND
-      doxygen "${PROJECT_SOURCE_DIR}/Doxyfile" ENV_GIT_HEAD="${__T9_GIT_HEAD}"
+      doxygen "${PROJECT_SOURCE_DIR}/doc/Doxyfile" ENV_GIT_HEAD="${__T9_GIT_HEAD}"
    BYPRODUCTS
-      "${CMAKE_BINARY_DIR}/README.md"
-      "${CMAKE_BINARY_DIR}/doc"
       "${CMAKE_BINARY_DIR}/html"
-      "${CMAKE_BINARY_DIR}/include"
 )
