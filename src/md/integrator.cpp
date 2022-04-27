@@ -18,6 +18,7 @@ void BasicIntegrator::plan(int istep)
 
    save = m_prop->ifSave(istep);
    bool mcbaro = false;
+   m_baro->setPrintPressure(istep);
    if (m_baro->ifApply(istep))
       if (m_baro->getBarostatEnum() == BarostatEnum::MONTECARLO)
          mcbaro = true;

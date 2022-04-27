@@ -12,6 +12,7 @@
 
 namespace tinker {
 bool IntegratorStaticData::applyBaro = false;
+bool IntegratorStaticData::printPressure = false;
 bool IntegratorStaticData::atomic = true;
 bool IntegratorStaticData::aniso = false;
 bool IntegratorStaticData::semiiso = false;

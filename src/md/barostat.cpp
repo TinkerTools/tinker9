@@ -27,9 +27,11 @@ void BasicBarostat::printBasic(FILE* o)
 
 BasicBarostat::BasicBarostat()
    : m_nbaro(1)
+   , m_iprint(0)
 {
    int msave = m_nbaro;
    getKV("VOLUME-TRIAL", m_nbaro, msave);
+   getKV("PRINTOUT", m_iprint, 0);
 }
 
 BasicBarostat::~BasicBarostat() {}
@@ -50,6 +52,14 @@ bool BasicBarostat::ifApply(int istep)
 bool BasicBarostat::ifApply() const
 {
    return applyBaro;
+}
+
+void BasicBarostat::setPrintPressure(int istep)
+{
+   if (m_iprint > 0)
+      printPressure = ((istep % m_iprint) == 0);
+   else
+      printPressure = false;
 }
 
 BasicBarostat* BasicBarostat::create(BarostatEnum be)
@@ -121,6 +131,11 @@ bool MonteCarloBarostat::ifApply(int)
       applyBaro = false;
    return applyBaro;
 }
+
+void MonteCarloBarostat::setPrintPressure(int)
+{
+   printPressure = false;
+}
 }
 
 namespace tinker {
@@ -146,7 +161,7 @@ void BerendsenBarostat::control2(time_prec dt)
 }
 
 namespace tinker {
-void IsoBaroDevice::control_1_2(time_prec dt)
+void IsoBaroDevice::control_1_2(time_prec dt, int idx)
 {
    time_prec dt2 = dt * 0.5;
    double vol0 = boxVolume();
@@ -158,6 +173,22 @@ void IsoBaroDevice::control_1_2(time_prec dt)
    double al = 1.0 + dim / dofP;
    double tr_vir = m_vir[0] + m_vir[4] + m_vir[8];
    double eksu1 = *m_eksum;
+
+   if (idx == 2 and printPressure) {
+      auto o = stdout;
+      double pres = (2 * eksu1 - tr_vir) * units::prescon / (dim * vol0);
+      if (atomic) {
+         const char* fmtp1 = " Atomic Pressure Atm    %12.3lf\n";
+         print(o, "\n");
+         print(o, fmtp1, pres);
+      } else {
+         const char* fmtp1 = " Group Pressure Atm     %12.3lf\n";
+         const char* fmtp4 = " Group Kinetic          %12.4lf Kcal/mole\n";
+         print(o, "\n");
+         print(o, fmtp1, pres);
+         print(o, fmtp4, eksu1);
+      }
+   }
 
    double gbar = 2 * eksu1 * al - tr_vir - dim * vol0 * bath::atmsph / units::prescon;
    gbar /= qbar;
@@ -213,7 +244,7 @@ void IsoBaroDevice::control1(time_prec dt)
    if (not applyBaro)
       return;
 
-   control_1_2(dt);
+   control_1_2(dt, 1);
 }
 
 void IsoBaroDevice::control2(time_prec dt)
@@ -221,8 +252,9 @@ void IsoBaroDevice::control2(time_prec dt)
    if (not applyBaro)
       return;
 
-   m_rdn = normal<double>();
-   control_1_2(dt);
+   if (m_langevin)
+      m_rdn = normal<double>();
+   control_1_2(dt, 2);
 }
 
 void IsoBaroDevice::control3(time_prec dt)
@@ -240,7 +272,7 @@ void IsoBaroDevice::control3(time_prec dt)
 }
 
 namespace tinker {
-void AnisoBaroDevice::control_1_2(time_prec dt)
+void AnisoBaroDevice::control_1_2(time_prec dt, int idx)
 {
    time_prec dt2 = dt * 0.5;
    double vol0 = boxVolume();
@@ -252,6 +284,36 @@ void AnisoBaroDevice::control_1_2(time_prec dt)
    double gbar[3][3] = {0};
    for (int i = 0; i < 3; ++i)
       gbar[i][i] += 2 * eksu1 / dofP - vol0 * bath::atmsph / units::prescon;
+
+   if (idx == 2 and printPressure) {
+      auto o = stdout;
+      double pres[3][3] = {0};
+      for (int i = 0; i < 3; ++i) {
+         for (int j = 0; j < 3; ++j) {
+            pres[i][j] = (2 * m_ekin[i][j] - m_vir[3 * i + j]) * units::prescon / vol0;
+         }
+      }
+
+      if (atomic) {
+         const char* fmtp1 = " Atomic Pressure x- Atm %12.3lf%12.3lf%12.3lf\n";
+         const char* fmtp2 = " Atomic Pressure y- Atm %12.3lf%12.3lf%12.3lf\n";
+         const char* fmtp3 = " Atomic Pressure z- Atm %12.3lf%12.3lf%12.3lf\n";
+         print(o, "\n");
+         print(o, fmtp1, pres[0][0], pres[0][1], pres[0][2]);
+         print(o, fmtp2, pres[1][0], pres[1][1], pres[1][2]);
+         print(o, fmtp3, pres[2][0], pres[2][1], pres[2][2]);
+      } else {
+         const char* fmtp1 = " Group Pressure x- Atm  %12.3lf%12.3lf%12.3lf\n";
+         const char* fmtp2 = " Group Pressure y- Atm  %12.3lf%12.3lf%12.3lf\n";
+         const char* fmtp3 = " Group Pressure z- Atm  %12.3lf%12.3lf%12.3lf\n";
+         const char* fmtp4 = " Group Kinetic          %12.4lf Kcal/mole\n";
+         print(o, "\n");
+         print(o, fmtp1, pres[0][0], pres[0][1], pres[0][2]);
+         print(o, fmtp2, pres[1][0], pres[1][1], pres[1][2]);
+         print(o, fmtp3, pres[2][0], pres[2][1], pres[2][2]);
+         print(o, fmtp4, eksu1);
+      }
+   }
 
    double c_ekin[3][3] = {0};
    double c_vir[9] = {0};
@@ -343,7 +405,7 @@ void AnisoBaroDevice::control1(time_prec dt)
 {
    if (not applyBaro)
       return;
-   control_1_2(dt);
+   control_1_2(dt, 1);
 }
 
 void AnisoBaroDevice::control2(time_prec dt)
@@ -351,12 +413,14 @@ void AnisoBaroDevice::control2(time_prec dt)
    if (not applyBaro)
       return;
 
-   for (int k = 0; k < arrayLength; ++k) {
-      int i = indexArray[k][0];
-      int j = indexArray[k][1];
-      m_rdn[i][j] = normal<double>();
+   if (m_langevin) {
+      for (int k = 0; k < arrayLength; ++k) {
+         int i = indexArray[k][0];
+         int j = indexArray[k][1];
+         m_rdn[i][j] = normal<double>();
+      }
    }
-   control_1_2(dt);
+   control_1_2(dt, 2);
 }
 
 void AnisoBaroDevice::control3(time_prec dt)

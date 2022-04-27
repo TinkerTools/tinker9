@@ -10,6 +10,7 @@ class IntegratorStaticData
 {
 protected:
    static bool applyBaro;
+   static bool printPressure;
    static bool atomic;
    static bool aniso;
    static bool semiiso;
@@ -249,6 +250,7 @@ class BasicBarostat : virtual public IntegratorStaticData
 {
 protected:
    int m_nbaro;
+   int m_iprint;
    void printBasic(FILE*);
 
 public:
@@ -264,6 +266,7 @@ public:
 
    virtual bool ifApply(int istep);
    bool ifApply() const;
+   virtual void setPrintPressure(int istep);
 
    static BasicBarostat* create(BarostatEnum);
 };
@@ -278,6 +281,7 @@ public:
    BarostatEnum getBarostatEnum() const override;
    void control4(time_prec) override;
    bool ifApply(int istep) override;
+   void setPrintPressure(int) override;
 };
 
 /// \ingroup mdpt
@@ -300,7 +304,7 @@ protected:
    double m_rdn;
    bool m_langevin;
 
-   void control_1_2(time_prec dt);
+   void control_1_2(time_prec dt, int idx);
 
 public:
    IsoBaroDevice(double fric);
@@ -323,7 +327,7 @@ protected:
    double m_rdn[3][3];
    bool m_langevin;
 
-   void control_1_2(time_prec dt);
+   void control_1_2(time_prec dt, int idx);
 
 public:
    AnisoBaroDevice(double fric);
@@ -393,7 +397,7 @@ protected:
    int vers1;
    bool save;
 
-   virtual void plan(int istep);
+   void plan(int istep);
    virtual const char* name() const = 0;
    virtual void kickoff() = 0;
 
