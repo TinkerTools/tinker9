@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from datetime import datetime
+import subprocess
 import sys
 
 ThisVersion = 2
@@ -241,13 +242,16 @@ RUN make install''' % (Nvhpc.cmakeArgComputeCapacity(self.nvhpc), DefaultNProc)
 class InstallFile(DockerFile):
     def __init__(self, cudaver: str):
         super().__init__(cudaver)
+        t = datetime.today().strftime('%Y%m%d')
+        githash = subprocess.check_output(["git", "log", "-1", "--format=%h"])
+        githash = githash.decode('utf-8').strip()
+        self._tagInstallFile = 'tinkertools/tinker9:cuda%s-%s-%s' % (self.cudaVersion, t, githash)
 
     def filename(self) -> str:
         return 'install-%s.dockerfile' % self.cudaVersion
 
     def tag(self) -> str:
-        t = datetime.today().strftime('%Y%m%d')
-        return 'tinkertools/tinker9:cuda%s-%s' % (self.cudaVersion, t)
+        return self._tagInstallFile
 
     def content(self) -> str:
         runtimeFile = RuntimeFile(self.cudaVersion)
