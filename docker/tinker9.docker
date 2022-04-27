@@ -212,7 +212,7 @@ class CompileFile(DockerFile):
         return 'compile-%s.dockerfile' % self.cudaVersion
 
     def tag(self) -> str:
-        return 'temp_build_tinker9'
+        return 'temp_build_tinker9-%s' % self.cudaVersion
 
     def content(self) -> str:
         develFile = DevelFile(self.cudaVersion)
