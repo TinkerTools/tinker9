@@ -244,8 +244,7 @@ void gpuData(RcOp op)
 {
    if (op & RcOp::DEALLOC) {
       /*
-      // should not reset these variables for the unit tests, if there are
-      // multiple GPUs available
+      // should not reset these variables for the unit tests, if multiple GPUs are available
       ndevice = 0;
 
       gpuDeviceAttributes().clear();
@@ -257,20 +256,7 @@ void gpuData(RcOp op)
    if (op & RcOp::INIT) {
       if (cuda_device_flags) {
          return;
-      }
-
-      always_check_rt(cudaGetDeviceCount(&ndevice));
-
-      auto& all = gpuDeviceAttributes();
-      all.resize(ndevice);
-      for (int i = 0; i < ndevice; ++i)
-         getDeviceAttribute(all[i], i);
-
-      idevice = recommendDevice(ndevice);
-
-      check_rt(cudaSetDevice(idevice));
-
-      if (cuda_device_flags == 0) {
+      } else { // if (cuda_device_flags == 0)
          cuda_device_flags = cudaDeviceMapHost;
 #if 1
          cuda_device_flags |= cudaDeviceScheduleBlockingSync;
@@ -281,6 +267,15 @@ void gpuData(RcOp op)
 #endif
          always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
       }
+
+      always_check_rt(cudaGetDeviceCount(&ndevice));
+      auto& all = gpuDeviceAttributes();
+      all.resize(ndevice);
+      for (int i = 0; i < ndevice; ++i)
+         getDeviceAttribute(all[i], i);
+
+      idevice = recommendDevice(ndevice);
+      check_rt(cudaSetDevice(idevice));
    }
 }
 
