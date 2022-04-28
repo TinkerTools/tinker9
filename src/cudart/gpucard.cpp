@@ -252,19 +252,19 @@ void gpuData(RcOp op)
    }
 
    if (op & RcOp::INIT) {
-      if (cuda_device_flags) {
+      if (cuda_device_flags)
          return;
-      } else { // if (cuda_device_flags == 0)
-         cuda_device_flags = cudaDeviceMapHost;
+      // else if (cuda_device_flags == 0)
+
+      cuda_device_flags = cudaDeviceMapHost;
 #if 1
-         cuda_device_flags |= cudaDeviceScheduleBlockingSync;
+      cuda_device_flags |= cudaDeviceScheduleBlockingSync;
 #elif 0
-         // Using this flag may reduce the latency
-         // for cudaStreamSynchronize() calls.
-         cuda_device_flags |= cudaDeviceScheduleSpin;
+      // Using this flag may reduce the latency
+      // for cudaStreamSynchronize() calls.
+      cuda_device_flags |= cudaDeviceScheduleSpin;
 #endif
-         always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
-      }
+      always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
 
       always_check_rt(cudaGetDeviceCount(&ndevice));
       auto& all = gpuDeviceAttributes();
@@ -274,19 +274,44 @@ void gpuData(RcOp op)
 
       idevice = recommendDevice(ndevice);
       check_rt(cudaSetDevice(idevice));
-      unsigned int kflags = 0;
-      check_rt(cudaGetDeviceFlags(&kflags));
-      if (kflags != cuda_device_flags)
-         always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
-
-      // sanity checks
       int kdevice = -1;
       check_rt(cudaGetDevice(&kdevice));
-      kflags = 0;
-      check_rt(cudaGetDeviceFlags(&kflags));
       if (kdevice != idevice)
          TINKER_THROW(
             format("Device %d in use is different than the selected Device %d.", kdevice, idevice));
+
+      unsigned int kflags;
+      // BEGIN HACK
+      // I failed to just call cudaGetDeviceFlags() only once in the code.
+      // I think this is due to an undocumented change in the Cuda runtime,
+      // e.g., 10.1 vs. 11.2, at least I didn't find anything related
+      // on the internet. Consider the following logic
+      //
+      // #A
+      // loop k over all devices (even if all == 1)
+      //    cudaSetDevice(k)
+      //    check the properties of device k
+      //    cudaDeviceReset()
+      // end loop
+      // idevice = select one device
+      // #B
+      // cudaSetDevice(idevice)
+      // #C
+      //
+      // where there are 3 lines (#A, #B, and #C) we can put the function
+      // cudaGetDeviceFlags() in. For Cuda 10.1, #A is the only option,
+      // otherwise, errno 708 (cudaErrorSetOnActiveProcess) will be returned.
+      // What it seems to me is that cudaDeviceReset() didn't actually reset
+      // the device. For Cuda 11.2, no error is returned, but the desired flags
+      // are not set correctly if cudaGetDeviceFlags() is put in #A. Therefore,
+      // I need to put cudaGetDeviceFlags() in #A and add a hack like this.
+      kflags = 0;
+      check_rt(cudaGetDeviceFlags(&kflags));
+      if (kflags != cuda_device_flags)
+         always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
+      // END HACK
+      kflags = 0;
+      check_rt(cudaGetDeviceFlags(&kflags));
       if (kflags != cuda_device_flags)
          TINKER_THROW(format("Cuda device flag %u in use is different than the pre-select flag %u.",
             kflags, cuda_device_flags));

@@ -271,6 +271,8 @@ ENV PATH="$PATH:/home/tinker9/bin/gpu-m"''' % (compileFile.tag(), runtimeFile.ta
         compileFile = CompileFile(self.cudaVersion)
         cmd = 'docker rmi %s' % compileFile.tag()
         print(cmd)
+        cmd = 'docker tag %s tinkertools/tinker9:cuda%s-latest' % (self.tag(), self.cudaVersion)
+        print(cmd)
         return self
 
 def DockerFileFactory(cudaver: str, stage: str) -> DockerFile:
