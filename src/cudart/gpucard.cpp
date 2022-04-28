@@ -244,11 +244,9 @@ void gpuData(RcOp op)
 {
    if (op & RcOp::DEALLOC) {
       /*
-      // should not reset these variables for the unit tests, if multiple GPUs are available
+      // should not reset these variables for unit tests, if multiple GPUs are available
       ndevice = 0;
-
       gpuDeviceAttributes().clear();
-
       idevice = -1;
       */
    }
@@ -276,11 +274,15 @@ void gpuData(RcOp op)
 
       idevice = recommendDevice(ndevice);
       check_rt(cudaSetDevice(idevice));
+      unsigned int kflags = 0;
+      check_rt(cudaGetDeviceFlags(&kflags));
+      if (kflags != cuda_device_flags)
+         always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
 
       // sanity checks
       int kdevice = -1;
       check_rt(cudaGetDevice(&kdevice));
-      unsigned int kflags = 0;
+      kflags = 0;
       check_rt(cudaGetDeviceFlags(&kflags));
       if (kdevice != idevice)
          TINKER_THROW(
