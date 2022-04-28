@@ -276,6 +276,18 @@ void gpuData(RcOp op)
 
       idevice = recommendDevice(ndevice);
       check_rt(cudaSetDevice(idevice));
+
+      // sanity checks
+      int kdevice = -1;
+      check_rt(cudaGetDevice(&kdevice));
+      unsigned int kflags = 0;
+      check_rt(cudaGetDeviceFlags(&kflags));
+      if (kdevice != idevice)
+         TINKER_THROW(
+            format("Device %d in use is different than the selected Device %d.", kdevice, idevice));
+      if (kflags != cuda_device_flags)
+         TINKER_THROW(format("Cuda device flag %u in use is different than the pre-select flag %u.",
+            kflags, cuda_device_flags));
    }
 }
 
