@@ -14,8 +14,8 @@
 namespace tinker {
 void BasicBarostat::printBasic(FILE* o)
 {
-   print(o, " Pressure           %12.1lf Atm\n", bath::atmsph);
-   print(o, " Tau-Pressure       %12.1lf ps\n", bath::taupres);
+   print(o, " Pressure           %12.3lf Atm\n", bath::atmsph);
+   print(o, " Tau-Pressure       %12.3lf ps\n", bath::taupres);
    print(o, " Volume Trial       %12d\n", m_nbaro);
    if (semiiso)
       print(o, " Semiisotropic Fluctuation\n");
@@ -103,6 +103,7 @@ void MonteCarloBarostat::printDetail(FILE* o)
 {
    print(o, "\n");
    print(o, " Monte Carlo Barostat\n");
+   print(o, " Volume Move        %12.1lf Ang**3\n", bath::volmove);
    printBasic(o);
 }
 
@@ -235,7 +236,7 @@ void IsoBaroDevice::printDetail(FILE* o)
    print(o, "\n");
    print(o, " VBar Mass          %12.1lf kT*tau(P)**2\n", qbar / tau2);
    if (m_langevin)
-      print(o, " Friction           %12.1lf /ps\n", m_fric);
+      print(o, " Friction           %12.3lf /ps\n", m_fric);
    printBasic(o);
 }
 
@@ -397,7 +398,7 @@ void AnisoBaroDevice::printDetail(FILE* o)
    print(o, "\n");
    print(o, " VBar Mass          %12.1lf kT*tau(P)**2\n", qbar / tau2);
    if (m_langevin)
-      print(o, " Friction           %12.1lf /ps\n", m_fric);
+      print(o, " Friction           %12.3lf /ps\n", m_fric);
    printBasic(o);
 }
 

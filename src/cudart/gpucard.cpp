@@ -313,8 +313,9 @@ void gpuData(RcOp op)
       kflags = 0;
       check_rt(cudaGetDeviceFlags(&kflags));
       if (kflags != cuda_device_flags)
-         TINKER_THROW(format("Cuda device flag %u in use is different than the pre-select flag %u.",
-            kflags, cuda_device_flags));
+         TINKER_THROW(
+            format("Cuda device flag %u in use is different than the pre-selected flag %u.", kflags,
+               cuda_device_flags));
    }
 }
 

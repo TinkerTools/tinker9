@@ -12,7 +12,7 @@ namespace tinker {
 void BasicThermostat::printBasic(FILE* o)
 {
    print(o, " Temperature        %12.1lf Kelvin\n", bath::kelvin);
-   print(o, " Tau-Temperature    %12.1lf ps\n", bath::tautemp);
+   print(o, " Tau-Temperature    %12.3lf ps\n", bath::tautemp);
 }
 
 BasicThermostat::BasicThermostat() {}
