@@ -1,18 +1,19 @@
 #include "ff/amoebamod.h"
-#include "ff/atom.h"
 #include "ff/evalence.h"
-#include "ff/hippo/cflux.h"
 #include "ff/hippomod.h"
-#include "math/libfunc.h"
+#include "math/zero.h"
 #include "seq/add.h"
-#include "tool/darray.h"
+#include "seq/launch.h"
 
 namespace tinker {
-static void bndchg_acc1()
+__global__
+static void bndangChg_cu1(real* restrict pdelta,                                                 //
+   const real* restrict x, const real* restrict y, const real* restrict z,                       //
+   int nbond, const int (*restrict ibnd)[2], const real* restrict bl, const real* restrict bflx, //
+   int nangle, const int (*restrict iang)[4], const real* restrict anat,                         //
+   const real (*restrict aflx)[2], const real (*restrict abflx)[2], const int (*restrict balist)[2])
 {
-   #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,ibnd,bl,bflx,pdelta)
-   for (int i = 0; i < nbond; ++i) {
+   for (int i = ITHREAD; i < nbond; i += STRIDE) {
       int ia = ibnd[i][0];
       int ib = ibnd[i][1];
 
@@ -21,19 +22,15 @@ static void bndchg_acc1()
       real xab = x[ia] - x[ib];
       real yab = y[ia] - y[ib];
       real zab = z[ia] - z[ib];
+
       real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
       real dq = pb * (rab - ideal);
 
       atomic_add(-dq, pdelta, ia);
       atomic_add(dq, pdelta, ib);
-   } // end for (int i)
-}
+   }
 
-static void angchg_acc1()
-{
-   #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,iang,anat,aflx,abflx,bl,balist,pdelta)
-   for (int i = 0; i < nangle; ++i) {
+   for (int i = ITHREAD; i < nangle; i += STRIDE) {
       int ia = iang[i][0];
       int ib = iang[i][1];
       int ic = iang[i][2];
@@ -61,8 +58,8 @@ static void angchg_acc1()
       real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
       real rcb = REAL_SQRT(xcb * xcb + ycb * ycb + zcb * zcb);
 
-      real dot, angle, cosine;
       if (rab != 0 and rcb != 0) {
+         real dot, angle, cosine;
          dot = xab * xcb + yab * ycb + zab * zcb;
          cosine = dot / (rab * rcb);
          cosine = REAL_MIN(1.0, REAL_MAX(-1, cosine));
@@ -78,61 +75,81 @@ static void angchg_acc1()
          atomic_add(dq2, pdelta, ic);
          atomic_add(-(dq1 + dq2), pdelta, ib);
       }
-   } // end for (int i)
+   }
 }
 
-void alterchg_acc()
+__global__
+static void bndangChg_cu2(int n, real* restrict pval, real (*restrict pole)[MPL_TOTAL], //
+   const real* restrict pval0, const real* restrict mono0, const real* restrict pdelta)
 {
-   darray::zero(g::q0, n, pdelta);
-
-   bndchg_acc1();
-   angchg_acc1();
-
-   // alter monopoles and charge penetration
-   #pragma acc parallel loop independent async\
-           deviceptr(pval,pval0,pdelta,pole,mono0)
-   for (int i = 0; i < n; ++i) {
+   for (int i = ITHREAD; i < n; i += STRIDE) {
       pval[i] = pval0[i] + pdelta[i];
       pole[i][0] = mono0[i] + pdelta[i];
    }
 }
+
+void alterchg_cu()
+{
+   darray::zero(g::q0, n, pdelta);
+
+   auto nparall = std::max(nbond, nangle);
+   if (nparall > 0) {
+      launch_k1s(g::s0, nparall, bndangChg_cu1, //
+         pdelta, x, y, z,                       //
+         nbond, ibnd, bl, bflx,                 //
+         nangle, iang, anat, aflx, abflx, balist);
+   }
+
+   launch_k1s(g::s0, n, bndangChg_cu2, //
+      n, pval, pole, pval0, mono0, pdelta);
+}
 }
 
 namespace tinker {
-static void dcfluxBnd_acc()
+template <int DO_V>
+__global__
+static void dcfluxBndAng_cu1(VirialBuffer restrict vir, grad_prec* restrict gx,
+   grad_prec* restrict gy, grad_prec* restrict gz, const real* restrict x, const real* restrict y,
+   const real* restrict z, const real* restrict pot,                    //
+   int nbond, const int (*restrict ibnd)[2], const real* restrict bflx, //
+   int nangle, const int (*restrict iang)[4], const real (*restrict aflx)[2],
+   const real (*restrict abflx)[2])
 {
-   #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,ibnd,bflx,pot,\
-               decfx,decfy,decfz)
-   for (int i = 0; i < nbond; ++i) {
+   int ithread = ITHREAD;
+   real vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
+
+   for (int i = ithread; i < nbond; i += STRIDE) {
       int ia = ibnd[i][0];
       int ib = ibnd[i][1];
 
-      real pb = bflx[i];
       real xab = x[ia] - x[ib];
       real yab = y[ia] - y[ib];
       real zab = z[ia] - z[ib];
       real rab = REAL_SQRT(xab * xab + yab * yab + zab * zab);
       real dpot = pot[ia] - pot[ib];
-      pb = pb / rab;
+      real pb = bflx[i] / rab;
 
       real fx = dpot * pb * xab;
       real fy = dpot * pb * yab;
       real fz = dpot * pb * zab;
-      atomic_add(-fx, decfx, ia);
-      atomic_add(-fy, decfy, ia);
-      atomic_add(-fz, decfz, ia);
-      atomic_add(fx, decfx, ib);
-      atomic_add(fy, decfy, ib);
-      atomic_add(fz, decfz, ib);
-   }
-}
+      atomic_add(-fx, gx, ia);
+      atomic_add(-fy, gy, ia);
+      atomic_add(-fz, gz, ia);
+      atomic_add(fx, gx, ib);
+      atomic_add(fy, gy, ib);
+      atomic_add(fz, gz, ib);
 
-static void dcfluxAng_acc()
-{
-   #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,iang,aflx,abflx,pot,decfx,decfy,decfz)
-   for (int i = 0; i < nangle; ++i) {
+      if CONSTEXPR (DO_V) {
+         vxx += -xab * fx;
+         vyx += -yab * fx;
+         vzx += -zab * fx;
+         vyy += -yab * fy;
+         vzy += -zab * fy;
+         vzz += -zab * fz;
+      }
+   }
+
+   for (int i = ithread; i < nangle; i += STRIDE) {
       int ia = iang[i][0];
       int ib = iang[i][1];
       int ic = iang[i][2];
@@ -151,18 +168,10 @@ static void dcfluxAng_acc()
       real rba2 = xab * xab + yab * yab + zab * zab;
       real rba = REAL_SQRT(rba2);
       real rba3 = rba2 * rba;
-      real dba[3];
-      dba[0] = xab;
-      dba[1] = yab;
-      dba[2] = zab;
 
       real rbc2 = xcb * xcb + ycb * ycb + zcb * zcb;
       real rbc = REAL_SQRT(rbc2);
       real rbc3 = rbc2 * rbc;
-      real dbc[3];
-      dbc[0] = xcb;
-      dbc[1] = ycb;
-      dbc[2] = zcb;
 
       real dpota = pot[ia] - pot[ib];
       real dpotc = pot[ic] - pot[ib];
@@ -181,7 +190,7 @@ static void dcfluxAng_acc()
       real fby = -(fay + fcy);
       real fbz = -(faz + fcz);
 
-      real dot = dba[0] * dbc[0] + dba[1] * dbc[1] + dba[2] * dbc[2];
+      real dot = xab * xcb + yab * ycb + zab * zcb;
       real term = -rba * rbc / REAL_SQRT(rba2 * rbc2 - dot * dot);
       real fterm = term * (dpota * pa1 + dpotc * pa2);
       c1 = 1 / (rba * rbc);
@@ -196,60 +205,49 @@ static void dcfluxAng_acc()
       real fbx2 = -(fax2 + fcx2);
       real fby2 = -(fay2 + fcy2);
       real fbz2 = -(faz2 + fcz2);
-      atomic_add((fax + fax2), decfx, ia);
-      atomic_add((fay + fay2), decfy, ia);
-      atomic_add((faz + faz2), decfz, ia);
-      atomic_add((fbx + fbx2), decfx, ib);
-      atomic_add((fby + fby2), decfy, ib);
-      atomic_add((fbz + fbz2), decfz, ib);
-      atomic_add((fcx + fcx2), decfx, ic);
-      atomic_add((fcy + fcy2), decfy, ic);
-      atomic_add((fcz + fcz2), decfz, ic);
+      atomic_add((fax + fax2), gx, ia);
+      atomic_add((fay + fay2), gy, ia);
+      atomic_add((faz + faz2), gz, ia);
+      atomic_add((fbx + fbx2), gx, ib);
+      atomic_add((fby + fby2), gy, ib);
+      atomic_add((fbz + fbz2), gz, ib);
+      atomic_add((fcx + fcx2), gx, ic);
+      atomic_add((fcy + fcy2), gy, ic);
+      atomic_add((fcz + fcz2), gz, ic);
+
+      if CONSTEXPR (DO_V) {
+         vxx += x[ia] * (fax + fax2) + x[ib] * (fbx + fbx2) + x[ic] * (fcx + fcx2);
+         vyx += y[ia] * (fax + fax2) + y[ib] * (fbx + fbx2) + y[ic] * (fcx + fcx2);
+         vzx += z[ia] * (fax + fax2) + z[ib] * (fbx + fbx2) + z[ic] * (fcx + fcx2);
+         vyy += y[ia] * (fay + fay2) + y[ib] * (fby + fby2) + y[ic] * (fcy + fcy2);
+         vzy += z[ia] * (fay + fay2) + z[ib] * (fby + fby2) + z[ic] * (fcy + fcy2);
+         vzz += z[ia] * (faz + faz2) + z[ib] * (fbz + fbz2) + z[ic] * (fcz + fcz2);
+      }
+   }
+
+   if CONSTEXPR (DO_V) {
+      atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir, ithread);
    }
 }
 
 template <int DO_V>
-static void dcflux_acc1(grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
+static void dcflux_cu1(grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
    VirialBuffer restrict vir)
 {
-   auto bufsize = bufferSize();
-
-   #pragma acc parallel loop independent async\
-               deviceptr(decfx,decfy,decfz)
-   for (int i = 0; i < n; ++i) {
-      decfx[i] = 0;
-      decfy[i] = 0;
-      decfz[i] = 0;
-   }
-
-   dcfluxBnd_acc();
-   dcfluxAng_acc();
-
-   #pragma acc parallel loop independent async\
-               deviceptr(x,y,z,decfx,decfy,decfz,\
-               gx,gy,gz,vir)
-   for (int i = 0; i < n; ++i) {
-      atomic_add(decfx[i], gx, i);
-      atomic_add(decfy[i], gy, i);
-      atomic_add(decfz[i], gz, i);
-
-      if CONSTEXPR (DO_V) {
-         real vxx = x[i] * decfx[i];
-         real vyx = y[i] * decfx[i];
-         real vzx = z[i] * decfx[i];
-         real vyy = y[i] * decfy[i];
-         real vzy = z[i] * decfy[i];
-         real vzz = z[i] * decfz[i];
-         atomic_add(vxx, vyx, vzx, vyy, vzy, vzz, vir, i & (bufsize - 1));
-      }
+   auto nparall = std::max(nbond, nangle);
+   if (nparall > 0) {
+      launch_k1b(g::s0, nparall, dcfluxBndAng_cu1<DO_V>, //
+         vir, gx, gy, gz, x, y, z, pot,                  //
+         nbond, ibnd, bflx,                              //
+         nangle, iang, aflx, abflx);
    }
 }
 
-void dcflux_acc(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, VirialBuffer vir)
+void dcflux_cu(int vers, grad_prec* gx, grad_prec* gy, grad_prec* gz, VirialBuffer vir)
 {
    if (vers & calc::virial)
-      dcflux_acc1<1>(gx, gy, gz, vir);
+      dcflux_cu1<1>(gx, gy, gz, vir);
    else
-      dcflux_acc1<0>(gx, gy, gz, nullptr);
+      dcflux_cu1<0>(gx, gy, gz, nullptr);
 }
 }
