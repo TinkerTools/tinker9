@@ -36,6 +36,7 @@ mathzero.cu
 mdintg.cu
 mdpq.cu
 mdpt.cu
+minimize.cu
 pme.cu
 rattle.cu
 spatial.cu

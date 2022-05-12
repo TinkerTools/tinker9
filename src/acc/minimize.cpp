@@ -1,4 +1,4 @@
-#include "md/pq.h"
+#include "ff/atom.h"
 
 namespace tinker {
 void xMinimizeSetXxByPos_acc(int n, double* xx, const double* scale)
