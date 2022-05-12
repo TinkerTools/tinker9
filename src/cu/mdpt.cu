@@ -1,3 +1,4 @@
+#include "ff/molecule.h"
 #include "seq/launch.h"
 #include "seq/reduce.h"
 #include "tool/error.h"
@@ -78,5 +79,52 @@ void kineticEnergy_cu(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int
    ekin_out[2][1] = eyz;
    ekin_out[2][2] = ezz;
    eksum_out = exx + eyy + ezz;
+}
+}
+
+namespace tinker {
+__global__
+void monteCarloMolMove_cu1(pos_prec pos_scale, int nmol,                      //
+   pos_prec* restrict xpos, pos_prec* restrict ypos, pos_prec* restrict zpos, //
+   const int (*restrict imol)[2], const int* restrict kmol, const double* restrict mass,
+   const double* restrict molmass)
+{
+   for (int i = ITHREAD; i < nmol; i += STRIDE) {
+      pos_prec xcm = 0, ycm = 0, zcm = 0;
+      int start = imol[i][0];
+      int stop = imol[i][1];
+      for (int j = start; j < stop; ++j) {
+         int k = kmol[j];
+         auto weigh = mass[k];
+         xcm += xpos[k] * weigh;
+         ycm += ypos[k] * weigh;
+         zcm += zpos[k] * weigh;
+      }
+      pos_prec term = pos_scale / molmass[i];
+      pos_prec xmove, ymove, zmove;
+      xmove = term * xcm;
+      ymove = term * ycm;
+      zmove = term * zcm;
+      for (int j = start; j < stop; ++j) {
+         int k = kmol[j];
+         xpos[k] += xmove;
+         ypos[k] += ymove;
+         zpos[k] += zmove;
+      }
+   }
+}
+
+void monteCarloMolMove_cu(double scale)
+{
+   auto nmol = molecule.nmol;
+   const auto* imol = molecule.imol;
+   const auto* kmol = molecule.kmol;
+   const auto* molmass = molecule.molmass;
+   pos_prec pos_scale = scale - 1;
+
+   launch_k1s(g::s0, nmol, monteCarloMolMove_cu1, //
+      pos_scale, nmol,                            //
+      xpos, ypos, zpos,                           //
+      imol, kmol, mass, molmass);
 }
 }
