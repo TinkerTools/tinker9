@@ -17,16 +17,16 @@ void mdPos(time_prec dt)
    TINKER_FCALL2(cu, 1, acc, 1, mdPos, dt, xpos, ypos, zpos, vx, vy, vz);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, mdPosAxbv, pos_prec, pos_prec);
+TINKER_FVOID2(cu, 1, acc, 1, mdPosAxbv, pos_prec, pos_prec);
 void mdPosAxbv(pos_prec a, pos_prec b)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, mdPosAxbv, a, b);
+   TINKER_FCALL2(cu, 1, acc, 1, mdPosAxbv, a, b);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, mdPosAxbvAn, pos_prec (*)[3], pos_prec (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, mdPosAxbvAn, pos_prec (*)[3], pos_prec (*)[3]);
 void mdPosAxbvAn(pos_prec (*a)[3], pos_prec (*b)[3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, mdPosAxbvAn, a, b);
+   TINKER_FCALL2(cu, 1, acc, 1, mdPosAxbvAn, a, b);
 }
 
 TINKER_FVOID2(cu, 0, acc, 1, mdDebugPosNorm, pos_prec, time_prec, const vel_prec*, const vel_prec*,
@@ -60,16 +60,16 @@ void mdVelScale(vel_prec scal, int nelem, vel_prec* vx, vel_prec* vy, vel_prec* 
    TINKER_FCALL2(cu, 1, acc, 1, mdVelScale, scal, nelem, vx, vy, vz);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, mdVelAvbf, int, vel_prec, vel_prec, vel_prec*, vel_prec*, vel_prec*,
+TINKER_FVOID2(cu, 1, acc, 1, mdVelAvbf, int, vel_prec, vel_prec, vel_prec*, vel_prec*, vel_prec*,
    const grad_prec*, const grad_prec*, const grad_prec*, const grad_prec*, const grad_prec*,
    const grad_prec*);
 void mdVelAvbf(int nrespa, vel_prec a, vel_prec b, const grad_prec* gx1, const grad_prec* gy1,
    const grad_prec* gz1, const grad_prec* gx2, const grad_prec* gy2, const grad_prec* gz2)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, mdVelAvbf, nrespa, a, b, vx, vy, vz, gx1, gy1, gz1, gx2, gy2, gz2);
+   TINKER_FCALL2(cu, 1, acc, 1, mdVelAvbf, nrespa, a, b, vx, vy, vz, gx1, gy1, gz1, gx2, gy2, gz2);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, mdVelAvbfAn, int, vel_prec (*)[3], vel_prec (*)[3], vel_prec*,
+TINKER_FVOID2(cu, 1, acc, 1, mdVelAvbfAn, int, vel_prec (*)[3], vel_prec (*)[3], vel_prec*,
    vel_prec*, vel_prec*, const grad_prec*, const grad_prec*, const grad_prec*, const grad_prec*,
    const grad_prec*, const grad_prec*);
 void mdVelAvbfAn(int nrespa, vel_prec a[3][3], vel_prec b[3][3], const grad_prec* gx1,
@@ -77,7 +77,7 @@ void mdVelAvbfAn(int nrespa, vel_prec a[3][3], vel_prec b[3][3], const grad_prec
    const grad_prec* gz2)
 {
    TINKER_FCALL2(
-      cu, 0, acc, 1, mdVelAvbfAn, nrespa, a, b, vx, vy, vz, gx1, gy1, gz1, gx2, gy2, gz2);
+      cu, 1, acc, 1, mdVelAvbfAn, nrespa, a, b, vx, vy, vz, gx1, gy1, gz1, gx2, gy2, gz2);
 }
 }
 

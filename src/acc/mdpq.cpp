@@ -15,9 +15,8 @@ void mdPos_acc(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel
    }
 }
 
-void mdPosAxbv_acc(pos_prec a, pos_prec b)
+void mdPosAxbv_acc(pos_prec sa, pos_prec sb)
 {
-   pos_prec sa = a, sb = b;
    #pragma acc parallel loop independent async deviceptr(xpos,ypos,zpos,vx,vy,vz)
    for (int i = 0; i < n; ++i) {
       xpos[i] = sa * xpos[i] + sb * vx[i];
@@ -218,7 +217,7 @@ label_nrespa1:
       vx[i] = a00*v0x + a01*v0y + a02*v0z + coef*(b00*grx+b01*gry+b02*grz);
       vy[i] = a10*v0x + a11*v0y + a12*v0z + coef*(b10*grx+b11*gry+b12*grz);
       vz[i] = a20*v0x + a21*v0y + a22*v0z + coef*(b20*grx+b21*gry+b22*grz);
-      // clang-foramt on
+      // clang-format on
    }
    return;
 
@@ -237,7 +236,7 @@ label_nrespa2:
       vx[i] = a00*v0x + a01*v0y + a02*v0z + coef*(b00*grx+b01*gry+b02*grz);
       vy[i] = a10*v0x + a11*v0y + a12*v0z + coef*(b10*grx+b11*gry+b12*grz);
       vz[i] = a20*v0x + a21*v0y + a22*v0z + coef*(b20*grx+b21*gry+b22*grz);
-      // clang-foramt on
+      // clang-format on
    }
    return;
 }
