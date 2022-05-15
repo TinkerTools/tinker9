@@ -9,11 +9,11 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, diagPrecond, const real (*)[3], const real (*)[3], //
+TINKER_FVOID2(cu, 1, acc, 1, diagPrecond, const real (*)[3], const real (*)[3], //
    real (*)[3], real (*)[3]);
 void diagPrecond(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, diagPrecond, rsd, rsdp, zrsd, zrsdp);
+   TINKER_FCALL2(cu, 1, acc, 1, diagPrecond, rsd, rsdp, zrsd, zrsdp);
 }
 
 void sparsePrecondBuild() {}
@@ -38,22 +38,22 @@ void ulspredSave(const real (*uind)[3], const real (*uinp)[3])
    real(*up)[3];
    int pos = nualt % maxualt;
    switch (pos) {
-      case  0: ud = udalt_00; up = upalt_00; break;
-      case  1: ud = udalt_01; up = upalt_01; break;
-      case  2: ud = udalt_02; up = upalt_02; break;
-      case  3: ud = udalt_03; up = upalt_03; break;
-      case  4: ud = udalt_04; up = upalt_04; break;
-      case  5: ud = udalt_05; up = upalt_05; break;
-      case  6: ud = udalt_06; up = upalt_06; break;
-      case  7: ud = udalt_07; up = upalt_07; break;
-      case  8: ud = udalt_08; up = upalt_08; break;
-      case  9: ud = udalt_09; up = upalt_09; break;
-      case 10: ud = udalt_10; up = upalt_10; break;
-      case 11: ud = udalt_11; up = upalt_11; break;
-      case 12: ud = udalt_12; up = upalt_12; break;
-      case 13: ud = udalt_13; up = upalt_13; break;
-      case 14: ud = udalt_14; up = upalt_14; break;
-      case 15: ud = udalt_15; up = upalt_15; break;
+      case  0: ud = udalt_00; if (uinp) up = upalt_00; break;
+      case  1: ud = udalt_01; if (uinp) up = upalt_01; break;
+      case  2: ud = udalt_02; if (uinp) up = upalt_02; break;
+      case  3: ud = udalt_03; if (uinp) up = upalt_03; break;
+      case  4: ud = udalt_04; if (uinp) up = upalt_04; break;
+      case  5: ud = udalt_05; if (uinp) up = upalt_05; break;
+      case  6: ud = udalt_06; if (uinp) up = upalt_06; break;
+      case  7: ud = udalt_07; if (uinp) up = upalt_07; break;
+      case  8: ud = udalt_08; if (uinp) up = upalt_08; break;
+      case  9: ud = udalt_09; if (uinp) up = upalt_09; break;
+      case 10: ud = udalt_10; if (uinp) up = upalt_10; break;
+      case 11: ud = udalt_11; if (uinp) up = upalt_11; break;
+      case 12: ud = udalt_12; if (uinp) up = upalt_12; break;
+      case 13: ud = udalt_13; if (uinp) up = upalt_13; break;
+      case 14: ud = udalt_14; if (uinp) up = upalt_14; break;
+      case 15: ud = udalt_15; if (uinp) up = upalt_15; break;
       default: ud =  nullptr; up =  nullptr; break;
    }
    nualt = nualt + 1;
@@ -64,10 +64,10 @@ void ulspredSave(const real (*uind)[3], const real (*uinp)[3])
    TINKER_FCALL2(cu, 1, acc, 1, ulspredSaveP1, ud, up, uind, uinp);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, ulspredSum, real (*)[3], real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, ulspredSum, real (*)[3], real (*)[3]);
 void ulspredSum(real (*uind)[3], real (*uinp)[3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, ulspredSum, uind, uinp);
+   TINKER_FCALL2(cu, 1, acc, 1, ulspredSum, uind, uinp);
 }
 }
 

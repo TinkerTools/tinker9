@@ -11,10 +11,10 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, diagPrecond2, const real (*)[3], real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, diagPrecond2, const real (*)[3], real (*)[3]);
 void diagPrecond2(const real (*rsd)[3], real (*zrsd)[3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, diagPrecond2, rsd, zrsd);
+   TINKER_FCALL2(cu, 1, acc, 1, diagPrecond2, rsd, zrsd);
 }
 
 void sparsePrecondBuild2() {}
@@ -23,18 +23,6 @@ TINKER_FVOID2(cu, 1, acc, 1, sparsePrecondApply2, const real (*)[3], real (*)[3]
 void sparsePrecondApply2(const real (*rsd)[3], real (*zrsd)[3])
 {
    TINKER_FCALL2(cu, 1, acc, 1, sparsePrecondApply2, rsd, zrsd);
-}
-
-TINKER_FVOID2(cu, 0, acc, 1, ulspredSave2, const real (*)[3]);
-void ulspredSave2(const real (*uind)[3])
-{
-   TINKER_FCALL2(cu, 0, acc, 1, ulspredSave2, uind);
-}
-
-TINKER_FVOID2(cu, 0, acc, 1, ulspredSum2, real (*)[3]);
-void ulspredSum2(real (*uind)[3])
-{
-   TINKER_FCALL2(cu, 0, acc, 1, ulspredSum2, uind);
 }
 }
 
@@ -55,10 +43,10 @@ void induce2(real (*ud)[3])
 {
    if (polpot::use_dirdamp) {
       induceMutualPcg3(ud);
-      ulspredSave3(ud);
+      ulspredSave(ud, nullptr);
    } else {
       induceMutualPcg2(ud);
-      ulspredSave2(ud);
+      ulspredSave(ud, nullptr);
    }
    inducePrint(ud);
 }

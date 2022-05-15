@@ -16,14 +16,4 @@ void sparsePrecondApply3(const real (*rsd)[3], real (*zrsd)[3])
 {
    TINKER_FCALL2(cu, 1, acc, 1, sparsePrecondApply3, rsd, zrsd);
 }
-
-void ulspredSave3(const real (*uind)[3])
-{
-   ulspredSave2(uind);
-}
-
-void ulspredSum3(real (*uind)[3])
-{
-   ulspredSum2(uind);
-}
 }

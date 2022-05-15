@@ -1,3 +1,4 @@
+#include "ff/amoeba/induce.h"
 #include "ff/amoebamod.h"
 #include "ff/hippo/induce.h"
 #include "seq/launch.h"
@@ -133,7 +134,7 @@ void induceMutualPcg2_cu(real (*uind)[3])
 
    // initial induced dipole
    if (predict) {
-      ulspredSum2(uind);
+      ulspredSum(uind, nullptr);
    } else if (dirguess) {
       darray::copy(g::q0, n, uind, udir);
    } else {

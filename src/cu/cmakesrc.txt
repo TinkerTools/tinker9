@@ -7,7 +7,6 @@ amoeba/pcg.cu
 amoeba/precond.cu
 amoeba/rotpole.cu
 amoeba/torque.cu
-amoeba/upred.cu
 aplus/echgtrn.cu
 aplus/empole.cu
 aplus/epolar.cu
@@ -16,6 +15,7 @@ aplus/pcg.cu
 atom.cu
 compilers.cu
 cudalib.cu
+diagprecond.cu
 echarge.cu
 echglj.cu
 egvop.cu
@@ -40,4 +40,5 @@ minimize.cu
 pme.cu
 rattle.cu
 spatial.cu
+upredict.cu
 )
