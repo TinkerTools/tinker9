@@ -240,7 +240,7 @@ static void spatialAlloc( //
 TINKER_FVOID1(cu, 0, acc, 1, nblistBuild, NBListUnit);
 static void nblistBuild(NBListUnit u)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, nblistBuild, u);
+   TINKER_FCALL1(cu, 0, acc, 1, nblistBuild, u);
 }
 
 // RcOp::INIT
@@ -434,7 +434,7 @@ namespace tinker {
 TINKER_FVOID1(cu, 0, acc, 1, nblistUpdate, NBListUnit);
 static void nblistUpdate(NBListUnit u)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, nblistUpdate, u);
+   TINKER_FCALL1(cu, 0, acc, 1, nblistUpdate, u);
 }
 
 TINKER_FVOID2(cu, 1, acc, 1, spatialCheck, int&, int, real, int*, const real*, const real*,

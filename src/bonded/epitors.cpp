@@ -71,7 +71,7 @@ void epitors(int vers)
          darray::zero(g::q0, n, deptx, depty, deptz);
    }
 
-   TINKER_FCALL2(cu, 0, acc, 1, epitors, vers);
+   TINKER_FCALL1(cu, 0, acc, 1, epitors, vers);
 
    if (rc_a) {
       if (do_e) {

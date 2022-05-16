@@ -44,8 +44,8 @@ TINKER_FVOID2(cu, 0, acc, 1, propagate_pos_lp2, time_prec dt, const pos_prec* x_
 static void propagate_pos_lp2(time_prec dt, const pos_prec* x_lp, const pos_prec* y_lp,
    const pos_prec* z_lp, pos_prec* xold_lp, pos_prec* yold_lp, pos_prec* zold_lp, double scale)
 {
-   TINKER_FCALL2(
-      cu, 0, acc, 1, propagate_pos_lp2, dt, x_lp, y_lp, z_lp, xold_lp, yold_lp, zold_lp, scale);
+   TINKER_FCALL2(cu, 0, acc, 1, propagate_pos_lp2, //
+      dt, x_lp, y_lp, z_lp, xold_lp, yold_lp, zold_lp, scale);
 }
 
 TINKER_FVOID2(cu, 0, acc, 1, propagate_velocity_lp2, time_prec dt, vel_prec* vx_lp, vel_prec* vy_lp,
@@ -79,8 +79,8 @@ static void propagate_pos_lf(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec*
    const pos_prec* qxold, const pos_prec* qyold, const pos_prec* qzold, const vel_prec* vlx,
    const vel_prec* vly, const vel_prec* vlz)
 {
-   TINKER_FCALL2(
-      cu, 0, acc, 1, propagate_pos_lf, dt, qx, qy, qz, qxold, qyold, qzold, vlx, vly, vlz);
+   TINKER_FCALL2(cu, 0, acc, 1, propagate_pos_lf, //
+      dt, qx, qy, qz, qxold, qyold, qzold, vlx, vly, vlz);
 }
 
 TINKER_FVOID2(cu, 0, acc, 1, shake2, time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
@@ -92,8 +92,8 @@ static void shake2(time_prec dt, const vel_prec* vxold, const vel_prec* vyold,
 {
    darray::zero(g::q0, bufferSize(), vir_buf);
 
-   TINKER_FCALL2(
-      cu, 0, acc, 1, shake2, dt, vxold, vyold, vzold, vxnew, vynew, vznew, xold, yold, zold);
+   TINKER_FCALL2(cu, 0, acc, 1, shake2, //
+      dt, vxold, vyold, vzold, vxnew, vynew, vznew, xold, yold, zold);
 
    virial_prec v[9];
    virialReduce(v, vir_buf);

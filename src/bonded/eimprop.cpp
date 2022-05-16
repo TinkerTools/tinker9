@@ -60,7 +60,7 @@ void eimprop(int vers)
          darray::zero(g::q0, n, deidx, deidy, deidz);
    }
 
-   TINKER_FCALL2(cu, 0, acc, 1, eimprop, vers);
+   TINKER_FCALL1(cu, 0, acc, 1, eimprop, vers);
 
    if (rc_a) {
       if (do_e) {

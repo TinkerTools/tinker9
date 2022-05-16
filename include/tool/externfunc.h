@@ -14,11 +14,11 @@ void throwExceptionMissingFunction(const char* functionName, const char* file, i
 
 #   define TINKER_FCALL0(F, ...) F##_acc(__VA_ARGS__)
 
-#   define TINKER_FCALL2_cu0_acc1__(F, ...) TINKER_FCALL1_NORMAL_(F, acc, __VA_ARGS__)
-#   define TINKER_FCALL2_cu1_acc0__(F, ...) TINKER_FCALL1_NORMAL_(F, cu, __VA_ARGS__)
+#   define TINKER_FCALL2_cu0_acc1__(F, ...) TINKER_FCALL0_NORMAL_(F, acc, __VA_ARGS__)
+#   define TINKER_FCALL2_cu1_acc0__(F, ...) TINKER_FCALL0_NORMAL_(F, cu, __VA_ARGS__)
 #   define TINKER_FCALL2_cu1_acc1__(F, ...)                                                        \
-      (pltfm_config & Platform::CUDA) ? TINKER_FCALL1_NORMAL_(F, cu, __VA_ARGS__)                  \
-                                      : TINKER_FCALL1_NORMAL_(F, acc, __VA_ARGS__)
+      (pltfm_config & Platform::CUDA) ? TINKER_FCALL0_NORMAL_(F, cu, __VA_ARGS__)                  \
+                                      : TINKER_FCALL0_NORMAL_(F, acc, __VA_ARGS__)
 
 #elif TINKER_GPULANG_CUDA // pure cuda
 
@@ -30,9 +30,9 @@ void throwExceptionMissingFunction(const char* functionName, const char* file, i
 
 #   define TINKER_FCALL0(F, ...) F##_cu(__VA_ARGS__)
 
-#   define TINKER_FCALL2_cu0_acc1__(F, ...) TINKER_FCALL1_ERROR__(F, cu)
-#   define TINKER_FCALL2_cu1_acc0__(F, ...) TINKER_FCALL1_NORMAL_(F, cu, __VA_ARGS__)
-#   define TINKER_FCALL2_cu1_acc1__(F, ...) TINKER_FCALL1_NORMAL_(F, cu, __VA_ARGS__)
+#   define TINKER_FCALL2_cu0_acc1__(F, ...) TINKER_FCALL0_ERROR__(F, cu)
+#   define TINKER_FCALL2_cu1_acc0__(F, ...) TINKER_FCALL0_NORMAL_(F, cu, __VA_ARGS__)
+#   define TINKER_FCALL2_cu1_acc1__(F, ...) TINKER_FCALL0_NORMAL_(F, cu, __VA_ARGS__)
 
 #else // host
 
@@ -44,9 +44,9 @@ void throwExceptionMissingFunction(const char* functionName, const char* file, i
 
 #   define TINKER_FCALL0(F, ...) F##_acc(__VA_ARGS__)
 
-#   define TINKER_FCALL2_cu1_acc0__(F, ...) TINKER_FCALL1_ERROR__(F, cu)
-#   define TINKER_FCALL2_cu0_acc1__(F, ...) TINKER_FCALL1_NORMAL_(F, acc, __VA_ARGS__)
-#   define TINKER_FCALL2_cu1_acc1__(F, ...) TINKER_FCALL1_NORMAL_(F, acc, __VA_ARGS__)
+#   define TINKER_FCALL2_cu1_acc0__(F, ...) TINKER_FCALL0_ERROR__(F, cu)
+#   define TINKER_FCALL2_cu0_acc1__(F, ...) TINKER_FCALL0_NORMAL_(F, acc, __VA_ARGS__)
+#   define TINKER_FCALL2_cu1_acc1__(F, ...) TINKER_FCALL0_NORMAL_(F, acc, __VA_ARGS__)
 
 #endif // end
 
@@ -58,6 +58,7 @@ void throwExceptionMissingFunction(const char* functionName, const char* file, i
    TINKER_FEXTN2__(SUFFIX1, HAS_IMPL1, SUFFIX2, HAS_IMPL2, void, FUNC, __VA_ARGS__)
 
 #define TINKER_FVOID1 TINKER_FVOID2
+#define TINKER_FCALL1 TINKER_FCALL2
 
 #define TINKER_FCALL2(SUFFIX1, HAS_IMPL1, SUFFIX2, HAS_IMPL2, FUNC, ...)                           \
    TINKER_FCALL2_##SUFFIX1##HAS_IMPL1##_##SUFFIX2##HAS_IMPL2##__(FUNC, __VA_ARGS__)
@@ -69,5 +70,5 @@ void throwExceptionMissingFunction(const char* functionName, const char* file, i
 #define TINKER_FEXTN1_EMPTY__
 #define TINKER_FEXTN1_NORMAL_(R, F, S, ...) extern R F##_##S(__VA_ARGS__)
 
-#define TINKER_FCALL1_ERROR__(F, S)      throwExceptionMissingFunction(#F "_" #S, __FILE__, __LINE__)
-#define TINKER_FCALL1_NORMAL_(F, S, ...) F##_##S(__VA_ARGS__)
+#define TINKER_FCALL0_ERROR__(F, S)      throwExceptionMissingFunction(#F "_" #S, __FILE__, __LINE__)
+#define TINKER_FCALL0_NORMAL_(F, S, ...) F##_##S(__VA_ARGS__)

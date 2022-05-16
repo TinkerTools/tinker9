@@ -155,7 +155,7 @@ void etortor(int vers)
          darray::zero(g::q0, n, dettx, detty, dettz);
    }
 
-   TINKER_FCALL2(cu, 0, acc, 1, etortor, vers);
+   TINKER_FCALL1(cu, 0, acc, 1, etortor, vers);
 
    if (rc_a) {
       if (do_e) {

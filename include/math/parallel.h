@@ -13,7 +13,7 @@ namespace tinker {
 template <class T>
 T reduceSum(const T* gpu_a, size_t nelem, int queue)
 {
-   // TINKER_FEXTN2__(cu, 1, acc, 1, T, reduceSum, const T*, size_t, int);
+   // TINKER_FVOID2(cu, 1, acc, 1, T, reduceSum, const T*, size_t, int);
    return TINKER_FCALL2(cu, 1, acc, 1, reduceSum, gpu_a, nelem, queue);
 }
 
@@ -81,8 +81,8 @@ void reduceSum2OnDevice(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
 template <class T>
 T dotProd(const T* a, const T* b, size_t nelem, int queue)
 {
-   // TINKER_FEXTN2__(cu, 0, acc, 1, T, dotProd, const T*, const T*, size_t, int);
-   return TINKER_FCALL2(cu, 0, acc, 1, dotProd, a, b, nelem, queue);
+   // TINKER_FVOID1(cu, 0, acc, 1, T, dotProd, const T*, const T*, size_t, int);
+   return TINKER_FCALL1(cu, 0, acc, 1, dotProd, a, b, nelem, queue);
 }
 
 /// \ingroup math_parallel

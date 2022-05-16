@@ -76,7 +76,7 @@ void eurey(int vers)
          darray::zero(g::q0, n, deubx, deuby, deubz);
    }
 
-   TINKER_FCALL2(cu, 0, acc, 1, eurey, vers);
+   TINKER_FCALL1(cu, 0, acc, 1, eurey, vers);
 
    if (rc_a) {
       if (do_e) {

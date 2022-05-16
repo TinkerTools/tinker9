@@ -70,7 +70,7 @@ void eimptor(int vers)
          darray::zero(g::q0, n, deitx, deity, deitz);
    }
 
-   TINKER_FCALL2(cu, 0, acc, 1, eimptor, vers);
+   TINKER_FCALL1(cu, 0, acc, 1, eimptor, vers);
 
    if (rc_a) {
       if (do_e) {

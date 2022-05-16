@@ -82,7 +82,7 @@ void ebond(int vers)
          darray::zero(g::q0, n, debx, deby, debz);
    }
 
-   TINKER_FCALL2(cu, 0, acc, 1, ebond, vers);
+   TINKER_FCALL1(cu, 0, acc, 1, ebond, vers);
 
    if (rc_a) {
       if (do_e) {

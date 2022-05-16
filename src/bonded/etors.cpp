@@ -75,7 +75,7 @@ void etors(int vers)
          darray::zero(g::q0, n, detx, dety, detz);
    }
 
-   TINKER_FCALL2(cu, 0, acc, 1, etors, vers);
+   TINKER_FCALL1(cu, 0, acc, 1, etors, vers);
 
    if (rc_a) {
       if (do_e) {

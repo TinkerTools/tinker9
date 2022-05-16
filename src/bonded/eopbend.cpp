@@ -84,7 +84,7 @@ void eopbend(int vers)
          darray::zero(g::q0, n, deopbx, deopby, deopbz);
    }
 
-   TINKER_FCALL2(cu, 0, acc, 1, eopbend, vers);
+   TINKER_FCALL1(cu, 0, acc, 1, eopbend, vers);
 
    if (rc_a) {
       if (do_e) {

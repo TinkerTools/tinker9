@@ -70,7 +70,7 @@ void estrtor(int vers)
          darray::zero(g::q0, n, debtx, debty, debtz);
    }
 
-   TINKER_FCALL2(cu, 0, acc, 1, estrtor, vers);
+   TINKER_FCALL1(cu, 0, acc, 1, estrtor, vers);
 
    if (rc_a) {
       if (do_e) {

@@ -97,7 +97,7 @@ void eangle(int vers)
          darray::zero(g::q0, n, deax, deay, deaz);
    }
 
-   TINKER_FCALL2(cu, 0, acc, 1, eangle, vers);
+   TINKER_FCALL1(cu, 0, acc, 1, eangle, vers);
 
    if (rc_a) {
       if (do_e) {
