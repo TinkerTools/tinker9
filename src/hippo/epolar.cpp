@@ -168,10 +168,10 @@ static void epolarChgpenEwaldReal(int vers, int use_cf)
    TINKER_FCALL2(cu, 1, acc, 1, epolarChgpenEwaldReal, vers, use_cf, uind);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, epolarChgpenEwaldRecipSelf, int, int, const real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, epolarChgpenEwaldRecipSelf, int, int, const real (*)[3]);
 void epolarChgpenEwaldRecipSelf(int vers, int use_cf)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, epolarChgpenEwaldRecipSelf, vers, use_cf, uind);
+   TINKER_FCALL2(cu, 1, acc, 1, epolarChgpenEwaldRecipSelf, vers, use_cf, uind);
 }
 
 static void epolarChgpenEwald(int vers, int use_cf)

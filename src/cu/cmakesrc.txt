@@ -21,6 +21,7 @@ echglj.cu
 egvop.cu
 ehal.cu
 elj.cu
+epolarrecip.cu
 evalence.cu
 hippo/cflux.cu
 hippo/echgtrn.cu

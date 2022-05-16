@@ -321,8 +321,8 @@ static void epolarChgpen_acc1(const real (*uind)[3])
    }
 }
 
-template <class Ver, int CFLX>
-static void epolarChgpenEwaldRecipSelf_acc1(const real (*gpu_uind)[3])
+template <class Ver>
+static void epolarChgpenEwaldRecipSelf_acc1(const real (*gpu_uind)[3], bool use_cf)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -457,7 +457,7 @@ static void epolarChgpenEwaldRecipSelf_acc1(const real (*gpu_uind)[3])
          atomic_add(tep2, trqy, i);
          atomic_add(tep3, trqz, i);
 
-         if CONSTEXPR (CFLX)
+         if (use_cf)
             atomic_add(cphidp[i][0], pot, i);
       }
 
@@ -711,36 +711,24 @@ void epolarChgpenEwaldReal_acc(int vers, int use_cf, const real (*uind)[3])
 
 void epolarChgpenEwaldRecipSelf_acc(int vers, int use_cf, const real (*uind)[3])
 {
-   if (use_cf) {
-      if (vers == calc::v0) {
-         // epolarChgpenEwaldRecipSelf_acc1<calc::V0, 1>(uind);
+   if (vers == calc::v0) {
+      if (use_cf)
          assert(false && "CFLX must compute gradient.");
-      } else if (vers == calc::v1) {
-         epolarChgpenEwaldRecipSelf_acc1<calc::V1, 1>(uind);
-      } else if (vers == calc::v3) {
-         // epolarChgpenEwaldRecipSelf_acc1<calc::V3, 1>(uind);
+      else
+         epolarChgpenEwaldRecipSelf_acc1<calc::V0>(uind, false);
+   } else if (vers == calc::v1) {
+      epolarChgpenEwaldRecipSelf_acc1<calc::V1>(uind, use_cf);
+   } else if (vers == calc::v3) {
+      if (use_cf)
          assert(false && "CFLX must compute gradient.");
-      } else if (vers == calc::v4) {
-         epolarChgpenEwaldRecipSelf_acc1<calc::V4, 1>(uind);
-      } else if (vers == calc::v5) {
-         epolarChgpenEwaldRecipSelf_acc1<calc::V5, 1>(uind);
-      } else if (vers == calc::v6) {
-         epolarChgpenEwaldRecipSelf_acc1<calc::V6, 1>(uind);
-      }
-   } else {
-      if (vers == calc::v0) {
-         epolarChgpenEwaldRecipSelf_acc1<calc::V0, 0>(uind);
-      } else if (vers == calc::v1) {
-         epolarChgpenEwaldRecipSelf_acc1<calc::V1, 0>(uind);
-      } else if (vers == calc::v3) {
-         epolarChgpenEwaldRecipSelf_acc1<calc::V3, 0>(uind);
-      } else if (vers == calc::v4) {
-         epolarChgpenEwaldRecipSelf_acc1<calc::V4, 0>(uind);
-      } else if (vers == calc::v5) {
-         epolarChgpenEwaldRecipSelf_acc1<calc::V5, 0>(uind);
-      } else if (vers == calc::v6) {
-         epolarChgpenEwaldRecipSelf_acc1<calc::V6, 0>(uind);
-      }
+      else
+         epolarChgpenEwaldRecipSelf_acc1<calc::V3>(uind, false);
+   } else if (vers == calc::v4) {
+      epolarChgpenEwaldRecipSelf_acc1<calc::V4>(uind, use_cf);
+   } else if (vers == calc::v5) {
+      epolarChgpenEwaldRecipSelf_acc1<calc::V5>(uind, use_cf);
+   } else if (vers == calc::v6) {
+      epolarChgpenEwaldRecipSelf_acc1<calc::V6>(uind, use_cf);
    }
 }
 }
