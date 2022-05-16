@@ -57,7 +57,7 @@ void eureyData(RcOp op)
    }
 }
 
-TINKER_FVOID1(cu, 0, acc, 1, eurey, int);
+TINKER_FVOID1(acc1, cu0, eurey, int);
 void eurey(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -76,7 +76,7 @@ void eurey(int vers)
          darray::zero(g::q0, n, deubx, deuby, deubz);
    }
 
-   TINKER_FCALL1(cu, 0, acc, 1, eurey, vers);
+   TINKER_FCALL1(acc1, cu0, eurey, vers);
 
    if (rc_a) {
       if (do_e) {

@@ -69,8 +69,8 @@ void echgtrnData(RcOp op)
    }
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, echgtrn, int);
-TINKER_FVOID2(cu, 1, acc, 1, echgtrnAplus, int);
+TINKER_FVOID2(acc1, cu1, echgtrn, int);
+TINKER_FVOID2(acc1, cu1, echgtrnAplus, int);
 void echgtrn(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -93,9 +93,9 @@ void echgtrn(int vers)
    }
 
    if (ctrntyp == Chgtrn::SEPARATE) {
-      TINKER_FCALL2(cu, 1, acc, 1, echgtrn, vers);
+      TINKER_FCALL2(acc1, cu1, echgtrn, vers);
    } else if (ctrntyp == Chgtrn::COMBINED) {
-      TINKER_FCALL2(cu, 1, acc, 1, echgtrnAplus, vers);
+      TINKER_FCALL2(acc1, cu1, echgtrnAplus, vers);
    }
 
    if (rc_a) {

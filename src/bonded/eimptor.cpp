@@ -51,7 +51,7 @@ void eimptorData(RcOp op)
    }
 }
 
-TINKER_FVOID1(cu, 0, acc, 1, eimptor, int);
+TINKER_FVOID1(acc1, cu0, eimptor, int);
 void eimptor(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -70,7 +70,7 @@ void eimptor(int vers)
          darray::zero(g::q0, n, deitx, deity, deitz);
    }
 
-   TINKER_FCALL1(cu, 0, acc, 1, eimptor, vers);
+   TINKER_FCALL1(acc1, cu0, eimptor, vers);
 
    if (rc_a) {
       if (do_e) {

@@ -50,18 +50,18 @@ void empoleData(RcOp op)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, empoleNonEwald, int);
+TINKER_FVOID2(acc1, cu1, empoleNonEwald, int);
 static void empoleNonEwald(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, empoleNonEwald, vers);
+   TINKER_FCALL2(acc1, cu1, empoleNonEwald, vers);
 }
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, empoleEwaldRealSelf, int);
+TINKER_FVOID2(acc1, cu1, empoleEwaldRealSelf, int);
 static void empoleEwaldRealSelf(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, empoleEwaldRealSelf, vers);
+   TINKER_FCALL2(acc1, cu1, empoleEwaldRealSelf, vers);
 }
 
 void empoleEwaldRecip(int vers)

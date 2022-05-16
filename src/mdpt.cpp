@@ -14,12 +14,12 @@
 #include <cmath>
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, kineticEnergy, energy_prec&, energy_prec (&)[3][3], int n,
-   const double*, const vel_prec*, const vel_prec*, const vel_prec*);
+TINKER_FVOID2(acc1, cu1, kineticEnergy, energy_prec&, energy_prec (&)[3][3], int n, const double*,
+   const vel_prec*, const vel_prec*, const vel_prec*);
 void kineticEnergy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n, const double* mass,
    const vel_prec* vx, const vel_prec* vy, const vel_prec* vz)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, kineticEnergy, eksum_out, ekin_out, n, mass, vx, vy, vz);
+   TINKER_FCALL2(acc1, cu1, kineticEnergy, eksum_out, ekin_out, n, mass, vx, vy, vz);
 }
 
 void kineticExplicit(T_prec& temp_out, energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
@@ -68,7 +68,7 @@ void bussiThermostat(time_prec dt_prec, T_prec temp_prec)
    }
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, monteCarloMolMove, double);
+TINKER_FVOID2(acc1, cu1, monteCarloMolMove, double);
 void monteCarloBarostat(energy_prec epot, T_prec temp)
 {
    if (not bound::use_bounds)
@@ -109,7 +109,7 @@ void monteCarloBarostat(energy_prec epot, T_prec temp)
       boxSetCurrentRecip();
 
       if (volscale == "MOLECULAR") {
-         TINKER_FCALL2(cu, 1, acc, 1, monteCarloMolMove, scale);
+         TINKER_FCALL2(acc1, cu1, monteCarloMolMove, scale);
       }
 
       copyPosToXyz();
@@ -146,9 +146,9 @@ void monteCarloBarostat(energy_prec epot, T_prec temp)
    }
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, berendsenBarostat, time_prec);
+TINKER_FVOID2(acc1, cu0, berendsenBarostat, time_prec);
 void berendsenBarostat(time_prec dt)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, berendsenBarostat, dt);
+   TINKER_FCALL2(acc1, cu0, berendsenBarostat, dt);
 }
 }

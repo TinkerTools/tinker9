@@ -476,38 +476,38 @@ void rattleData(RcOp op)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, rattle, time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
-TINKER_FVOID2(cu, 0, acc, 1, rattleSettle, time_prec, //
+TINKER_FVOID2(acc1, cu0, rattle, time_prec, const pos_prec*, const pos_prec*, const pos_prec*);
+TINKER_FVOID2(acc1, cu0, rattleSettle, time_prec, //
    const pos_prec*, const pos_prec*, const pos_prec*);
-TINKER_FVOID2(cu, 0, acc, 1, rattleCH, time_prec, //
+TINKER_FVOID2(acc1, cu0, rattleCH, time_prec, //
    const pos_prec*, const pos_prec*, const pos_prec*);
-TINKER_FVOID2(cu, 1, acc, 0, rattleMethyl, time_prec, //
+TINKER_FVOID2(acc0, cu1, rattleMethyl, time_prec, //
    const pos_prec*, const pos_prec*, const pos_prec*);
 void rattle(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, rattleSettle, dt, xold, yold, zold);
-   TINKER_FCALL2(cu, 0, acc, 1, rattleCH, dt, xold, yold, zold);
+   TINKER_FCALL2(acc1, cu0, rattleSettle, dt, xold, yold, zold);
+   TINKER_FCALL2(acc1, cu0, rattleCH, dt, xold, yold, zold);
    if (pltfm_config & Platform::CUDA)
-      TINKER_FCALL2(cu, 1, acc, 0, rattleMethyl, dt, xold, yold, zold);
-   TINKER_FCALL2(cu, 0, acc, 1, rattle, dt, xold, yold, zold);
+      TINKER_FCALL2(acc0, cu1, rattleMethyl, dt, xold, yold, zold);
+   TINKER_FCALL2(acc1, cu0, rattle, dt, xold, yold, zold);
 }
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, rattle2, time_prec, bool);
-TINKER_FVOID2(cu, 0, acc, 1, rattle2Settle, time_prec, bool);
-TINKER_FVOID2(cu, 0, acc, 1, rattle2CH, time_prec, bool);
-TINKER_FVOID2(cu, 1, acc, 0, rattle2Methyl, time_prec, bool);
+TINKER_FVOID2(acc1, cu0, rattle2, time_prec, bool);
+TINKER_FVOID2(acc1, cu0, rattle2Settle, time_prec, bool);
+TINKER_FVOID2(acc1, cu0, rattle2CH, time_prec, bool);
+TINKER_FVOID2(acc0, cu1, rattle2Methyl, time_prec, bool);
 void rattle2(time_prec dt, bool do_v)
 {
    if (do_v)
       darray::zero(g::q0, bufferSize(), vir_buf);
 
-   TINKER_FCALL2(cu, 0, acc, 1, rattle2Settle, dt, do_v);
-   TINKER_FCALL2(cu, 0, acc, 1, rattle2CH, dt, do_v);
+   TINKER_FCALL2(acc1, cu0, rattle2Settle, dt, do_v);
+   TINKER_FCALL2(acc1, cu0, rattle2CH, dt, do_v);
    if (pltfm_config & Platform::CUDA)
-      TINKER_FCALL2(cu, 1, acc, 0, rattle2Methyl, dt, do_v);
-   TINKER_FCALL2(cu, 0, acc, 1, rattle2, dt, do_v);
+      TINKER_FCALL2(acc0, cu1, rattle2Methyl, dt, do_v);
+   TINKER_FCALL2(acc1, cu0, rattle2, dt, do_v);
 
    if (do_v) {
       virial_prec v[9];
@@ -520,22 +520,22 @@ void rattle2(time_prec dt, bool do_v)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, shake, time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
+TINKER_FVOID2(acc1, cu0, shake, time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
    const pos_prec*, const pos_prec*);
-TINKER_FVOID2(cu, 0, acc, 1, shakeSettle, time_prec, pos_prec*, pos_prec*, pos_prec*,
-   const pos_prec*, const pos_prec*, const pos_prec*);
-TINKER_FVOID2(cu, 0, acc, 1, shakeCH, time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
+TINKER_FVOID2(acc1, cu0, shakeSettle, time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
    const pos_prec*, const pos_prec*);
-TINKER_FVOID2(cu, 1, acc, 0, shakeMethyl, time_prec, pos_prec*, pos_prec*, pos_prec*,
-   const pos_prec*, const pos_prec*, const pos_prec*);
+TINKER_FVOID2(acc1, cu0, shakeCH, time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
+   const pos_prec*, const pos_prec*);
+TINKER_FVOID2(acc0, cu1, shakeMethyl, time_prec, pos_prec*, pos_prec*, pos_prec*, const pos_prec*,
+   const pos_prec*, const pos_prec*);
 void shake(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew, const pos_prec* xold,
    const pos_prec* yold, const pos_prec* zold)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, shakeSettle, dt, xnew, ynew, znew, xold, yold, zold);
-   TINKER_FCALL2(cu, 0, acc, 1, shakeCH, dt, xnew, ynew, znew, xold, yold, zold);
+   TINKER_FCALL2(acc1, cu0, shakeSettle, dt, xnew, ynew, znew, xold, yold, zold);
+   TINKER_FCALL2(acc1, cu0, shakeCH, dt, xnew, ynew, znew, xold, yold, zold);
    if (pltfm_config & Platform::CUDA)
-      TINKER_FCALL2(cu, 1, acc, 0, shakeMethyl, dt, xnew, ynew, znew, xold, yold, zold);
-   TINKER_FCALL2(cu, 0, acc, 1, shake, dt, xnew, ynew, znew, xold, yold, zold);
+      TINKER_FCALL2(acc0, cu1, shakeMethyl, dt, xnew, ynew, znew, xold, yold, zold);
+   TINKER_FCALL2(acc1, cu0, shake, dt, xnew, ynew, znew, xold, yold, zold);
 }
 }
 
@@ -546,46 +546,46 @@ void hcKinetic()
    kineticEnergy(hc_eksum, hc_ekin, m.nmol, m.molmass, ratcom_vx, ratcom_vy, ratcom_vz);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, hcVirial);
+TINKER_FVOID2(acc1, cu1, hcVirial);
 void hcVirial()
 {
    for (int iv = 0; iv < 9; ++iv)
       hc_vir[iv] = 0;
 
-   TINKER_FCALL2(cu, 1, acc, 1, hcVirial);
+   TINKER_FCALL2(acc1, cu1, hcVirial);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, hcCenterOfMass, const pos_prec*, const pos_prec*, const pos_prec*,
+TINKER_FVOID2(acc1, cu0, hcCenterOfMass, const pos_prec*, const pos_prec*, const pos_prec*,
    pos_prec*, pos_prec*, pos_prec*);
 void hcCenterOfMass(const pos_prec* atomx, const pos_prec* atomy, const pos_prec* atomz,
    pos_prec* molx, pos_prec* moly, pos_prec* molz)
 {
    static_assert(std::is_same<pos_prec, vel_prec>::value, //
       "pos_prec and vel_prec must be the same type.");
-   TINKER_FCALL2(cu, 0, acc, 1, hcCenterOfMass, atomx, atomy, atomz, molx, moly, molz);
+   TINKER_FCALL2(acc1, cu0, hcCenterOfMass, atomx, atomy, atomz, molx, moly, molz);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, hcVelIso, vel_prec);
+TINKER_FVOID2(acc1, cu0, hcVelIso, vel_prec);
 void hcVelIso(vel_prec scal)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, hcVelIso, scal);
+   TINKER_FCALL2(acc1, cu0, hcVelIso, scal);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, hcVelAn, vel_prec scal[3][3]);
+TINKER_FVOID2(acc1, cu0, hcVelAn, vel_prec scal[3][3]);
 void hcVelAn(vel_prec scal[3][3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, hcVelAn, scal);
+   TINKER_FCALL2(acc1, cu0, hcVelAn, scal);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, hcPosIso, pos_prec);
+TINKER_FVOID2(acc1, cu0, hcPosIso, pos_prec);
 void hcPosIso(pos_prec s)
 {
-   TINKER_FCALL2(cu, 0, acc, 1, hcPosIso, s);
+   TINKER_FCALL2(acc1, cu0, hcPosIso, s);
 }
 
-TINKER_FVOID2(cu, 0, acc, 1, hcPosAn, pos_prec (*)[3]);
+TINKER_FVOID2(acc1, cu0, hcPosAn, pos_prec (*)[3]);
 void hcPosAn(pos_prec (*scal)[3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, hcPosAn, scal);
+   TINKER_FCALL2(acc1, cu0, hcPosAn, scal);
 }
 }

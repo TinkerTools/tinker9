@@ -138,7 +138,7 @@ static void boxSetRecip(real3& recipa, real3& recipb, real3& recipc, BoxShape bo
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, boxDataP1, RcOp);
+TINKER_FVOID2(acc1, cu1, boxDataP1, RcOp);
 void boxDataP1(RcOp op)
 {
    TINKER_FCALL0(boxDataP1, op);
@@ -290,7 +290,7 @@ void boxLattice(Box& p, BoxShape sh, double a, double b, double c, double alphaD
    boxSetRecip(p.recipa, p.recipb, p.recipc, p.box_shape, p.lvec1, p.lvec2, p.lvec3);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, boxCopyin);
+TINKER_FVOID2(acc1, cu1, boxCopyin);
 void boxCopyin()
 {
    TINKER_FCALL0(boxCopyin);

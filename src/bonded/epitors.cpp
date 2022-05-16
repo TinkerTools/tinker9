@@ -52,7 +52,7 @@ void epitorsData(RcOp op)
    }
 }
 
-TINKER_FVOID1(cu, 0, acc, 1, epitors, int);
+TINKER_FVOID1(acc1, cu0, epitors, int);
 void epitors(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -71,7 +71,7 @@ void epitors(int vers)
          darray::zero(g::q0, n, deptx, depty, deptz);
    }
 
-   TINKER_FCALL1(cu, 0, acc, 1, epitors, vers);
+   TINKER_FCALL1(acc1, cu0, epitors, vers);
 
    if (rc_a) {
       if (do_e) {

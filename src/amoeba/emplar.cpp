@@ -5,7 +5,7 @@
 #include "tool/externfunc.h"
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 0, emplar, int);
+TINKER_FVOID2(acc0, cu1, emplar, int);
 void emplar(int vers)
 {
    bool do_v = vers & calc::virial;
@@ -13,7 +13,7 @@ void emplar(int vers)
    zeroOnHost(energy_em, virial_em);
 
    mpoleInit(vers);
-   TINKER_FCALL2(cu, 1, acc, 0, emplar, vers);
+   TINKER_FCALL2(acc0, cu1, emplar, vers);
    torque(vers, demx, demy, demz);
    if (do_v) {
       VirialBuffer u2 = vir_trq;

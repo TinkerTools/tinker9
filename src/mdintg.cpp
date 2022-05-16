@@ -125,10 +125,10 @@ void mdIntegrateData(RcOp op)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, mdrest, int);
+TINKER_FVOID2(acc1, cu1, mdrest, int);
 void mdrest(int istep)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, mdrest, istep);
+   TINKER_FCALL2(acc1, cu1, mdrest, istep);
 }
 
 void mdrestPrintP1(bool prints, double vtot1, double vtot2, double vtot3, double totmass)

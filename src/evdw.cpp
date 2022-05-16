@@ -479,51 +479,51 @@ void evdw(int vers)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, elj, int);
+TINKER_FVOID2(acc1, cu1, elj, int);
 void elj(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, elj, vers);
+   TINKER_FCALL2(acc1, cu1, elj, vers);
 }
 
-TINKER_FVOID2(cu, 1, acc, 0, elj14, int);
+TINKER_FVOID2(acc0, cu1, elj14, int);
 void elj14(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 0, elj14, vers);
+   TINKER_FCALL2(acc0, cu1, elj14, vers);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, ebuck, int);
+TINKER_FVOID2(acc1, cu1, ebuck, int);
 void ebuck(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, ebuck, vers);
+   TINKER_FCALL2(acc1, cu1, ebuck, vers);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, emm3hb, int);
+TINKER_FVOID2(acc1, cu1, emm3hb, int);
 void emm3hb(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, emm3hb, vers);
+   TINKER_FCALL2(acc1, cu1, emm3hb, vers);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, egauss, int);
+TINKER_FVOID2(acc1, cu1, egauss, int);
 void egauss(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, egauss, vers);
+   TINKER_FCALL2(acc1, cu1, egauss, vers);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, ehal, int);
+TINKER_FVOID2(acc1, cu1, ehal, int);
 void ehal(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, ehal, vers);
+   TINKER_FCALL2(acc1, cu1, ehal, vers);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, ehalReduceXyz);
+TINKER_FVOID2(acc1, cu1, ehalReduceXyz);
 void ehalReduceXyz()
 {
-   TINKER_FCALL2(cu, 1, acc, 1, ehalReduceXyz);
+   TINKER_FCALL2(acc1, cu1, ehalReduceXyz);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, ehalResolveGradient);
+TINKER_FVOID2(acc1, cu1, ehalResolveGradient);
 void ehalResolveGradient()
 {
-   TINKER_FCALL2(cu, 1, acc, 1, ehalResolveGradient);
+   TINKER_FCALL2(acc1, cu1, ehalResolveGradient);
 }
 }

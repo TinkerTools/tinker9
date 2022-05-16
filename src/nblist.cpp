@@ -237,10 +237,10 @@ static void spatialAlloc( //
 }
 
 // RcOp::INIT
-TINKER_FVOID1(cu, 0, acc, 1, nblistBuild, NBListUnit);
+TINKER_FVOID1(acc1, cu0, nblistBuild, NBListUnit);
 static void nblistBuild(NBListUnit u)
 {
-   TINKER_FCALL1(cu, 0, acc, 1, nblistBuild, u);
+   TINKER_FCALL1(acc1, cu0, nblistBuild, u);
 }
 
 // RcOp::INIT
@@ -431,19 +431,19 @@ void nblistData(RcOp op)
 }
 
 namespace tinker {
-TINKER_FVOID1(cu, 0, acc, 1, nblistUpdate, NBListUnit);
+TINKER_FVOID1(acc1, cu0, nblistUpdate, NBListUnit);
 static void nblistUpdate(NBListUnit u)
 {
-   TINKER_FCALL1(cu, 0, acc, 1, nblistUpdate, u);
+   TINKER_FCALL1(acc1, cu0, nblistUpdate, u);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, spatialCheck, int&, int, real, int*, const real*, const real*,
-   const real*, real*, real*, real*);
+TINKER_FVOID2(acc1, cu1, spatialCheck, int&, int, real, int*, const real*, const real*, const real*,
+   real*, real*, real*);
 static void spatialUpdate(SpatialUnit unt)
 {
    MAYBE_UNUSED auto& st = *unt;
    int answer = 0;
-   TINKER_FCALL2(cu, 1, acc, 1, spatialCheck, answer, st.n, st.buffer, st.update, st.x, st.y, st.z,
+   TINKER_FCALL2(acc1, cu1, spatialCheck, answer, st.n, st.buffer, st.update, st.x, st.y, st.z,
       st.xold, st.yold, st.zold);
    if (answer) {
       spatialDataInit(unt);

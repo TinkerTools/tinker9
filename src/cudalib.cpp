@@ -7,7 +7,7 @@
 #   include <cuda_profiler_api.h>
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, cudalibDataStreamAndQ, RcOp);
+TINKER_FVOID2(acc1, cu1, cudalibDataStreamAndQ, RcOp);
 }
 #endif
 

@@ -273,16 +273,16 @@ void elj_acc(int vers)
 
 void ebuck_acc(int)
 {
-   TINKER_FCALL1_ERROR__(ebuck, acc);
+   TINKER_FCALL0_ERROR__(ebuck, acc);
 }
 
 void emm3hb_acc(int)
 {
-   TINKER_FCALL1_ERROR__(emm3hb, acc);
+   TINKER_FCALL0_ERROR__(emm3hb, acc);
 }
 
 void egauss_acc(int)
 {
-   TINKER_FCALL1_ERROR__(egauss, acc);
+   TINKER_FCALL0_ERROR__(egauss, acc);
 }
 }

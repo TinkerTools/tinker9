@@ -78,7 +78,7 @@ void eangleData(RcOp op)
    }
 }
 
-TINKER_FVOID1(cu, 0, acc, 1, eangle, int);
+TINKER_FVOID1(acc1, cu0, eangle, int);
 void eangle(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -97,7 +97,7 @@ void eangle(int vers)
          darray::zero(g::q0, n, deax, deay, deaz);
    }
 
-   TINKER_FCALL1(cu, 0, acc, 1, eangle, vers);
+   TINKER_FCALL1(acc1, cu0, eangle, vers);
 
    if (rc_a) {
       if (do_e) {

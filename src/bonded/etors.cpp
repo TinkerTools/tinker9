@@ -56,7 +56,7 @@ void etorsData(RcOp op)
    }
 }
 
-TINKER_FVOID1(cu, 0, acc, 1, etors, int);
+TINKER_FVOID1(acc1, cu0, etors, int);
 void etors(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -75,7 +75,7 @@ void etors(int vers)
          darray::zero(g::q0, n, detx, dety, detz);
    }
 
-   TINKER_FCALL1(cu, 0, acc, 1, etors, vers);
+   TINKER_FCALL1(acc1, cu0, etors, vers);
 
    if (rc_a) {
       if (do_e) {

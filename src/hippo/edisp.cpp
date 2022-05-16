@@ -152,18 +152,18 @@ void edispData(RcOp op)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, edispNonEwald, int);
+TINKER_FVOID2(acc1, cu1, edispNonEwald, int);
 static void edispNonEwald(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, edispNonEwald, vers);
+   TINKER_FCALL2(acc1, cu1, edispNonEwald, vers);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, edispEwaldReal, int);
-TINKER_FVOID2(cu, 1, acc, 1, edispEwaldRecipSelf, int);
-TINKER_FVOID2(cu, 1, acc, 1, pmeConvDisp, int);
+TINKER_FVOID2(acc1, cu1, edispEwaldReal, int);
+TINKER_FVOID2(acc1, cu1, edispEwaldRecipSelf, int);
+TINKER_FVOID2(acc1, cu1, pmeConvDisp, int);
 static void edispEwald(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, edispEwaldReal, vers);
+   TINKER_FCALL2(acc1, cu1, edispEwaldReal, vers);
 
    // recip and self
    bool do_e = vers & calc::energy;
@@ -173,11 +173,11 @@ static void edispEwald(int vers)
 
    gridDisp(u, csix);
    fftfront(u);
-   TINKER_FCALL2(cu, 1, acc, 1, pmeConvDisp, vers);
+   TINKER_FCALL2(acc1, cu1, pmeConvDisp, vers);
    if (do_g) {
       fftback(u);
    }
-   TINKER_FCALL2(cu, 1, acc, 1, edispEwaldRecipSelf, vers);
+   TINKER_FCALL2(acc1, cu1, edispEwaldRecipSelf, vers);
 
    // account for the total energy and virial correction term
    if CONSTEXPR (do_e || do_v) {

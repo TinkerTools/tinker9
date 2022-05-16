@@ -53,24 +53,24 @@ void empoleChgpenData(RcOp op)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, empoleChgpenNonEwald, int, int);
+TINKER_FVOID2(acc1, cu1, empoleChgpenNonEwald, int, int);
 static void empoleChgpenNonEwald(int vers, int use_cf)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, empoleChgpenNonEwald, vers, use_cf);
+   TINKER_FCALL2(acc1, cu1, empoleChgpenNonEwald, vers, use_cf);
 }
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, empoleChgpenEwaldRealSelf, int, int);
+TINKER_FVOID2(acc1, cu1, empoleChgpenEwaldRealSelf, int, int);
 static void empoleChgpenEwaldRealSelf(int vers, int use_cf)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, empoleChgpenEwaldRealSelf, vers, use_cf);
+   TINKER_FCALL2(acc1, cu1, empoleChgpenEwaldRealSelf, vers, use_cf);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, empoleChgpenEwaldRecip, int, int);
+TINKER_FVOID2(acc1, cu1, empoleChgpenEwaldRecip, int, int);
 void empoleChgpenEwaldRecip(int vers, int use_cf)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, empoleChgpenEwaldRecip, vers, use_cf);
+   TINKER_FCALL2(acc1, cu1, empoleChgpenEwaldRecip, vers, use_cf);
 }
 
 static void empoleChgpenEwald(int vers, int use_cf)

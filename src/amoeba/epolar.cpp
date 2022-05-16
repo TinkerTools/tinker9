@@ -505,7 +505,7 @@ void epolarData(RcOp op)
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 1, epolarNonEwald, int, const real (*)[3], const real (*)[3]);
+TINKER_FVOID2(acc1, cu1, epolarNonEwald, int, const real (*)[3], const real (*)[3]);
 static void epolarNonEwald(int vers)
 {
    // v0: E_dot
@@ -525,19 +525,19 @@ static void epolarNonEwald(int vers)
    if (edot)
       epolar0DotProd(uind, udirp);
    if (vers != calc::v0)
-      TINKER_FCALL2(cu, 1, acc, 1, epolarNonEwald, ver2, uind, uinp);
+      TINKER_FCALL2(acc1, cu1, epolarNonEwald, ver2, uind, uinp);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, epolarEwaldRecipSelf, int, const real (*)[3], const real (*)[3]);
+TINKER_FVOID2(acc1, cu1, epolarEwaldRecipSelf, int, const real (*)[3], const real (*)[3]);
 void epolarEwaldRecipSelf(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, epolarEwaldRecipSelf, vers, uind, uinp);
+   TINKER_FCALL2(acc1, cu1, epolarEwaldRecipSelf, vers, uind, uinp);
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, epolarEwaldReal, int, const real (*)[3], const real (*)[3]);
+TINKER_FVOID2(acc1, cu1, epolarEwaldReal, int, const real (*)[3], const real (*)[3]);
 static void epolarEwaldReal(int vers)
 {
-   TINKER_FCALL2(cu, 1, acc, 1, epolarEwaldReal, vers, uind, uinp);
+   TINKER_FCALL2(acc1, cu1, epolarEwaldReal, vers, uind, uinp);
 }
 
 static void epolarEwald(int vers)
@@ -640,9 +640,9 @@ void epolar(int vers)
    }
 }
 
-TINKER_FVOID2(cu, 1, acc, 1, epolar0DotProd, const real (*)[3], const real (*)[3]);
+TINKER_FVOID2(acc1, cu1, epolar0DotProd, const real (*)[3], const real (*)[3]);
 void epolar0DotProd(const real (*uind)[3], const real (*udirp)[3])
 {
-   TINKER_FCALL2(cu, 1, acc, 1, epolar0DotProd, uind, udirp);
+   TINKER_FCALL2(acc1, cu1, epolar0DotProd, uind, udirp);
 }
 }

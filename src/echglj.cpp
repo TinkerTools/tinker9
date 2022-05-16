@@ -20,7 +20,7 @@
 #include <tinker/detail/vdwpot.hh>
 
 namespace tinker {
-TINKER_FVOID2(cu, 1, acc, 0, echgljData, RcOp);
+TINKER_FVOID2(acc0, cu1, echgljData, RcOp);
 void echgljData(RcOp op)
 {
    if (not(clistVersion() & Nbl::SPATIAL))
@@ -266,11 +266,11 @@ void echgljData(RcOp op)
       waitFor(g::q0);
    }
 
-   TINKER_FCALL2(cu, 1, acc, 0, echgljData, op);
+   TINKER_FCALL2(acc0, cu1, echgljData, op);
 }
 
-TINKER_FVOID2(cu, 1, acc, 0, echgljRadArithEpsGeomNonEwald, int);
-TINKER_FVOID2(cu, 1, acc, 0, echgljRadArithEpsGeomEwaldReal, int);
+TINKER_FVOID2(acc0, cu1, echgljRadArithEpsGeomNonEwald, int);
+TINKER_FVOID2(acc0, cu1, echgljRadArithEpsGeomEwaldReal, int);
 void echglj(int vers)
 {
    bool do_e = vers & calc::energy;
@@ -284,9 +284,9 @@ void echglj(int vers)
    assert(epsrule == Vdw::GEOMETRIC);
    if (useEwald()) {
       echargeEwaldRecipSelf(vers);
-      TINKER_FCALL2(cu, 1, acc, 0, echgljRadArithEpsGeomEwaldReal, vers);
+      TINKER_FCALL2(acc0, cu1, echgljRadArithEpsGeomEwaldReal, vers);
    } else {
-      TINKER_FCALL2(cu, 1, acc, 0, echgljRadArithEpsGeomNonEwald, vers);
+      TINKER_FCALL2(acc0, cu1, echgljRadArithEpsGeomNonEwald, vers);
    }
 
    if (do_e) {

@@ -63,7 +63,7 @@ void ebondData(RcOp op)
    }
 }
 
-TINKER_FVOID1(cu, 0, acc, 1, ebond, int);
+TINKER_FVOID1(acc1, cu0, ebond, int);
 void ebond(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -82,7 +82,7 @@ void ebond(int vers)
          darray::zero(g::q0, n, debx, deby, debz);
    }
 
-   TINKER_FCALL1(cu, 0, acc, 1, ebond, vers);
+   TINKER_FCALL1(acc1, cu0, ebond, vers);
 
    if (rc_a) {
       if (do_e) {

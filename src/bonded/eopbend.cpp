@@ -65,7 +65,7 @@ void eopbendData(RcOp op)
    }
 }
 
-TINKER_FVOID1(cu, 0, acc, 1, eopbend, int);
+TINKER_FVOID1(acc1, cu0, eopbend, int);
 void eopbend(int vers)
 {
    bool rc_a = rc_flag & calc::analyz;
@@ -84,7 +84,7 @@ void eopbend(int vers)
          darray::zero(g::q0, n, deopbx, deopby, deopbz);
    }
 
-   TINKER_FCALL1(cu, 0, acc, 1, eopbend, vers);
+   TINKER_FCALL1(acc1, cu0, eopbend, vers);
 
    if (rc_a) {
       if (do_e) {
