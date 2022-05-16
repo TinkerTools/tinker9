@@ -153,52 +153,6 @@ void dfieldChgpenEwaldReal_acc(real (*field)[3])
    dfieldChgpen_acc1<EWALD>(field);
 }
 
-// see also subroutine umutual1 in induce.f
-void ufieldChgpenEwaldRecipSelf_acc(const real (*uind)[3], real (*field)[3])
-{
-   darray::zero(g::q0, n, field);
-
-   const PMEUnit pu = ppme_unit;
-   const auto& st = *pu;
-   const int nfft1 = st.nfft1;
-   const int nfft2 = st.nfft2;
-   const int nfft3 = st.nfft3;
-   const real aewald = st.aewald;
-
-   cuindToFuind(pu, uind, uind, fuind, fuind);
-   gridUind(pu, fuind, fuind);
-   fftfront(pu);
-   // TODO: store vs. recompute qfac
-   pmeConv(pu);
-   fftback(pu);
-   fphiUind2(pu, fdip_phi1, fdip_phi2);
-
-   const real term = aewald * aewald * aewald * 4 / 3 / sqrtpi;
-
-   #pragma acc parallel loop independent async\
-               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(field,uind,fdip_phi1)
-   for (int i = 0; i < n; ++i) {
-      real a[3][3];
-      a[0][0] = nfft1 * recipa.x;
-      a[1][0] = nfft2 * recipb.x;
-      a[2][0] = nfft3 * recipc.x;
-      a[0][1] = nfft1 * recipa.y;
-      a[1][1] = nfft2 * recipb.y;
-      a[2][1] = nfft3 * recipc.y;
-      a[0][2] = nfft1 * recipa.z;
-      a[1][2] = nfft2 * recipb.z;
-      a[2][2] = nfft3 * recipc.z;
-
-      #pragma acc loop seq
-      for (int j = 0; j < 3; ++j) {
-         real df1 =
-            a[0][j] * fdip_phi1[i][1] + a[1][j] * fdip_phi1[i][2] + a[2][j] * fdip_phi1[i][3];
-         field[i][j] += (term * uind[i][j] - df1);
-      }
-   }
-}
-
 #define UFIELD_DPTRS x, y, z, pcore, pval, palpha, field, uind
 template <class ETYP>
 static void ufieldChgpen_acc1(const real (*uind)[3], real (*field)[3])

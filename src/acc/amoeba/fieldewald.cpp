@@ -198,14 +198,23 @@ void ufieldEwaldRecipSelfP1_acc(const real (*uind)[3], const real (*uinp)[3], //
       a[1][2] = nfft2 * recipb.z;
       a[2][2] = nfft3 * recipc.z;
 
-      #pragma acc loop seq
-      for (int j = 0; j < 3; ++j) {
-         real df1 =
-            a[0][j] * fdip_phi1[i][1] + a[1][j] * fdip_phi1[i][2] + a[2][j] * fdip_phi1[i][3];
-         real df2 =
-            a[0][j] * fdip_phi2[i][1] + a[1][j] * fdip_phi2[i][2] + a[2][j] * fdip_phi2[i][3];
-         field[i][j] += (term * uind[i][j] - df1);
-         fieldp[i][j] += (term * uinp[i][j] - df2);
+      if (uinp) {
+         #pragma acc loop seq
+         for (int j = 0; j < 3; ++j) {
+            real df1 =
+               a[0][j] * fdip_phi1[i][1] + a[1][j] * fdip_phi1[i][2] + a[2][j] * fdip_phi1[i][3];
+            real df2 =
+               a[0][j] * fdip_phi2[i][1] + a[1][j] * fdip_phi2[i][2] + a[2][j] * fdip_phi2[i][3];
+            field[i][j] += (term * uind[i][j] - df1);
+            fieldp[i][j] += (term * uinp[i][j] - df2);
+         }
+      } else {
+         #pragma acc loop seq
+         for (int j = 0; j < 3; ++j) {
+            real df1 =
+               a[0][j] * fdip_phi1[i][1] + a[1][j] * fdip_phi1[i][2] + a[2][j] * fdip_phi1[i][3];
+            field[i][j] += (term * uind[i][j] - df1);
+         }
       }
    }
 }

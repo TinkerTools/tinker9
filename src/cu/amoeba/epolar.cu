@@ -812,23 +812,22 @@ void epolarEwaldRecipSelfVirial_cu2(int n, VirialBuffer restrict vir_ep, //
    const real (*restrict cphidp)[10], //
    int nfft1, int nfft2, int nfft3, TINKER_IMAGE_PARAMS)
 {
+   // frac_to_cart
+
+   real ftc[3][3];
+   ftc[0][0] = nfft1 * recipa.x;
+   ftc[1][0] = nfft2 * recipb.x;
+   ftc[2][0] = nfft3 * recipc.x;
+   ftc[0][1] = nfft1 * recipa.y;
+   ftc[1][1] = nfft2 * recipb.y;
+   ftc[2][1] = nfft3 * recipc.y;
+   ftc[0][2] = nfft1 * recipa.z;
+   ftc[1][2] = nfft2 * recipb.z;
+   ftc[2][2] = nfft3 * recipc.z;
+
    int ithread = ITHREAD;
    for (int i = ithread; i < n; i += STRIDE) {
       real cphid[4], cphip[4];
-      real ftc[3][3];
-
-      // frac_to_cart
-
-      ftc[0][0] = nfft1 * recipa.x;
-      ftc[1][0] = nfft2 * recipb.x;
-      ftc[2][0] = nfft3 * recipc.x;
-      ftc[0][1] = nfft1 * recipa.y;
-      ftc[1][1] = nfft2 * recipb.y;
-      ftc[2][1] = nfft3 * recipc.y;
-      ftc[0][2] = nfft1 * recipa.z;
-      ftc[1][2] = nfft2 * recipb.z;
-      ftc[2][2] = nfft3 * recipc.z;
-
       for (int j = 0; j < 3; ++j) {
          cphid[j + 1] = 0;
          cphip[j + 1] = 0;

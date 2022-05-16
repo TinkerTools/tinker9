@@ -1,6 +1,8 @@
 #include "ff/amoeba/induce.h"
+#include "ff/atom.h"
 #include "ff/elec.h"
 #include "ff/nblist.h"
+#include "ff/pme.h"
 #include "tool/externfunc.h"
 
 namespace tinker {
@@ -34,10 +36,22 @@ void dfieldChgpen(real (*field)[3])
 }
 
 namespace tinker {
-TINKER_FVOID2(cu, 0, acc, 1, ufieldChgpenEwaldRecipSelf, const real (*)[3], real (*)[3]);
+TINKER_FVOID2(cu, 1, acc, 1, ufieldEwaldRecipSelfP1, const real (*)[3], const real (*)[3],
+   real (*)[3], real (*)[3]);
 void ufieldChgpenEwaldRecipSelf(const real (*uind)[3], real (*field)[3])
 {
-   TINKER_FCALL2(cu, 0, acc, 1, ufieldChgpenEwaldRecipSelf, uind, field);
+   darray::zero(g::q0, n, field);
+
+   const PMEUnit pu = ppme_unit;
+   cuindToFuind(pu, uind, uind, fuind, fuind);
+   gridUind(pu, fuind, fuind);
+   fftfront(pu);
+   // TODO: store vs. recompute qfac
+   pmeConv(pu);
+   fftback(pu);
+   fphiUind2(pu, fdip_phi1, fdip_phi2);
+
+   TINKER_FCALL2(cu, 1, acc, 1, ufieldEwaldRecipSelfP1, uind, nullptr, field, nullptr);
 }
 
 TINKER_FVOID2(cu, 1, acc, 1, ufieldChgpenEwaldReal, const real (*)[3], real (*)[3]);

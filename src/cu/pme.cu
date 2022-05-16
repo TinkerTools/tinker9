@@ -1083,20 +1083,20 @@ __global__
 void cmpToFmp_cu1(int n, const real (*restrict cmp)[10], real (*restrict fmp)[10], int nfft1,
    int nfft2, int nfft3, TINKER_IMAGE_PARAMS)
 {
-   for (int iatom = ITHREAD; iatom < n; iatom += STRIDE) {
-      real a[3][3];
-      // see also subroutine cart_to_frac in pmestuf.f
-      // set the reciprocal vector transformation matrix
-      a[0][0] = nfft1 * recipa.x;
-      a[0][1] = nfft2 * recipb.x;
-      a[0][2] = nfft3 * recipc.x;
-      a[1][0] = nfft1 * recipa.y;
-      a[1][1] = nfft2 * recipb.y;
-      a[1][2] = nfft3 * recipc.y;
-      a[2][0] = nfft1 * recipa.z;
-      a[2][1] = nfft2 * recipb.z;
-      a[2][2] = nfft3 * recipc.z;
+   // see also subroutine cart_to_frac in pmestuf.f
+   // set the reciprocal vector transformation matrix
+   real a[3][3];
+   a[0][0] = nfft1 * recipa.x;
+   a[0][1] = nfft2 * recipb.x;
+   a[0][2] = nfft3 * recipc.x;
+   a[1][0] = nfft1 * recipa.y;
+   a[1][1] = nfft2 * recipb.y;
+   a[1][2] = nfft3 * recipc.y;
+   a[2][0] = nfft1 * recipa.z;
+   a[2][1] = nfft2 * recipb.z;
+   a[2][2] = nfft3 * recipc.z;
 
+   for (int iatom = ITHREAD; iatom < n; iatom += STRIDE) {
       // data qi1  / 1, 2, 3, 1, 1, 2 /
       // data qi2  / 1, 2, 3, 2, 3, 3 /
       constexpr int qi1[] = {0, 1, 2, 0, 0, 1};
@@ -1176,18 +1176,18 @@ void cuindToFuind_cu1(int n, const real (*restrict cind)[3], const real (*restri
    real (*restrict fuind)[3], real (*restrict fuinp)[3], int nfft1, int nfft2, int nfft3,
    TINKER_IMAGE_PARAMS)
 {
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      real a[3][3];
-      a[0][0] = nfft1 * recipa.x;
-      a[0][1] = nfft2 * recipb.x;
-      a[0][2] = nfft3 * recipc.x;
-      a[1][0] = nfft1 * recipa.y;
-      a[1][1] = nfft2 * recipb.y;
-      a[1][2] = nfft3 * recipc.y;
-      a[2][0] = nfft1 * recipa.z;
-      a[2][1] = nfft2 * recipb.z;
-      a[2][2] = nfft3 * recipc.z;
+   real a[3][3];
+   a[0][0] = nfft1 * recipa.x;
+   a[0][1] = nfft2 * recipb.x;
+   a[0][2] = nfft3 * recipc.x;
+   a[1][0] = nfft1 * recipa.y;
+   a[1][1] = nfft2 * recipb.y;
+   a[1][2] = nfft3 * recipc.y;
+   a[2][0] = nfft1 * recipa.z;
+   a[2][1] = nfft2 * recipb.z;
+   a[2][2] = nfft3 * recipc.z;
 
+   for (int i = ITHREAD; i < n; i += STRIDE) {
       for (int j = 0; j < 3; ++j) {
          fuind[i][j] = a[0][j] * cind[i][0] + a[1][j] * cind[i][1] + a[2][j] * cind[i][2];
          fuinp[i][j] = a[0][j] * cinp[i][0] + a[1][j] * cinp[i][1] + a[2][j] * cinp[i][2];
@@ -1211,20 +1211,20 @@ __global__
 void fphiToCphi_cu1(int n, const real (*restrict fphi)[20], real (*restrict cphi)[10], int nfft1,
    int nfft2, int nfft3, TINKER_IMAGE_PARAMS)
 {
-   for (int iatom = ITHREAD; iatom < n; iatom += STRIDE) {
-      real a[3][3];
-      // see also subroutine frac_to_cart in pmestuf.f
-      // set the reciprocal vector transformation matrix
-      a[0][0] = nfft1 * recipa.x;
-      a[1][0] = nfft2 * recipb.x;
-      a[2][0] = nfft3 * recipc.x;
-      a[0][1] = nfft1 * recipa.y;
-      a[1][1] = nfft2 * recipb.y;
-      a[2][1] = nfft3 * recipc.y;
-      a[0][2] = nfft1 * recipa.z;
-      a[1][2] = nfft2 * recipb.z;
-      a[2][2] = nfft3 * recipc.z;
+   // see also subroutine frac_to_cart in pmestuf.f
+   // set the reciprocal vector transformation matrix
+   real a[3][3];
+   a[0][0] = nfft1 * recipa.x;
+   a[1][0] = nfft2 * recipb.x;
+   a[2][0] = nfft3 * recipc.x;
+   a[0][1] = nfft1 * recipa.y;
+   a[1][1] = nfft2 * recipb.y;
+   a[2][1] = nfft3 * recipc.y;
+   a[0][2] = nfft1 * recipa.z;
+   a[1][2] = nfft2 * recipb.z;
+   a[2][2] = nfft3 * recipc.z;
 
+   for (int iatom = ITHREAD; iatom < n; iatom += STRIDE) {
       // data qi1  / 1, 2, 3, 1, 1, 2 /
       // data qi2  / 1, 2, 3, 2, 3, 3 /
       constexpr int qi1[] = {0, 1, 2, 0, 0, 1};
