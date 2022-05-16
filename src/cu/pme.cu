@@ -914,7 +914,7 @@ void fphiUind2_cu(PMEUnit pme_u, real (*fdip_phi1)[10], real (*fdip_phi2)[10])
 
 template <bool DO_E, bool DO_V>
 __global__
-void pmeConv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
+static void pmeConv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
    const real* restrict bsmod1, const real* restrict bsmod2, const real* restrict bsmod3, real f,
    real aewald, TINKER_IMAGE_PARAMS, real box_volume, EnergyBuffer restrict gpu_e,
    VirialBuffer restrict gpu_vir)
@@ -977,7 +977,7 @@ void pmeConv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
             if ((k1 + k2 + k3) & 1)
                expterm = 0; // end if ((k1 + k2 + k3) % 2 != 0)
 
-         if CONSTEXPR (DO_E || DO_V) {
+         if CONSTEXPR (DO_E or DO_V) {
             real struc2 = gridx * gridx + gridy * gridy;
             real eterm = 0.5f * f * expterm * struc2;
             if CONSTEXPR (DO_E) {
@@ -1015,7 +1015,7 @@ void pmeConv_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
 }
 
 template <bool DO_E, bool DO_V>
-void pmeConv_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
+static void pmeConv_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_vir)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);

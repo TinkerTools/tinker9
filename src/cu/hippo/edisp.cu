@@ -9,6 +9,150 @@
 #include "seq/triangle.h"
 
 namespace tinker {
+template <bool DO_E, bool DO_V>
+__global__
+static void pmeConvDisp_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
+   const real* restrict bsmod1, const real* restrict bsmod2, const real* restrict bsmod3,
+   real aewald, TINKER_IMAGE_PARAMS, real vbox, EnergyBuffer restrict gpu_e,
+   VirialBuffer restrict gpu_vir)
+{
+   using ebuf_prec = EnergyBufferTraits::type;
+   ebuf_prec ectl;
+   if CONSTEXPR (DO_E) {
+      ectl = 0;
+   }
+   using vbuf_prec = VirialBufferTraits::type;
+   vbuf_prec vctlxx, vctlyx, vctlzx, vctlyy, vctlzy, vctlzz;
+   if CONSTEXPR (DO_V) {
+      vctlxx = 0;
+      vctlyx = 0;
+      vctlzx = 0;
+      vctlyy = 0;
+      vctlzy = 0;
+      vctlzz = 0;
+   }
+
+   int nff = nfft1 * nfft2;
+   int ntot = nfft1 * nfft2 * nfft3;
+   const real bfac = pi / aewald;
+   const real fac1 = 109.91438900847863181; // 2 Pi**3.5
+   const real fac2 = aewald * aewald * aewald;
+   const real fac3 = -2 * aewald * 9.86960440108935861883449; // Pi**2
+   const real denom0 = vbox * 1.07752273275099937;            // 6/Pi**1.5
+
+   int ithread = ITHREAD;
+   for (int i = ithread; i < ntot; i += STRIDE) {
+      if (i == 0) {
+         qgrid[0][0] = 0;
+         qgrid[0][1] = 0;
+         continue;
+      }
+
+      int k3 = i / nff;
+      int j = i - k3 * nff;
+      int k2 = j / nfft1;
+      int k1 = j - k2 * nfft1;
+
+      int r1 = (k1 < (nfft1 + 1) / 2) ? k1 : (k1 - nfft1);
+      int r2 = (k2 < (nfft2 + 1) / 2) ? k2 : (k2 - nfft2);
+      int r3 = (k3 < (nfft3 + 1) / 2) ? k3 : (k3 - nfft3);
+
+      real h1 = recipa.x * r1 + recipb.x * r2 + recipc.x * r3;
+      real h2 = recipa.y * r1 + recipb.y * r2 + recipc.y * r3;
+      real h3 = recipa.z * r1 + recipb.z * r2 + recipc.z * r3;
+      real hsq = h1 * h1 + h2 * h2 + h3 * h3;
+
+      real gridx = qgrid[i][0];
+      real gridy = qgrid[i][1];
+      real h = REAL_SQRT(hsq);
+      real b = h * bfac;
+      real hhh = h * hsq;
+      real term = -hsq * bfac * bfac;
+      real eterm = 0;
+      if (term > -50) {
+         real expterm = REAL_EXP(term);
+         real erfcterm = REAL_ERFC(b);
+         if (box_shape == BoxShape::UNBOUND) {
+            real coef = (1 - REAL_COS(pi * lvec1.x * REAL_SQRT(hsq)));
+            expterm *= coef;
+            erfcterm *= coef;
+         } else if (box_shape == BoxShape::OCT) {
+            if ((k1 + k2 + k3) & 1) {
+               expterm = 0;
+               erfcterm = 0;
+            } // end if ((k1 + k2 + k3) % 2 != 0)
+         }
+         real denom = denom0 * bsmod1[k1] * bsmod2[k2] * bsmod3[k3];
+         eterm = (-fac1 * erfcterm * hhh - expterm * (fac2 + fac3 * hsq)) * REAL_RECIP(denom);
+
+         if CONSTEXPR (DO_E or DO_V) {
+            real struc2 = gridx * gridx + gridy * gridy;
+            real e = eterm * struc2;
+            if CONSTEXPR (DO_E) {
+               ectl += floatTo<ebuf_prec>(e);
+            }
+            if CONSTEXPR (DO_V) {
+               real vterm = 3 * (fac1 * erfcterm * h + fac3 * expterm) * struc2 * REAL_RECIP(denom);
+               real vxx = (h1 * h1 * vterm - e);
+               real vxy = h1 * h2 * vterm;
+               real vxz = h1 * h3 * vterm;
+               real vyy = (h2 * h2 * vterm - e);
+               real vyz = h2 * h3 * vterm;
+               real vzz = (h3 * h3 * vterm - e);
+               vctlxx += floatTo<vbuf_prec>(vxx);
+               vctlyx += floatTo<vbuf_prec>(vxy);
+               vctlzx += floatTo<vbuf_prec>(vxz);
+               vctlyy += floatTo<vbuf_prec>(vyy);
+               vctlzy += floatTo<vbuf_prec>(vyz);
+               vctlzz += floatTo<vbuf_prec>(vzz);
+            }
+         } // end if (e or v)
+      }
+
+      qgrid[i][0] = eterm * gridx;
+      qgrid[i][1] = eterm * gridy;
+   }
+
+   if CONSTEXPR (DO_E) {
+      atomic_add(ectl, gpu_e, ithread);
+   }
+   if CONSTEXPR (DO_V) {
+      atomic_add(vctlxx, vctlyx, vctlzx, vctlyy, vctlzy, vctlzz, gpu_vir, ithread);
+   }
+}
+
+template <bool DO_E, bool DO_V>
+static void pmeConvDisp_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
+{
+   real(*qgrid)[2] = reinterpret_cast<real(*)[2]>(pme_u->qgrid);
+   real vbox = boxVolume();
+
+   auto ker = pmeConvDisp_cu1<DO_E, DO_V>;
+   auto stream = g::s0;
+   int ngrid = gpuGridSize(BLOCK_DIM);
+   ker<<<ngrid, BLOCK_DIM, 0, stream>>>(pme_u->nfft1, pme_u->nfft2, pme_u->nfft3, qgrid,
+      pme_u->bsmod1, pme_u->bsmod2, pme_u->bsmod3, pme_u->aewald, TINKER_IMAGE_ARGS, vbox, gpu_e,
+      gpu_v);
+}
+
+void pmeConvDisp_cu(int vers)
+{
+   bool do_e = vers & calc::energy;
+   bool do_v = vers & calc::virial;
+   PMEUnit u = dpme_unit;
+
+   if (do_e and do_v)
+      pmeConvDisp_cu2<true, true>(u, edsp, vir_edsp);
+   else if (do_e and not do_v)
+      pmeConvDisp_cu2<true, false>(u, edsp, nullptr);
+   else if (not do_e and do_v)
+      pmeConvDisp_cu2<false, true>(u, nullptr, vir_edsp);
+   else if (not do_e and not do_v)
+      pmeConvDisp_cu2<false, false>(u, nullptr, nullptr);
+}
+}
+
+namespace tinker {
 // ck.py Version 2.0.2
 template <class Ver, class DTYP>
 __global__

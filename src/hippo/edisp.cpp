@@ -160,7 +160,7 @@ static void edispNonEwald(int vers)
 
 TINKER_FVOID2(cu, 1, acc, 1, edispEwaldReal, int);
 TINKER_FVOID2(cu, 1, acc, 1, edispEwaldRecipSelf, int);
-TINKER_FVOID2(cu, 0, acc, 1, pmeConvDisp, int);
+TINKER_FVOID2(cu, 1, acc, 1, pmeConvDisp, int);
 static void edispEwald(int vers)
 {
    TINKER_FCALL2(cu, 1, acc, 1, edispEwaldReal, vers);
@@ -173,7 +173,7 @@ static void edispEwald(int vers)
 
    gridDisp(u, csix);
    fftfront(u);
-   TINKER_FCALL2(cu, 0, acc, 1, pmeConvDisp, vers);
+   TINKER_FCALL2(cu, 1, acc, 1, pmeConvDisp, vers);
    if (do_g) {
       fftback(u);
    }

@@ -1,5 +1,5 @@
-#include "ff/hippo/edisp.h"
 #include "ff/atom.h"
+#include "ff/hippo/edisp.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
@@ -108,13 +108,13 @@ void pmeConvDisp_acc(int vers)
    bool do_v = vers & calc::virial;
    PMEUnit u = dpme_unit;
 
-   if (do_e && do_v)
+   if (do_e and do_v)
       pmeConvDisp_acc1<true, true>(u, edsp, vir_edsp);
-   else if (do_e && !do_v)
+   else if (do_e and not do_v)
       pmeConvDisp_acc1<true, false>(u, edsp, nullptr);
-   else if (!do_e && do_v)
+   else if (not do_e and do_v)
       pmeConvDisp_acc1<false, true>(u, nullptr, vir_edsp);
-   else if (!do_e && !do_v)
+   else if (not do_e and not do_v)
       pmeConvDisp_acc1<false, false>(u, nullptr, nullptr);
 }
 
