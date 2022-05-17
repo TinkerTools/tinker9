@@ -2,7 +2,86 @@
 #include "md/rattle.h"
 #include "seq/add.h"
 #include "seq/launch.h"
+#include "seq/settle.h"
 #include <tinker/detail/units.hh>
+
+namespace tinker {
+template <class HTYPE>
+__global__
+static void constrainSettle_cu1(time_prec dt, int nratwt, const pos_prec* restrict xold,
+   const pos_prec* restrict yold, const pos_prec* restrict zold, pos_prec* restrict xnew,
+   pos_prec* restrict ynew, pos_prec* restrict znew, vel_prec* restrict vx, vel_prec* restrict vy,
+   vel_prec* restrict vz, const double* restrict mass, const int (*restrict iratwt)[3],
+   const pos_prec (*restrict kratwt)[3])
+{
+   for (int iw = ITHREAD; iw < nratwt; iw += STRIDE) {
+      dk_settle1<HTYPE>(dt, iw, xold, yold, zold, xnew, ynew, znew, //
+         vx, vy, vz, mass, iratwt, kratwt);
+   }
+}
+
+template <class HTYPE>
+static void constrainSettle_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+{
+   if (nratwt <= 0)
+      return;
+
+   auto ker = constrainSettle_cu1<HTYPE>;
+   launch_k1s(g::s0, nratwt, ker,                     //
+      dt, nratwt, xold, yold, zold, xnew, ynew, znew, //
+      vx, vy, vz, mass, iratwt, kratwt);
+}
+
+void rattleSettle_cu(time_prec dt, const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+{
+   constrainSettle_cu<RATTLE>(dt, xpos, ypos, zpos, xold, yold, zold);
+}
+
+void shakeSettle_cu(time_prec dt, pos_prec* xnew, pos_prec* ynew, pos_prec* znew,
+   const pos_prec* xold, const pos_prec* yold, const pos_prec* zold)
+{
+   constrainSettle_cu<SHAKE>(dt, xnew, ynew, znew, xold, yold, zold);
+}
+
+template <bool DO_V>
+__global__
+static void constrainSettle2_cu1(time_prec dt, int nratwt, vel_prec* restrict vx,
+   vel_prec* restrict vy, vel_prec* restrict vz, const pos_prec* restrict xpos,
+   const pos_prec* restrict ypos, const pos_prec* restrict zpos, const double* restrict mass,
+   const int (*restrict iratwt)[3], VirialBuffer restrict vir_buf)
+{
+   int ithread = ITHREAD;
+   for (int iw = ithread; iw < nratwt; iw += STRIDE) {
+      double vxx, vyx, vzx, vyy, vzy, vzz;
+      dk_settle2<DO_V>(dt, iw, vx, vy, vz, xpos, ypos, zpos, mass, iratwt, //
+         vxx, vyx, vzx, vyy, vzy, vzz);
+      if CONSTEXPR (DO_V) {
+         atomic_add(
+            (real)vxx, (real)vyx, (real)vzx, (real)vyy, (real)vzy, (real)vzz, vir_buf, ithread);
+      }
+   }
+}
+
+template <bool DO_V>
+static void constrainSettle2_cu(time_prec dt)
+{
+   if (nratwt <= 0)
+      return;
+
+   auto ker = constrainSettle2_cu1<DO_V>;
+   launch_k1b(g::s0, nratwt, ker, //
+      dt, nratwt, vx, vy, vz, xpos, ypos, zpos, mass, iratwt, vir_buf);
+}
+
+void rattle2Settle_cu(time_prec dt, bool do_v)
+{
+   if (do_v)
+      constrainSettle2_cu<true>(dt);
+   else
+      constrainSettle2_cu<false>(dt);
+}
+}
 
 namespace tinker {
 template <class HTYPE>

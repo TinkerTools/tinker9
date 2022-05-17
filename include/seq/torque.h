@@ -1,3 +1,4 @@
+#pragma once
 #include "ff/precision.h"
 #include "seq/seq.h"
 
