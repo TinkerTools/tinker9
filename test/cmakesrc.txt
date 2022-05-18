@@ -29,6 +29,7 @@ opbend.cpp
 osrw.cpp
 partialcharge.cpp
 pitors.cpp
+rattle.cpp
 reduce.cpp
 rephippo.cpp
 strbnd.cpp

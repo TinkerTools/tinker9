@@ -30,7 +30,6 @@ BasicPropagator::BasicPropagator(int nrspa)
 {
    nrespa = nrspa;
 
-   atomic = not useRattle();
    getKV("SEMIISO-PRESSURE", semiiso, false);
    if (semiiso)
       aniso = true;
@@ -52,7 +51,7 @@ BasicPropagator::BasicPropagator(int nrspa)
       }
    }
 
-   if (not atomic) {
+   if (useRattle()) {
       auto o = stdout;
       const char* fmt = " %-40s %8d\n";
       print(o, "\n");
@@ -72,8 +71,12 @@ BasicPropagator::BasicPropagator(int nrspa)
 BasicPropagator::~BasicPropagator()
 {
    nrespa = 0;
+   semiiso = false;
+   aniso = false;
+   arrayLength = 0;
+   indexArray = nullptr;
 
-   if (not atomic) {
+   if (useRattle()) {
       darray::deallocate(hc_vir_buf);
    }
 }
@@ -285,9 +288,15 @@ void LogVDevice::velImpl(time_prec t, int idx, int nrespa)
 
 LogVDevice::LogVDevice(int nrspa)
    : RespaDevice(nrspa)
-{}
+{
+   if (useRattle())
+      atomic = false;
+}
 
-LogVDevice::~LogVDevice() {}
+LogVDevice::~LogVDevice()
+{
+   atomic = true;
+}
 
 void LogVDevice::pos(time_prec t)
 {
