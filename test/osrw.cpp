@@ -37,7 +37,7 @@ static const double refvir_0[][3] = {
 static const double refg_0[][3] = {{0.0000, 0.0000, 0.0000}, {-9.1476, 13.6765, 5.6035},
    {4.2502, -6.1981, -4.9165}, {4.9047, -7.4853, -0.6896}};
 
-TEST_CASE("K-Water", "[ff][osrw]")
+TEST_CASE("K-Water", "[ff][osrw][mixcuda]")
 {
    TestFile fx(TINKER9_DIRSTR "/test/file/kwater/kwater.xyz", x1);
    TestFile fk(TINKER9_DIRSTR "/test/file/kwater/kwater.key", k1, k0);
@@ -93,7 +93,7 @@ TEST_CASE("K-Water", "[ff][osrw]")
    testEnd();
 }
 
-TEST_CASE("K-Water-Analyze", "[ff][osrw]")
+TEST_CASE("K-Water-Analyze", "[ff][osrw][mixcuda]")
 {
    TestFile fx(TINKER9_DIRSTR "/test/file/kwater/kwater.xyz", x1);
    TestFile fk(TINKER9_DIRSTR "/test/file/kwater/kwater.key", k1, k0);

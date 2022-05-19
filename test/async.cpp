@@ -125,7 +125,7 @@ static void func()
    sync_write();
 }
 
-TEST_CASE("Host-Async", "[noassert][host][async]")
+TEST_CASE("Host-Async", "[noassert]")
 {
    func();
 }

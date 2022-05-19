@@ -5,7 +5,7 @@
 
 using namespace tinker;
 
-TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage]")
+TEST_CASE("PartialCharge-Trpcage", "[ff][echarge][ewald][nonewald][trpcage][mixcuda]")
 {
    rc_flag = calc::xyz | calc::vmask;
 

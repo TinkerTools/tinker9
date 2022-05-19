@@ -59,7 +59,7 @@ TEST_CASE("Angle-Trpcage", "[ff][eangle][trpcage]")
    testEnd();
 }
 
-TEST_CASE("Angle-2-fourier", "[ff][eangle][fourier][anglef]")
+TEST_CASE("Angle-2-fourier", "[ff][eangle][fourier][anglef][mixcuda]")
 {
    const char* k1 = "test_anglef.key";
    const char* x1 = "test_anglef.xyz";

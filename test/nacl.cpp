@@ -32,7 +32,7 @@ using namespace tinker;
       COMPARE_VIR9(virial_ev, ref_v, eps);                                                         \
    }
 
-TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
+TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl][mixcuda]")
 {
    TestFile fpr(TINKER9_DIRSTR "/test/file/commit_6fe8e913/amoeba09.prm");
 
@@ -204,7 +204,7 @@ TEST_CASE("NaCl-1", "[ff][evdw][evcorr][hal][switch][nacl]")
       COMPARE_VIR2(vir_em, vir_trq, ref_v, eps_v);                                                 \
    }
 
-TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
+TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl][mixcuda]")
 {
    TestFile fpr(TINKER9_DIRSTR "/test/file/commit_6fe8e913/amoeba09.prm");
 
@@ -243,7 +243,7 @@ TEST_CASE("NaCl-2", "[ff][empole][nonewald][nacl]")
    }
 }
 
-TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl]")
+TEST_CASE("NaCl-3", "[ff][empole][ewald][nacl][mixcuda]")
 {
    TestFile fpr(TINKER9_DIRSTR "/test/file/commit_6fe8e913/amoeba09.prm");
 

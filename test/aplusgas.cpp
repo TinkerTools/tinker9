@@ -3,7 +3,7 @@
 
 using namespace tinker;
 
-TEST_CASE("APlus-Gas-Alyz", "[ff][aplus]")
+TEST_CASE("APlus-Gas-Alyz", "[ff][aplus][mixcuda]")
 {
    rc_flag = calc::xyz | calc::energy | calc::grad | calc::virial;
    rc_flag |= calc::analyz;
@@ -60,7 +60,7 @@ TEST_CASE("APlus-Gas-Alyz", "[ff][aplus]")
    testEnd();
 }
 
-TEST_CASE("APlus-Gas", "[ff][aplus]")
+TEST_CASE("APlus-Gas", "[ff][aplus][mixcuda]")
 {
    rc_flag = calc::xyz | calc::energy | calc::grad | calc::virial;
 

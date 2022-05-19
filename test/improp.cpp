@@ -5,7 +5,7 @@
 
 using namespace tinker;
 
-TEST_CASE("Improp-Trpcage", "[ff][eimprop][trpcage]")
+TEST_CASE("Improp-Trpcage", "[ff][eimprop][trpcage][mixcuda]")
 {
    const char* k1 = "test_trpcage.key";
    const char* k2 = "impropterm only\n";

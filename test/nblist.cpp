@@ -145,7 +145,7 @@ static void copyin_arc_file(const std::string& arcfile, int first1, int last1, i
    }
 }
 
-TEST_CASE("NBList-ArBox", "[ff][nblist][arbox]")
+TEST_CASE("NBList-ArBox", "[ff][nblist][arbox][mixcuda]")
 {
    int usage_ = calc::xyz | calc::mass | calc::traj | calc::energy;
 

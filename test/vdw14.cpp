@@ -5,7 +5,7 @@
 
 using namespace tinker;
 
-TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage]")
+TEST_CASE("Vdw14-Trpcage", "[ff][evdw][vdw14][lj][trpcage][mixcuda]")
 {
    rc_flag = calc::xyz | calc::vmask;
 

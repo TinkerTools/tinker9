@@ -37,11 +37,7 @@ TEST_CASE("Rattle", "[ff][rattle]")
    rc_flag = mask;
    initialize();
 
-   // initial virial
-   for (int iv = 0; iv < 9; ++iv) {
-      REQUIRE(vir[iv] == 0);
-   }
-
+   // NVE: zero initial velocities
    double dt_ps = 0.002;
    int nsteps = 1;
    VerletIntegrator vvi(ThermostatEnum::NONE, BarostatEnum::NONE);
