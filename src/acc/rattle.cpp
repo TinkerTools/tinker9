@@ -478,14 +478,14 @@ void hcCenterOfMass_acc(const pos_prec* ax, const pos_prec* ay, const pos_prec* 
 
 void hcVelIso_acc(vel_prec scal)
 {
-   auto* molec = rattle_dmol.molecule;
+   const auto* molec = rattle_dmol.molecule;
    #pragma acc parallel loop independent async\
                deviceptr(vx,vy,vz,ratcom_vx,ratcom_vy,ratcom_vz,molec)
    for (int i = 0; i < n; ++i) {
       int im = molec[i];
-      vx[i] = vx[i] + scal * ratcom_vx[im];
-      vy[i] = vy[i] + scal * ratcom_vy[im];
-      vz[i] = vz[i] + scal * ratcom_vz[im];
+      vx[i] += scal * ratcom_vx[im];
+      vy[i] += scal * ratcom_vy[im];
+      vz[i] += scal * ratcom_vz[im];
    }
 }
 
@@ -494,7 +494,7 @@ void hcVelAn_acc(vel_prec scal[3][3])
    auto s00 = scal[0][0], s01 = scal[0][1], s02 = scal[0][2];
    auto s10 = scal[1][0], s11 = scal[1][1], s12 = scal[1][2];
    auto s20 = scal[2][0], s21 = scal[2][1], s22 = scal[2][2];
-   auto* molec = rattle_dmol.molecule;
+   const auto* molec = rattle_dmol.molecule;
    #pragma acc parallel loop independent async\
                deviceptr(vx,vy,vz,ratcom_vx,ratcom_vy,ratcom_vz,molec)
    for (int i = 0; i < n; ++i) {

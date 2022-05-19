@@ -34,6 +34,7 @@ hippo/pcg.cu
 hippo/precond.cu
 mathparallel.cu
 mathzero.cu
+mdhc.cu
 mdintg.cu
 mdpq.cu
 mdpt.cu

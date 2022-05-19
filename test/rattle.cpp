@@ -18,8 +18,10 @@ TEST_CASE("Rattle", "[ff][rattle]")
    TestFile fx1(TINKER9_DIRSTR "/test/file/rattle/dhfr.xyz", x1);
    TestFile fpr(TINKER9_DIRSTR "/test/file/commit_350df099/amber99sb.prm");
 
+   // created by rattle-eps 1.0e-10
    TestReference rvel(TINKER9_DIRSTR "/test/ref/rattle.p.txt");
    TestReference rpos(TINKER9_DIRSTR "/test/ref/rattle.q.txt");
+   // positions and velocities are saved as gradients in the text files
    auto ref_pos = rpos.getGradient();
    auto ref_vel = rvel.getGradient();
    auto ref_v = rvel.getVirial();

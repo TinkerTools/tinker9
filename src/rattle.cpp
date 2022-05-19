@@ -563,37 +563,37 @@ void hcVirial()
    TINKER_FCALL2(acc1, cu1, hcVirial);
 }
 
-TINKER_FVOID2(acc1, cu0, hcCenterOfMass, const pos_prec*, const pos_prec*, const pos_prec*,
+TINKER_FVOID2(acc1, cu1, hcCenterOfMass, const pos_prec*, const pos_prec*, const pos_prec*,
    pos_prec*, pos_prec*, pos_prec*);
 void hcCenterOfMass(const pos_prec* atomx, const pos_prec* atomy, const pos_prec* atomz,
    pos_prec* molx, pos_prec* moly, pos_prec* molz)
 {
    static_assert(std::is_same<pos_prec, vel_prec>::value, //
       "pos_prec and vel_prec must be the same type.");
-   TINKER_FCALL2(acc1, cu0, hcCenterOfMass, atomx, atomy, atomz, molx, moly, molz);
+   TINKER_FCALL2(acc1, cu1, hcCenterOfMass, atomx, atomy, atomz, molx, moly, molz);
 }
 
-TINKER_FVOID2(acc1, cu0, hcVelIso, vel_prec);
+TINKER_FVOID2(acc1, cu1, hcVelIso, vel_prec);
 void hcVelIso(vel_prec scal)
 {
-   TINKER_FCALL2(acc1, cu0, hcVelIso, scal);
+   TINKER_FCALL2(acc1, cu1, hcVelIso, scal);
 }
 
-TINKER_FVOID2(acc1, cu0, hcVelAn, vel_prec scal[3][3]);
+TINKER_FVOID2(acc1, cu1, hcVelAn, vel_prec scal[3][3]);
 void hcVelAn(vel_prec scal[3][3])
 {
-   TINKER_FCALL2(acc1, cu0, hcVelAn, scal);
+   TINKER_FCALL2(acc1, cu1, hcVelAn, scal);
 }
 
-TINKER_FVOID2(acc1, cu0, hcPosIso, pos_prec);
+TINKER_FVOID2(acc1, cu1, hcPosIso, pos_prec);
 void hcPosIso(pos_prec s)
 {
-   TINKER_FCALL2(acc1, cu0, hcPosIso, s);
+   TINKER_FCALL2(acc1, cu1, hcPosIso, s);
 }
 
-TINKER_FVOID2(acc1, cu0, hcPosAn, pos_prec (*)[3]);
+TINKER_FVOID2(acc1, cu1, hcPosAn, pos_prec (*)[3]);
 void hcPosAn(pos_prec (*scal)[3])
 {
-   TINKER_FCALL2(acc1, cu0, hcPosAn, scal);
+   TINKER_FCALL2(acc1, cu1, hcPosAn, scal);
 }
 }
