@@ -82,15 +82,9 @@ void mdVel_acc(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, const 
                deviceptr(massinv,vlx,vly,vlz,grx,gry,grz)
    for (int i = 0; i < n; ++i) {
       vel_prec coef = -ekcal * massinv[i] * dt;
-#if TINKER_DETERMINISTIC_FORCE
-      vlx[i] += coef * fixedTo<vel_prec>(grx[i]);
-      vly[i] += coef * fixedTo<vel_prec>(gry[i]);
-      vlz[i] += coef * fixedTo<vel_prec>(grz[i]);
-#else
-      vlx[i] += coef * grx[i];
-      vly[i] += coef * gry[i];
-      vlz[i] += coef * grz[i];
-#endif
+      vlx[i] += coef * toFloatGrad<vel_prec>(grx[i]);
+      vly[i] += coef * toFloatGrad<vel_prec>(gry[i]);
+      vlz[i] += coef * toFloatGrad<vel_prec>(grz[i]);
    }
 }
 
@@ -102,17 +96,11 @@ void mdVel2_acc(time_prec dt, const grad_prec* grx, const grad_prec* gry, const 
                deviceptr(massinv,vx,vy,vz,grx,gry,grz,grx2,gry2,grz2)
    for (int i = 0; i < n; ++i) {
       vel_prec coef = -ekcal * massinv[i];
-#if TINKER_DETERMINISTIC_FORCE
       // clang-format off
-      vx[i] += coef*(fixedTo<vel_prec>(grx[i])*dt+fixedTo<vel_prec>(grx2[i])*dt2);
-      vy[i] += coef*(fixedTo<vel_prec>(gry[i])*dt+fixedTo<vel_prec>(gry2[i])*dt2);
-      vz[i] += coef*(fixedTo<vel_prec>(grz[i])*dt+fixedTo<vel_prec>(grz2[i])*dt2);
+      vx[i] += coef*(toFloatGrad<vel_prec>(grx[i])*dt+toFloatGrad<vel_prec>(grx2[i])*dt2);
+      vy[i] += coef*(toFloatGrad<vel_prec>(gry[i])*dt+toFloatGrad<vel_prec>(gry2[i])*dt2);
+      vz[i] += coef*(toFloatGrad<vel_prec>(grz[i])*dt+toFloatGrad<vel_prec>(grz2[i])*dt2);
       // clang-format on
-#else
-      vx[i] += coef * (grx[i] * dt + grx2[i] * dt2);
-      vy[i] += coef * (gry[i] * dt + gry2[i] * dt2);
-      vz[i] += coef * (grz[i] * dt + grz2[i] * dt2);
-#endif
    }
 }
 
@@ -125,20 +113,6 @@ void mdVelScale_acc(vel_prec sc, int nelem, vel_prec* vx0, vel_prec* vy0, vel_pr
       vz0[i] *= sc;
    }
 }
-
-#pragma acc routine seq
-static inline vel_prec
-#if TINKER_DETERMINISTIC_FORCE
-cvt_grad(fixed val)
-{
-   return fixedTo<vel_prec>(val);
-}
-#else
-cvt_grad(grad_prec val)
-{
-   return val;
-}
-#endif
 
 void mdVelAvbf_acc(int nrespa, vel_prec a, vel_prec b, vel_prec* vx, vel_prec* vy, vel_prec* vz,
    const grad_prec* gx1, const grad_prec* gy1, const grad_prec* gz1, const grad_prec* gx2,
@@ -158,9 +132,9 @@ label_nrespa1:
       auto v0x = vx[i];
       auto v0y = vy[i];
       auto v0z = vz[i];
-      auto grx = cvt_grad(gx1[i]);
-      auto gry = cvt_grad(gy1[i]);
-      auto grz = cvt_grad(gz1[i]);
+      auto grx = toFloatGrad<vel_prec>(gx1[i]);
+      auto gry = toFloatGrad<vel_prec>(gy1[i]);
+      auto grz = toFloatGrad<vel_prec>(gz1[i]);
       vx[i] = a * v0x + coef * b * grx;
       vy[i] = a * v0y + coef * b * gry;
       vz[i] = a * v0z + coef * b * grz;
@@ -175,9 +149,9 @@ label_nrespa2:
       auto v0x = vx[i];
       auto v0y = vy[i];
       auto v0z = vz[i];
-      auto grx = cvt_grad(gx1[i]) / nrespa + cvt_grad(gx2[i]);
-      auto gry = cvt_grad(gy1[i]) / nrespa + cvt_grad(gy2[i]);
-      auto grz = cvt_grad(gz1[i]) / nrespa + cvt_grad(gz2[i]);
+      auto grx = toFloatGrad<vel_prec>(gx1[i]) / nrespa + toFloatGrad<vel_prec>(gx2[i]);
+      auto gry = toFloatGrad<vel_prec>(gy1[i]) / nrespa + toFloatGrad<vel_prec>(gy2[i]);
+      auto grz = toFloatGrad<vel_prec>(gz1[i]) / nrespa + toFloatGrad<vel_prec>(gz2[i]);
       vx[i] = a * v0x + coef * b * grx;
       vy[i] = a * v0y + coef * b * gry;
       vz[i] = a * v0z + coef * b * grz;
@@ -210,9 +184,9 @@ label_nrespa1:
       auto v0x = vx[i];
       auto v0y = vy[i];
       auto v0z = vz[i];
-      auto grx = cvt_grad(gx1[i]);
-      auto gry = cvt_grad(gy1[i]);
-      auto grz = cvt_grad(gz1[i]);
+      auto grx = toFloatGrad<vel_prec>(gx1[i]);
+      auto gry = toFloatGrad<vel_prec>(gy1[i]);
+      auto grz = toFloatGrad<vel_prec>(gz1[i]);
       // clang-format off
       vx[i] = a00*v0x + a01*v0y + a02*v0z + coef*(b00*grx+b01*gry+b02*grz);
       vy[i] = a10*v0x + a11*v0y + a12*v0z + coef*(b10*grx+b11*gry+b12*grz);
@@ -229,9 +203,9 @@ label_nrespa2:
       auto v0x = vx[i];
       auto v0y = vy[i];
       auto v0z = vz[i];
-      auto grx = cvt_grad(gx1[i]) / nrespa + cvt_grad(gx2[i]);
-      auto gry = cvt_grad(gy1[i]) / nrespa + cvt_grad(gy2[i]);
-      auto grz = cvt_grad(gz1[i]) / nrespa + cvt_grad(gz2[i]);
+      auto grx = toFloatGrad<vel_prec>(gx1[i]) / nrespa + toFloatGrad<vel_prec>(gx2[i]);
+      auto gry = toFloatGrad<vel_prec>(gy1[i]) / nrespa + toFloatGrad<vel_prec>(gy2[i]);
+      auto grz = toFloatGrad<vel_prec>(gz1[i]) / nrespa + toFloatGrad<vel_prec>(gz2[i]);
       // clang-format off
       vx[i] = a00*v0x + a01*v0y + a02*v0z + coef*(b00*grx+b01*gry+b02*grz);
       vy[i] = a10*v0x + a11*v0y + a12*v0z + coef*(b10*grx+b11*gry+b12*grz);

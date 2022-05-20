@@ -28,15 +28,9 @@ void ehalResolveGradient_acc()
                deviceptr(ired,kred,gxred,gyred,gzred,devx,devy,devz)
    for (int ii = 0; ii < n; ++ii) {
       int iv = ired[ii];
-#if TINKER_DETERMINISTIC_FORCE
-      real fx = fixedTo<real>(gxred[ii]);
-      real fy = fixedTo<real>(gyred[ii]);
-      real fz = fixedTo<real>(gzred[ii]);
-#else
-      real fx = gxred[ii];
-      real fy = gyred[ii];
-      real fz = gzred[ii];
-#endif
+      real fx = toFloatGrad<real>(gxred[ii]);
+      real fy = toFloatGrad<real>(gyred[ii]);
+      real fz = toFloatGrad<real>(gzred[ii]);
       if (ii == iv) {
          atomic_add(fx, devx, ii);
          atomic_add(fy, devy, ii);

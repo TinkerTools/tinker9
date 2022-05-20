@@ -395,15 +395,9 @@ void hcVirial_acc()
       #pragma acc loop seq
       for (int i = start; i < end; ++i) {
          int k = kmol[i];
-#if TINKER_DETERMINISTIC_FORCE
-         igx = fixedTo<double>(gx[k]);
-         igy = fixedTo<double>(gy[k]);
-         igz = fixedTo<double>(gz[k]);
-#else
-         igx = gx[k];
-         igy = gy[k];
-         igz = gz[k];
-#endif
+         igx = toFloatGrad<double>(gx[k]);
+         igy = toFloatGrad<double>(gy[k]);
+         igz = toFloatGrad<double>(gz[k]);
          irx = xpos[k];
          iry = ypos[k];
          irz = zpos[k];

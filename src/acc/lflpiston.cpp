@@ -1,5 +1,5 @@
-#include "md/lflpiston.h"
 #include "ff/energy.h"
+#include "md/lflpiston.h"
 #include "md/pq.h"
 #include "seq/add.h"
 #include <tinker/detail/units.hh>
@@ -168,15 +168,9 @@ void mdVelB_acc(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, const
                deviceptr(massinv,vlx,vly,vlz,vlx0,vly0,vlz0,grx,gry,grz)
    for (int i = 0; i < n; ++i) {
       vel_prec coef = -ekcal * massinv[i] * dt;
-#if TINKER_DETERMINISTIC_FORCE
-      vlx[i] = vlx0[i] + coef * fixedTo<vel_prec>(grx[i]);
-      vly[i] = vly0[i] + coef * fixedTo<vel_prec>(gry[i]);
-      vlz[i] = vlz0[i] + coef * fixedTo<vel_prec>(grz[i]);
-#else
-      vlx[i] = vlx0[i] + coef * grx[i];
-      vly[i] = vly0[i] + coef * gry[i];
-      vlz[i] = vlz0[i] + coef * grz[i];
-#endif
+      vlx[i] = vlx0[i] + coef * toFloatGrad<vel_prec>(grx[i]);
+      vly[i] = vly0[i] + coef * toFloatGrad<vel_prec>(gry[i]);
+      vlz[i] = vlz0[i] + coef * toFloatGrad<vel_prec>(grz[i]);
    }
 }
 }
