@@ -226,6 +226,15 @@ void dk_tortor(real& restrict e, real& restrict vxx, real& restrict vyx, real& r
       sign = (vol < 0 ? -1 : 1);
       value1 = (vol < 0 ? -value1 : value1);
       value2 = (vol < 0 ? -value2 : value2);
+      // angles must be within the range [-180, +180); +180 is not allowed
+      if (value1 < -180)
+         value1 += 360;
+      if (value1 >= 180)
+         value1 -= 360;
+      if (value2 < -180)
+         value2 += 360;
+      if (value2 >= 180)
+         value2 -= 360;
 
       // use bicubic interpolation to compute spline values
 
