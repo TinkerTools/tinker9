@@ -2,22 +2,30 @@
 #include "ff/atom.h"
 #include "tool/darray.h"
 #include "tool/externfunc.h"
-#include <cstdlib>
 #include <tinker/detail/bound.hh>
 #include <tinker/detail/boxes.hh>
 #include <tinker/routines.h>
+
+#include <cstdlib>
 
 namespace tinker {
 static void boxGetTinkerModule(Box& p)
 {
    if (not bound::use_bounds) {
+      // set up a hypothetical box
+      double ext;
+      tinker_f_extent(&ext);
+      double cutbuf = 12. + 2.;
+      real x = std::max(64., 2 * (ext + cutbuf));
+      real y = 1. / x;
+
       p.box_shape = BoxShape::UNBOUND;
-      p.lvec1 = make_real3(0, 0, 0);
-      p.lvec2 = make_real3(0, 0, 0);
-      p.lvec3 = make_real3(0, 0, 0);
-      p.recipa = make_real3(0, 0, 0);
-      p.recipb = make_real3(0, 0, 0);
-      p.recipc = make_real3(0, 0, 0);
+      p.lvec1 = make_real3(x, 0, 0);
+      p.lvec2 = make_real3(0, x, 0);
+      p.lvec3 = make_real3(0, 0, x);
+      p.recipa = make_real3(y, 0, 0);
+      p.recipb = make_real3(0, y, 0);
+      p.recipc = make_real3(0, 0, y);
       return;
    }
 

@@ -35,9 +35,17 @@ Nbl vlistVersion()
    } else if (vdwtyp != Vdw::HAL) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_vlist) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
+#endif
    } else if (!bound::use_bounds) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::VERLET, pltfm_config = Platform::ACC;
+#endif
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
@@ -56,9 +64,17 @@ Nbl clistVersion()
    if (not use(Potent::CHARGE) /* and not use(Potent::SOLV) */) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_clist) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
+#endif
    } else if (!bound::use_bounds) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::VERLET, pltfm_config = Platform::ACC;
+#endif
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
@@ -75,9 +91,17 @@ Nbl clistVersion()
    } else if (vdwtyp == Vdw::HAL) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_vlist) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
+#endif
    } else if (!bound::use_bounds) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::VERLET, pltfm_config = Platform::ACC;
+#endif
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
@@ -96,9 +120,17 @@ Nbl mlistVersion()
       not use(Potent::REPULS) /* and not use(Potent::SOLV) */) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_mlist) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
+#endif
    } else if (!bound::use_bounds) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::VERLET, pltfm_config = Platform::ACC;
+#endif
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
@@ -116,9 +148,17 @@ Nbl ulistVersion()
    if (not use(Potent::POLAR)) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_ulist) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
+#endif
    } else if (!bound::use_bounds) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::VERLET, pltfm_config = Platform::ACC;
+#endif
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)
@@ -136,9 +176,17 @@ Nbl dsplistVersion()
    if (not use(Potent::DISP)) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_dlist) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
+#endif
    } else if (!bound::use_bounds) {
+#if TINKER_GPULANG_CUDA
+      u = Nbl::SPATIAL;
+#else
       u = Nbl::VERLET, pltfm_config = Platform::ACC;
+#endif
    } else {
 #if TINKER_CUDART
       if (pltfm_config & Platform::CUDA)

@@ -136,6 +136,9 @@ Valid values (noninclusive) are 35, 50, 60, 70, 75 etc., and can be
 comma-separated, e.g. 35,60.
 Multiple compute capabilites will increase the size of executables.
 
+If new cards are released but the newer compute capabilities
+are not supported, please inform us.
+
 The full list of compute capabilities can be found on the
 `NVIDIA website. <https://developer.nvidia.com/cuda-gpus>`_
 
