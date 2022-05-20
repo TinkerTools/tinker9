@@ -141,6 +141,7 @@ static void getDeviceAttribute(DeviceAttribute& a, int device = 0)
    a.clock_rate_kHz = prop.clockRate;
 
    check_rt(cudaDeviceReset());
+   cudaDeviceSynchronize();
 
    if (not found_cc) {
       TINKER_THROW(format("The source code should be updated for compute capability %d; "
@@ -292,6 +293,7 @@ void gpuData(RcOp op)
       //    cudaSetDevice(k)
       //    check the properties of device k
       //    cudaDeviceReset()
+      //    cudaDeviceSynchronize()
       // end loop
       // idevice = select one device
       // #B
