@@ -5,7 +5,7 @@
 
 using namespace tinker;
 
-TEST_CASE("Opbend-Trpcage", "[ff][eopbend][allinger][trpcage][mixcuda]")
+TEST_CASE("Opbend-Trpcage", "[ff][eopbend][allinger][trpcage]")
 {
    const char* x1 = "test_trpcage.xyz";
    const char* k = "test_trpcage.key";

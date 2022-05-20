@@ -5,7 +5,7 @@
 
 using namespace tinker;
 
-TEST_CASE("Angtor-A4", "[ff][eangtor][a4][mixcuda]")
+TEST_CASE("Angtor-A4", "[ff][eangtor][a4]")
 {
    const char* k = "test_a4.key";
    const char* k0 = "angtorterm  only\n";
