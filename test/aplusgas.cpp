@@ -3,7 +3,7 @@
 
 using namespace tinker;
 
-TEST_CASE("APlus-Gas-Alyz", "[ff][aplus][mixcuda]")
+TEST_CASE("APlus-Gas-Alyz", "[ff][aplus]")
 {
    rc_flag = calc::xyz | calc::energy | calc::grad | calc::virial;
    rc_flag |= calc::analyz;
@@ -20,7 +20,7 @@ TEST_CASE("APlus-Gas-Alyz", "[ff][aplus][mixcuda]")
    auto ref_v = r.getVirial();
    auto ref_g = r.getGradient();
 
-   const double eps_e = testGetEps(0.0010, 0.0001);
+   const double eps_e = testGetEps(0.0030, 0.0001);
    const double eps_g = testGetEps(0.0010, 0.0001);
    const double eps_v = testGetEps(0.002, 0.001);
 
@@ -60,7 +60,7 @@ TEST_CASE("APlus-Gas-Alyz", "[ff][aplus][mixcuda]")
    testEnd();
 }
 
-TEST_CASE("APlus-Gas", "[ff][aplus][mixcuda]")
+TEST_CASE("APlus-Gas", "[ff][aplus]")
 {
    rc_flag = calc::xyz | calc::energy | calc::grad | calc::virial;
 
@@ -76,7 +76,7 @@ TEST_CASE("APlus-Gas", "[ff][aplus][mixcuda]")
    auto ref_v = r.getVirial();
    auto ref_g = r.getGradient();
 
-   const double eps_e = testGetEps(0.0010, 0.0001);
+   const double eps_e = testGetEps(0.0030, 0.0001);
    const double eps_g = testGetEps(0.0010, 0.0001);
    const double eps_v = testGetEps(0.002, 0.001);
 

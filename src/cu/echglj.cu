@@ -949,6 +949,9 @@ static void echglj_cu3()
    } else if (box_shape == BoxShape::OCT) {
       auto ker1 = echglj_cu5<Ver, PbcOct, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
       ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
+   } else if (box_shape == BoxShape::UNBOUND) {
+      auto ker1 = echglj_cu5<Ver, PbcUnbound, ETYP, RADRULE, EPSRULE, SOFTCORE, VOUT>;
+      ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(ECHGLJ_CU3_V2_ARGS);
    } else {
       assert(false);
    }

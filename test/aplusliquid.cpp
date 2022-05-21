@@ -154,7 +154,7 @@ TEST_CASE("APlus-Liquid-NonEwald", "[ff][aplus]")
    auto ref_v = r.getVirial();
    auto ref_g = r.getGradient();
 
-   const double eps_e = testGetEps(0.0036, 0.0001);
+   const double eps_e = testGetEps(0.0060, 0.0001);
    const double eps_g = testGetEps(0.0008, 0.0001);
    const double eps_v = testGetEps(0.002, 0.001);
 

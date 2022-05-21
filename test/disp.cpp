@@ -70,9 +70,9 @@ TEST_CASE("EDISP-2-DEWALD", "[ff][hippo][edisp][dewald]")
    const char* argv[] = {"dummy", xn, "-k", kn};
    int argc = 4;
 
-   const double eps_e = testGetEps(0.0027, 0.0001);
+   const double eps_e = testGetEps(0.0030, 0.0001);
    const double eps_g = testGetEps(0.0006, 0.0001);
-   const double eps_v = testGetEps(0.006, 0.001);
+   const double eps_v = testGetEps(0.0065, 0.001);
 
    TestReference r(TINKER9_DIRSTR "/test/ref/disp.2.txt");
    auto ref_c = r.getCount();

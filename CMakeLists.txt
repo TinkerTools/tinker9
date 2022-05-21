@@ -612,25 +612,19 @@ add_dependencies (tinker9 __t9_symlink)
 
 
 ## unit tests
-if (HOST OR GPU_LANG STREQUAL "OPENACC")
-   add_custom_target (test
-      DEPENDS
-         all.tests
-      COMMAND
-         ./all.tests info
-      COMMAND
-         ./all.tests ~[noassert] -a --durations yes --order rand --rng-seed time
-   )
-elseif (GPU_LANG STREQUAL "CUDA")
-   add_custom_target (test
-      DEPENDS
-         all.tests
-      COMMAND
-         ./all.tests info
-      COMMAND
-         ./all.tests ~[noassert]~[mixcuda] -a --durations yes --order rand --rng-seed time
-   )
-endif ()
+add_custom_target (test
+   DEPENDS
+      all.tests
+   COMMAND
+      ./all.tests info
+   COMMAND
+      if [ ${GPU_LANG} = CUDA ] \;
+      then
+         ./all.tests -a --durations yes --order rand --rng-seed time ~[noassert]~[mixcuda] \;
+      else
+         ./all.tests -a --durations yes --order rand --rng-seed time ~[noassert] \;
+      fi
+)
 
 
 ## documentations

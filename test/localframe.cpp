@@ -21,7 +21,7 @@ static bool do_ij(int i, int /* j */)
    return i < n - 4;
 }
 
-TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame][mixcuda]")
+TEST_CASE("Local-Frame-1", "[ff][empole][nonewald][local-frame]")
 {
    TestFile fpr(TINKER9_DIRSTR "/test/file/commit_6fe8e913/amoeba09.prm");
 
@@ -190,7 +190,7 @@ TEST_CASE("Local-Frame-2", "[ff][empole][ewald][local-frame]")
       COMPARE_VIR2(vir_ep, vir_trq, ref_v, eps_v);                                                 \
    }
 
-TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame][mixcuda]")
+TEST_CASE("Local-Frame-3", "[ff][epolar][nonewald][local-frame]")
 {
    TestFile fpr(TINKER9_DIRSTR "/test/file/commit_6fe8e913/amoeba09.prm");
 

@@ -51,6 +51,7 @@ namespace tinker {
       zr = fz * l1.x;                                                                              \
    }
 
+inline namespace v1 {
 class PbcOrtho
 {
    SEQ_ROUTINE
@@ -70,7 +71,6 @@ public:
    }
 };
 
-inline namespace v1 {
 class PbcMono
 {
    SEQ_ROUTINE
@@ -124,6 +124,17 @@ public:
       real3 l3, real3 ra, real3 rb, real3 rc)
    {
       img(xr, yr, zr, l1, l2, l3, ra, rb, rc);
+      return xr * xr + yr * yr + zr * zr;
+   }
+};
+
+class PbcUnbound
+{
+public:
+   SEQ_ROUTINE
+   static real img2(real& restrict xr, real& restrict yr, real& restrict zr, real3, real3, real3,
+      real3, real3, real3)
+   {
       return xr * xr + yr * yr + zr * zr;
    }
 };

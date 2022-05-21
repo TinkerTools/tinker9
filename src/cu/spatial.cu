@@ -770,6 +770,8 @@ void spatialDataInit_cu(SpatialUnit u)
       spatialRunStep5<PbcTri>(u);
    } else if (box_shape == BoxShape::OCT) {
       spatialRunStep5<PbcOct>(u);
+   } else if (box_shape == BoxShape::UNBOUND) {
+      spatialRunStep5<PbcUnbound>(u);
    } else {
       assert(false);
    }

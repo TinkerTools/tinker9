@@ -16,7 +16,7 @@ TEST_CASE("EMPOLE-1-EWALD-HIPPO", "[ff][hippo][emhippo][ewald]")
    int argc = 4;
 
    const double eps_e = testGetEps(0.0015, 0.0001);
-   const double eps_g = testGetEps(0.0002, 0.0001);
+   const double eps_g = testGetEps(0.0003, 0.000);
    const double eps_v = testGetEps(0.002, 0.001);
 
    TestReference r(TINKER9_DIRSTR "/test/ref/emhippo.1.txt");
@@ -70,7 +70,7 @@ TEST_CASE("EMPOLE-2-NONEWALD-HIPPO", "[ff][hippo][emhippo][nonewald]")
    const char* argv[] = {"dummy", xn, "-k", kn};
    int argc = 4;
 
-   const double eps_e = testGetEps(0.0041, 0.0001);
+   const double eps_e = testGetEps(0.0050, 0.0001);
    const double eps_g = testGetEps(0.0003, 0.0001);
    const double eps_v = testGetEps(0.0025, 0.001);
 
