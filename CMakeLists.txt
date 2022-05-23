@@ -600,6 +600,8 @@ foreach (var
    add_custom_command (TARGET __t9_symlink POST_BUILD
       COMMAND
          "${CMAKE_COMMAND}" -E create_symlink tinker9 "${var}"
+      BYPRODUCTS
+         "${CMAKE_BINARY_DIR}/${var}"
    )
    if (__T9_INSTALL_DEFINED)
       install (PROGRAMS "${CMAKE_BINARY_DIR}/${var}"
