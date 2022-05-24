@@ -14,4 +14,8 @@
 
 // Catch2 version 2.13.8
 // https://github.com/catchorg/Catch2/blob/v2.13.8/single_include/catch2/catch.hpp
-#include <catch_2_13_8>
+// #include <catch_2_13_8>
+
+// Catch2 version 2.13.9
+// https://github.com/catchorg/Catch2/blob/v2.13.9/single_include/catch2/catch.hpp
+#include <catch_2_13_9>
