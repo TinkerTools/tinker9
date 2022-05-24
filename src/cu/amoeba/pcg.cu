@@ -1,5 +1,6 @@
 #include "ff/amoeba/induce.h"
 #include "ff/amoebamod.h"
+#include "ff/switch.h"
 #include "seq/launch.h"
 #include "tool/error.h"
 #include "tool/ioprint.h"
@@ -150,7 +151,7 @@ void induceMutualPcg1_cu(real (*uind)[3], real (*uinp)[3])
    auto* vec = work09_;
    auto* vecp = work10_;
 
-   const bool sparse_prec = polpcg::pcgprec;
+   const bool sparse_prec = polpcg::pcgprec and (switchOff(Switch::USOLVE) > 0);
    bool dirguess = polpcg::pcgguess;
    bool predict = polpred != UPred::NONE;
    if (predict and nualt < maxualt) {

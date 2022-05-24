@@ -3,6 +3,7 @@
 #include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
+#include "ff/switch.h"
 #include "math/lu.h"
 #include "seq/add.h"
 #include "seq/damp.h"
@@ -50,7 +51,7 @@ void induceMutualPcg1_acc(real (*uind)[3], real (*uinp)[3])
 
    // use sparse matrix preconditioner
    // or just use diagonal matrix preconditioner
-   const bool sparse_prec = polpcg::pcgprec;
+   const bool sparse_prec = polpcg::pcgprec and (switchOff(Switch::USOLVE) > 0);
    bool dirguess = polpcg::pcgguess;
    bool predict = polpred != UPred::NONE;
    if (predict and nualt < maxualt) {

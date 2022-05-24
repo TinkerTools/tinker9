@@ -148,10 +148,14 @@ Nbl ulistVersion()
    if (not use(Potent::POLAR)) {
       u = Nbl::UNDEFINED;
    } else if (!limits::use_ulist) {
+      // if usolvcut > 0, the preconditioner is still used even though use_ulist is false
+      if (switchOff(Switch::USOLVE) <= 0)
+         u = Nbl::UNDEFINED;
+      else
 #if TINKER_GPULANG_CUDA
-      u = Nbl::SPATIAL;
+         u = Nbl::SPATIAL;
 #else
-      u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
+         u = Nbl::DOUBLE_LOOP, pltfm_config = Platform::ACC;
 #endif
    } else if (!bound::use_bounds) {
 #if TINKER_GPULANG_CUDA

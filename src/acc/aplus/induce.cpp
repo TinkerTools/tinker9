@@ -4,6 +4,7 @@
 #include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
+#include "ff/switch.h"
 #include "seq/add.h"
 #include "seq/damp.h"
 #include "tool/error.h"
@@ -26,7 +27,7 @@ void induceMutualPcg3_acc(real (*uind)[3])
    bool dirguess = polpcg::pcgguess;
    // use sparse matrix preconditioner
    // or just use diagonal matrix preconditioner
-   const bool sparse_prec = polpcg::pcgprec;
+   const bool sparse_prec = polpcg::pcgprec and (switchOff(Switch::USOLVE) > 0);
 
    // zero out the induced dipoles at each site
 
