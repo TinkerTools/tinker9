@@ -1,7 +1,9 @@
 #pragma once
 #include "ff/precision.h"
 #include "seq/seq.h"
+
 #include <cmath>
+#include <cstdlib>
 
 // erfc
 extern "C"
@@ -27,15 +29,34 @@ extern "C"
    }
 }
 
-// integer functions
-#define INT_ABS abs
+// abs functions
+#if TINKER_CUDART
+#   define INT_ABS abs
+
+#   if TINKER_REAL_SIZE == 8
+#      define REAL_ABS fabs
+#   endif
+
+#   if TINKER_REAL_SIZE == 4
+#      define REAL_ABS fabsf
+#   endif
+#else
+#   define INT_ABS std::abs
+
+#   if TINKER_REAL_SIZE == 8
+#      define REAL_ABS std::fabs
+#   endif
+
+#   if TINKER_REAL_SIZE == 4
+#      define REAL_ABS std::fabsf
+#   endif
+#endif
 
 // double
 #if TINKER_REAL_SIZE == 8
 #   define REAL_SQRT     sqrt
 #   define REAL_EXP      exp
 #   define REAL_FLOOR    floor
-#   define REAL_ABS      fabs
 #   define REAL_POW      pow
 #   define REAL_RECIP(x) (1 / static_cast<double>(x))
 #   define REAL_RSQRT(x) (1 / sqrt(x))
@@ -59,7 +80,6 @@ extern "C"
 #   define REAL_SQRT     sqrtf
 #   define REAL_EXP      expf
 #   define REAL_FLOOR    floorf
-#   define REAL_ABS      fabsf
 #   define REAL_POW      powf
 #   define REAL_RECIP(x) (1 / static_cast<float>(x))
 #   define REAL_RSQRT(x) (1 / sqrtf(x))

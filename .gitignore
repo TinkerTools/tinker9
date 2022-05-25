@@ -6,7 +6,8 @@ docker/Dockerfile*
 docker/*.dockerfile
 
 # macOS
-.DS_STORE
+.DS_Store
+._.DS_Store
 
 # Wiki
 *.wiki

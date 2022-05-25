@@ -27,7 +27,7 @@ TEST_CASE("APlus-Liquid-Alyz", "[ff][aplus]")
    auto ref_v = r.getVirial();
    auto ref_g = r.getGradient();
 
-   const double eps_e = testGetEps(0.0007, 0.0001);
+   const double eps_e = testGetEps(0.0009, 0.0001);
    const double eps_g = testGetEps(0.0003, 0.0001);
    const double eps_v = testGetEps(0.001, 0.001);
 
@@ -100,7 +100,7 @@ TEST_CASE("APlus-Liquid", "[ff][aplus]")
    auto ref_v = r.getVirial();
    auto ref_g = r.getGradient();
 
-   const double eps_e = testGetEps(0.0007, 0.0001);
+   const double eps_e = testGetEps(0.0009, 0.0001);
    const double eps_g = testGetEps(0.0003, 0.0001);
    const double eps_v = testGetEps(0.001, 0.001);
 

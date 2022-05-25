@@ -113,7 +113,7 @@ void xInfo(int, char**)
             out, f2d, "Number of CUDA cores:", a.cores_per_multiprocessor * a.multiprocessor_count);
          const double B_to_GB = 1024. * 1024. * 1024.;
          print(out, fm2, "Used/Total GPU memory:",
-            format("%.2f % / %.2f GB", 100.0 - 100.0 * a.free_mem_bytes / a.total_mem_bytes,
+            format("%.2f %% / %.2f GB", 100.0 - 100.0 * a.free_mem_bytes / a.total_mem_bytes,
                a.total_mem_bytes / B_to_GB));
       }
    }

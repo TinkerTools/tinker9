@@ -37,3 +37,13 @@ target_link_libraries (all.tests
    tinkerFToCpp
    ${__T9_EXTRA_LINK_FLAGS}
 )
+
+
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+   foreach (var tinker9 all.tests)
+      add_custom_command (TARGET "${var}" POST_BUILD
+         COMMAND
+            ${CMAKE_INSTALL_NAME_TOOL} -add_rpath "${CUDA_DIR}/lib" "${var}"
+      )
+   endforeach ()
+endif ()
