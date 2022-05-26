@@ -5,26 +5,37 @@ Prerequisites
 
 A relatively recent NVIDIA GPU is mandatory for the GPU code.
 Nothing special is needed for the CPU code.
+The oldest NVIDIA GPU Tinker9 has been tested on is GeForce GTX 675MX (compute capability 3.0).
 
 **Operating Systems and Compilers**
 
-In order to compile the GPU code, the most recent
+In order to compile the GPU code with full functionality, a recent
 `NVIDIA HPC SDK <https://www.developer.nvidia.com/hpc-sdk>`_
 is preferred for the OpenACC directives. Due to its limitations,
-the GPU code is unavailable on macOS.
+the *full* version is unavailable on macOS.
 
 For Linux, we need:
 
 - GNU or Intel Fortran compiler.
 - Recent C++ compiler that supports C++11 syntax.
+- CMake 3.15 or newer.
 - (GPU code only) NVIDIA HPC SDK with OpenACC support, and CUDA with nvcc.
 - If NVIDIA driver has been installed correctly, *nvidia-smi* should be
   available.
 
-We have successfully built Tinker9 on Windows WSL2 Ubuntu with
+For Windows, we have successfully built Tinker9 on Windows WSL2 Ubuntu with
 CUDA 11.0 and NVHPC 20.9. Please proceed to
 `this NVIDIA webpage <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>`_
 for more details.
+
+The majority of the functionalities are also implemented in CUDA.
+To compile this subset (PureCuda) of the code, NVIDIA HPC SDK is not mandatory.
+Please refer to *Build Tinker9 with CMake* for the flags to compile
+the *PureCuda* GPU kernels.
+It is even possible to compile and run the *PureCuda* version on macOS
+(El Capitan 10.13 or earlier), if suitable drivers and CUDA toolkits are installed.
+If the calculation selects one of the missing functionalities only implemented
+in OpenACC, the program will throw a runtime error.
 
 **Using NVIDIA HPC SDK on Clusters**
 
@@ -34,7 +45,7 @@ Red Hat with gcc 4.8.5 by default without root privilege. Although several
 more recent gcc and PGI versions were available via the *module* program,
 the most recent PGI compiler (2019) was still configured with gcc 4.8.5
 by default, which had a very bad support for C++11.
-Since I didn't have root privilege on the cluster, I had to use
+Without root privilege on the cluster, we had to use
 a custom *localrc* file by running the following command to
 reconfigure PGI compiler with gcc 7.4.0:
 
@@ -81,15 +92,14 @@ the mixed and single precision CPU code.
 - `ClangFormat <https://clang.llvm.org/docs/ClangFormat.html>`_:
   to format the source code.
 
+- `Doxygen <https://www.doxygen.nl>`_: to generate developer guides.
+
 - `Sphinx <https://www.sphinx-doc.org>`_: to generate user manual.
 
    - PDF version also depends on `TeX <https://www.tug.org/begin.html>`_.
 
-   - HTML theme from *pip*.
-
-- `Doxygen <https://www.doxygen.nl>`_: to generate developer guides.
-
 .. code-block:: bash
 
-   pip install -U Sphinx
-   pip install pydata-sphinx-theme
+   python3 -m venv env-tinker9doc
+   source env-tinker9doc/bin/activate
+   pip3 install -r path_to/doc/manual/requirements.txt

@@ -11,7 +11,7 @@ Tinker9 is a complete rewrite and extension of the canonical Tinker software, cu
 ## Docker
 Docker images are now available for [download](https://hub.docker.com/r/tinkertools/tinker9).
 
-The executables included in these images were compiled on a recent computer. It is known that they will not run on the machines with very old CPUs. If this is a problem for you, please write a new issue and provide us with more details. Thank you.
+The executables included in these images were compiled on a recent computer. It is known that they will not run on the machines with very old CPUs. If this is a problem for you, please write a new issue and provide us with more details.
 
 ## Installation Steps
    1. [Prerequisites](doc/manual/m/install/preq.rst)
@@ -23,7 +23,7 @@ The executables included in these images were compiled on a recent computer. It 
 See [Citations](https://tinkerdoc.readthedocs.io/en/latest/text/cite.html) for details. -->
 
 
-## User Manual (In Progress)
+## User Manual (in progress)
 The HTML version is hosted on [readthedocs](https://tinker9-manual.readthedocs.io)
 and the [PDF](https://tinker9-manual.readthedocs.io/_/downloads/en/latest/pdf/)
 version is accessible from the same webpage.
