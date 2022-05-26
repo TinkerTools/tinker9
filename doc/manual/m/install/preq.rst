@@ -4,7 +4,6 @@ Prerequisites
 **Hardware**
 
 A relatively recent NVIDIA GPU is mandatory for the GPU code.
-Nothing special is needed for the CPU code.
 The oldest NVIDIA GPU Tinker9 has been tested on is GeForce GTX 675MX (compute capability 3.0).
 
 **Operating Systems and Compilers**
@@ -29,12 +28,12 @@ CUDA 11.0 and NVHPC 20.9. Please proceed to
 for more details.
 
 The majority of the functionalities are also implemented in CUDA.
-To compile this subset (PureCuda) of the code, NVIDIA HPC SDK is not mandatory.
+To compile this subset (PureCuda) of the GPU kernels, NVIDIA HPC SDK is not mandatory.
 Please refer to *Build Tinker9 with CMake* for the flags to compile
 the *PureCuda* GPU kernels.
 It is even possible to compile and run the *PureCuda* version on macOS
 (El Capitan 10.13 or earlier), if suitable drivers and CUDA toolkits are installed.
-If the calculation selects one of the missing functionalities only implemented
+If the calculation selects one of the missing functionalities that is only implemented
 in OpenACC, the program will throw a runtime error.
 
 **Using NVIDIA HPC SDK on Clusters**
