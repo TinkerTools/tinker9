@@ -37,6 +37,7 @@ numfig = True
 extensions = [
     'sphinxcontrib.bibtex'
 ]
+bibtex_bibfiles = ['m/refs.bib']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
