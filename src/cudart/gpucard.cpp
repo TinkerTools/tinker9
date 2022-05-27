@@ -6,6 +6,8 @@
 #include <cuda_runtime.h>
 #include <thrust/version.h>
 
+extern "C" int tinkerGpuUtilizationInt32_macos(int);
+
 namespace tinker {
 std::string gpuCudaRuntimeVersion()
 {
@@ -177,18 +179,19 @@ static int recommendDevice(int ndev)
    std::vector<double> gflops;
    for (int i = 0; i < ndev; ++i) {
       const auto& a = gpuDeviceAttributes()[i];
-      std::string percent;
-      if (ndev > 1) {
-         std::string smi = getNvidiaSmi();
-         std::string cmd = format("%s --query-gpu=utilization.gpu "
-                                  "--format=csv,noheader,nounits -i %s",
-            smi, a.pci_string);
-         percent = exec(cmd);
-      } else {
-         percent = "42";
-      }
-      prcd.push_back(i);
+#if defined(__APPLE__)
+      // not really a percentage though
+      int macosGpuUtil = tinkerGpuUtilizationInt32_macos(i);
+      gpercent.push_back(macosGpuUtil);
+#else
+      std::string smi = getNvidiaSmi();
+      std::string cmd = format("%s --query-gpu=utilization.gpu "
+                               "--format=csv,noheader,nounits -i %s",
+         smi, a.pci_string);
+      std::string percent = exec(cmd);
       gpercent.push_back(std::stoi(percent));
+#endif
+      prcd.push_back(i);
       double gf = a.clock_rate_kHz;
       gf *= a.cores_per_multiprocessor * a.multiprocessor_count;
       gflops.push_back(gf);

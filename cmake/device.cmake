@@ -40,6 +40,9 @@ target_link_libraries (all.tests
 
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+   add_subdirectory ("src/objc")
+   target_link_libraries (tinker9 tinker9_objc "-framework CoreFoundation -framework IOKit")
+   target_link_libraries (all.tests tinker9_objc "-framework CoreFoundation -framework IOKit")
    foreach (var tinker9 all.tests)
       add_custom_command (TARGET "${var}" POST_BUILD
          COMMAND
