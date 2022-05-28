@@ -54,16 +54,3 @@ else
    clang-format -i -style=file "$x"
 fi
 done
-
-# clang-tidy
-# ClangTidyFound=$(which clang-tidy)
-# if [ "$ClangTidyFound" != "" ]; then
-#    CMakeCacheFile=$(grep --include=\*.txt -irl "HOST:STRING=1" | head -1)
-#    BuildDir="${CMakeCacheFile%%/*}"
-#    for x in "$@"; do
-#       FileExt="${x##*.}"
-#       if [ "$FileExt" = "cpp" ] || [ "$FileExt" = "cxx" ] || [ "$FileExt" = "cc" ] ; then
-#          clang-tidy -config= -header-filter=.* -p "$BuildDir" "$x"
-#       fi
-#    done
-# fi
