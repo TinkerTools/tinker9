@@ -52,10 +52,15 @@ else ()
       "${CMAKE_BINARY_DIR}/doxygen-awesome.css"
    )
 endif ()
-add_custom_target (doc
+add_custom_target (doc VERBATIM
    COMMAND
-      doxygen "${PROJECT_SOURCE_DIR}/doc/Doxyfile" ENV_GIT_HEAD="${__T9_GIT_HEAD}"
+      ${CMAKE_COMMAND} -E env ENV_GIT_HEAD=${__T9_GIT_HEAD} doxygen "${PROJECT_SOURCE_DIR}/doc/Doxyfile"
    BYPRODUCTS
       "${CMAKE_BINARY_DIR}/html"
       "${CMAKE_BINARY_DIR}/xml"
+)
+add_custom_command (TARGET doc POST_BUILD
+   COMMAND
+      ${CMAKE_COMMAND} -E copy_directory
+         "${PROJECT_SOURCE_DIR}/doc/manual" "${CMAKE_BINARY_DIR}/html/doc/manual"
 )
