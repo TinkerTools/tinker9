@@ -45,6 +45,13 @@ add_custom_target (pdf
 
 
 ## Developer Guides
+if (EXISTS "${CMAKE_BINARY_DIR}/doxygen-awesome.css")
+else ()
+   file (DOWNLOAD
+      https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome.css
+      "${CMAKE_BINARY_DIR}/doxygen-awesome.css"
+   )
+endif ()
 add_custom_target (doc
    COMMAND
       doxygen "${PROJECT_SOURCE_DIR}/doc/Doxyfile" ENV_GIT_HEAD="${__T9_GIT_HEAD}"
