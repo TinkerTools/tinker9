@@ -1,0 +1,23 @@
+\documentclass[preview=true]{standalone}
+\usepackage{algpseudocode}
+\usepackage[notextcomp]{kpfonts}
+\usepackage[defaultsans]{lato}
+\usepackage{inconsolata}
+
+\begin{document}
+\begin{algorithmic}
+\Procedure{Conjugate Gradient}{}
+\State Guess Initial $\mu$
+\State $r = E - \tilde{T}\mu$
+\State $p = M r$
+\While{not converged}
+   \State $\gamma \gets r M r / p \tilde{T} p$
+   \State $\mu    \gets \mu + \gamma p$
+   \State $r_1    \gets r - \gamma \tilde{T} p$ 
+   \State $\beta  \gets r_1 M r_1 / r M r$ (Previous $r$ is used.)
+   \State $p      \gets M r_1 + \beta p$
+   \State Check Convergence
+\EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{document}
