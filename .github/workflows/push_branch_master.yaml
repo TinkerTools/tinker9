@@ -1,0 +1,30 @@
+name: on_push_to_branch_master
+on:
+   push:
+      branches:
+         - master
+jobs:
+   deploy:
+      runs-on: ubuntu-latest
+      steps:
+         - name: Checkout repository
+           uses: actions/checkout@v3
+           with:
+              fetch-depth: 1
+         - name: Install doxygen
+           run: |
+              sudo apt-get install -y doxygen
+         - name: Generate doxygen html
+           run: |
+              mkdir build
+              cd build
+              wget https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome.css
+              ENV_GIT_HEAD=`git log -1 --format="%h (%cd)" | tr -d "\n"` doxygen ../doc/Doxyfile
+              mkdir -p html/doc
+              cp -r ../doc/manual html/doc/
+         - name: Deploy
+           uses: peaceiris/actions-gh-pages@v3
+           with:
+              github_token: ${{ secrets.GITHUB_TOKEN }}
+              publish_dir: ./build/html
+              publish_branch: gh-pages

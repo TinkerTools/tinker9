@@ -121,10 +121,20 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ../README.md ../doc ../include ../test
+INPUT                  = ../README.md ../doc ../test \
+                         ../include \
+                         ../include/ff \
+                         ../include/ff/amoeba \
+                         ../include/ff/aplus \
+                         ../include/ff/hippo \
+                         ../include/math \
+                         ../include/md \
+                         ../include/seq \
+                         ../include/syntax/cu \
+                         ../include/tool
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.h
-RECURSIVE              = YES
+RECURSIVE              = NO
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       =
@@ -289,13 +299,18 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = include include/syntax/cu
+INCLUDE_PATH           = ../include \
+                         ../include/ff \
+                         ../include/math \
+                         ../include/tool \
+                         ../include/syntax/cu
 INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = NDEBUG \
                          TINKER_MIXED_PRECISION \
                          TINKER_CUDART \
                          TINKER_EXTERN_DEFINITION_FILE \
-                         __cplusplus
+                         __cplusplus \
+                         __CUDACC__
 EXPAND_AS_DEFINED      = YES
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

@@ -2,14 +2,15 @@
 #include "math/libfunc.h"
 
 namespace tinker {
+#ifdef __CUDACC__
 /**
  * \ingroup pme
  * \brief B-spline coefficients and derivatives for a single %PME atomic site
  * along a particular direction. See also subroutine `bsplgen` in `pmestuf.f`
  * file.
  *
- * \param bsorder  Desired B-spline order; `MAX_BSORDER` is hard-coded to 5.
- * \param LEVEL    Flag to control the results in `thetai`, and must be:
+ * \tparam bsorder Desired B-spline order; `MAX_BSORDER` is hard-coded to 5.
+ * \tparam LEVEL   Flag to control the results in `thetai`, and must be:
  *                    - greater than 0.
  *                    - less than `bsorder`.
  * \param w        Fractional distance to the reference %PME grid point along
@@ -23,7 +24,6 @@ namespace tinker {
  *                    - `LEVEL=4`, third derivatives are in `thetai(4,:)`.
  * \param bsbuild_ A CUDA working array of size `MAX_BSORDER*MAX_BSORDER`.
  */
-#ifdef __CUDACC__
 template <int LEVEL, int bsorder>
 __device__
 void bsplgen(real w, real* restrict thetai, volatile real* restrict bsbuild_)

@@ -102,7 +102,7 @@
 /// \brief Macro for the PGI or NVHPC C++ compiler.
 #define TINKER_PGI
 #define TINKER_EXTERN_DEFINITION_FILE
-
+#define TINKER9_DIR
 /*
  *
  * Data structures and procedures to construct the spatial decomposition
