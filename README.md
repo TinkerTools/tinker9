@@ -2,6 +2,7 @@ Tinker9: Next Generation of Tinker with GPU Support
 ===================================================
 [//]: # (Badges)
 [![Docs Status](https://readthedocs.org/projects/tinker9-manual/badge/?version=latest&style=flat)](https://tinker9-manual.readthedocs.io)
+[![Doxygen Page Status](https://github.com/tinkertools/tinker9/actions/workflows/doxygen_gh_pages.yaml/badge.svg?branch=master)](https://tinkertools.github.io/tinker9/)
 
 
 <h2>Introduction</h2>

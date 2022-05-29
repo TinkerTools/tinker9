@@ -1,4 +1,4 @@
-name: on_push_to_branch_master
+name: Doxygen
 on:
    push:
       branches:
