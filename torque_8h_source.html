@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -83,13 +83,13 @@ $(function() {
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;seq/seq.h&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacetinker.html">tinker</a> {</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<a class="code" href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<a class="code" href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
 <div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="namespacetinker.html#a61184f505bef1926027c7dc19a6e10d3">    7</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> <a class="code" href="namespacetinker.html#a61184f505bef1926027c7dc19a6e10d3">torqueDot</a>(<span class="keyword">const</span> <a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>* <a class="code" href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a> a, <span class="keyword">const</span> <a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>* <a class="code" href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a> b)</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;   <span class="keywordflow">return</span> (a[0] * b[0] + a[1] * b[1] + a[2] * b[2]);</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;}</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<a class="code" href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<a class="code" href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
 <div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="namespacetinker.html#a476810d19a87aaeaf4958aa1b407fd12">   13</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacetinker.html#a476810d19a87aaeaf4958aa1b407fd12">torqueCross</a>(<a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>* <a class="code" href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a> ans, <span class="keyword">const</span> <a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>* <a class="code" href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a> u, <span class="keyword">const</span> <a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>* <a class="code" href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a> v)</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;   ans[0] = u[1] * v[2] - u[2] * v[1];</div>
@@ -97,7 +97,7 @@ $(function() {
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;   ans[2] = u[0] * v[1] - u[1] * v[0];</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;}</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<a class="code" href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<a class="code" href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
 <div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="namespacetinker.html#a2489215f468d9ea5b9d050d0c803e438">   21</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="namespacetinker.html#a2489215f468d9ea5b9d050d0c803e438">torqueNormal</a>(<a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>* <a class="code" href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a> a, <a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> _1_na)</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;   a[0] *= _1_na;</div>
@@ -107,12 +107,12 @@ $(function() {
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="anamespacetinker_html_a476810d19a87aaeaf4958aa1b407fd12"><div class="ttname"><a href="namespacetinker.html#a476810d19a87aaeaf4958aa1b407fd12">tinker::torqueCross</a></div><div class="ttdeci">__device__ void torqueCross(real *__restrict__ ans, const real *__restrict__ u, const real *__restrict__ v)</div><div class="ttdef"><b>Definition:</b> torque.h:13</div></div>
-<div class="ttc" id="agroup__prec_html_ga705b733820a8480aac42d7dcb3bbd7e0"><div class="ttname"><a href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">tinker::real</a></div><div class="ttdeci">float real</div><div class="ttdoc">Floating-point type with lower precision (not higher than mixed).</div><div class="ttdef"><b>Definition:</b> precision.h:75</div></div>
+<div class="ttc" id="agroup__prec_html_ga705b733820a8480aac42d7dcb3bbd7e0"><div class="ttname"><a href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">tinker::real</a></div><div class="ttdeci">float real</div><div class="ttdef"><b>Definition:</b> precision.h:80</div></div>
 <div class="ttc" id="anamespacetinker_html_a2489215f468d9ea5b9d050d0c803e438"><div class="ttname"><a href="namespacetinker.html#a2489215f468d9ea5b9d050d0c803e438">tinker::torqueNormal</a></div><div class="ttdeci">__device__ void torqueNormal(real *__restrict__ a, real _1_na)</div><div class="ttdef"><b>Definition:</b> torque.h:21</div></div>
-<div class="ttc" id="agroup__cpp__syntax_html_ga080abdcb9c02438f1cd2bb707af25af8"><div class="ttname"><a href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a></div><div class="ttdeci">#define restrict</div><div class="ttdoc">Expands to __restrict__, which is a common C++ extension.</div><div class="ttdef"><b>Definition:</b> macro.h:13</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:6</div></div>
-<div class="ttc" id="agroup__cuda__syntax_html_gae1187d8dadd78f33bac11eec7b297eb4"><div class="ttname"><a href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div><div class="ttdeci">#define SEQ_ROUTINE</div><div class="ttdoc">Expands to __device__ in CUDA source files.</div><div class="ttdef"><b>Definition:</b> seqdef.h:6</div></div>
+<div class="ttc" id="agroup__cpp__syntax_html_ga080abdcb9c02438f1cd2bb707af25af8"><div class="ttname"><a href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a></div><div class="ttdeci">#define restrict</div><div class="ttdef"><b>Definition:</b> macro.h:47</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
 <div class="ttc" id="anamespacetinker_html_a61184f505bef1926027c7dc19a6e10d3"><div class="ttname"><a href="namespacetinker.html#a61184f505bef1926027c7dc19a6e10d3">tinker::torqueDot</a></div><div class="ttdeci">__device__ real torqueDot(const real *__restrict__ a, const real *__restrict__ b)</div><div class="ttdef"><b>Definition:</b> torque.h:7</div></div>
+<div class="ttc" id="agroup__acc__syntax_html_gae1187d8dadd78f33bac11eec7b297eb4"><div class="ttname"><a href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div><div class="ttdeci">#define SEQ_ROUTINE</div><div class="ttdef"><b>Definition:</b> acc/seqdef.h:7</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

@@ -1,17 +1,16 @@
 var searchData=
 [
-  ['f_5fkin_2663',['f_kin',['../group__mdpt.html#a72c31e0c223c767aba1d1ac4d548e7db',1,'tinker::NhcDevice']]],
-  ['fdip_5fphi1_2664',['fdip_phi1',['../group__pme.html#gaac71f83d04b1447cd50fcec6f1004dea',1,'tinker']]],
-  ['fdip_5fphi2_2665',['fdip_phi2',['../group__pme.html#ga1c386b661a211897a59dfac948158c14',1,'tinker']]],
-  ['fmp_2666',['fmp',['../group__pme.html#gaee99b375e0565cad30473afaa8b7acd5',1,'tinker']]],
-  ['foo_2667',['foo',['../struct_p_c_h_g.html#adc27b2469b9fe6e3c42efe4c997fe5ed',1,'PCHG::foo()'],['../struct_m_p_o_l_e.html#af806cc0a4a7e9368eddbd39177e2f7b5',1,'MPOLE::foo()'],['../struct_u_i_n_d.html#afc92da0b61393d6b3527235f0e99f74a',1,'UIND::foo()'],['../struct_u_i_n_d2.html#a59fa847811190bc21c7c7c70de2cd26b',1,'UIND2::foo()'],['../struct_d_i_s_p.html#af33bea46ef140398d10581e1b7cba801',1,'DISP::foo()'],['../struct_e_w_a_l_d.html#a5c31683295813ee78985eade0cefac70',1,'EWALD::foo()'],['../struct_d_e_w_a_l_d.html#a8c86c43b8901a81ec7670dd5bb88dae1',1,'DEWALD::foo()'],['../struct_n_o_n___e_w_a_l_d.html#a29ba43a839cd5cd1fa6b98ee92162b21',1,'NON_EWALD::foo()'],['../struct_n_o_n___e_w_a_l_d___t_a_p_e_r.html#a553b87705952aea723cbff2ca8860a1a',1,'NON_EWALD_TAPER::foo()'],['../struct_g_o_r_d_o_n1.html#a0671dc3d56ff1a03b720bd86a3a7aab4',1,'GORDON1::foo()'],['../struct_g_o_r_d_o_n2.html#a791f5f33cb2ae7aa7489eeaf161d143f',1,'GORDON2::foo()'],['../struct_h_a_r_m_o_n_i_c.html#a9070ccdf42cb1d5a67cc1139716bf48b',1,'HARMONIC::foo()'],['../struct_m_o_r_s_e.html#af158b03cded7c210805cdb1b115bce46',1,'MORSE::foo()'],['../struct_w_d_c.html#afafa54d1fd99d1fc4c13131a3c19a2b3',1,'WDC::foo()'],['../struct_a_l_l_i_n_g_e_r.html#a76414e3758b0784d6800bc3ddb01cdea',1,'ALLINGER::foo()'],['../struct_l_j.html#ad7b36a61bcff6d3fd92d08e8911bd3ee',1,'LJ::foo()'],['../struct_b_u_c_k.html#aa11587fa131c8595160787ace6aa67f9',1,'BUCK::foo()'],['../struct_m_m3_h_b.html#aefe3d9acf07d384617cbce35823b9bc0',1,'MM3HB::foo()'],['../struct_h_a_l.html#a0f5fb38012964130f9d7264246ff9770',1,'HAL::foo()'],['../struct_g_a_u_s_s.html#a545a9f361e5863dc1fdd57939ec0c4ca',1,'GAUSS::foo()'],['../struct_r_a_t_t_l_e.html#a9ff5fa2f628232651324e22abf909f91',1,'RATTLE::foo()'],['../struct_s_h_a_k_e.html#ab367293aa8342ee2c29ef749ae4e7ec5',1,'SHAKE::foo()']]],
-  ['fphi_2668',['fphi',['../group__pme.html#ga045234476b55f434ecb902992f703ad9',1,'tinker']]],
-  ['fphidp_2669',['fphidp',['../group__pme.html#ga0bbc799d441f3ae82de93d3eb3f4148b',1,'tinker']]],
-  ['frcx_2670',['frcx',['../group__mpole.html#a1442006d43714865386bfd4caf05e61d',1,'tinker::PairMPoleGrad::frcx()'],['../structtinker_1_1_pair_polar_grad.html#a6aefd278a1cab7542d761ac5c824b048',1,'tinker::PairPolarGrad::frcx()'],['../structtinker_1_1_pair_repel_grad.html#ab9bc80b87a5586f4038d3743c7fdc29f',1,'tinker::PairRepelGrad::frcx()']]],
-  ['frcy_2671',['frcy',['../group__mpole.html#a0f2d53e0a0d15cac1dd0e60f4a164f6c',1,'tinker::PairMPoleGrad::frcy()'],['../structtinker_1_1_pair_polar_grad.html#a12718932a59967b21968ef682c00fb5c',1,'tinker::PairPolarGrad::frcy()'],['../structtinker_1_1_pair_repel_grad.html#a76ee0d06034afe1a27c731ed8cd7a814',1,'tinker::PairRepelGrad::frcy()']]],
-  ['frcz_2672',['frcz',['../group__mpole.html#a629d165e719b3fb97e0e71e019e27713',1,'tinker::PairMPoleGrad::frcz()'],['../structtinker_1_1_pair_polar_grad.html#a0250d52c9ab4f6f3cb9db81583b13b4c',1,'tinker::PairPolarGrad::frcz()'],['../structtinker_1_1_pair_repel_grad.html#a8c2d4bccaba82e04a9487023d8a8f809',1,'tinker::PairRepelGrad::frcz()']]],
-  ['free_5fmem_5fbytes_2673',['free_mem_bytes',['../group__nvidia.html#ae55b7a95a1d7cbad187af3b6fe2da4ba',1,'tinker::DeviceAttribute']]],
-  ['fresh_2674',['fresh',['../group__nblist.html#a87015510d04f3272b71a6bfee872b445',1,'tinker::Spatial']]],
-  ['fuind_2675',['fuind',['../group__pme.html#ga8ebe36c0a72503d624fc797eb02674e4',1,'tinker']]],
-  ['fuinp_2676',['fuinp',['../group__pme.html#ga248d1d37a718178c84d2c5c5f5dbbaa9',1,'tinker']]]
+  ['f_5fkin_2707',['f_kin',['../group__mdpt.html#a72c31e0c223c767aba1d1ac4d548e7db',1,'tinker::NhcDevice']]],
+  ['fdip_5fphi1_2708',['fdip_phi1',['../group__pme.html#gaac71f83d04b1447cd50fcec6f1004dea',1,'tinker']]],
+  ['fdip_5fphi2_2709',['fdip_phi2',['../group__pme.html#ga1c386b661a211897a59dfac948158c14',1,'tinker']]],
+  ['fmp_2710',['fmp',['../group__pme.html#gaee99b375e0565cad30473afaa8b7acd5',1,'tinker']]],
+  ['fphi_2711',['fphi',['../group__pme.html#ga045234476b55f434ecb902992f703ad9',1,'tinker']]],
+  ['fphidp_2712',['fphidp',['../group__pme.html#ga0bbc799d441f3ae82de93d3eb3f4148b',1,'tinker']]],
+  ['frcx_2713',['frcx',['../group__mpole.html#a1442006d43714865386bfd4caf05e61d',1,'tinker::PairMPoleGrad::frcx()'],['../structtinker_1_1_pair_polar_grad.html#a6aefd278a1cab7542d761ac5c824b048',1,'tinker::PairPolarGrad::frcx()'],['../structtinker_1_1_pair_repel_grad.html#ab9bc80b87a5586f4038d3743c7fdc29f',1,'tinker::PairRepelGrad::frcx()']]],
+  ['frcy_2714',['frcy',['../group__mpole.html#a0f2d53e0a0d15cac1dd0e60f4a164f6c',1,'tinker::PairMPoleGrad::frcy()'],['../structtinker_1_1_pair_polar_grad.html#a12718932a59967b21968ef682c00fb5c',1,'tinker::PairPolarGrad::frcy()'],['../structtinker_1_1_pair_repel_grad.html#a76ee0d06034afe1a27c731ed8cd7a814',1,'tinker::PairRepelGrad::frcy()']]],
+  ['frcz_2715',['frcz',['../group__mpole.html#a629d165e719b3fb97e0e71e019e27713',1,'tinker::PairMPoleGrad::frcz()'],['../structtinker_1_1_pair_polar_grad.html#a0250d52c9ab4f6f3cb9db81583b13b4c',1,'tinker::PairPolarGrad::frcz()'],['../structtinker_1_1_pair_repel_grad.html#a8c2d4bccaba82e04a9487023d8a8f809',1,'tinker::PairRepelGrad::frcz()']]],
+  ['free_5fmem_5fbytes_2716',['free_mem_bytes',['../group__nvidia.html#ae55b7a95a1d7cbad187af3b6fe2da4ba',1,'tinker::DeviceAttribute']]],
+  ['fresh_2717',['fresh',['../group__nblist.html#a87015510d04f3272b71a6bfee872b445',1,'tinker::Spatial']]],
+  ['fuind_2718',['fuind',['../group__pme.html#ga8ebe36c0a72503d624fc797eb02674e4',1,'tinker']]],
+  ['fuinp_2719',['fuinp',['../group__pme.html#ga248d1d37a718178c84d2c5c5f5dbbaa9',1,'tinker']]]
 ];

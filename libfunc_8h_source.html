@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -90,7 +90,7 @@ $(function() {
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;   <span class="comment">// The helper function for the complementary error function.</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;   <span class="comment">// \param ex2  exp(-x*x)</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;   <a class="code" href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;   <a class="code" href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;   <span class="keyword">inline</span> <span class="keywordtype">float</span> tinkerErfcfHastings2Args(<span class="keywordtype">float</span> <a class="code" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, <span class="keywordtype">float</span> ex2)</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;   {</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;      <span class="keywordtype">float</span> t = 1.0f / (1.0f + 0.3275911f * <a class="code" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>);</div>
@@ -101,7 +101,7 @@ $(function() {
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;   <span class="comment">// The complementary error function.</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;   <span class="comment">// C. Hastings. Approximations for Digital Computers. Princeton Univ. Press. (1955) p. 167.</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;   <a class="code" href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;   <a class="code" href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;   <span class="keyword">inline</span> <span class="keywordtype">float</span> tinkerErfcfHastings(<span class="keywordtype">float</span> <a class="code" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>)</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;   {</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;      <span class="keywordtype">float</span> exp2a = expf(-<a class="code" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a> * <a class="code" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>);</div>
@@ -215,8 +215,8 @@ $(function() {
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="preprocessor">#pragma acc routine(copysignf) seq</span></div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="preprocessor">#endif</span></div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="agroup__cuda__syntax_html_gae1187d8dadd78f33bac11eec7b297eb4"><div class="ttname"><a href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div><div class="ttdeci">#define SEQ_ROUTINE</div><div class="ttdoc">Expands to __device__ in CUDA source files.</div><div class="ttdef"><b>Definition:</b> seqdef.h:6</div></div>
-<div class="ttc" id="agroup__ff_html_ga954874b9e04814a23c2cab07a2abd9d0"><div class="ttname"><a href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">tinker::x</a></div><div class="ttdeci">real * x</div><div class="ttdoc">Current coordinates used in energy evaluation and neighbor lists.</div><div class="ttdef"><b>Definition:</b> atom.h:87</div></div>
+<div class="ttc" id="agroup__ff_html_ga954874b9e04814a23c2cab07a2abd9d0"><div class="ttname"><a href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">tinker::x</a></div><div class="ttdeci">real * x</div><div class="ttdoc">Current coordinates used in energy evaluation and neighbor lists.</div></div>
+<div class="ttc" id="agroup__acc__syntax_html_gae1187d8dadd78f33bac11eec7b297eb4"><div class="ttname"><a href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div><div class="ttdeci">#define SEQ_ROUTINE</div><div class="ttdef"><b>Definition:</b> acc/seqdef.h:7</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

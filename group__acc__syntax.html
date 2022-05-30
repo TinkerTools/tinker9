@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Tinker9: OpenACC Specific Code</title>
+<title>Tinker9: OpenACC Syntax</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -70,10 +70,1526 @@ $(function() {
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">OpenACC Specific Code<div class="ingroups"><a class="el" href="group__platform.html">Platforms and Syntaxes</a></div></div>  </div>
+<div class="title">OpenACC Syntax<div class="ingroups"><a class="el" href="group__platform.html">Platforms</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:structtinker_1_1int2"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#structtinker_1_1int2">tinker::int2</a></td></tr>
+<tr class="separator:structtinker_1_1int2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structtinker_1_1int3"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#structtinker_1_1int3">tinker::int3</a></td></tr>
+<tr class="separator:structtinker_1_1int3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structtinker_1_1int4"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#structtinker_1_1int4">tinker::int4</a></td></tr>
+<tr class="separator:structtinker_1_1int4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structtinker_1_1float2"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#structtinker_1_1float2">tinker::float2</a></td></tr>
+<tr class="separator:structtinker_1_1float2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structtinker_1_1float3"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#structtinker_1_1float3">tinker::float3</a></td></tr>
+<tr class="separator:structtinker_1_1float3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structtinker_1_1float4"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#structtinker_1_1float4">tinker::float4</a></td></tr>
+<tr class="separator:structtinker_1_1float4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structtinker_1_1double2"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#structtinker_1_1double2">tinker::double2</a></td></tr>
+<tr class="separator:structtinker_1_1double2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structtinker_1_1double3"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#structtinker_1_1double3">tinker::double3</a></td></tr>
+<tr class="separator:structtinker_1_1double3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:structtinker_1_1double4"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#structtinker_1_1double4">tinker::double4</a></td></tr>
+<tr class="separator:structtinker_1_1double4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gae1187d8dadd78f33bac11eec7b297eb4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a>&#160;&#160;&#160;_Pragma(&quot;acc routine seq&quot;)</td></tr>
+<tr class="separator:gae1187d8dadd78f33bac11eec7b297eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafc832d528e178477cfa0577ff8782ac5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#gafc832d528e178477cfa0577ff8782ac5">SEQ_CUDA</a></td></tr>
+<tr class="separator:gafc832d528e178477cfa0577ff8782ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga6f53a25dbbcf814dd75b8d35d784d472"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:ga6f53a25dbbcf814dd75b8d35d784d472"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga6f53a25dbbcf814dd75b8d35d784d472">tinker::atomic_add</a> (T value, T *buffer, size_t offset=0)</td></tr>
+<tr class="separator:ga6f53a25dbbcf814dd75b8d35d784d472"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8b892223ad1638cd99f28cf325ff3e26"><td class="memTemplParams" colspan="2">template&lt;class T , class  = typename std::enable_if&lt;std::is_same&lt;T, float&gt;::value ||      std::is_same&lt;T, double&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:ga8b892223ad1638cd99f28cf325ff3e26"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga8b892223ad1638cd99f28cf325ff3e26">tinker::atomic_add</a> (T value, <a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a> *buffer, size_t offset=0)</td></tr>
+<tr class="separator:ga8b892223ad1638cd99f28cf325ff3e26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4b3e37ed165ba58b8238781413c82fe0"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:ga4b3e37ed165ba58b8238781413c82fe0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga4b3e37ed165ba58b8238781413c82fe0">tinker::atomic_add</a> (T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T(*buffer)[8], size_t offset=0)</td></tr>
+<tr class="separator:ga4b3e37ed165ba58b8238781413c82fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad110546c7c112636e47157015cb8460b"><td class="memTemplParams" colspan="2">template&lt;class T , class  = typename std::enable_if&lt;std::is_same&lt;T, float&gt;::value ||      std::is_same&lt;T, double&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:gad110546c7c112636e47157015cb8460b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#gad110546c7c112636e47157015cb8460b">tinker::atomic_add</a> (T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, <a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a>(*buffer)[8], size_t offset=0)</td></tr>
+<tr class="separator:gad110546c7c112636e47157015cb8460b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3c5c70c14c0708cd64583bd1b5db5a6f"><td class="memTemplParams" colspan="2">template&lt;class G , class T &gt; </td></tr>
+<tr class="memitem:ga3c5c70c14c0708cd64583bd1b5db5a6f"><td class="memTemplItemLeft" align="right" valign="top">G&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga3c5c70c14c0708cd64583bd1b5db5a6f">tinker::floatTo</a> (T val)</td></tr>
+<tr class="separator:ga3c5c70c14c0708cd64583bd1b5db5a6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga47b708b2c42affd1f96e149525f3f15b"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:ga47b708b2c42affd1f96e149525f3f15b"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga47b708b2c42affd1f96e149525f3f15b">tinker::fixedTo</a> (<a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a> val)</td></tr>
+<tr class="separator:ga47b708b2c42affd1f96e149525f3f15b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3ca2edd4f30ab7febe86764d0fa71b3a"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:ga3ca2edd4f30ab7febe86764d0fa71b3a"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga3ca2edd4f30ab7febe86764d0fa71b3a">tinker::toFloatGrad</a> (<a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a> g)</td></tr>
+<tr class="separator:ga3ca2edd4f30ab7febe86764d0fa71b3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga43124f67d1ef5241ba179d3592252f2a"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:ga43124f67d1ef5241ba179d3592252f2a"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga43124f67d1ef5241ba179d3592252f2a">tinker::toFloatGrad</a> (double g)</td></tr>
+<tr class="separator:ga43124f67d1ef5241ba179d3592252f2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab7747a809b4d7764a929856033b29241"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:gab7747a809b4d7764a929856033b29241"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#gab7747a809b4d7764a929856033b29241">tinker::toFloatGrad</a> (float g)</td></tr>
+<tr class="separator:gab7747a809b4d7764a929856033b29241"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8a768ea49f35fd0f7240752ddb711629"><td class="memTemplParams" colspan="2">template&lt;class T , class U &gt; </td></tr>
+<tr class="memitem:ga8a768ea49f35fd0f7240752ddb711629"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga8a768ea49f35fd0f7240752ddb711629">tinker::eq</a> ()</td></tr>
+<tr class="separator:ga8a768ea49f35fd0f7240752ddb711629"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0fea492d3451acb1559bbe5349a6397a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acc__syntax.html#structtinker_1_1int2">int2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga0fea492d3451acb1559bbe5349a6397a">tinker::make_int2</a> (int <a class="el" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, int <a class="el" href="group__ff.html#ga6088d3a3d3d398f82167777cf426b55c">y</a>)</td></tr>
+<tr class="separator:ga0fea492d3451acb1559bbe5349a6397a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad82f797b3e5464cb8328d94c34ed19a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acc__syntax.html#structtinker_1_1int3">int3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#gad82f797b3e5464cb8328d94c34ed19a9">tinker::make_int3</a> (int <a class="el" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, int <a class="el" href="group__ff.html#ga6088d3a3d3d398f82167777cf426b55c">y</a>, int <a class="el" href="group__ff.html#ga76fbaccbcbd6ea28eb431585fd93749d">z</a>)</td></tr>
+<tr class="separator:gad82f797b3e5464cb8328d94c34ed19a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabdf183c390af94e01c335752aab45fad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acc__syntax.html#structtinker_1_1int4">int4</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#gabdf183c390af94e01c335752aab45fad">tinker::make_int4</a> (int <a class="el" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, int <a class="el" href="group__ff.html#ga6088d3a3d3d398f82167777cf426b55c">y</a>, int <a class="el" href="group__ff.html#ga76fbaccbcbd6ea28eb431585fd93749d">z</a>, int w)</td></tr>
+<tr class="separator:gabdf183c390af94e01c335752aab45fad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga96d2bef555cfd7187b69224086276100"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acc__syntax.html#structtinker_1_1float2">float2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga96d2bef555cfd7187b69224086276100">tinker::make_float2</a> (float <a class="el" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, float <a class="el" href="group__ff.html#ga6088d3a3d3d398f82167777cf426b55c">y</a>)</td></tr>
+<tr class="separator:ga96d2bef555cfd7187b69224086276100"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga72bf81d2f783f8b81207aed14077889d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acc__syntax.html#structtinker_1_1float3">float3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga72bf81d2f783f8b81207aed14077889d">tinker::make_float3</a> (float <a class="el" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, float <a class="el" href="group__ff.html#ga6088d3a3d3d398f82167777cf426b55c">y</a>, float <a class="el" href="group__ff.html#ga76fbaccbcbd6ea28eb431585fd93749d">z</a>)</td></tr>
+<tr class="separator:ga72bf81d2f783f8b81207aed14077889d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga190963809d8f93abaa776dfaa1ed2a46"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acc__syntax.html#structtinker_1_1float4">float4</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga190963809d8f93abaa776dfaa1ed2a46">tinker::make_float4</a> (float <a class="el" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, float <a class="el" href="group__ff.html#ga6088d3a3d3d398f82167777cf426b55c">y</a>, float <a class="el" href="group__ff.html#ga76fbaccbcbd6ea28eb431585fd93749d">z</a>, float w)</td></tr>
+<tr class="separator:ga190963809d8f93abaa776dfaa1ed2a46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa971ce09b214d20132d6097c61428313"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acc__syntax.html#structtinker_1_1double2">double2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#gaa971ce09b214d20132d6097c61428313">tinker::make_double2</a> (double <a class="el" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, double <a class="el" href="group__ff.html#ga6088d3a3d3d398f82167777cf426b55c">y</a>)</td></tr>
+<tr class="separator:gaa971ce09b214d20132d6097c61428313"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2366c4f93ec02e21727244c9b9282aa0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acc__syntax.html#structtinker_1_1double3">double3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga2366c4f93ec02e21727244c9b9282aa0">tinker::make_double3</a> (double <a class="el" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, double <a class="el" href="group__ff.html#ga6088d3a3d3d398f82167777cf426b55c">y</a>, double <a class="el" href="group__ff.html#ga76fbaccbcbd6ea28eb431585fd93749d">z</a>)</td></tr>
+<tr class="separator:ga2366c4f93ec02e21727244c9b9282aa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga525c1c4672e0ad10f7a98ee53abd86b9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__acc__syntax.html#structtinker_1_1double4">double4</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ga525c1c4672e0ad10f7a98ee53abd86b9">tinker::make_double4</a> (double <a class="el" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, double <a class="el" href="group__ff.html#ga6088d3a3d3d398f82167777cf426b55c">y</a>, double <a class="el" href="group__ff.html#ga76fbaccbcbd6ea28eb431585fd93749d">z</a>, double w)</td></tr>
+<tr class="separator:ga525c1c4672e0ad10f7a98ee53abd86b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<hr/><h2 class="groupheader">Class Documentation</h2>
+<a name="structtinker_1_1int2" id="structtinker_1_1int2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1int2">&#9670;&nbsp;</a></span>tinker::int2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct tinker::int2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock"></div><table class="memberdecls">
+<tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
+<tr class="memitem:ad353f5d2f2a4053caea228bf4ed3a8ec"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ad353f5d2f2a4053caea228bf4ed3a8ec">x</a></td></tr>
+<tr class="separator:ad353f5d2f2a4053caea228bf4ed3a8ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaaca7e585888335a7d4608f26d3b9192"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#aaaca7e585888335a7d4608f26d3b9192">y</a></td></tr>
+<tr class="separator:aaaca7e585888335a7d4608f26d3b9192"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h4 class="groupheader">Member Data Documentation</h4>
+<a id="ad353f5d2f2a4053caea228bf4ed3a8ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad353f5d2f2a4053caea228bf4ed3a8ec">&#9670;&nbsp;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tinker::int2::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aaaca7e585888335a7d4608f26d3b9192"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaaca7e585888335a7d4608f26d3b9192">&#9670;&nbsp;</a></span>y</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tinker::int2::y</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+
+</div>
+</div>
+<a name="structtinker_1_1int3" id="structtinker_1_1int3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1int3">&#9670;&nbsp;</a></span>tinker::int3</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct tinker::int3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock"></div><table class="memberdecls">
+<tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
+<tr class="memitem:af2fefc146d8217626ec08122078fe8a1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#af2fefc146d8217626ec08122078fe8a1">x</a></td></tr>
+<tr class="separator:af2fefc146d8217626ec08122078fe8a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6746e10eac4eab2143ca6bad494a470"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ae6746e10eac4eab2143ca6bad494a470">y</a></td></tr>
+<tr class="separator:ae6746e10eac4eab2143ca6bad494a470"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a704bce3a5d4d36a8d2a09d07c0392a0b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a704bce3a5d4d36a8d2a09d07c0392a0b">z</a></td></tr>
+<tr class="separator:a704bce3a5d4d36a8d2a09d07c0392a0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h4 class="groupheader">Member Data Documentation</h4>
+<a id="af2fefc146d8217626ec08122078fe8a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2fefc146d8217626ec08122078fe8a1">&#9670;&nbsp;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tinker::int3::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae6746e10eac4eab2143ca6bad494a470"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6746e10eac4eab2143ca6bad494a470">&#9670;&nbsp;</a></span>y</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tinker::int3::y</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a704bce3a5d4d36a8d2a09d07c0392a0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a704bce3a5d4d36a8d2a09d07c0392a0b">&#9670;&nbsp;</a></span>z</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tinker::int3::z</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+
+</div>
+</div>
+<a name="structtinker_1_1int4" id="structtinker_1_1int4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1int4">&#9670;&nbsp;</a></span>tinker::int4</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct tinker::int4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock"></div><table class="memberdecls">
+<tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
+<tr class="memitem:a4c3d3964a8998294e86e90a7c7bb8001"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a4c3d3964a8998294e86e90a7c7bb8001">x</a></td></tr>
+<tr class="separator:a4c3d3964a8998294e86e90a7c7bb8001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0201d0deb6d0e6bb59294053d5123a75"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a0201d0deb6d0e6bb59294053d5123a75">y</a></td></tr>
+<tr class="separator:a0201d0deb6d0e6bb59294053d5123a75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a482f92a4704b4c675bc018fd9bb2c046"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a482f92a4704b4c675bc018fd9bb2c046">z</a></td></tr>
+<tr class="separator:a482f92a4704b4c675bc018fd9bb2c046"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa565faa8817e280c4be441f9c0fabbec"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#aa565faa8817e280c4be441f9c0fabbec">w</a></td></tr>
+<tr class="separator:aa565faa8817e280c4be441f9c0fabbec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h4 class="groupheader">Member Data Documentation</h4>
+<a id="aa565faa8817e280c4be441f9c0fabbec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa565faa8817e280c4be441f9c0fabbec">&#9670;&nbsp;</a></span>w</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tinker::int4::w</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4c3d3964a8998294e86e90a7c7bb8001"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c3d3964a8998294e86e90a7c7bb8001">&#9670;&nbsp;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tinker::int4::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0201d0deb6d0e6bb59294053d5123a75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0201d0deb6d0e6bb59294053d5123a75">&#9670;&nbsp;</a></span>y</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tinker::int4::y</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a482f92a4704b4c675bc018fd9bb2c046"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a482f92a4704b4c675bc018fd9bb2c046">&#9670;&nbsp;</a></span>z</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tinker::int4::z</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+
+</div>
+</div>
+<a name="structtinker_1_1float2" id="structtinker_1_1float2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1float2">&#9670;&nbsp;</a></span>tinker::float2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct tinker::float2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock"></div><table class="memberdecls">
+<tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
+<tr class="memitem:ad73ef279f043d03ba7cffab4feef8190"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ad73ef279f043d03ba7cffab4feef8190">x</a></td></tr>
+<tr class="separator:ad73ef279f043d03ba7cffab4feef8190"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff13de293122d18ed44089bae67e3807"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#aff13de293122d18ed44089bae67e3807">y</a></td></tr>
+<tr class="separator:aff13de293122d18ed44089bae67e3807"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h4 class="groupheader">Member Data Documentation</h4>
+<a id="ad73ef279f043d03ba7cffab4feef8190"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad73ef279f043d03ba7cffab4feef8190">&#9670;&nbsp;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float tinker::float2::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aff13de293122d18ed44089bae67e3807"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff13de293122d18ed44089bae67e3807">&#9670;&nbsp;</a></span>y</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float tinker::float2::y</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+
+</div>
+</div>
+<a name="structtinker_1_1float3" id="structtinker_1_1float3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1float3">&#9670;&nbsp;</a></span>tinker::float3</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct tinker::float3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock"></div><table class="memberdecls">
+<tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
+<tr class="memitem:ab32b72242fa05b3fe361c4c3b4cd9f5d"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ab32b72242fa05b3fe361c4c3b4cd9f5d">x</a></td></tr>
+<tr class="separator:ab32b72242fa05b3fe361c4c3b4cd9f5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af80bd9cc4c8eeb805dd06320774dc3f4"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#af80bd9cc4c8eeb805dd06320774dc3f4">y</a></td></tr>
+<tr class="separator:af80bd9cc4c8eeb805dd06320774dc3f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8584c3dd706449a3487b8157acf8683"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#af8584c3dd706449a3487b8157acf8683">z</a></td></tr>
+<tr class="separator:af8584c3dd706449a3487b8157acf8683"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h4 class="groupheader">Member Data Documentation</h4>
+<a id="ab32b72242fa05b3fe361c4c3b4cd9f5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab32b72242fa05b3fe361c4c3b4cd9f5d">&#9670;&nbsp;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float tinker::float3::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af80bd9cc4c8eeb805dd06320774dc3f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af80bd9cc4c8eeb805dd06320774dc3f4">&#9670;&nbsp;</a></span>y</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float tinker::float3::y</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af8584c3dd706449a3487b8157acf8683"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8584c3dd706449a3487b8157acf8683">&#9670;&nbsp;</a></span>z</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float tinker::float3::z</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+
+</div>
+</div>
+<a name="structtinker_1_1float4" id="structtinker_1_1float4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1float4">&#9670;&nbsp;</a></span>tinker::float4</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct tinker::float4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock"></div><table class="memberdecls">
+<tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
+<tr class="memitem:abfe80504320fe94940dd6901c7a847ea"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#abfe80504320fe94940dd6901c7a847ea">x</a></td></tr>
+<tr class="separator:abfe80504320fe94940dd6901c7a847ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3ee22af29d9b36e571c7a478f976597"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ac3ee22af29d9b36e571c7a478f976597">y</a></td></tr>
+<tr class="separator:ac3ee22af29d9b36e571c7a478f976597"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f4857baf8c5cec71c9ddb54e92bcabe"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a1f4857baf8c5cec71c9ddb54e92bcabe">z</a></td></tr>
+<tr class="separator:a1f4857baf8c5cec71c9ddb54e92bcabe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b11250673d8ca4666fe0ba3789b7f94"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a6b11250673d8ca4666fe0ba3789b7f94">w</a></td></tr>
+<tr class="separator:a6b11250673d8ca4666fe0ba3789b7f94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h4 class="groupheader">Member Data Documentation</h4>
+<a id="a6b11250673d8ca4666fe0ba3789b7f94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b11250673d8ca4666fe0ba3789b7f94">&#9670;&nbsp;</a></span>w</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float tinker::float4::w</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abfe80504320fe94940dd6901c7a847ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfe80504320fe94940dd6901c7a847ea">&#9670;&nbsp;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float tinker::float4::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac3ee22af29d9b36e571c7a478f976597"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3ee22af29d9b36e571c7a478f976597">&#9670;&nbsp;</a></span>y</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float tinker::float4::y</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1f4857baf8c5cec71c9ddb54e92bcabe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f4857baf8c5cec71c9ddb54e92bcabe">&#9670;&nbsp;</a></span>z</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float tinker::float4::z</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+
+</div>
+</div>
+<a name="structtinker_1_1double2" id="structtinker_1_1double2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1double2">&#9670;&nbsp;</a></span>tinker::double2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct tinker::double2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock"></div><table class="memberdecls">
+<tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
+<tr class="memitem:ab5750273f15ac3a9cf04aa7df7bb983b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ab5750273f15ac3a9cf04aa7df7bb983b">x</a></td></tr>
+<tr class="separator:ab5750273f15ac3a9cf04aa7df7bb983b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d23649a40de74cf527b2c44dae59562"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a6d23649a40de74cf527b2c44dae59562">y</a></td></tr>
+<tr class="separator:a6d23649a40de74cf527b2c44dae59562"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h4 class="groupheader">Member Data Documentation</h4>
+<a id="ab5750273f15ac3a9cf04aa7df7bb983b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5750273f15ac3a9cf04aa7df7bb983b">&#9670;&nbsp;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tinker::double2::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6d23649a40de74cf527b2c44dae59562"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d23649a40de74cf527b2c44dae59562">&#9670;&nbsp;</a></span>y</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tinker::double2::y</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+
+</div>
+</div>
+<a name="structtinker_1_1double3" id="structtinker_1_1double3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1double3">&#9670;&nbsp;</a></span>tinker::double3</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct tinker::double3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock"></div><table class="memberdecls">
+<tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
+<tr class="memitem:a4a2cd6d409174606c55326917c12aa9b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a4a2cd6d409174606c55326917c12aa9b">x</a></td></tr>
+<tr class="separator:a4a2cd6d409174606c55326917c12aa9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2e5de88f00f3af464a5e88b728580bd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ad2e5de88f00f3af464a5e88b728580bd">y</a></td></tr>
+<tr class="separator:ad2e5de88f00f3af464a5e88b728580bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99e53c9ba9db9314093637f136baf06c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a99e53c9ba9db9314093637f136baf06c">z</a></td></tr>
+<tr class="separator:a99e53c9ba9db9314093637f136baf06c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h4 class="groupheader">Member Data Documentation</h4>
+<a id="a4a2cd6d409174606c55326917c12aa9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a2cd6d409174606c55326917c12aa9b">&#9670;&nbsp;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tinker::double3::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad2e5de88f00f3af464a5e88b728580bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2e5de88f00f3af464a5e88b728580bd">&#9670;&nbsp;</a></span>y</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tinker::double3::y</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a99e53c9ba9db9314093637f136baf06c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99e53c9ba9db9314093637f136baf06c">&#9670;&nbsp;</a></span>z</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tinker::double3::z</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+
+</div>
+</div>
+<a name="structtinker_1_1double4" id="structtinker_1_1double4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1double4">&#9670;&nbsp;</a></span>tinker::double4</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">struct tinker::double4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="textblock"></div><table class="memberdecls">
+<tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
+<tr class="memitem:ad3abd431bd2bca6edfa551fa88ea0ef7"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#ad3abd431bd2bca6edfa551fa88ea0ef7">x</a></td></tr>
+<tr class="separator:ad3abd431bd2bca6edfa551fa88ea0ef7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fe7bc271217ccf7755e391f4f37cfed"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a8fe7bc271217ccf7755e391f4f37cfed">y</a></td></tr>
+<tr class="separator:a8fe7bc271217ccf7755e391f4f37cfed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc315460dcf3831a5b3e1ad7284ddfb2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#afc315460dcf3831a5b3e1ad7284ddfb2">z</a></td></tr>
+<tr class="separator:afc315460dcf3831a5b3e1ad7284ddfb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59d59705c48bbb862475f06f3bf543af"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__acc__syntax.html#a59d59705c48bbb862475f06f3bf543af">w</a></td></tr>
+<tr class="separator:a59d59705c48bbb862475f06f3bf543af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h4 class="groupheader">Member Data Documentation</h4>
+<a id="a59d59705c48bbb862475f06f3bf543af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59d59705c48bbb862475f06f3bf543af">&#9670;&nbsp;</a></span>w</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tinker::double4::w</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad3abd431bd2bca6edfa551fa88ea0ef7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3abd431bd2bca6edfa551fa88ea0ef7">&#9670;&nbsp;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tinker::double4::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8fe7bc271217ccf7755e391f4f37cfed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fe7bc271217ccf7755e391f4f37cfed">&#9670;&nbsp;</a></span>y</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tinker::double4::y</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afc315460dcf3831a5b3e1ad7284ddfb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc315460dcf3831a5b3e1ad7284ddfb2">&#9670;&nbsp;</a></span>z</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tinker::double4::z</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+
+</div>
+</div>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="gafc832d528e178477cfa0577ff8782ac5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafc832d528e178477cfa0577ff8782ac5">&#9670;&nbsp;</a></span>SEQ_CUDA</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SEQ_CUDA</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>An empty macro in the OpenACC source code. </p>
+
+</div>
+</div>
+<a id="gae1187d8dadd78f33bac11eec7b297eb4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae1187d8dadd78f33bac11eec7b297eb4">&#9670;&nbsp;</a></span>SEQ_ROUTINE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SEQ_ROUTINE&#160;&#160;&#160;_Pragma(&quot;acc routine seq&quot;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Expands to <code>_Pragma</code>("acc routine seq") in OpenACC source files. <code>#pragma acc</code> cannot be used in macro. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga8b892223ad1638cd99f28cf325ff3e26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8b892223ad1638cd99f28cf325ff3e26">&#9670;&nbsp;</a></span>atomic_add() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T , class  = typename std::enable_if&lt;std::is_same&lt;T, float&gt;::value ||      std::is_same&lt;T, double&gt;::value&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tinker::atomic_add </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a> *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>offset</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Adds <code>value</code> to <code>buffer[offset]</code> via fixed-point arithmetic. </p><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>A floating-point type. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga6f53a25dbbcf814dd75b8d35d784d472"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6f53a25dbbcf814dd75b8d35d784d472">&#9670;&nbsp;</a></span>atomic_add() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tinker::atomic_add </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>offset</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Adds <code>value</code> to <code>buffer[offset]</code>. </p><dl class="section note"><dt>Note</dt><dd><code>value</code> and <code>buffer</code> elements are of the same type. </dd></dl>
+
+</div>
+</div>
+<a id="gad110546c7c112636e47157015cb8460b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad110546c7c112636e47157015cb8460b">&#9670;&nbsp;</a></span>atomic_add() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T , class  = typename std::enable_if&lt;std::is_same&lt;T, float&gt;::value ||      std::is_same&lt;T, double&gt;::value&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tinker::atomic_add </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vxx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vyx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vzx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vyy</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vzy</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vzz</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a>(*)&#160;</td>
+          <td class="paramname"><em>buffer</em>[8], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>offset</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Adds virial <code>{xx,yx,zx,yy,zy,zz}</code> to <code>buffer[offset][0 to 7]</code> via fixed-point arithmetic. </p>
+
+</div>
+</div>
+<a id="ga4b3e37ed165ba58b8238781413c82fe0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4b3e37ed165ba58b8238781413c82fe0">&#9670;&nbsp;</a></span>atomic_add() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tinker::atomic_add </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vxx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vyx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vzx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vyy</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vzy</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>vzz</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T(*)&#160;</td>
+          <td class="paramname"><em>buffer</em>[8], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>offset</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Adds virial <code>{xx,yx,zx,yy,zy,zz}</code> to <code>buffer[offset][0 to 7]</code>. </p>
+
+</div>
+</div>
+<a id="ga8a768ea49f35fd0f7240752ddb711629"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8a768ea49f35fd0f7240752ddb711629">&#9670;&nbsp;</a></span>eq()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T , class U &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool tinker::eq </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Used as <code><a class="el" href="group__acc__syntax.html#ga8a768ea49f35fd0f7240752ddb711629" title="Used as eq&lt;T1,T2&gt;() for two type identifiers.">eq&lt;T1,T2&gt;()</a></code> for two type identifiers. </p>
+
+</div>
+</div>
+<a id="ga47b708b2c42affd1f96e149525f3f15b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga47b708b2c42affd1f96e149525f3f15b">&#9670;&nbsp;</a></span>fixedTo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T tinker::fixedTo </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a>&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converts <code>val</code> of fixed-point to floating-point. </p>
+
+</div>
+</div>
+<a id="ga3c5c70c14c0708cd64583bd1b5db5a6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3c5c70c14c0708cd64583bd1b5db5a6f">&#9670;&nbsp;</a></span>floatTo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class G , class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">G tinker::floatTo </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converts <code>val</code> of floating-point to type <code>G</code>. </p>
+
+</div>
+</div>
+<a id="gaa971ce09b214d20132d6097c61428313"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa971ce09b214d20132d6097c61428313">&#9670;&nbsp;</a></span>make_double2()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__acc__syntax.html#structtinker_1_1double2">double2</a> tinker::make_double2 </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>y</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga2366c4f93ec02e21727244c9b9282aa0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2366c4f93ec02e21727244c9b9282aa0">&#9670;&nbsp;</a></span>make_double3()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__acc__syntax.html#structtinker_1_1double3">double3</a> tinker::make_double3 </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>z</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga525c1c4672e0ad10f7a98ee53abd86b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga525c1c4672e0ad10f7a98ee53abd86b9">&#9670;&nbsp;</a></span>make_double4()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__acc__syntax.html#structtinker_1_1double4">double4</a> tinker::make_double4 </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>z</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>w</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga96d2bef555cfd7187b69224086276100"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga96d2bef555cfd7187b69224086276100">&#9670;&nbsp;</a></span>make_float2()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__acc__syntax.html#structtinker_1_1float2">float2</a> tinker::make_float2 </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>y</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga72bf81d2f783f8b81207aed14077889d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga72bf81d2f783f8b81207aed14077889d">&#9670;&nbsp;</a></span>make_float3()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__acc__syntax.html#structtinker_1_1float3">float3</a> tinker::make_float3 </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>z</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga190963809d8f93abaa776dfaa1ed2a46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga190963809d8f93abaa776dfaa1ed2a46">&#9670;&nbsp;</a></span>make_float4()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__acc__syntax.html#structtinker_1_1float4">float4</a> tinker::make_float4 </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>z</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>w</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga0fea492d3451acb1559bbe5349a6397a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0fea492d3451acb1559bbe5349a6397a">&#9670;&nbsp;</a></span>make_int2()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__acc__syntax.html#structtinker_1_1int2">int2</a> tinker::make_int2 </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>y</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="gad82f797b3e5464cb8328d94c34ed19a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad82f797b3e5464cb8328d94c34ed19a9">&#9670;&nbsp;</a></span>make_int3()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__acc__syntax.html#structtinker_1_1int3">int3</a> tinker::make_int3 </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>z</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="gabdf183c390af94e01c335752aab45fad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabdf183c390af94e01c335752aab45fad">&#9670;&nbsp;</a></span>make_int4()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__acc__syntax.html#structtinker_1_1int4">int4</a> tinker::make_int4 </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>z</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>w</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga43124f67d1ef5241ba179d3592252f2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga43124f67d1ef5241ba179d3592252f2a">&#9670;&nbsp;</a></span>toFloatGrad() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T tinker::toFloatGrad </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>g</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converts a double-precision value <code>g</code> to floating-point value. </p>
+
+</div>
+</div>
+<a id="ga3ca2edd4f30ab7febe86764d0fa71b3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3ca2edd4f30ab7febe86764d0fa71b3a">&#9670;&nbsp;</a></span>toFloatGrad() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T tinker::toFloatGrad </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a>&#160;</td>
+          <td class="paramname"><em>g</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converts a fixed-point value <code>g</code> to floating-point value. </p>
+
+</div>
+</div>
+<a id="gab7747a809b4d7764a929856033b29241"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab7747a809b4d7764a929856033b29241">&#9670;&nbsp;</a></span>toFloatGrad() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T tinker::toFloatGrad </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>g</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converts a single-precision value <code>g</code> to floating-point value. </p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

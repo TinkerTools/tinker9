@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Tinker9: CUDA Specific Code</title>
+<title>Tinker9: CUDA Syntax</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -71,53 +71,32 @@ $(function() {
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#define-members">Macros</a> &#124;
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">CUDA Specific Code<div class="ingroups"><a class="el" href="group__platform.html">Platforms and Syntaxes</a></div></div>  </div>
+<div class="title">CUDA Syntax<div class="ingroups"><a class="el" href="group__platform.html">Platforms</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:classtinker_1_1_thrust_cache"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#classtinker_1_1_thrust_cache">tinker::ThrustCache</a></td></tr>
-<tr class="memdesc:classtinker_1_1_thrust_cache"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device memory cache for the Thrust Library.  <a href="group__cuda__syntax.html#classtinker_1_1_thrust_cache">More...</a><br /></td></tr>
-<tr class="separator:classtinker_1_1_thrust_cache"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:gace905349e3cca47762bee79ec7643ce9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gace905349e3cca47762bee79ec7643ce9">INT_COPYSIGN</a>&#160;&#160;&#160;intCopysignShift</td></tr>
-<tr class="memdesc:gace905349e3cca47762bee79ec7643ce9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the implementation of <code>int copysign(int,int);</code> function.  <a href="group__cuda__syntax.html#gace905349e3cca47762bee79ec7643ce9">More...</a><br /></td></tr>
-<tr class="separator:gace905349e3cca47762bee79ec7643ce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4f2f73bf7c4dade71e79ca23af4d926f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga4f2f73bf7c4dade71e79ca23af4d926f">ITHREAD</a>&#160;&#160;&#160;threadIdx.x + blockIdx.x* blockDim.x</td></tr>
+<tr class="separator:ga4f2f73bf7c4dade71e79ca23af4d926f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga351d54267048643c4365f6a24641d0cf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga351d54267048643c4365f6a24641d0cf">STRIDE</a>&#160;&#160;&#160;blockDim.x* gridDim.x</td></tr>
+<tr class="separator:ga351d54267048643c4365f6a24641d0cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae1187d8dadd78f33bac11eec7b297eb4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a>&#160;&#160;&#160;__device__</td></tr>
-<tr class="memdesc:gae1187d8dadd78f33bac11eec7b297eb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Expands to <code>__device__</code> in CUDA source files.  <a href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">More...</a><br /></td></tr>
 <tr class="separator:gae1187d8dadd78f33bac11eec7b297eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafc832d528e178477cfa0577ff8782ac5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gafc832d528e178477cfa0577ff8782ac5">SEQ_CUDA</a>&#160;&#160;&#160;__device__</td></tr>
-<tr class="memdesc:gafc832d528e178477cfa0577ff8782ac5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Expands to <code>__device__</code> in CUDA source files. Used in CUDA kernel templates.  <a href="group__cuda__syntax.html#gafc832d528e178477cfa0577ff8782ac5">More...</a><br /></td></tr>
 <tr class="separator:gafc832d528e178477cfa0577ff8782ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gad370b71fad00d420ad405f9d748035ef"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gad370b71fad00d420ad405f9d748035ef">tinker::intCopysignShift</a> (int a, int b)</td></tr>
-<tr class="memdesc:gad370b71fad00d420ad405f9d748035ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">If <code>b &lt; 0</code>, returns <code>-abs(a)</code>, otherwise, returns <code>abs(a)</code>. Similar to the 32-bit integer version of Fortran <code>SIGN(A,B)</code>.  <a href="group__cuda__syntax.html#gad370b71fad00d420ad405f9d748035ef">More...</a><br /></td></tr>
-<tr class="separator:gad370b71fad00d420ad405f9d748035ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga4a82a27bb0a0ec92f3e348e5a6c3c2b1"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">tinker::intCopysignIf</a> (int a, int b)</td></tr>
-<tr class="memdesc:ga4a82a27bb0a0ec92f3e348e5a6c3c2b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">If <code>b &lt; 0</code>, returns <code>-abs(a)</code>, otherwise, returns <code>abs(a)</code>.  <a href="group__cuda__syntax.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">More...</a><br /></td></tr>
-<tr class="separator:ga4a82a27bb0a0ec92f3e348e5a6c3c2b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3813648698b545ee7abeba6a22e9d509"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga3813648698b545ee7abeba6a22e9d509">tinker::ffsnShift</a> (int c1, int <a class="el" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>)</td></tr>
-<tr class="memdesc:ga3813648698b545ee7abeba6a22e9d509"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find the position of the n-th least significant bit set in a 32-bit integer. Returns a value from 0 to 32.  <a href="group__cuda__syntax.html#ga3813648698b545ee7abeba6a22e9d509">More...</a><br /></td></tr>
-<tr class="separator:ga3813648698b545ee7abeba6a22e9d509"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gade82f17c9ecdcd5c744ebe0190a96875"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gade82f17c9ecdcd5c744ebe0190a96875">tinker::ffsnLoop</a> (int c1, int <a class="el" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>)</td></tr>
-<tr class="memdesc:gade82f17c9ecdcd5c744ebe0190a96875"><td class="mdescLeft">&#160;</td><td class="mdescRight">An alternative implementation of ffsn using loop.  <a href="group__cuda__syntax.html#gade82f17c9ecdcd5c744ebe0190a96875">More...</a><br /></td></tr>
-<tr class="separator:gade82f17c9ecdcd5c744ebe0190a96875"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga294329a3b32a96c65f96f082bcc4a298"><td class="memTemplParams" colspan="2">template&lt;class K , class... Ts&gt; </td></tr>
-<tr class="memitem:ga294329a3b32a96c65f96f082bcc4a298"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga294329a3b32a96c65f96f082bcc4a298">tinker::launch_k4</a> (cudaStream_t st, size_t sh, int bs, int np, K k, Ts &amp;&amp;... a)</td></tr>
-<tr class="separator:ga294329a3b32a96c65f96f082bcc4a298"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8f2171e3c6fbc4cdb4172834ec2ce677"><td class="memTemplParams" colspan="2">template&lt;class K , class... Ts&gt; </td></tr>
-<tr class="memitem:ga8f2171e3c6fbc4cdb4172834ec2ce677"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga8f2171e3c6fbc4cdb4172834ec2ce677">tinker::launch_k4b</a> (cudaStream_t st, size_t sh, int bs, int np, K k, Ts &amp;&amp;... a)</td></tr>
-<tr class="separator:ga8f2171e3c6fbc4cdb4172834ec2ce677"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4dcbc2fad7e98df99c3eb5b890794202"><td class="memTemplParams" colspan="2">template&lt;class K , class... Ts&gt; </td></tr>
+<tr class="memitem:ga4dcbc2fad7e98df99c3eb5b890794202"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga4dcbc2fad7e98df99c3eb5b890794202">tinker::launch_k3s</a> (cudaStream_t st, size_t sh, int bs, int np, K k, Ts &amp;&amp;... a)</td></tr>
+<tr class="separator:ga4dcbc2fad7e98df99c3eb5b890794202"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6674b108bcc5730f2a448473920538fa"><td class="memTemplParams" colspan="2">template&lt;class K , class... Ts&gt; </td></tr>
+<tr class="memitem:ga6674b108bcc5730f2a448473920538fa"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga6674b108bcc5730f2a448473920538fa">tinker::launch_k3b</a> (cudaStream_t st, size_t sh, int bs, int np, K k, Ts &amp;&amp;... a)</td></tr>
+<tr class="separator:ga6674b108bcc5730f2a448473920538fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac6e2d373b6ca6844c2693bf9bfa4f993"><td class="memTemplParams" colspan="2">template&lt;class K , class... Ts&gt; </td></tr>
 <tr class="memitem:gac6e2d373b6ca6844c2693bf9bfa4f993"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">tinker::launch_k2s</a> (cudaStream_t st, int bs, int np, K k, Ts &amp;&amp;... a)</td></tr>
 <tr class="separator:gac6e2d373b6ca6844c2693bf9bfa4f993"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,266 +111,48 @@ Functions</h2></td></tr>
 <tr class="separator:ga26a3ab4a08126272a8c2a8e7b1adcc82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga113e5f952ae32ee3252c2e0cf5d2f64a"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga113e5f952ae32ee3252c2e0cf5d2f64a"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga113e5f952ae32ee3252c2e0cf5d2f64a">tinker::atomic_add</a> (T value, T *buffer, size_t offset=0)</td></tr>
-<tr class="memdesc:ga113e5f952ae32ee3252c2e0cf5d2f64a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds <code>value</code> to <code>buffer[offset]</code>.  <a href="group__cuda__syntax.html#ga113e5f952ae32ee3252c2e0cf5d2f64a">More...</a><br /></td></tr>
 <tr class="separator:ga113e5f952ae32ee3252c2e0cf5d2f64a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf8490b7537553978014ab730ee9ced53"><td class="memTemplParams" colspan="2">template&lt;class T , class  = typename std::enable_if&lt;std::is_same&lt;T, float&gt;::value ||      std::is_same&lt;T, double&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:gaf8490b7537553978014ab730ee9ced53"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gaf8490b7537553978014ab730ee9ced53">tinker::atomic_add</a> (T value, <a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a> *buffer, size_t offset=0)</td></tr>
-<tr class="memdesc:gaf8490b7537553978014ab730ee9ced53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds <code>value</code> to <code>buffer[offset]</code> via fixed-point arithmetic.  <a href="group__cuda__syntax.html#gaf8490b7537553978014ab730ee9ced53">More...</a><br /></td></tr>
 <tr class="separator:gaf8490b7537553978014ab730ee9ced53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf850aa84dfc9cf8335e98ea2eb81a27f"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:gaf850aa84dfc9cf8335e98ea2eb81a27f"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gaf850aa84dfc9cf8335e98ea2eb81a27f">tinker::atomic_add</a> (T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T(*buffer)[8], size_t offset=0)</td></tr>
-<tr class="memdesc:gaf850aa84dfc9cf8335e98ea2eb81a27f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds virial <code>{xx,yx,zx,yy,zy,zz}</code> to <code>buffer[offset][0 to 7]</code>.  <a href="group__cuda__syntax.html#gaf850aa84dfc9cf8335e98ea2eb81a27f">More...</a><br /></td></tr>
 <tr class="separator:gaf850aa84dfc9cf8335e98ea2eb81a27f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga563a3e0fda60c724b911e03bef0364da"><td class="memTemplParams" colspan="2">template&lt;class T , class  = typename std::enable_if&lt;std::is_same&lt;T, float&gt;::value ||      std::is_same&lt;T, double&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:ga563a3e0fda60c724b911e03bef0364da"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga563a3e0fda60c724b911e03bef0364da">tinker::atomic_add</a> (T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, <a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a>(*buffer)[8], size_t offset=0)</td></tr>
-<tr class="memdesc:ga563a3e0fda60c724b911e03bef0364da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds virial <code>{xx,yx,zx,yy,zy,zz}</code> to <code>buffer[offset][0 to 7]</code> via fixed-point arithmetic.  <a href="group__cuda__syntax.html#ga563a3e0fda60c724b911e03bef0364da">More...</a><br /></td></tr>
 <tr class="separator:ga563a3e0fda60c724b911e03bef0364da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga13b8f3f083445e998421fb82e5b192be"><td class="memTemplParams" colspan="2">template&lt;class G , class T &gt; </td></tr>
 <tr class="memitem:ga13b8f3f083445e998421fb82e5b192be"><td class="memTemplItemLeft" align="right" valign="top">__device__ G&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga13b8f3f083445e998421fb82e5b192be">tinker::floatTo</a> (T val)</td></tr>
-<tr class="memdesc:ga13b8f3f083445e998421fb82e5b192be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts <code>val</code> of floating-point from its original type to type <code>G</code>.  <a href="group__cuda__syntax.html#ga13b8f3f083445e998421fb82e5b192be">More...</a><br /></td></tr>
 <tr class="separator:ga13b8f3f083445e998421fb82e5b192be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga04bdc1b484c00b6b7cb2301e598fdeb1"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga04bdc1b484c00b6b7cb2301e598fdeb1"><td class="memTemplItemLeft" align="right" valign="top">__device__ T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga04bdc1b484c00b6b7cb2301e598fdeb1">tinker::fixedTo</a> (<a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a> val)</td></tr>
-<tr class="memdesc:ga04bdc1b484c00b6b7cb2301e598fdeb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts <code>val</code> of fixed-point to floating-point.  <a href="group__cuda__syntax.html#ga04bdc1b484c00b6b7cb2301e598fdeb1">More...</a><br /></td></tr>
 <tr class="separator:ga04bdc1b484c00b6b7cb2301e598fdeb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae93b259fd16f7fd28b04a8749d0ed4aa"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:gae93b259fd16f7fd28b04a8749d0ed4aa"><td class="memTemplItemLeft" align="right" valign="top">__device__ T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gae93b259fd16f7fd28b04a8749d0ed4aa">tinker::toFloatGrad</a> (<a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a> g)</td></tr>
+<tr class="separator:gae93b259fd16f7fd28b04a8749d0ed4aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga04114fac1803630939755fadf156320d"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:ga04114fac1803630939755fadf156320d"><td class="memTemplItemLeft" align="right" valign="top">__device__ T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga04114fac1803630939755fadf156320d">tinker::toFloatGrad</a> (double g)</td></tr>
+<tr class="separator:ga04114fac1803630939755fadf156320d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga41fdcd29dd0553882401902c8c816210"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:ga41fdcd29dd0553882401902c8c816210"><td class="memTemplItemLeft" align="right" valign="top">__device__ T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga41fdcd29dd0553882401902c8c816210">tinker::toFloatGrad</a> (float g)</td></tr>
+<tr class="separator:ga41fdcd29dd0553882401902c8c816210"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3567952c8adb4288a66de7296a2a0ae5"><td class="memTemplParams" colspan="2">template&lt;class T , class U &gt; </td></tr>
 <tr class="memitem:ga3567952c8adb4288a66de7296a2a0ae5"><td class="memTemplItemLeft" align="right" valign="top">__device__ constexpr __host__ bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga3567952c8adb4288a66de7296a2a0ae5">tinker::eq</a> ()</td></tr>
-<tr class="memdesc:ga3567952c8adb4288a66de7296a2a0ae5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used as <code>eq&lt;T1,T2&gt;()</code> for two type identifiers.  <a href="group__cuda__syntax.html#ga3567952c8adb4288a66de7296a2a0ae5">More...</a><br /></td></tr>
 <tr class="separator:ga3567952c8adb4288a66de7296a2a0ae5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:ga9c896890fb63d0cd6d9a4c99409c4134"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga9c896890fb63d0cd6d9a4c99409c4134">tinker::pinned_buf</a></td></tr>
-<tr class="memdesc:ga9c896890fb63d0cd6d9a4c99409c4134"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preallocated pinned host memory.  <a href="group__cuda__syntax.html#ga9c896890fb63d0cd6d9a4c99409c4134">More...</a><br /></td></tr>
-<tr class="separator:ga9c896890fb63d0cd6d9a4c99409c4134"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae8b0536dc44e34f2c19665550c0ede7f"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gae8b0536dc44e34f2c19665550c0ede7f">tinker::dptr_buf</a></td></tr>
-<tr class="memdesc:gae8b0536dc44e34f2c19665550c0ede7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preallocated device memory.  <a href="group__cuda__syntax.html#gae8b0536dc44e34f2c19665550c0ede7f">More...</a><br /></td></tr>
-<tr class="separator:gae8b0536dc44e34f2c19665550c0ede7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<hr/><h2 class="groupheader">Class Documentation</h2>
-<a name="classtinker_1_1_thrust_cache" id="classtinker_1_1_thrust_cache"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#classtinker_1_1_thrust_cache">&#9670;&nbsp;</a></span>tinker::ThrustCache</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">class tinker::ThrustCache</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<div class="textblock"><p>Device memory cache for the Thrust Library. </p>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h3>Public Types</h3></td></tr>
-<tr class="memitem:ab016712515f38326c818979030022481"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ab016712515f38326c818979030022481">value_type</a> = char</td></tr>
-<tr class="separator:ab016712515f38326c818979030022481"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><h3>Public Member Functions</h3></td></tr>
-<tr class="memitem:a1bb1f645a4e0b986694ce8e6f23643dc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#a1bb1f645a4e0b986694ce8e6f23643dc">ThrustCache</a> ()</td></tr>
-<tr class="separator:a1bb1f645a4e0b986694ce8e6f23643dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a665b28fbae7f6d4dc20721dcc8b76b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__cuda__syntax.html#ab016712515f38326c818979030022481">value_type</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#a2a665b28fbae7f6d4dc20721dcc8b76b">allocate</a> (ptrdiff_t)</td></tr>
-<tr class="separator:a2a665b28fbae7f6d4dc20721dcc8b76b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03322c7ff7fc563dec96b906485ca009"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#a03322c7ff7fc563dec96b906485ca009">deallocate</a> (<a class="el" href="group__cuda__syntax.html#ab016712515f38326c818979030022481">value_type</a> *, size_t)</td></tr>
-<tr class="separator:a03322c7ff7fc563dec96b906485ca009"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a888482682e2e331aef0d9254141974e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#a888482682e2e331aef0d9254141974e3">clear</a> ()</td></tr>
-<tr class="separator:a888482682e2e331aef0d9254141974e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr><td colspan="2"><h3>Static Public Member Functions</h3></td></tr>
-<tr class="memitem:aec0a8fc8876a7dd74271fd1835509aa1"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="group__cuda__syntax.html#classtinker_1_1_thrust_cache">ThrustCache</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#aec0a8fc8876a7dd74271fd1835509aa1">instance</a> ()</td></tr>
-<tr class="separator:aec0a8fc8876a7dd74271fd1835509aa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc90f210a6bddbfa6884d755f118fb2f"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#acc90f210a6bddbfa6884d755f118fb2f">allocate</a> ()</td></tr>
-<tr class="separator:acc90f210a6bddbfa6884d755f118fb2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adab480b0aec534ceff0382d0a65dc607"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#adab480b0aec534ceff0382d0a65dc607">deallocate</a> ()</td></tr>
-<tr class="separator:adab480b0aec534ceff0382d0a65dc607"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<h4 class="groupheader">Member Typedef Documentation</h4>
-<a id="ab016712515f38326c818979030022481"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab016712515f38326c818979030022481">&#9670;&nbsp;</a></span>value_type</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="group__cuda__syntax.html#ab016712515f38326c818979030022481">tinker::ThrustCache::value_type</a> =  char</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h4 class="groupheader">Constructor &amp; Destructor Documentation</h4>
-<a id="a1bb1f645a4e0b986694ce8e6f23643dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1bb1f645a4e0b986694ce8e6f23643dc">&#9670;&nbsp;</a></span>ThrustCache()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">tinker::ThrustCache::ThrustCache </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h4 class="groupheader">Member Function Documentation</h4>
-<a id="acc90f210a6bddbfa6884d755f118fb2f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc90f210a6bddbfa6884d755f118fb2f">&#9670;&nbsp;</a></span>allocate() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void tinker::ThrustCache::allocate </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a2a665b28fbae7f6d4dc20721dcc8b76b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a665b28fbae7f6d4dc20721dcc8b76b">&#9670;&nbsp;</a></span>allocate() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="group__cuda__syntax.html#ab016712515f38326c818979030022481">value_type</a>* tinker::ThrustCache::allocate </td>
-          <td>(</td>
-          <td class="paramtype">ptrdiff_t&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a888482682e2e331aef0d9254141974e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a888482682e2e331aef0d9254141974e3">&#9670;&nbsp;</a></span>clear()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tinker::ThrustCache::clear </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="adab480b0aec534ceff0382d0a65dc607"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adab480b0aec534ceff0382d0a65dc607">&#9670;&nbsp;</a></span>deallocate() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void tinker::ThrustCache::deallocate </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a03322c7ff7fc563dec96b906485ca009"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03322c7ff7fc563dec96b906485ca009">&#9670;&nbsp;</a></span>deallocate() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tinker::ThrustCache::deallocate </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="group__cuda__syntax.html#ab016712515f38326c818979030022481">value_type</a> *&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aec0a8fc8876a7dd74271fd1835509aa1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec0a8fc8876a7dd74271fd1835509aa1">&#9670;&nbsp;</a></span>instance()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="group__cuda__syntax.html#classtinker_1_1_thrust_cache">ThrustCache</a>&amp; tinker::ThrustCache::instance </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-
-</div>
-</div>
 <h2 class="groupheader">Macro Definition Documentation</h2>
-<a id="gace905349e3cca47762bee79ec7643ce9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gace905349e3cca47762bee79ec7643ce9">&#9670;&nbsp;</a></span>INT_COPYSIGN</h2>
+<a id="ga4f2f73bf7c4dade71e79ca23af4d926f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4f2f73bf7c4dade71e79ca23af4d926f">&#9670;&nbsp;</a></span>ITHREAD</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define INT_COPYSIGN&#160;&#160;&#160;intCopysignShift</td>
+          <td class="memname">#define ITHREAD&#160;&#160;&#160;threadIdx.x + blockIdx.x* blockDim.x</td>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Defines the implementation of <code>int copysign(int,int);</code> function. </p>
 
 </div>
 </div>
@@ -406,8 +167,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Expands to <code>__device__</code> in CUDA source files. Used in CUDA kernel templates. </p>
+<p>Expands to <code><b>device</b></code> in CUDA source files. Used in CUDA kernel templates. </p>
 
 </div>
 </div>
@@ -422,8 +182,21 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Expands to <code><b>device</b></code> in CUDA source files. </p>
 
-<p>Expands to <code>__device__</code> in CUDA source files. </p>
+</div>
+</div>
+<a id="ga351d54267048643c4365f6a24641d0cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga351d54267048643c4365f6a24641d0cf">&#9670;&nbsp;</a></span>STRIDE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define STRIDE&#160;&#160;&#160;blockDim.x* gridDim.x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -473,7 +246,7 @@ template&lt;class T , class  = typename std::enable_if&lt;std::is_same&lt;T, flo
 <p>Adds <code>value</code> to <code>buffer[offset]</code> via fixed-point arithmetic. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>Must be of floating-point type. </td></tr>
+    <tr><td class="paramname">T</td><td>A floating-point type. </td></tr>
   </table>
   </dd>
 </dl>
@@ -521,9 +294,7 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Adds <code>value</code> to <code>buffer[offset]</code>. </p>
-<dl class="section note"><dt>Note</dt><dd><code>value</code> and <code>buffer</code> elements are of the same type. </dd></dl>
+<p>Adds <code>value</code> to <code>buffer[offset]</code>. </p><dl class="section note"><dt>Note</dt><dd><code>value</code> and <code>buffer</code> elements are of the same type. </dd></dl>
 
 </div>
 </div>
@@ -704,95 +475,7 @@ template&lt;class T , class U &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Used as <code>eq&lt;T1,T2&gt;()</code> for two type identifiers. </p>
-
-</div>
-</div>
-<a id="gade82f17c9ecdcd5c744ebe0190a96875"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gade82f17c9ecdcd5c744ebe0190a96875">&#9670;&nbsp;</a></span>ffsnLoop()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ int tinker::ffsnLoop </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>c1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>n</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>An alternative implementation of ffsn using loop. </p>
-
-</div>
-</div>
-<a id="ga3813648698b545ee7abeba6a22e9d509"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3813648698b545ee7abeba6a22e9d509">&#9670;&nbsp;</a></span>ffsnShift()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ int tinker::ffsnShift </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>c1</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>n</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Find the position of the n-th least significant bit set in a 32-bit integer. Returns a value from 0 to 32. </p>
-<ul>
-<li>If <code>c1</code> equals 0, always returns 0.</li>
-<li>If <code>n</code> equals 0, always returns 0.</li>
-<li>If <code>n</code> is greater than <code>POPC</code>, which is the number of bits that are set to 1 in <code>c1</code>, returns an undefined value.</li>
-</ul>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">c1</td><td>A 32-bit integer. </td></tr>
-    <tr><td class="paramname">n</td><td>Ranges from 1 to 32. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Used as <code><a class="el" href="group__acc__syntax.html#ga8a768ea49f35fd0f7240752ddb711629" title="Used as eq&lt;T1,T2&gt;() for two type identifiers.">eq&lt;T1,T2&gt;()</a></code> for two type identifiers. </p>
 
 </div>
 </div>
@@ -852,84 +535,7 @@ template&lt;class G , class T &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Converts <code>val</code> of floating-point from its original type to type <code>G</code>. </p>
-
-</div>
-</div>
-<a id="ga4a82a27bb0a0ec92f3e348e5a6c3c2b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">&#9670;&nbsp;</a></span>intCopysignIf()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ int tinker::intCopysignIf </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>a</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>b</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>If <code>b &lt; 0</code>, returns <code>-abs(a)</code>, otherwise, returns <code>abs(a)</code>. </p>
-
-</div>
-</div>
-<a id="gad370b71fad00d420ad405f9d748035ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad370b71fad00d420ad405f9d748035ef">&#9670;&nbsp;</a></span>intCopysignShift()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">__device__ int tinker::intCopysignShift </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>a</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>b</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>If <code>b &lt; 0</code>, returns <code>-abs(a)</code>, otherwise, returns <code>abs(a)</code>. Similar to the 32-bit integer version of Fortran <code>SIGN(A,B)</code>. </p>
-<dl class="section note"><dt>Note</dt><dd>Standard C and CUDA math libraries only have float and double versions. </dd></dl>
+<p>Converts <code>val</code> of floating-point to type <code>G</code>. </p>
 
 </div>
 </div>
@@ -972,7 +578,8 @@ template&lt;class K , class... Ts&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Launch a non-blocking CUDA kernel with 0 dynamic shared memory and the default block size (<a class="el" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d" title="Default dimension of thread blocks.">BLOCK_DIM</a>). </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d" title="Default dimension of thread blocks.">BLOCK_DIM</a>, <a class="el" href="group__cuda__syntax.html#ga69e50cfdc7432f9f52f4a613f0a78e41">launch_k2b</a>, <a class="el" href="group__cuda__syntax.html#ga8f2171e3c6fbc4cdb4172834ec2ce677">launch_k4b</a> </dd></dl>
+<p>Launch a non-blocking CUDA kernel with 0 dynamic shared memory and the default block size (<a class="el" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d" title="Default dimension of thread blocks.">BLOCK_DIM</a>). Energy, virial, and/or count buffers are involved.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d" title="Default dimension of thread blocks.">BLOCK_DIM</a>, <a class="el" href="group__cuda__syntax.html#ga69e50cfdc7432f9f52f4a613f0a78e41">launch_k2b</a>, <a class="el" href="group__cuda__syntax.html#ga6674b108bcc5730f2a448473920538fa">launch_k3b</a> </dd></dl>
 
 </div>
 </div>
@@ -1015,7 +622,8 @@ template&lt;class K , class... Ts&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Launch a non-blocking CUDA kernel with 0 dynamic shared memory and the default block size (<a class="el" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d" title="Default dimension of thread blocks.">BLOCK_DIM</a>). </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d" title="Default dimension of thread blocks.">BLOCK_DIM</a>, <a class="el" href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">launch_k2s</a>, <a class="el" href="group__cuda__syntax.html#ga294329a3b32a96c65f96f082bcc4a298">launch_k4</a> </dd></dl>
+<p>Launch a non-blocking CUDA kernel with 0 dynamic shared memory and the default block size (<a class="el" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d" title="Default dimension of thread blocks.">BLOCK_DIM</a>).</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d" title="Default dimension of thread blocks.">BLOCK_DIM</a>, <a class="el" href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">launch_k2s</a>, <a class="el" href="group__cuda__syntax.html#ga4dcbc2fad7e98df99c3eb5b890794202">launch_k3s</a> </dd></dl>
 
 </div>
 </div>
@@ -1064,7 +672,8 @@ template&lt;class K , class... Ts&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Launch a non-blocking CUDA kernel with 0 dynamic shared memory. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="group__cuda__syntax.html#ga8f2171e3c6fbc4cdb4172834ec2ce677">launch_k4b</a> </dd></dl>
+<p>Launch a non-blocking CUDA kernel with 0 dynamic shared memory. Energy, virial, and/or count buffers are involved.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__cuda__syntax.html#ga6674b108bcc5730f2a448473920538fa">launch_k3b</a> </dd></dl>
 
 </div>
 </div>
@@ -1113,12 +722,13 @@ template&lt;class K , class... Ts&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Launch a non-blocking CUDA kernel with 0 dynamic shared memory. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="group__cuda__syntax.html#ga294329a3b32a96c65f96f082bcc4a298">launch_k4</a> </dd></dl>
+<p>Launch a non-blocking CUDA kernel with 0 dynamic shared memory.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__cuda__syntax.html#ga4dcbc2fad7e98df99c3eb5b890794202">launch_k3s</a> </dd></dl>
 
 </div>
 </div>
-<a id="ga294329a3b32a96c65f96f082bcc4a298"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga294329a3b32a96c65f96f082bcc4a298">&#9670;&nbsp;</a></span>launch_k4()</h2>
+<a id="ga6674b108bcc5730f2a448473920538fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6674b108bcc5730f2a448473920538fa">&#9670;&nbsp;</a></span>launch_k3b()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1126,7 +736,7 @@ template&lt;class K , class... Ts&gt; </div>
 template&lt;class K , class... Ts&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void tinker::launch_k4 </td>
+          <td class="memname">void tinker::launch_k3b </td>
           <td>(</td>
           <td class="paramtype">cudaStream_t&#160;</td>
           <td class="paramname"><em>st</em>, </td>
@@ -1168,23 +778,24 @@ template&lt;class K , class... Ts&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Launch a non-blocking CUDA kernel. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Launch a non-blocking CUDA kernel. Energy, virial, and/or count buffers are involved.</p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">st</td><td>CUDA stream. </td></tr>
     <tr><td class="paramname">sh</td><td>Dynamic shared memory (bytes per block). </td></tr>
     <tr><td class="paramname">bs</td><td>Thread block size. </td></tr>
-    <tr><td class="paramname">np</td><td>Hint to determine the grid dimension (often is the loop limit). </td></tr>
-    <tr><td class="paramname">k</td><td>CUDA <code>__global__</code> kernel. </td></tr>
-    <tr><td class="paramname">a</td><td>Arguments of the kernel. </td></tr>
+    <tr><td class="paramname">np</td><td>Hint to determine the grid dimension. This is often the loop limit. </td></tr>
+    <tr><td class="paramname">k</td><td>CUDA <code><b>global</b></code> kernel. </td></tr>
+    <tr><td class="paramname">a</td><td>Arguments of the kernel.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__cuda__syntax.html#ga8f2171e3c6fbc4cdb4172834ec2ce677">launch_k4b</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__cuda__syntax.html#ga4dcbc2fad7e98df99c3eb5b890794202">launch_k3s</a> </dd></dl>
 
 </div>
 </div>
-<a id="ga8f2171e3c6fbc4cdb4172834ec2ce677"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8f2171e3c6fbc4cdb4172834ec2ce677">&#9670;&nbsp;</a></span>launch_k4b()</h2>
+<a id="ga4dcbc2fad7e98df99c3eb5b890794202"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4dcbc2fad7e98df99c3eb5b890794202">&#9670;&nbsp;</a></span>launch_k3s()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1192,7 +803,7 @@ template&lt;class K , class... Ts&gt; </div>
 template&lt;class K , class... Ts&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void tinker::launch_k4b </td>
+          <td class="memname">void tinker::launch_k3s </td>
           <td>(</td>
           <td class="paramtype">cudaStream_t&#160;</td>
           <td class="paramname"><em>st</em>, </td>
@@ -1234,51 +845,109 @@ template&lt;class K , class... Ts&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Launch a non-blocking CUDA kernel with energy, virial, and/or count buffer parameters. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Launch a non-blocking CUDA kernel.</p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">st</td><td>CUDA stream. </td></tr>
     <tr><td class="paramname">sh</td><td>Dynamic shared memory (bytes per block). </td></tr>
     <tr><td class="paramname">bs</td><td>Thread block size. </td></tr>
-    <tr><td class="paramname">np</td><td>Hint to determine the grid dimension (often is the loop limit). </td></tr>
-    <tr><td class="paramname">k</td><td>CUDA <code>__global__</code> kernel. </td></tr>
-    <tr><td class="paramname">a</td><td>Arguments of the kernel. </td></tr>
+    <tr><td class="paramname">np</td><td>Hint to determine the grid dimension. This is often the loop limit. </td></tr>
+    <tr><td class="paramname">k</td><td>CUDA <code><b>global</b></code> kernel. </td></tr>
+    <tr><td class="paramname">a</td><td>Arguments of the kernel.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__cuda__syntax.html#ga294329a3b32a96c65f96f082bcc4a298">launch_k4</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group__cuda__syntax.html#ga6674b108bcc5730f2a448473920538fa">launch_k3b</a> </dd></dl>
 
 </div>
 </div>
-<h2 class="groupheader">Variable Documentation</h2>
-<a id="gae8b0536dc44e34f2c19665550c0ede7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae8b0536dc44e34f2c19665550c0ede7f">&#9670;&nbsp;</a></span>dptr_buf</h2>
+<a id="ga04114fac1803630939755fadf156320d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga04114fac1803630939755fadf156320d">&#9670;&nbsp;</a></span>toFloatGrad() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void* tinker::dptr_buf</td>
+          <td class="memname">__device__ T tinker::toFloatGrad </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>g</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Preallocated device memory. </p>
+<p>Converts a double-precision value <code>g</code> to floating-point value. </p>
 
 </div>
 </div>
-<a id="ga9c896890fb63d0cd6d9a4c99409c4134"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9c896890fb63d0cd6d9a4c99409c4134">&#9670;&nbsp;</a></span>pinned_buf</h2>
+<a id="gae93b259fd16f7fd28b04a8749d0ed4aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae93b259fd16f7fd28b04a8749d0ed4aa">&#9670;&nbsp;</a></span>toFloatGrad() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void* tinker::pinned_buf</td>
+          <td class="memname">__device__ T tinker::toFloatGrad </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a>&#160;</td>
+          <td class="paramname"><em>g</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Preallocated pinned host memory. </p>
+<p>Converts a fixed-point value <code>g</code> to floating-point value. </p>
+
+</div>
+</div>
+<a id="ga41fdcd29dd0553882401902c8c816210"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga41fdcd29dd0553882401902c8c816210">&#9670;&nbsp;</a></span>toFloatGrad() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">__device__ T tinker::toFloatGrad </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>g</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converts a single-precision value <code>g</code> to floating-point value. </p>
 
 </div>
 </div>

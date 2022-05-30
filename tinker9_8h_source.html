@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -82,10 +82,10 @@ $(function() {
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;tool/macro.h&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="group__general.html#ga66ebec061bbca318747f57e67ac63bd5">   11</a></span>&#160;<span class="preprocessor">#define TINKER9_VERSION_MAJOR 1</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="group__general.html#gaa4aff6915be98d3ebed0929e75383f44">   12</a></span>&#160;<span class="preprocessor">#define TINKER9_VERSION_MINOR 0</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="group__general.html#ga1caa4a9ab8870a20f9c5c12c058eb6b2">   13</a></span>&#160;<span class="preprocessor">#define TINKER9_VERSION_PATCH 0</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="group__general.html#ga66ebec061bbca318747f57e67ac63bd5">   10</a></span>&#160;<span class="preprocessor">#define TINKER9_VERSION_MAJOR 1</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="group__general.html#gaa4aff6915be98d3ebed0929e75383f44">   11</a></span>&#160;<span class="preprocessor">#define TINKER9_VERSION_MINOR 0</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="group__general.html#ga1caa4a9ab8870a20f9c5c12c058eb6b2">   12</a></span>&#160;<span class="preprocessor">#define TINKER9_VERSION_PATCH 0</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">// clang-format off</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#ifdef TINKER9_GIT_SHORT_HASH</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#   define TINKER9_PROMO1__ &quot;\n&quot; &quot; Commit:       &quot; TINKER_STR(TINKER9_GIT_SHORT_HASH)</span></div>
@@ -126,21 +126,23 @@ $(function() {
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#ga671903b2d3c6bcdb174b396f6a6ce543">xInfo</a>(<span class="keywordtype">int</span>, <span class="keywordtype">char</span>**);     </div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#gaeb0c93da569571697d925ac51e60b15d">xMinimize</a>(<span class="keywordtype">int</span>, <span class="keywordtype">char</span>**); </div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#gab9cdcc7c0094bb6a8d380ff27660f153">xTestgrad</a>(<span class="keywordtype">int</span>, <span class="keywordtype">char</span>**); </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacetinker.html">tinker</a> {</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#gab81941c26687ec5af7fd88905902413e">promo</a>();</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#gac1e608e55901de8b485a988ed23cd39a">initial</a>();</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#ga6fe51d9e65076dc8868cc588ff25c2b6">mechanic2</a>();</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;}</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#gab81941c26687ec5af7fd88905902413e">promo</a>();      </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#gac1e608e55901de8b485a988ed23cd39a">initial</a>();    </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#ga6fe51d9e65076dc8868cc588ff25c2b6">mechanic2</a>();  </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#ga37ed75e8bc382ed9c6258c5b69c31bb6">initialize</a>(); </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__general.html#ga842871bcdc9ec230f4db497c8c97e119">finish</a>();     </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="agroup__general_html_ga0727684147c6d33cbd6b3b2f2c19377a"><div class="ttname"><a href="group__general.html#ga0727684147c6d33cbd6b3b2f2c19377a">tinker::xHelp</a></div><div class="ttdeci">void xHelp(int, char **)</div><div class="ttdoc">Entry point of the help program.</div></div>
 <div class="ttc" id="agroup__general_html_ga4f67a78632c89f0d7553adb3bf252457"><div class="ttname"><a href="group__general.html#ga4f67a78632c89f0d7553adb3bf252457">tinker::xDynamic</a></div><div class="ttdeci">void xDynamic(int, char **)</div><div class="ttdoc">Entry point of the dynamic program.</div></div>
-<div class="ttc" id="agroup__general_html_gac1e608e55901de8b485a988ed23cd39a"><div class="ttname"><a href="group__general.html#gac1e608e55901de8b485a988ed23cd39a">tinker::initial</a></div><div class="ttdeci">void initial()</div><div class="ttdoc">Sets up original values. This function must be translated from the Fortran initial subroutine line-by...</div></div>
+<div class="ttc" id="agroup__general_html_gac1e608e55901de8b485a988ed23cd39a"><div class="ttname"><a href="group__general.html#gac1e608e55901de8b485a988ed23cd39a">tinker::initial</a></div><div class="ttdeci">void initial()</div></div>
 <div class="ttc" id="agroup__general_html_ga671903b2d3c6bcdb174b396f6a6ce543"><div class="ttname"><a href="group__general.html#ga671903b2d3c6bcdb174b396f6a6ce543">tinker::xInfo</a></div><div class="ttdeci">void xInfo(int, char **)</div><div class="ttdoc">Entry point of the info program.</div></div>
 <div class="ttc" id="agroup__general_html_ga3e4e32348a4170a07275ff9469ff629a"><div class="ttname"><a href="group__general.html#ga3e4e32348a4170a07275ff9469ff629a">tinker::xAnalyze</a></div><div class="ttdeci">void xAnalyze(int, char **)</div><div class="ttdoc">Entry point of the analyze program.</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:6</div></div>
-<div class="ttc" id="agroup__general_html_ga6fe51d9e65076dc8868cc588ff25c2b6"><div class="ttname"><a href="group__general.html#ga6fe51d9e65076dc8868cc588ff25c2b6">tinker::mechanic2</a></div><div class="ttdeci">void mechanic2()</div><div class="ttdoc">Sets up extra parameters and selectable options in addition to the Fortran mechanic subroutine.</div></div>
+<div class="ttc" id="agroup__general_html_ga37ed75e8bc382ed9c6258c5b69c31bb6"><div class="ttname"><a href="group__general.html#ga37ed75e8bc382ed9c6258c5b69c31bb6">tinker::initialize</a></div><div class="ttdeci">void initialize()</div><div class="ttdoc">Sets up host and device environment.</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="agroup__general_html_ga842871bcdc9ec230f4db497c8c97e119"><div class="ttname"><a href="group__general.html#ga842871bcdc9ec230f4db497c8c97e119">tinker::finish</a></div><div class="ttdeci">void finish()</div><div class="ttdoc">Cleans up host and device environment.</div></div>
+<div class="ttc" id="agroup__general_html_ga6fe51d9e65076dc8868cc588ff25c2b6"><div class="ttname"><a href="group__general.html#ga6fe51d9e65076dc8868cc588ff25c2b6">tinker::mechanic2</a></div><div class="ttdeci">void mechanic2()</div></div>
 <div class="ttc" id="agroup__general_html_gab81941c26687ec5af7fd88905902413e"><div class="ttname"><a href="group__general.html#gab81941c26687ec5af7fd88905902413e">tinker::promo</a></div><div class="ttdeci">void promo()</div><div class="ttdoc">Writes a banner message.</div></div>
 <div class="ttc" id="agroup__general_html_gab9cdcc7c0094bb6a8d380ff27660f153"><div class="ttname"><a href="group__general.html#gab9cdcc7c0094bb6a8d380ff27660f153">tinker::xTestgrad</a></div><div class="ttdeci">void xTestgrad(int, char **)</div><div class="ttdoc">Entry point of the testgrad program.</div></div>
 <div class="ttc" id="agroup__general_html_ga24e41d6fba6dc81c70ba9d770ea53b9c"><div class="ttname"><a href="group__general.html#ga24e41d6fba6dc81c70ba9d770ea53b9c">tinker::xBar</a></div><div class="ttdeci">void xBar(int, char **)</div><div class="ttdoc">Entry point of the bar program.</div></div>

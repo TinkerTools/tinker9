@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Tinker9: Periodic Boundary Box</title>
+<title>Tinker9: Box</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -77,14 +77,13 @@ $(function() {
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
-<div class="title">Periodic Boundary Box<div class="ingroups"><a class="el" href="group__ff.html">Force Fields</a></div></div>  </div>
+<div class="title">Box</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:structtinker_1_1_box"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#structtinker_1_1_box">tinker::Box</a></td></tr>
-<tr class="memdesc:structtinker_1_1_box"><td class="mdescLeft">&#160;</td><td class="mdescRight">Periodic boundary conditions (PBC).  <a href="group__box.html#structtinker_1_1_box">More...</a><br /></td></tr>
 <tr class="separator:structtinker_1_1_box"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
@@ -101,17 +100,20 @@ Macros</h2></td></tr>
 <tr class="separator:gae17428e26c173b79c93fa907c0453e34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga36695d7f8ba47be90bab13f961d9faac"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga36695d7f8ba47be90bab13f961d9faac">TINKER_IMAGE_ARGS</a>&#160;&#160;&#160;box_shape, <a class="el" href="group__box.html#gaf29c9665b1b8af719cf005a5fc4add95">TINKER_IMAGE_LVEC_ARGS</a>, <a class="el" href="group__box.html#gac6a028e3bacd7ac856b33ffb0c1d7971">TINKER_IMAGE_RECIP_ARGS</a></td></tr>
 <tr class="separator:ga36695d7f8ba47be90bab13f961d9faac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabd29895ca383cd1ac3412386b1533c11"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#gabd29895ca383cd1ac3412386b1533c11">IMAGE_TRI__</a>(xr,  yr,  zr,  l1,  l2,  l3,  ra,  rb,  rc)</td></tr>
+<tr class="separator:gabd29895ca383cd1ac3412386b1533c11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga34dfa70c10acf56333c8c4f6d2c46fe9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga34dfa70c10acf56333c8c4f6d2c46fe9">IMAGE_MONO__</a>(xr,  yr,  zr,  l1,  l2,  l3,  ra,  rb,  rc)</td></tr>
+<tr class="separator:ga34dfa70c10acf56333c8c4f6d2c46fe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadc34f6332b3d70c0fa61f4e9926c28fd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#gadc34f6332b3d70c0fa61f4e9926c28fd">IMAGE_ORTHO__</a>(xr,  yr,  zr,  l1,  l2,  l3,  ra,  rb,  rc)</td></tr>
+<tr class="separator:gadc34f6332b3d70c0fa61f4e9926c28fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5e1ea8d5151ef90c3240845829d624ab"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga5e1ea8d5151ef90c3240845829d624ab">IMAGE_OCT__</a>(xr,  yr,  zr,  l1,  l2,  l3,  ra,  rb,  rc)</td></tr>
+<tr class="separator:ga5e1ea8d5151ef90c3240845829d624ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad264d27e6e866b721039798f53e27ed1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#gad264d27e6e866b721039798f53e27ed1">image</a>(x,  y,  z)&#160;&#160;&#160;imageGeneral(x, y, z, <a class="el" href="group__box.html#ga36695d7f8ba47be90bab13f961d9faac">TINKER_IMAGE_ARGS</a>)</td></tr>
-<tr class="memdesc:gad264d27e6e866b721039798f53e27ed1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies periodic boundary conditions to displacement (<code>xr, yr, zr</code>) and preserves the correct signs.  <a href="group__box.html#gad264d27e6e866b721039798f53e27ed1">More...</a><br /></td></tr>
 <tr class="separator:gad264d27e6e866b721039798f53e27ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae2d673fd7672b86463300714f75f9afc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#gae2d673fd7672b86463300714f75f9afc">image2</a>(x,  y,  z)&#160;&#160;&#160;image2General(x, y, z, <a class="el" href="group__box.html#ga36695d7f8ba47be90bab13f961d9faac">TINKER_IMAGE_ARGS</a>)</td></tr>
-<tr class="memdesc:gae2d673fd7672b86463300714f75f9afc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies periodic boundary conditions to displacement (<code>xr, yr, zr</code>) and preserves the correct signs. Returns the displacement squared.  <a href="group__box.html#gae2d673fd7672b86463300714f75f9afc">More...</a><br /></td></tr>
 <tr class="separator:gae2d673fd7672b86463300714f75f9afc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9d3e0a895bc64f1548b080d5723f0e15"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga9d3e0a895bc64f1548b080d5723f0e15">imagen2</a>(x,  y,  z)&#160;&#160;&#160;imagen2General(x, y, z, <a class="el" href="group__box.html#ga36695d7f8ba47be90bab13f961d9faac">TINKER_IMAGE_ARGS</a>)</td></tr>
-<tr class="memdesc:ga9d3e0a895bc64f1548b080d5723f0e15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies periodic boundary conditions to displacement (<code>xr, yr, zr</code>). Correct signs may not be preserved. Returns the displacement squared.  <a href="group__box.html#ga9d3e0a895bc64f1548b080d5723f0e15">More...</a><br /></td></tr>
 <tr class="separator:ga9d3e0a895bc64f1548b080d5723f0e15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga139095159589cd7ca50e06e0919e9288"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga139095159589cd7ca50e06e0919e9288">imagectof</a>(xr,  yr,  zr)&#160;&#160;&#160;imagectof_general(xr, yr, zr, recipa, recipb, recipc)</td></tr>
-<tr class="separator:ga139095159589cd7ca50e06e0919e9288"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -130,6 +132,8 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:ga8acdd861958945d6ab8597588d1e7a9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga8acdd861958945d6ab8597588d1e7a9f">tinker::boxData</a> (<a class="el" href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">RcOp</a>)</td></tr>
 <tr class="separator:ga8acdd861958945d6ab8597588d1e7a9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga480c170dfd39508e39cf23348fa9bfc3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga480c170dfd39508e39cf23348fa9bfc3">tinker::boxDataP1</a> (<a class="el" href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">RcOp</a>)</td></tr>
+<tr class="separator:ga480c170dfd39508e39cf23348fa9bfc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga93a8dbbaed12dc09ad552083576169d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga93a8dbbaed12dc09ad552083576169d5">tinker::boxExtent</a> (double newExtent)</td></tr>
 <tr class="separator:ga93a8dbbaed12dc09ad552083576169d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gacfb352d980b057de47a5c7b40a81fad8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#gacfb352d980b057de47a5c7b40a81fad8">tinker::boxSetCurrent</a> (const <a class="el" href="group__box.html#structtinker_1_1_box">Box</a> &amp;p)</td></tr>
@@ -138,15 +142,13 @@ Functions</h2></td></tr>
 <tr class="separator:ga1294db5816fb11154960f36583f4754d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga53111cc80a992e211016415f7fb3a39f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga53111cc80a992e211016415f7fb3a39f">tinker::boxSetCurrentRecip</a> ()</td></tr>
 <tr class="separator:ga53111cc80a992e211016415f7fb3a39f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad648aecc6de0869e60b2a56ef979ce00"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#gad648aecc6de0869e60b2a56ef979ce00">tinker::boxSetTinkerModule</a> (const <a class="el" href="group__box.html#structtinker_1_1_box">Box</a> &amp;p)</td></tr>
-<tr class="separator:gad648aecc6de0869e60b2a56ef979ce00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gafee6b83884b91593e4e313584a7e68eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#gafee6b83884b91593e4e313584a7e68eb">tinker::boxLattice</a> (<a class="el" href="group__box.html#structtinker_1_1_box">Box</a> &amp;p, <a class="el" href="group__box.html#gad6800b16f8741fe22d6d4a192f306646">BoxShape</a> sh, double a, double b, double c, double alphaDeg, double betaDeg, double gammaDeg)</td></tr>
-<tr class="memdesc:gafee6b83884b91593e4e313584a7e68eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Similar to Tinker <code>lattice</code> subroutine.  <a href="group__box.html#gafee6b83884b91593e4e313584a7e68eb">More...</a><br /></td></tr>
-<tr class="separator:gafee6b83884b91593e4e313584a7e68eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadb38c9db19f09407fd65475815682767"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#gadb38c9db19f09407fd65475815682767">tinker::boxSetTinker</a> (const <a class="el" href="group__box.html#structtinker_1_1_box">Box</a> &amp;p)</td></tr>
+<tr class="separator:gadb38c9db19f09407fd65475815682767"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga20cfe80f592b958df39a29dcedc7a643"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga20cfe80f592b958df39a29dcedc7a643">tinker::boxCopyin</a> ()</td></tr>
 <tr class="separator:ga20cfe80f592b958df39a29dcedc7a643"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafee6b83884b91593e4e313584a7e68eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#gafee6b83884b91593e4e313584a7e68eb">tinker::boxLattice</a> (<a class="el" href="group__box.html#structtinker_1_1_box">Box</a> &amp;p, <a class="el" href="group__box.html#gad6800b16f8741fe22d6d4a192f306646">BoxShape</a> sh, double a, double b, double c, double alphaDeg, double betaDeg, double gammaDeg)</td></tr>
+<tr class="separator:gafee6b83884b91593e4e313584a7e68eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga00a9db8b970c73a09d39040bd76c839b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga00a9db8b970c73a09d39040bd76c839b">tinker::boxVolume</a> ()</td></tr>
-<tr class="memdesc:ga00a9db8b970c73a09d39040bd76c839b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the volume of the PBC box.  <a href="group__box.html#ga00a9db8b970c73a09d39040bd76c839b">More...</a><br /></td></tr>
 <tr class="separator:ga00a9db8b970c73a09d39040bd76c839b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4b4391d471d9df649573a6eaa3851b43"><td class="memItemLeft" align="right" valign="top">__device__ <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga4b4391d471d9df649573a6eaa3851b43">tinker::ftoc_triclinic</a> (<a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a> f, <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a> l1, <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a> l2, <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a> l3)</td></tr>
 <tr class="separator:ga4b4391d471d9df649573a6eaa3851b43"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -184,11 +186,13 @@ Variables</h2></td></tr>
 <tr class="memitem:ga39e1dda7d1b9aa56f759efe6939454b0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga39e1dda7d1b9aa56f759efe6939454b0">tinker::recipc</a></td></tr>
 <tr class="separator:ga39e1dda7d1b9aa56f759efe6939454b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5b69e310a387c505efbeb6a8489de2e7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__box.html#structtinker_1_1_box">Box</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__box.html#ga5b69e310a387c505efbeb6a8489de2e7">tinker::trajbox</a></td></tr>
-<tr class="memdesc:ga5b69e310a387c505efbeb6a8489de2e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Host pointer to the PBC boxes of a trajectory.  <a href="group__box.html#ga5b69e310a387c505efbeb6a8489de2e7">More...</a><br /></td></tr>
 <tr class="separator:ga5b69e310a387c505efbeb6a8489de2e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<hr/><h2 class="groupheader">Class Documentation</h2>
+<p>Periodic boundary conditions and image distance. </p>
+
+
+<h3><a id="box_image"></a>Notes on the image distance</h3><div class="textblock">The image distances are coded as macro instead of inlined functions. This is because of a <a href="https://forums.developer.nvidia.com/t/136445">bug</a> I found in pgc++ 19.10. </div><hr/><h2 class="groupheader">Class Documentation</h2>
 <a name="structtinker_1_1_box" id="structtinker_1_1_box"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1_box">&#9670;&nbsp;</a></span>tinker::Box</h2>
 
@@ -200,7 +204,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<div class="textblock"><p>Periodic boundary conditions (PBC). </p>
+<div class="textblock"><p>Internal data for the periodic boundary condition (PBC).</p>
 <p>PBC in Tinker is defined by lengths of three axes and three angles: <code>a-axis</code>, <code>b-axis</code>, <code>c-axis</code>, <code>alpha</code>, <code>beta</code>, and <code>gamma</code>.</p>
 <p>In cartesian coordinates:</p><ul>
 <li><code>a-axis</code> is always aligned with the x axis, so the vector of <code>a-axis</code> is <code>(ax,ay,az) = (a,0,0)</code>;</li>
@@ -232,8 +236,8 @@ Variables</h2></td></tr>
 <p>Reciprocal lattice (<code>recip</code>), is the inverse of <code>lvec</code>:</p><ul>
 <li>Fortran: <code>recip(:,1)</code>, <code>recip(:,2)</code>, <code>recip(:,3)</code>;</li>
 <li>C++: <code>recip[0][]</code>, <code>recip[1][]</code>, <code>recip[2][]</code>;</li>
-<li>Fractional coordinates <code>fi (i=1,2,3) = recip(:,i) (xr,yr,zr)</code>;</li>
-<li>Cartesian coordinates <code>wr (w=1,2,3 or x,y,z) = inv_recip(:,w) (f1,f2,f3) = lvec(:,w) (f1,f2,f3)</code>. </li>
+<li>Fractional coordinates <code>fi = recip(:,i) (xr,yr,zr), (i=1,2,3)</code>;</li>
+<li>Cartesian coordinates <code>wr = inv_recip(:,w) (f1,f2,f3) = lvec(:,w) (f1,f2,f3), (w=1,2,3 or x,y,z)</code>. </li>
 </ul>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
@@ -386,9 +390,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Applies periodic boundary conditions to displacement (<code>xr, yr, zr</code>) and preserves the correct signs. </p>
-<p>For testing purpose, defining it in the source code before including this header file will overwrite the default macro definition. Otherwise, it needs to be undef-ed. </p>
+<p>Applies periodic boundary conditions to displacement <code>(xr,yr,zr)</code> and preserves the correct signs.</p>
+<p>For testing purpose, defining it in the source code before including this header file will overwrite the default macro definition. </p>
 
 </div>
 </div>
@@ -423,19 +426,18 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Applies periodic boundary conditions to displacement (<code>xr, yr, zr</code>) and preserves the correct signs. Returns the displacement squared. </p>
+<p>Applies periodic boundary conditions to displacement <code>(xr,yr,zr)</code> and preserves the correct signs. Returns the displacement squared. </p>
 
 </div>
 </div>
-<a id="ga139095159589cd7ca50e06e0919e9288"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga139095159589cd7ca50e06e0919e9288">&#9670;&nbsp;</a></span>imagectof</h2>
+<a id="ga34dfa70c10acf56333c8c4f6d2c46fe9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga34dfa70c10acf56333c8c4f6d2c46fe9">&#9670;&nbsp;</a></span>IMAGE_MONO__</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define imagectof</td>
+          <td class="memname">#define IMAGE_MONO__</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">xr, </td>
@@ -450,15 +452,309 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">zr&#160;</td>
+          <td class="paramname">zr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l2, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l3, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ra, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">rb, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">rc&#160;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;imagectof_general(xr, yr, zr, recipa, recipb, recipc)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
+<div class="line">      real fx = REAL_FLOOR(0.5f + zr * ra.z + xr * ra.x);                                          \</div>
+<div class="line">      real fy = REAL_FLOOR(0.5f + yr * rb.y);                                                      \</div>
+<div class="line">      real fz = REAL_FLOOR(0.5f + zr * rc.z);                                                      \</div>
+<div class="line">      xr -= (fz * l1.z + fx * l1.x);                                                               \</div>
+<div class="line">      yr -= (fy * l2.y);                                                                           \</div>
+<div class="line">      zr -= (fz * l3.z);                                                                           \</div>
+<div class="line">   }</div>
+</div><!-- fragment -->
+<p>Image displacement for the monoclinic PBC. </p>
+
+</div>
+</div>
+<a id="ga5e1ea8d5151ef90c3240845829d624ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5e1ea8d5151ef90c3240845829d624ab">&#9670;&nbsp;</a></span>IMAGE_OCT__</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define IMAGE_OCT__</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">xr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">yr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">zr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l2, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l3, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ra, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">rb, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">rc&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
+<div class="line">      real fx = xr * ra.x;                                                                         \</div>
+<div class="line">      real fy = yr * ra.x;                                                                         \</div>
+<div class="line">      real fz = zr * ra.x;                                                                         \</div>
+<div class="line">      fx -= REAL_FLOOR(0.5f + fx);                                                                 \</div>
+<div class="line">      fy -= REAL_FLOOR(0.5f + fy);                                                                 \</div>
+<div class="line">      fz -= REAL_FLOOR(0.5f + fz);                                                                 \</div>
+<div class="line">      if (REAL_ABS(fx) + REAL_ABS(fy) + REAL_ABS(fz) &gt; 0.75f) {                                    \</div>
+<div class="line">         fx -= REAL_SIGN(0.5f, fx);                                                                \</div>
+<div class="line">         fy -= REAL_SIGN(0.5f, fy);                                                                \</div>
+<div class="line">         fz -= REAL_SIGN(0.5f, fz);                                                                \</div>
+<div class="line">      }                                                                                            \</div>
+<div class="line">      xr = fx * l1.x;                                                                              \</div>
+<div class="line">      yr = fy * l1.x;                                                                              \</div>
+<div class="line">      zr = fz * l1.x;                                                                              \</div>
+<div class="line">   }</div>
+</div><!-- fragment -->
+<p>Image displacement for the truncated octahedron PBC. </p>
+
+</div>
+</div>
+<a id="gadc34f6332b3d70c0fa61f4e9926c28fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadc34f6332b3d70c0fa61f4e9926c28fd">&#9670;&nbsp;</a></span>IMAGE_ORTHO__</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define IMAGE_ORTHO__</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">xr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">yr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">zr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l2, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l3, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ra, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">rb, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">rc&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
+<div class="line">      real fx = REAL_FLOOR(0.5f + xr * ra.x);                                                      \</div>
+<div class="line">      real fy = REAL_FLOOR(0.5f + yr * rb.y);                                                      \</div>
+<div class="line">      real fz = REAL_FLOOR(0.5f + zr * rc.z);                                                      \</div>
+<div class="line">      xr -= (fx * l1.x);                                                                           \</div>
+<div class="line">      yr -= (fy * l2.y);                                                                           \</div>
+<div class="line">      zr -= (fz * l3.z);                                                                           \</div>
+<div class="line">   }</div>
+</div><!-- fragment -->
+<p>Image displacement for the orthogonal PBC. </p>
+
+</div>
+</div>
+<a id="gabd29895ca383cd1ac3412386b1533c11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabd29895ca383cd1ac3412386b1533c11">&#9670;&nbsp;</a></span>IMAGE_TRI__</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define IMAGE_TRI__</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">xr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">yr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">zr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l2, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">l3, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ra, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">rb, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">rc&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
+<div class="line">      real fx = REAL_FLOOR(0.5f + zr * ra.z + yr * ra.y + xr * ra.x);                              \</div>
+<div class="line">      real fy = REAL_FLOOR(0.5f + zr * rb.z + yr * rb.y);                                          \</div>
+<div class="line">      real fz = REAL_FLOOR(0.5f + zr * rc.z);                                                      \</div>
+<div class="line">      xr -= (fz * l1.z + fy * l1.y + fx * l1.x);                                                   \</div>
+<div class="line">      yr -= (fz * l2.z + fy * l2.y);                                                               \</div>
+<div class="line">      zr -= (fz * l3.z);                                                                           \</div>
+<div class="line">   }</div>
+</div><!-- fragment -->
+<p>Image displacement for the triclinic PBC. </p>
 
 </div>
 </div>
@@ -493,8 +789,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Applies periodic boundary conditions to displacement (<code>xr, yr, zr</code>). Correct signs may not be preserved. Returns the displacement squared. </p>
+<p>Applies periodic boundary conditions to displacement <code>(xr,yr,zr)</code>. Correct signs may not be preserved. Returns the displacement squared. </p>
 
 </div>
 </div>
@@ -602,12 +897,19 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Shapes of the periodic box. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggad6800b16f8741fe22d6d4a192f306646a51a7a84ddad8b1738d49cffc916ad3a4"></a>UNBOUND&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ggad6800b16f8741fe22d6d4a192f306646a9441273d8f694623f0a3cf3e24c29944"></a>ORTHO&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ggad6800b16f8741fe22d6d4a192f306646af5f75f1b95652443e4398974b82c3f7c"></a>MONO&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ggad6800b16f8741fe22d6d4a192f306646a38b464161bf5019798797584babd0433"></a>TRI&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ggad6800b16f8741fe22d6d4a192f306646a3926d07453f350556c4e2e8094e42a98"></a>OCT&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggad6800b16f8741fe22d6d4a192f306646a51a7a84ddad8b1738d49cffc916ad3a4"></a>UNBOUND&#160;</td><td class="fielddoc"><p>unbound </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggad6800b16f8741fe22d6d4a192f306646a9441273d8f694623f0a3cf3e24c29944"></a>ORTHO&#160;</td><td class="fielddoc"><p>orthorgonal </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggad6800b16f8741fe22d6d4a192f306646af5f75f1b95652443e4398974b82c3f7c"></a>MONO&#160;</td><td class="fielddoc"><p>monoclinic </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggad6800b16f8741fe22d6d4a192f306646a38b464161bf5019798797584babd0433"></a>TRI&#160;</td><td class="fielddoc"><p>triclinic </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggad6800b16f8741fe22d6d4a192f306646a3926d07453f350556c4e2e8094e42a98"></a>OCT&#160;</td><td class="fielddoc"><p>truncated octahedron </p>
+</td></tr>
 </table>
 
 </div>
@@ -627,6 +929,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>OpenACC only: Copies the current box data to device asynchronously. The implementations are empty for CPU and CUDA code because it is only in the OpenACC code that a copy of the PBC box is created on device. </p>
 
 </div>
 </div>
@@ -646,6 +949,28 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets up box data on device. </p>
+
+</div>
+</div>
+<a id="ga480c170dfd39508e39cf23348fa9bfc3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga480c170dfd39508e39cf23348fa9bfc3">&#9670;&nbsp;</a></span>boxDataP1()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tinker::boxDataP1 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">RcOp</a>&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Internal function used in the setup. </p>
+
 </div>
 </div>
 <a id="ga93a8dbbaed12dc09ad552083576169d5"></a>
@@ -663,6 +988,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Sets up a hypothetical orthogonal box for the unbound box whose a-axis equals the new extent. </p>
 
 </div>
 </div>
@@ -681,6 +1007,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Copies the current PBC box to the output variable. </p>
 
 </div>
 </div>
@@ -746,7 +1074,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Similar to Tinker <code>lattice</code> subroutine. </p>
+<p>Sets up the internal PBC data. Similar to Tinker <code>lattice</code> subroutine. </p>
 
 </div>
 </div>
@@ -766,6 +1094,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets the box by the input and updates the box on device. </p>
+
 </div>
 </div>
 <a id="ga53111cc80a992e211016415f7fb3a39f"></a>
@@ -782,17 +1112,18 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Calculates the <code>recip</code> arrays by new <code>lvec</code> arrays and updates the box on device </p>
 
 </div>
 </div>
-<a id="gad648aecc6de0869e60b2a56ef979ce00"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad648aecc6de0869e60b2a56ef979ce00">&#9670;&nbsp;</a></span>boxSetTinkerModule()</h2>
+<a id="gadb38c9db19f09407fd65475815682767"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadb38c9db19f09407fd65475815682767">&#9670;&nbsp;</a></span>boxSetTinker()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void tinker::boxSetTinkerModule </td>
+          <td class="memname">void tinker::boxSetTinker </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group__box.html#structtinker_1_1_box">Box</a> &amp;&#160;</td>
           <td class="paramname"><em>p</em></td><td>)</td>
@@ -800,6 +1131,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Updates the related PBC modules of Tinker by <code>p</code>. </p>
 
 </div>
 </div>
@@ -817,9 +1150,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Get the volume of the PBC box. </p>
-<dl class="section note"><dt>Note</dt><dd>This function may calculate the volume on-the-fly instead of using an internal variable to save the volume. </dd>
+<p>Gets the volume of the PBC box. </p><dl class="section note"><dt>Note</dt><dd>This function may calculate the volume on-the-fly instead of using an internal variable to save the volume. </dd>
 <dd>
 The volume is undefined for the unbound box. </dd></dl>
 
@@ -883,6 +1214,8 @@ The volume is undefined for the unbound box. </dd></dl>
 </table>
 </div><div class="memdoc">
 
+<p>Cartesian to fractional: monoclinic. </p>
+
 </div>
 </div>
 <a id="ga1b0b8e56bb34daef491316c49fc5b2c4"></a>
@@ -942,6 +1275,8 @@ The volume is undefined for the unbound box. </dd></dl>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Cartesian to fractional: orthogonal. </p>
 
 </div>
 </div>
@@ -1003,6 +1338,8 @@ The volume is undefined for the unbound box. </dd></dl>
 </table>
 </div><div class="memdoc">
 
+<p>Cartesian to fractional: triclinic. </p>
+
 </div>
 </div>
 <a id="ga444a37f158bd8f90332b8fac45b509b3"></a>
@@ -1050,6 +1387,8 @@ The volume is undefined for the unbound box. </dd></dl>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Fractional to cartesian. </p>
 
 </div>
 </div>
@@ -1099,6 +1438,8 @@ The volume is undefined for the unbound box. </dd></dl>
 </table>
 </div><div class="memdoc">
 
+<p>Fractional to cartesian: monoclinic. </p>
+
 </div>
 </div>
 <a id="ga447f1f375905c068ef363cbbcc8ae091"></a>
@@ -1147,6 +1488,8 @@ The volume is undefined for the unbound box. </dd></dl>
 </table>
 </div><div class="memdoc">
 
+<p>Fractional to cartesian: orthogonal. </p>
+
 </div>
 </div>
 <a id="ga4b4391d471d9df649573a6eaa3851b43"></a>
@@ -1194,6 +1537,8 @@ The volume is undefined for the unbound box. </dd></dl>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Fractional to cartesian: triclinic. </p>
 
 </div>
 </div>
@@ -1255,6 +1600,8 @@ The volume is undefined for the unbound box. </dd></dl>
 </table>
 </div><div class="memdoc">
 
+<p>Cartesian to fractional. </p>
+
 </div>
 </div>
 <a id="ga72f57b4da610dea8a5d9feb9415ceed0"></a>
@@ -1280,6 +1627,8 @@ The volume is undefined for the unbound box. </dd></dl>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>PBC image of the fractional coordinates. </p>
 
 </div>
 </div>

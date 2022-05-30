@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -83,7 +83,7 @@ $(function() {
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;seq/seq.h&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacetinker.html">tinker</a> {</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<a class="code" href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<a class="code" href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
 <div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="group__vdw.html#ga0869431aa790d4cfd778c05e4894ffe4">   10</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> <a class="code" href="group__vdw.html#ga0869431aa790d4cfd778c05e4894ffe4">pair_vlambda</a>(<a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> <a class="code" href="namespacetinker.html#a051355837d25006b617787e77d3a44bc">vlam</a>, <a class="code" href="group__vdw.html#ga0d7208589eb41e900a617e7d1a72524b">Vdw</a> <a class="code" href="namespacetinker.html#aad6d30766a9fdac168453960225e9d19">vcouple</a>, <span class="keywordtype">int</span> imut, <span class="keywordtype">int</span> kmut)</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;{</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;   <a class="code" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> vlambda = 1;</div>
@@ -97,14 +97,14 @@ $(function() {
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="agroup__vdw_html_ga0d7208589eb41e900a617e7d1a72524b"><div class="ttname"><a href="group__vdw.html#ga0d7208589eb41e900a617e7d1a72524b">tinker::Vdw</a></div><div class="ttdeci">Vdw</div><div class="ttdoc">Constant flags for the VDW energy functions.</div><div class="ttdef"><b>Definition:</b> evdw.h:38</div></div>
-<div class="ttc" id="agroup__prec_html_ga705b733820a8480aac42d7dcb3bbd7e0"><div class="ttname"><a href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">tinker::real</a></div><div class="ttdeci">float real</div><div class="ttdoc">Floating-point type with lower precision (not higher than mixed).</div><div class="ttdef"><b>Definition:</b> precision.h:75</div></div>
+<div class="ttc" id="agroup__prec_html_ga705b733820a8480aac42d7dcb3bbd7e0"><div class="ttname"><a href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">tinker::real</a></div><div class="ttdeci">float real</div><div class="ttdef"><b>Definition:</b> precision.h:80</div></div>
 <div class="ttc" id="agroup__vdw_html_gga0d7208589eb41e900a617e7d1a72524ba4717d9302a2bace641906c45c0b1b546"><div class="ttname"><a href="group__vdw.html#gga0d7208589eb41e900a617e7d1a72524ba4717d9302a2bace641906c45c0b1b546">tinker::Vdw::DECOUPLE</a></div><div class="ttdeci">@ DECOUPLE</div><div class="ttdoc">VDW lambda type: decouple.</div></div>
-<div class="ttc" id="anamespacetinker_html_aad6d30766a9fdac168453960225e9d19"><div class="ttname"><a href="namespacetinker.html#aad6d30766a9fdac168453960225e9d19">tinker::vcouple</a></div><div class="ttdeci">Vdw vcouple</div><div class="ttdef"><b>Definition:</b> evdw.h:196</div></div>
+<div class="ttc" id="anamespacetinker_html_aad6d30766a9fdac168453960225e9d19"><div class="ttname"><a href="namespacetinker.html#aad6d30766a9fdac168453960225e9d19">tinker::vcouple</a></div><div class="ttdeci">Vdw vcouple</div></div>
 <div class="ttc" id="agroup__vdw_html_ga0869431aa790d4cfd778c05e4894ffe4"><div class="ttname"><a href="group__vdw.html#ga0869431aa790d4cfd778c05e4894ffe4">tinker::pair_vlambda</a></div><div class="ttdeci">__device__ real pair_vlambda(real vlam, Vdw vcouple, int imut, int kmut)</div><div class="ttdef"><b>Definition:</b> pair_vlambda.h:10</div></div>
 <div class="ttc" id="agroup__vdw_html_gga0d7208589eb41e900a617e7d1a72524baec208ac5d088ba06ec2c9684396f44e3"><div class="ttname"><a href="group__vdw.html#gga0d7208589eb41e900a617e7d1a72524baec208ac5d088ba06ec2c9684396f44e3">tinker::Vdw::ANNIHILATE</a></div><div class="ttdeci">@ ANNIHILATE</div><div class="ttdoc">VDW lambda type: annihilate.</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:6</div></div>
-<div class="ttc" id="agroup__cuda__syntax_html_gae1187d8dadd78f33bac11eec7b297eb4"><div class="ttname"><a href="group__cuda__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div><div class="ttdeci">#define SEQ_ROUTINE</div><div class="ttdoc">Expands to __device__ in CUDA source files.</div><div class="ttdef"><b>Definition:</b> seqdef.h:6</div></div>
-<div class="ttc" id="anamespacetinker_html_a051355837d25006b617787e77d3a44bc"><div class="ttname"><a href="namespacetinker.html#a051355837d25006b617787e77d3a44bc">tinker::vlam</a></div><div class="ttdeci">real vlam</div><div class="ttdef"><b>Definition:</b> evdw.h:206</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="agroup__acc__syntax_html_gae1187d8dadd78f33bac11eec7b297eb4"><div class="ttname"><a href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div><div class="ttdeci">#define SEQ_ROUTINE</div><div class="ttdef"><b>Definition:</b> acc/seqdef.h:7</div></div>
+<div class="ttc" id="anamespacetinker_html_a051355837d25006b617787e77d3a44bc"><div class="ttname"><a href="namespacetinker.html#a051355837d25006b617787e77d3a44bc">tinker::vlam</a></div><div class="ttdeci">real vlam</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

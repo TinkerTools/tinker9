@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -84,9 +84,9 @@ $(function() {
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacetinker.html">tinker</a> {</div>
 <div class="line"><a name="l00007"></a><span class="lineno"><a class="line" href="group__platform.html#gabe00d9e69e7c7dd0f43eaab9bcf13a99">    7</a></span>&#160;<span class="keyword">enum class</span> <a class="code" href="group__platform.html#gabe00d9e69e7c7dd0f43eaab9bcf13a99">Platform</a></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;{</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;   <a class="code" href="group__platform.html#ggabe00d9e69e7c7dd0f43eaab9bcf13a99a666a87025ab0d8965e221050c8948001">UNSET</a> = 0x000, </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;   <a class="code" href="group__platform.html#ggabe00d9e69e7c7dd0f43eaab9bcf13a99ac4fd1ef4041f00039def6df0331841de">ACC</a> = 0x001,   </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;   <a class="code" href="group__platform.html#ggabe00d9e69e7c7dd0f43eaab9bcf13a99aa33b7755e5f9b504d2d038eaca4ff28d">CUDA</a> = 0x002   </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;   <a class="code" href="group__platform.html#ggabe00d9e69e7c7dd0f43eaab9bcf13a99a696b031073e74bf2cb98e5ef201d4aa3">UNKNOWN</a> = 0x000, </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;   <a class="code" href="group__platform.html#ggabe00d9e69e7c7dd0f43eaab9bcf13a99ac4fd1ef4041f00039def6df0331841de">ACC</a> = 0x001,     </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;   <a class="code" href="group__platform.html#ggabe00d9e69e7c7dd0f43eaab9bcf13a99aa33b7755e5f9b504d2d038eaca4ff28d">CUDA</a> = 0x002     </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;};</div>
 <div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="structtinker_1_1_enable_enum_bit_mask_3_01_platform_01_4.html#a26001b6690acc9a00ed8af6e645f7e5a">   13</a></span>&#160;<a class="code" href="group__rc.html#ga0f4716180606d95e1c5be9c359a979dd">TINKER_ENABLE_ENUM_BITMASK</a>(<a class="code" href="group__platform.html#gabe00d9e69e7c7dd0f43eaab9bcf13a99">Platform</a>);</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
@@ -100,18 +100,18 @@ $(function() {
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">//====================================================================//</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacetinker.html">tinker</a> {</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="group__platform.html#gab2b3b37ede8831dd84973a3770b1a18d">   27</a></span>&#160;<a class="code" href="group__cpp__syntax.html#gad007fe0cc7bedd195c0642d4622daf81">TINKER_EXTERN</a> <a class="code" href="group__platform.html#gabe00d9e69e7c7dd0f43eaab9bcf13a99">Platform</a> <a class="code" href="group__platform.html#gab2b3b37ede8831dd84973a3770b1a18d">pltfm_config</a>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<a class="code" href="group__cpp__syntax.html#gad007fe0cc7bedd195c0642d4622daf81">TINKER_EXTERN</a> <a class="code" href="group__platform.html#gabe00d9e69e7c7dd0f43eaab9bcf13a99">Platform</a> <a class="code" href="group__platform.html#gab2b3b37ede8831dd84973a3770b1a18d">pltfm_config</a>; </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="agroup__platform_html_gab2b3b37ede8831dd84973a3770b1a18d"><div class="ttname"><a href="group__platform.html#gab2b3b37ede8831dd84973a3770b1a18d">tinker::pltfm_config</a></div><div class="ttdeci">Platform pltfm_config</div><div class="ttdef"><b>Definition:</b> platform.h:27</div></div>
-<div class="ttc" id="agroup__cpp__syntax_html_gad007fe0cc7bedd195c0642d4622daf81"><div class="ttname"><a href="group__cpp__syntax.html#gad007fe0cc7bedd195c0642d4622daf81">TINKER_EXTERN</a></div><div class="ttdeci">#define TINKER_EXTERN</div><div class="ttdoc">Expands to extern, unless TINKER_EXTERN_DEFINITION_FILE has been predefined to 1. This is useful to d...</div><div class="ttdef"><b>Definition:</b> macro.h:100</div></div>
+<div class="ttc" id="agroup__platform_html_gab2b3b37ede8831dd84973a3770b1a18d"><div class="ttname"><a href="group__platform.html#gab2b3b37ede8831dd84973a3770b1a18d">tinker::pltfm_config</a></div><div class="ttdeci">Platform pltfm_config</div><div class="ttdoc">Platform in use.</div></div>
+<div class="ttc" id="agroup__cpp__syntax_html_gad007fe0cc7bedd195c0642d4622daf81"><div class="ttname"><a href="group__cpp__syntax.html#gad007fe0cc7bedd195c0642d4622daf81">TINKER_EXTERN</a></div><div class="ttdeci">#define TINKER_EXTERN</div><div class="ttdef"><b>Definition:</b> macro.h:104</div></div>
 <div class="ttc" id="agroup__platform_html_ggabe00d9e69e7c7dd0f43eaab9bcf13a99ac4fd1ef4041f00039def6df0331841de"><div class="ttname"><a href="group__platform.html#ggabe00d9e69e7c7dd0f43eaab9bcf13a99ac4fd1ef4041f00039def6df0331841de">tinker::Platform::ACC</a></div><div class="ttdeci">@ ACC</div><div class="ttdoc">Flag for the OpenACC platform.</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:6</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="agroup__platform_html_ggabe00d9e69e7c7dd0f43eaab9bcf13a99a696b031073e74bf2cb98e5ef201d4aa3"><div class="ttname"><a href="group__platform.html#ggabe00d9e69e7c7dd0f43eaab9bcf13a99a696b031073e74bf2cb98e5ef201d4aa3">tinker::Platform::UNKNOWN</a></div><div class="ttdeci">@ UNKNOWN</div><div class="ttdoc">Flag for the unknown platform.</div></div>
 <div class="ttc" id="agroup__platform_html_gad7cc7138c4067af713801f1e1e0d1bc3"><div class="ttname"><a href="group__platform.html#gad7cc7138c4067af713801f1e1e0d1bc3">tinker::platformData</a></div><div class="ttdeci">void platformData(RcOp)</div></div>
 <div class="ttc" id="agroup__rc_html_gaa2180c702b53e2f135f4238ea3fa0cfa"><div class="ttname"><a href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">tinker::ResourceOperation</a></div><div class="ttdeci">ResourceOperation</div><div class="ttdef"><b>Definition:</b> rcman.h:43</div></div>
-<div class="ttc" id="agroup__platform_html_ggabe00d9e69e7c7dd0f43eaab9bcf13a99a666a87025ab0d8965e221050c8948001"><div class="ttname"><a href="group__platform.html#ggabe00d9e69e7c7dd0f43eaab9bcf13a99a666a87025ab0d8965e221050c8948001">tinker::Platform::UNSET</a></div><div class="ttdeci">@ UNSET</div><div class="ttdoc">Flag for the unset platform.</div></div>
 <div class="ttc" id="agroup__rc_html_ga0f4716180606d95e1c5be9c359a979dd"><div class="ttname"><a href="group__rc.html#ga0f4716180606d95e1c5be9c359a979dd">TINKER_ENABLE_ENUM_BITMASK</a></div><div class="ttdeci">#define TINKER_ENABLE_ENUM_BITMASK(x)</div><div class="ttdoc">Explicitly enables mathematical calculation by casting enum class to integer.</div><div class="ttdef"><b>Definition:</b> rcman.h:19</div></div>
-<div class="ttc" id="agroup__platform_html_gabe00d9e69e7c7dd0f43eaab9bcf13a99"><div class="ttname"><a href="group__platform.html#gabe00d9e69e7c7dd0f43eaab9bcf13a99">tinker::Platform</a></div><div class="ttdeci">Platform</div><div class="ttdoc">Flags for the major platforms.</div><div class="ttdef"><b>Definition:</b> platform.h:7</div></div>
+<div class="ttc" id="agroup__platform_html_gabe00d9e69e7c7dd0f43eaab9bcf13a99"><div class="ttname"><a href="group__platform.html#gabe00d9e69e7c7dd0f43eaab9bcf13a99">tinker::Platform</a></div><div class="ttdeci">Platform</div><div class="ttdef"><b>Definition:</b> platform.h:7</div></div>
 <div class="ttc" id="agroup__platform_html_ggabe00d9e69e7c7dd0f43eaab9bcf13a99aa33b7755e5f9b504d2d038eaca4ff28d"><div class="ttname"><a href="group__platform.html#ggabe00d9e69e7c7dd0f43eaab9bcf13a99aa33b7755e5f9b504d2d038eaca4ff28d">tinker::Platform::CUDA</a></div><div class="ttdeci">@ CUDA</div><div class="ttdoc">Flag for the CUDA platform.</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

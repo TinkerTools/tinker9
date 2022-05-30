@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -71,6 +71,7 @@ $(function() {
 
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
@@ -78,11 +79,15 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gace905349e3cca47762bee79ec7643ce9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#gace905349e3cca47762bee79ec7643ce9">INT_COPYSIGN</a>&#160;&#160;&#160;intCopysignShift</td></tr>
+<tr class="separator:gace905349e3cca47762bee79ec7643ce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga6954d199f89c92bc0dda21617e7cb892"><td class="memTemplParams" colspan="2">template&lt;int N, class T &gt; </td></tr>
 <tr class="memitem:ga6954d199f89c92bc0dda21617e7cb892"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga6954d199f89c92bc0dda21617e7cb892">tinker::symlusolve</a> (const T *aUpRowMajor, T *b)</td></tr>
-<tr class="memdesc:ga6954d199f89c92bc0dda21617e7cb892"><td class="mdescLeft">&#160;</td><td class="mdescRight">This subroutine uses the LU decomposition method to solve the linear system Ax = b, returning x in b. A is an n by n real symmetric matrix with its upper triangle (including the diagonal) stored by rows.  <a href="group__math.html#ga6954d199f89c92bc0dda21617e7cb892">More...</a><br /></td></tr>
 <tr class="separator:ga6954d199f89c92bc0dda21617e7cb892"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab4d61f47da0dd4d1334366ea1b17498f"><td class="memTemplParams" colspan="2">template&lt;class T , class T2 &gt; </td></tr>
 <tr class="memitem:gab4d61f47da0dd4d1334366ea1b17498f"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#gab4d61f47da0dd4d1334366ea1b17498f">tinker::maxOf</a> (T a, T2 b)</td></tr>
@@ -97,140 +102,112 @@ Functions</h2></td></tr>
 <tr class="memitem:ga1a5b558ded4c16beb0dffab747f1a60a"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga1a5b558ded4c16beb0dffab747f1a60a">tinker::minOf</a> (T a, T2 b, Ts... cs)</td></tr>
 <tr class="separator:ga1a5b558ded4c16beb0dffab747f1a60a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad848b1d5fd587b017d3a065555431a81"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#gad848b1d5fd587b017d3a065555431a81">tinker::OUProcess</a> (double t, double x0, double gamma, double a, double b, double R)</td></tr>
-<tr class="memdesc:gad848b1d5fd587b017d3a065555431a81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of an Ornstein-Uhlenbeck process after time t.  <a href="group__math.html#gad848b1d5fd587b017d3a065555431a81">More...</a><br /></td></tr>
 <tr class="separator:gad848b1d5fd587b017d3a065555431a81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad255347117881bfe041c4f6ddc4b049e"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#gad255347117881bfe041c4f6ddc4b049e">tinker::isPow2</a> (size_t val)</td></tr>
-<tr class="memdesc:gad255347117881bfe041c4f6ddc4b049e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return true if and only if <code>val</code> is a power of 2.  <a href="group__math.html#gad255347117881bfe041c4f6ddc4b049e">More...</a><br /></td></tr>
 <tr class="separator:gad255347117881bfe041c4f6ddc4b049e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga03ac471f8be21599fd9f6253bb620916"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga03ac471f8be21599fd9f6253bb620916">tinker::pow2</a> (int val)</td></tr>
-<tr class="memdesc:ga03ac471f8be21599fd9f6253bb620916"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integer base 2 power.  <a href="group__math.html#ga03ac471f8be21599fd9f6253bb620916">More...</a><br /></td></tr>
 <tr class="separator:ga03ac471f8be21599fd9f6253bb620916"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga160cf5f90617e0da092c96ec2bcb52ef"><td class="memItemLeft" align="right" valign="top">constexpr long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga160cf5f90617e0da092c96ec2bcb52ef">tinker::pow2ll</a> (int val)</td></tr>
-<tr class="memdesc:ga160cf5f90617e0da092c96ec2bcb52ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Long long integer base 2 power.  <a href="group__math.html#ga160cf5f90617e0da092c96ec2bcb52ef">More...</a><br /></td></tr>
 <tr class="separator:ga160cf5f90617e0da092c96ec2bcb52ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac6c5890328f740f782426d7682f3acd3"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#gac6c5890328f740f782426d7682f3acd3">tinker::floorLog2_constexpr</a> (size_t val)</td></tr>
-<tr class="memdesc:gac6c5890328f740f782426d7682f3acd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The base-2 logarithm of <code>val</code>.  <a href="group__math.html#gac6c5890328f740f782426d7682f3acd3">More...</a><br /></td></tr>
 <tr class="separator:gac6c5890328f740f782426d7682f3acd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6fe022bdc156e162e607251dfdf0294a"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga6fe022bdc156e162e607251dfdf0294a">tinker::pow2Le</a> (size_t val)</td></tr>
-<tr class="memdesc:ga6fe022bdc156e162e607251dfdf0294a"><td class="mdescLeft">&#160;</td><td class="mdescRight">A power of 2 that is less than or equal to <code>val</code>.  <a href="group__math.html#ga6fe022bdc156e162e607251dfdf0294a">More...</a><br /></td></tr>
 <tr class="separator:ga6fe022bdc156e162e607251dfdf0294a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga751836f17711659c8228a63c46dbd7a1"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga751836f17711659c8228a63c46dbd7a1">tinker::pow2Ge</a> (size_t val)</td></tr>
-<tr class="memdesc:ga751836f17711659c8228a63c46dbd7a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">A power of 2 that is greater than or equal to <code>val</code>.  <a href="group__math.html#ga751836f17711659c8228a63c46dbd7a1">More...</a><br /></td></tr>
 <tr class="separator:ga751836f17711659c8228a63c46dbd7a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2b91c034018978a77482edecc593988a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga2b91c034018978a77482edecc593988a">tinker::floorLog2</a> (int val)</td></tr>
-<tr class="memdesc:ga2b91c034018978a77482edecc593988a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-constexpr <code><a class="el" href="group__math.html#ga2b91c034018978a77482edecc593988a" title="Non-constexpr floorLog2(int).">floorLog2(int)</a></code>.  <a href="group__math.html#ga2b91c034018978a77482edecc593988a">More...</a><br /></td></tr>
 <tr class="separator:ga2b91c034018978a77482edecc593988a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga677931f02506c842f0cf81ad5131dd0d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga677931f02506c842f0cf81ad5131dd0d">tinker::floorLog2</a> (long long val)</td></tr>
-<tr class="memdesc:ga677931f02506c842f0cf81ad5131dd0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-constexpr <code><a class="el" href="group__math.html#ga677931f02506c842f0cf81ad5131dd0d" title="Non-constexpr floorLog2(long long).">floorLog2(long long)</a></code>.  <a href="group__math.html#ga677931f02506c842f0cf81ad5131dd0d">More...</a><br /></td></tr>
 <tr class="separator:ga677931f02506c842f0cf81ad5131dd0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3189b25d1332d10fbc9d7e387941a3e4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga3189b25d1332d10fbc9d7e387941a3e4">tinker::ceilLog2</a> (int val)</td></tr>
-<tr class="memdesc:ga3189b25d1332d10fbc9d7e387941a3e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-constexpr log base 2 ceiling.  <a href="group__math.html#ga3189b25d1332d10fbc9d7e387941a3e4">More...</a><br /></td></tr>
 <tr class="separator:ga3189b25d1332d10fbc9d7e387941a3e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9044041672dbeab446b0bb9921b21cdd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga9044041672dbeab446b0bb9921b21cdd">tinker::ceilLog2</a> (long long val)</td></tr>
-<tr class="memdesc:ga9044041672dbeab446b0bb9921b21cdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-constexpr log base 2 ceiling.  <a href="group__math.html#ga9044041672dbeab446b0bb9921b21cdd">More...</a><br /></td></tr>
 <tr class="separator:ga9044041672dbeab446b0bb9921b21cdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga610cf95b0fa6229f23e704d549bb6e41"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga610cf95b0fa6229f23e704d549bb6e41"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga610cf95b0fa6229f23e704d549bb6e41">tinker::random</a> ()</td></tr>
-<tr class="memdesc:ga610cf95b0fa6229f23e704d549bb6e41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a random number on <code>[0,1]</code> from a uniform distribution.  <a href="group__math.html#ga610cf95b0fa6229f23e704d549bb6e41">More...</a><br /></td></tr>
 <tr class="separator:ga610cf95b0fa6229f23e704d549bb6e41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gacab49b9589c81e2870d9a9823c77f7af"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:gacab49b9589c81e2870d9a9823c77f7af"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#gacab49b9589c81e2870d9a9823c77f7af">tinker::normal</a> ()</td></tr>
-<tr class="memdesc:gacab49b9589c81e2870d9a9823c77f7af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a random number from a normal Gaussian distribution with a mean of zero and a standard deviation of one.  <a href="group__math.html#gacab49b9589c81e2870d9a9823c77f7af">More...</a><br /></td></tr>
 <tr class="separator:gacab49b9589c81e2870d9a9823c77f7af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab8d790554015f9cdc2ee81ca32e7bfca"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:gab8d790554015f9cdc2ee81ca32e7bfca"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#gab8d790554015f9cdc2ee81ca32e7bfca">tinker::normal</a> (T u, T s)</td></tr>
-<tr class="memdesc:gab8d790554015f9cdc2ee81ca32e7bfca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a random number from a normal Gaussian distribution with a mean of <code>u</code> and a standard deviation of <code>s</code>.  <a href="group__math.html#gab8d790554015f9cdc2ee81ca32e7bfca">More...</a><br /></td></tr>
 <tr class="separator:gab8d790554015f9cdc2ee81ca32e7bfca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab573e4439aca58ee5112172b5fb0f557"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:gab573e4439aca58ee5112172b5fb0f557"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#gab573e4439aca58ee5112172b5fb0f557">tinker::chiSquared</a> (int k)</td></tr>
-<tr class="memdesc:gab573e4439aca58ee5112172b5fb0f557"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a random number as if the square of <code>k</code> independent standard normal <code>N(0,1)</code> random variables were aggregated.  <a href="group__math.html#gab573e4439aca58ee5112172b5fb0f557">More...</a><br /></td></tr>
 <tr class="separator:gab573e4439aca58ee5112172b5fb0f557"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3d2ee996495228285680357894d83738"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga3d2ee996495228285680357894d83738">tinker::randomData</a> (<a class="el" href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">RcOp</a>)</td></tr>
 <tr class="separator:ga3d2ee996495228285680357894d83738"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaecd0bbd128f83f490909366a36cf60e4"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:gaecd0bbd128f83f490909366a36cf60e4"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#gaecd0bbd128f83f490909366a36cf60e4">tinker::sinhc</a> (T <a class="el" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>)</td></tr>
-<tr class="memdesc:gaecd0bbd128f83f490909366a36cf60e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">\( \sinh(x)/x \)  <a href="group__math.html#gaecd0bbd128f83f490909366a36cf60e4">More...</a><br /></td></tr>
 <tr class="separator:gaecd0bbd128f83f490909366a36cf60e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga20491637de2b68bc2f4896ac196e7fde"><td class="memTemplParams" colspan="2">template&lt;int DO_DTAPER&gt; </td></tr>
 <tr class="memitem:ga20491637de2b68bc2f4896ac196e7fde"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga20491637de2b68bc2f4896ac196e7fde">tinker::switchTaper5</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> rik, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> cut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> off, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ taper, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ dtaper)</td></tr>
-<tr class="memdesc:ga20491637de2b68bc2f4896ac196e7fde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Smooth function <code>F: [cut,off]-&gt;[1,0]</code>.  <a href="group__math.html#ga20491637de2b68bc2f4896ac196e7fde">More...</a><br /></td></tr>
 <tr class="separator:ga20491637de2b68bc2f4896ac196e7fde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga76826de1113213a49ea15b98e1a90cdd"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga76826de1113213a49ea15b98e1a90cdd"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga76826de1113213a49ea15b98e1a90cdd">tinker::matmul3</a> (T R[3][3], T A[3][3], T B[3][3])</td></tr>
-<tr class="memdesc:ga76826de1113213a49ea15b98e1a90cdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Matrix multiplication of two 3 by 3 matrices. \( R = A B \). Matrices are stored in the row-major order (C-style).  <a href="group__math.html#ga76826de1113213a49ea15b98e1a90cdd">More...</a><br /></td></tr>
 <tr class="separator:ga76826de1113213a49ea15b98e1a90cdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga37a6e9288236ffccc1ba59be4bb7ba9d"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga37a6e9288236ffccc1ba59be4bb7ba9d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga37a6e9288236ffccc1ba59be4bb7ba9d">tinker::matmul3</a> (T R[3][3], T A[3][3])</td></tr>
-<tr class="memdesc:ga37a6e9288236ffccc1ba59be4bb7ba9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Matrix multiplication of two 3 by 3 matrices. \( R = A R \). Matrices are stored in the row-major order (C-style).  <a href="group__math.html#ga37a6e9288236ffccc1ba59be4bb7ba9d">More...</a><br /></td></tr>
 <tr class="separator:ga37a6e9288236ffccc1ba59be4bb7ba9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga091a91128c815470f70fae2f47d3b52c"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga091a91128c815470f70fae2f47d3b52c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga091a91128c815470f70fae2f47d3b52c">tinker::trimatExp</a> (T ans[3][3], T m[3][3], T t)</td></tr>
-<tr class="memdesc:ga091a91128c815470f70fae2f47d3b52c"><td class="mdescLeft">&#160;</td><td class="mdescRight">\( \exp(mt) \). Matrix m is 3 by 3 upper triangular. Matrices are stored in the row-major order (C-style).  <a href="group__math.html#ga091a91128c815470f70fae2f47d3b52c">More...</a><br /></td></tr>
 <tr class="separator:ga091a91128c815470f70fae2f47d3b52c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga869ccc58d228071bd49ed6c64da865f2"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga869ccc58d228071bd49ed6c64da865f2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga869ccc58d228071bd49ed6c64da865f2">tinker::trimatExpm1c</a> (T ans[3][3], T m[3][3], T t)</td></tr>
-<tr class="memdesc:ga869ccc58d228071bd49ed6c64da865f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">\( (\exp(mt)-I)/(mt) \). Matrix m is 3 by 3 upper triangular. Matrices are stored in the row-major order (C-style).  <a href="group__math.html#ga869ccc58d228071bd49ed6c64da865f2">More...</a><br /></td></tr>
 <tr class="separator:ga869ccc58d228071bd49ed6c64da865f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga48d66df981ae20afdb89f8d31f197e35"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga48d66df981ae20afdb89f8d31f197e35"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga48d66df981ae20afdb89f8d31f197e35">tinker::trimatTExpm1c</a> (T ans[3][3], T m[3][3], T t)</td></tr>
-<tr class="memdesc:ga48d66df981ae20afdb89f8d31f197e35"><td class="mdescLeft">&#160;</td><td class="mdescRight">\( t \frac{\exp(mt)-I}{mt} \). Matrix m is 3 by 3 upper triangular. Matrices are stored in the row-major order (C-style).  <a href="group__math.html#ga48d66df981ae20afdb89f8d31f197e35">More...</a><br /></td></tr>
 <tr class="separator:ga48d66df981ae20afdb89f8d31f197e35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga12b7d79df01bf18cd8a66acddeae9ea6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga12b7d79df01bf18cd8a66acddeae9ea6">tinker::zeroOnHost</a> (int &amp;v)</td></tr>
-<tr class="memdesc:ga12b7d79df01bf18cd8a66acddeae9ea6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros variable on host.  <a href="group__math.html#ga12b7d79df01bf18cd8a66acddeae9ea6">More...</a><br /></td></tr>
 <tr class="separator:ga12b7d79df01bf18cd8a66acddeae9ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga972c3ca9857ccc267dad20f12a8e43e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga972c3ca9857ccc267dad20f12a8e43e9">tinker::zeroOnHost</a> (float &amp;v)</td></tr>
-<tr class="memdesc:ga972c3ca9857ccc267dad20f12a8e43e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros variable on host.  <a href="group__math.html#ga972c3ca9857ccc267dad20f12a8e43e9">More...</a><br /></td></tr>
 <tr class="separator:ga972c3ca9857ccc267dad20f12a8e43e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7eb85e7b6bc1a71250af7ca2110d4dbb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga7eb85e7b6bc1a71250af7ca2110d4dbb">tinker::zeroOnHost</a> (double &amp;v)</td></tr>
-<tr class="memdesc:ga7eb85e7b6bc1a71250af7ca2110d4dbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros variable on host.  <a href="group__math.html#ga7eb85e7b6bc1a71250af7ca2110d4dbb">More...</a><br /></td></tr>
 <tr class="separator:ga7eb85e7b6bc1a71250af7ca2110d4dbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga22b1cdf50019af5bf4101064de99bd09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga22b1cdf50019af5bf4101064de99bd09">tinker::zeroOnHost</a> (unsigned long long &amp;v)</td></tr>
-<tr class="memdesc:ga22b1cdf50019af5bf4101064de99bd09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros variable on host.  <a href="group__math.html#ga22b1cdf50019af5bf4101064de99bd09">More...</a><br /></td></tr>
 <tr class="separator:ga22b1cdf50019af5bf4101064de99bd09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga44d45985704f610160fe4b10bb8b25df"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga44d45985704f610160fe4b10bb8b25df"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga44d45985704f610160fe4b10bb8b25df">tinker::zeroOnHost</a> (T *&amp;ptr)</td></tr>
-<tr class="memdesc:ga44d45985704f610160fe4b10bb8b25df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros variable on host.  <a href="group__math.html#ga44d45985704f610160fe4b10bb8b25df">More...</a><br /></td></tr>
 <tr class="separator:ga44d45985704f610160fe4b10bb8b25df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga84e2235410f743434e3f4413f7589cee"><td class="memTemplParams" colspan="2">template&lt;class T , size_t N&gt; </td></tr>
 <tr class="memitem:ga84e2235410f743434e3f4413f7589cee"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga84e2235410f743434e3f4413f7589cee">tinker::zeroOnHost</a> (T(&amp;v)[N])</td></tr>
-<tr class="memdesc:ga84e2235410f743434e3f4413f7589cee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros variables on host.  <a href="group__math.html#ga84e2235410f743434e3f4413f7589cee">More...</a><br /></td></tr>
 <tr class="separator:ga84e2235410f743434e3f4413f7589cee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga63707f54d631fb28c16b78f667f5165f"><td class="memTemplParams" colspan="2">template&lt;class T , class... Ts&gt; </td></tr>
 <tr class="memitem:ga63707f54d631fb28c16b78f667f5165f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga63707f54d631fb28c16b78f667f5165f">tinker::zeroOnHost</a> (T &amp;v, Ts &amp;... vs)</td></tr>
-<tr class="memdesc:ga63707f54d631fb28c16b78f667f5165f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros variables on host.  <a href="group__math.html#ga63707f54d631fb28c16b78f667f5165f">More...</a><br /></td></tr>
 <tr class="separator:ga63707f54d631fb28c16b78f667f5165f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae3612abae6df700cf5052b7bd21a8517"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:gae3612abae6df700cf5052b7bd21a8517"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#gae3612abae6df700cf5052b7bd21a8517">tinker::zeroOnDevice3Async</a> (int nelem, T *a1, T *a2, T *a3)</td></tr>
-<tr class="memdesc:gae3612abae6df700cf5052b7bd21a8517"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros variables on device.  <a href="group__math.html#gae3612abae6df700cf5052b7bd21a8517">More...</a><br /></td></tr>
 <tr class="separator:gae3612abae6df700cf5052b7bd21a8517"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafe48b0e9d05173dc70184287c68abe8e"><td class="memTemplParams" colspan="2">template&lt;class T , int N&gt; </td></tr>
 <tr class="memitem:gafe48b0e9d05173dc70184287c68abe8e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#gafe48b0e9d05173dc70184287c68abe8e">tinker::zeroOnDevice3Async</a> (int nelem, T(*a1)[N], T(*a2)[N], T(*a3)[N])</td></tr>
-<tr class="memdesc:gafe48b0e9d05173dc70184287c68abe8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros variables on device.  <a href="group__math.html#gafe48b0e9d05173dc70184287c68abe8e">More...</a><br /></td></tr>
 <tr class="separator:gafe48b0e9d05173dc70184287c68abe8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga629306a4481f1525d6bc6ac68098de45"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga629306a4481f1525d6bc6ac68098de45"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math.html#ga629306a4481f1525d6bc6ac68098de45">tinker::zeroOnDevice9Async</a> (int nelem, T *a1, T *a2, T *a3, T *a4, T *a5, T *a6, T *a7, T *a8, T *a9)</td></tr>
-<tr class="memdesc:ga629306a4481f1525d6bc6ac68098de45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zeros variables on device.  <a href="group__math.html#ga629306a4481f1525d6bc6ac68098de45">More...</a><br /></td></tr>
 <tr class="separator:ga629306a4481f1525d6bc6ac68098de45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad370b71fad00d420ad405f9d748035ef"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#gad370b71fad00d420ad405f9d748035ef">tinker::intCopysignShift</a> (int a, int b)</td></tr>
+<tr class="separator:gad370b71fad00d420ad405f9d748035ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4a82a27bb0a0ec92f3e348e5a6c3c2b1"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">tinker::intCopysignIf</a> (int a, int b)</td></tr>
+<tr class="separator:ga4a82a27bb0a0ec92f3e348e5a6c3c2b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3813648698b545ee7abeba6a22e9d509"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga3813648698b545ee7abeba6a22e9d509">tinker::ffsnShift</a> (int c1, int <a class="el" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>)</td></tr>
+<tr class="separator:ga3813648698b545ee7abeba6a22e9d509"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gade82f17c9ecdcd5c744ebe0190a96875"><td class="memItemLeft" align="right" valign="top">__device__ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#gade82f17c9ecdcd5c744ebe0190a96875">tinker::ffsnLoop</a> (int c1, int <a class="el" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>)</td></tr>
+<tr class="separator:gade82f17c9ecdcd5c744ebe0190a96875"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:ga260c77665843d0457c96f2ebab35acdc"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga260c77665843d0457c96f2ebab35acdc">tinker::pi</a> = M_PI</td></tr>
-<tr class="memdesc:ga260c77665843d0457c96f2ebab35acdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">\( \pi \)  <a href="group__math.html#ga260c77665843d0457c96f2ebab35acdc">More...</a><br /></td></tr>
 <tr class="separator:ga260c77665843d0457c96f2ebab35acdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9033ba1be1779fd5c45aa1497610bc34"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga9033ba1be1779fd5c45aa1497610bc34">tinker::sqrtpi</a> = 1.77245385090551602730</td></tr>
-<tr class="memdesc:ga9033ba1be1779fd5c45aa1497610bc34"><td class="mdescLeft">&#160;</td><td class="mdescRight">\( \sqrt{\pi} \)  <a href="group__math.html#ga9033ba1be1779fd5c45aa1497610bc34">More...</a><br /></td></tr>
 <tr class="separator:ga9033ba1be1779fd5c45aa1497610bc34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9f708f1f897e2ad3c5723f918b412407"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga9f708f1f897e2ad3c5723f918b412407">tinker::radian</a> = 57.2957795130823208768</td></tr>
-<tr class="memdesc:ga9f708f1f897e2ad3c5723f918b412407"><td class="mdescLeft">&#160;</td><td class="mdescRight">\( 180/\pi \)  <a href="group__math.html#ga9f708f1f897e2ad3c5723f918b412407">More...</a><br /></td></tr>
 <tr class="separator:ga9f708f1f897e2ad3c5723f918b412407"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga82e0356e9384ee575c67c73be3bca27b"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga82e0356e9384ee575c67c73be3bca27b">tinker::_1radian</a> = 0.01745329251994329576924</td></tr>
-<tr class="memdesc:ga82e0356e9384ee575c67c73be3bca27b"><td class="mdescLeft">&#160;</td><td class="mdescRight">\( \pi/180 \)  <a href="group__math.html#ga82e0356e9384ee575c67c73be3bca27b">More...</a><br /></td></tr>
 <tr class="separator:ga82e0356e9384ee575c67c73be3bca27b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8855d1575ef15dfad35b8875eb8c6806"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga8855d1575ef15dfad35b8875eb8c6806">tinker::real2</a> = float2</td></tr>
+<tr class="memitem:ga8855d1575ef15dfad35b8875eb8c6806"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga8855d1575ef15dfad35b8875eb8c6806">tinker::real2</a> = <a class="el" href="group__acc__syntax.html#structtinker_1_1float2">float2</a></td></tr>
 <tr class="separator:ga8855d1575ef15dfad35b8875eb8c6806"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad7ed414566b9a16d7d834c8290c56f6f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">tinker::real3</a> = float3</td></tr>
+<tr class="memitem:gad7ed414566b9a16d7d834c8290c56f6f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">tinker::real3</a> = <a class="el" href="group__acc__syntax.html#structtinker_1_1float3">float3</a></td></tr>
 <tr class="separator:gad7ed414566b9a16d7d834c8290c56f6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga649254dd9808a8dd12b3a45039ea5f41"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga649254dd9808a8dd12b3a45039ea5f41">tinker::real4</a> = float4</td></tr>
+<tr class="memitem:ga649254dd9808a8dd12b3a45039ea5f41"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#ga649254dd9808a8dd12b3a45039ea5f41">tinker::real4</a> = <a class="el" href="group__acc__syntax.html#structtinker_1_1float4">float4</a></td></tr>
 <tr class="separator:ga649254dd9808a8dd12b3a45039ea5f41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaade33a73d261e26884b269df006eb9dd"><td class="memItemLeft" align="right" valign="top">__device__ <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__math.html#gaade33a73d261e26884b269df006eb9dd">tinker::operator-</a> (<a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a> a)</td></tr>
 <tr class="separator:gaade33a73d261e26884b269df006eb9dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -289,6 +266,23 @@ Variables</h2></td></tr>
 <tr class="separator:ga994cd5ed3fc49d7b75a363c000858b2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="gace905349e3cca47762bee79ec7643ce9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gace905349e3cca47762bee79ec7643ce9">&#9670;&nbsp;</a></span>INT_COPYSIGN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define INT_COPYSIGN&#160;&#160;&#160;intCopysignShift</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Defines the implementation of <code>int copysign(int,int);</code> function. </p>
+
+</div>
+</div>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="ga8855d1575ef15dfad35b8875eb8c6806"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga8855d1575ef15dfad35b8875eb8c6806">&#9670;&nbsp;</a></span>real2</h2>
@@ -297,7 +291,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="group__math.html#ga8855d1575ef15dfad35b8875eb8c6806">tinker::real2</a> = typedef float2</td>
+          <td class="memname">using <a class="el" href="group__math.html#ga8855d1575ef15dfad35b8875eb8c6806">tinker::real2</a> = typedef <a class="el" href="group__acc__syntax.html#structtinker_1_1float2">float2</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -311,7 +305,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">tinker::real3</a> = typedef float3</td>
+          <td class="memname">using <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">tinker::real3</a> = typedef <a class="el" href="group__acc__syntax.html#structtinker_1_1float3">float3</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -325,7 +319,7 @@ Variables</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="group__math.html#ga649254dd9808a8dd12b3a45039ea5f41">tinker::real4</a> = typedef float4</td>
+          <td class="memname">using <a class="el" href="group__math.html#ga649254dd9808a8dd12b3a45039ea5f41">tinker::real4</a> = typedef <a class="el" href="group__acc__syntax.html#structtinker_1_1float4">float4</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -802,6 +796,94 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="gade82f17c9ecdcd5c744ebe0190a96875"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gade82f17c9ecdcd5c744ebe0190a96875">&#9670;&nbsp;</a></span>ffsnLoop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">__device__ int tinker::ffsnLoop </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>c1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>An alternative implementation of ffsn using loop. </p>
+
+</div>
+</div>
+<a id="ga3813648698b545ee7abeba6a22e9d509"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3813648698b545ee7abeba6a22e9d509">&#9670;&nbsp;</a></span>ffsnShift()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">__device__ int tinker::ffsnShift </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>c1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Find the position of the n-th least significant bit set in a 32-bit integer. Returns a value from 0 to 32. </p>
+<ul>
+<li>If <code>c1</code> equals 0, always returns 0.</li>
+<li>If <code>n</code> equals 0, always returns 0.</li>
+<li>If <code>n</code> is greater than <code>POPC</code>, which is the number of bits that are set to 1 in <code>c1</code>, returns an undefined value.</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">c1</td><td>A 32-bit integer. </td></tr>
+    <tr><td class="paramname">n</td><td>Ranges from 1 to 32. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1285,6 +1367,83 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga4a82a27bb0a0ec92f3e348e5a6c3c2b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">&#9670;&nbsp;</a></span>intCopysignIf()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">__device__ int tinker::intCopysignIf </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>If <code>b &lt; 0</code>, returns <code>-abs(a)</code>, otherwise, returns <code>abs(a)</code>. </p>
+
+</div>
+</div>
+<a id="gad370b71fad00d420ad405f9d748035ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad370b71fad00d420ad405f9d748035ef">&#9670;&nbsp;</a></span>intCopysignShift()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">__device__ int tinker::intCopysignShift </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>If <code>b &lt; 0</code>, returns <code>-abs(a)</code>, otherwise, returns <code>abs(a)</code>. Similar to the 32-bit integer version of Fortran <code>SIGN(A,B)</code>. </p>
+<dl class="section note"><dt>Note</dt><dd>Standard C and CUDA math libraries only have float and double versions. </dd></dl>
 
 </div>
 </div>

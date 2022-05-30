@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -103,15 +103,15 @@ $(function() {
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__egv.html#ga8e7bb4ae5cc1f42329b721fc7a03b3c6">copyGradient</a>(<span class="keywordtype">int</span> vers, <span class="keywordtype">double</span>* grdx, <span class="keywordtype">double</span>* grdy, <span class="keywordtype">double</span>* grdz);</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__egv.html#ga6dcf3e245ea8f0ca3d12acb0f3072964">copyEnergy</a>(<span class="keywordtype">int</span> vers, <a class="code" href="group__prec.html#ga8259ff7509835a575bc1750888422fd4">energy_prec</a>* eng);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__egv.html#ga6dcf3e245ea8f0ca3d12acb0f3072964">copyEnergy</a>(<span class="keywordtype">int</span> vers, <a class="code" href="group__prec.html#ga8286f2194addf403df0dda44fc758703">energy_prec</a>* eng);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="agroup__egv_html_ga8e7bb4ae5cc1f42329b721fc7a03b3c6"><div class="ttname"><a href="group__egv.html#ga8e7bb4ae5cc1f42329b721fc7a03b3c6">tinker::copyGradient</a></div><div class="ttdeci">void copyGradient(int vers, double *grdx, double *grdy, double *grdz, const grad_prec *gx_src, const grad_prec *gy_src, const grad_prec *gz_src, int queue)</div><div class="ttdoc">Copy the energy gradients from device to host.</div></div>
-<div class="ttc" id="agroup__prec_html_ga753fe0f5b2ef77802a069f67e51f33ab"><div class="ttname"><a href="group__prec.html#ga753fe0f5b2ef77802a069f67e51f33ab">tinker::grad_prec</a></div><div class="ttdeci">fixed grad_prec</div><div class="ttdoc">Floating-point or fixed-point type for the total gradients.</div><div class="ttdef"><b>Definition:</b> precision.h:135</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:6</div></div>
+<div class="ttc" id="agroup__prec_html_ga753fe0f5b2ef77802a069f67e51f33ab"><div class="ttname"><a href="group__prec.html#ga753fe0f5b2ef77802a069f67e51f33ab">tinker::grad_prec</a></div><div class="ttdeci">fixed grad_prec</div><div class="ttdef"><b>Definition:</b> precision.h:103</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
 <div class="ttc" id="agroup__egv_html_ga6dcf3e245ea8f0ca3d12acb0f3072964"><div class="ttname"><a href="group__egv.html#ga6dcf3e245ea8f0ca3d12acb0f3072964">tinker::copyEnergy</a></div><div class="ttdeci">void copyEnergy(int vers, energy_prec *eng)</div><div class="ttdoc">Copy total potential energy to another variable. Avoid accessing esum directly because it is not alwa...</div></div>
 <div class="ttc" id="agroup__egv_html_ga65391785a38e3eb601e3e38d5e45be2e"><div class="ttname"><a href="group__egv.html#ga65391785a38e3eb601e3e38d5e45be2e">tinker::sumGradient</a></div><div class="ttdeci">void sumGradient(grad_prec *g0x, grad_prec *g0y, grad_prec *g0z, const grad_prec *g1x, const grad_prec *g1y, const grad_prec *g1z)</div><div class="ttdoc">Copy the energy gradients from device to host.</div></div>
-<div class="ttc" id="agroup__prec_html_ga8259ff7509835a575bc1750888422fd4"><div class="ttname"><a href="group__prec.html#ga8259ff7509835a575bc1750888422fd4">tinker::energy_prec</a></div><div class="ttdeci">mixed energy_prec</div><div class="ttdoc">Floating-point type for total energies.</div><div class="ttdef"><b>Definition:</b> precision.h:132</div></div>
+<div class="ttc" id="agroup__prec_html_ga8286f2194addf403df0dda44fc758703"><div class="ttname"><a href="group__prec.html#ga8286f2194addf403df0dda44fc758703">tinker::energy_prec</a></div><div class="ttdeci">mixed energy_prec</div><div class="ttdoc">Floating-point type for total energies.</div><div class="ttdef"><b>Definition:</b> precision.h:97</div></div>
 <div class="ttc" id="agroup__egv_html_gaec619c1a8e648a65ef4db9fff05984ad"><div class="ttname"><a href="group__egv.html#gaec619c1a8e648a65ef4db9fff05984ad">tinker::zeroEGV</a></div><div class="ttdeci">void zeroEGV(int vers)</div><div class="ttdoc">Zero out all of the counts, energies, gradients, and virials on device.</div></div>
 <div class="ttc" id="agroup__egv_html_gaf6965b54d162e34aa7ed09a010bd8086"><div class="ttname"><a href="group__egv.html#gaf6965b54d162e34aa7ed09a010bd8086">tinker::scaleGradient</a></div><div class="ttdeci">void scaleGradient(double scale, grad_prec *g0x, grad_prec *g0y, grad_prec *g0z)</div><div class="ttdoc">Copy the energy gradients from device to host.</div></div>
 <!-- start footer part -->

@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -82,58 +82,42 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:classtinker_1_1_test_file"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#classtinker_1_1_test_file">tinker::TestFile</a></td></tr>
-<tr class="memdesc:classtinker_1_1_test_file"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a file to disk in its constructor and removes this file in its destructor, unless the file is set to be kept.  <a href="group__test.html#classtinker_1_1_test_file">More...</a><br /></td></tr>
 <tr class="separator:classtinker_1_1_test_file"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:classtinker_1_1_test_remove_file_on_exit"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#classtinker_1_1_test_remove_file_on_exit">tinker::TestRemoveFileOnExit</a></td></tr>
-<tr class="memdesc:classtinker_1_1_test_remove_file_on_exit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the file in its destructor as necessary.  <a href="group__test.html#classtinker_1_1_test_remove_file_on_exit">More...</a><br /></td></tr>
 <tr class="separator:classtinker_1_1_test_remove_file_on_exit"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:classtinker_1_1_test_reference"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#classtinker_1_1_test_reference">tinker::TestReference</a></td></tr>
-<tr class="memdesc:classtinker_1_1_test_reference"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads reference values from a text file.  <a href="group__test.html#classtinker_1_1_test_reference">More...</a><br /></td></tr>
 <tr class="separator:classtinker_1_1_test_reference"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:ga07b230adc56d9874f252466b635d99d0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga07b230adc56d9874f252466b635d99d0">COMPARE_INTS</a>(i1,  refi)&#160;&#160;&#160;REQUIRE(i1 == refi)</td></tr>
-<tr class="memdesc:ga07b230adc56d9874f252466b635d99d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two integers.  <a href="group__test.html#ga07b230adc56d9874f252466b635d99d0">More...</a><br /></td></tr>
 <tr class="separator:ga07b230adc56d9874f252466b635d99d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa82f04925c4d16ca5aaee6671dbfa85a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gaa82f04925c4d16ca5aaee6671dbfa85a">COMPARE_REALS</a>(v1,  refv,  eps)&#160;&#160;&#160;REQUIRE(v1 == Approx(refv).margin(eps))</td></tr>
-<tr class="memdesc:gaa82f04925c4d16ca5aaee6671dbfa85a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two floating-point numbers with a margin of <code>eps</code>.  <a href="group__test.html#gaa82f04925c4d16ca5aaee6671dbfa85a">More...</a><br /></td></tr>
 <tr class="separator:gaa82f04925c4d16ca5aaee6671dbfa85a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae5b7fba502059f9183a9e514dfbb1723"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gae5b7fba502059f9183a9e514dfbb1723">COMPARE_ENERGY</a>(gpuptr,  ref_eng,  eps)</td></tr>
-<tr class="memdesc:gae5b7fba502059f9183a9e514dfbb1723"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reduces the energy from the energy buffer and compares to the reference value with a margin of <code>eps</code>.  <a href="group__test.html#gae5b7fba502059f9183a9e514dfbb1723">More...</a><br /></td></tr>
 <tr class="separator:gae5b7fba502059f9183a9e514dfbb1723"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga059d50f2ecb9a98db35cf11f62a21249"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga059d50f2ecb9a98db35cf11f62a21249">COMPARE_COUNT</a>(gpuptr,  ref_count)</td></tr>
-<tr class="memdesc:ga059d50f2ecb9a98db35cf11f62a21249"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reduces the number of interactions from the count buffer and compares to the reference value.  <a href="group__test.html#ga059d50f2ecb9a98db35cf11f62a21249">More...</a><br /></td></tr>
 <tr class="separator:ga059d50f2ecb9a98db35cf11f62a21249"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4e97d3c54989336d977a3c429a71c319"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga4e97d3c54989336d977a3c429a71c319">COMPARE_VIR9</a>(vir1,  ref_v,  eps)</td></tr>
-<tr class="memdesc:ga4e97d3c54989336d977a3c429a71c319"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares a virial tensor to the reference values with a margin of <code>eps</code>.  <a href="group__test.html#ga4e97d3c54989336d977a3c429a71c319">More...</a><br /></td></tr>
 <tr class="separator:ga4e97d3c54989336d977a3c429a71c319"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga91e273c825b35ca762018f3763c9fd04"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga91e273c825b35ca762018f3763c9fd04">COMPARE_VIR</a>(gpuptr,  ref_v,  eps)</td></tr>
-<tr class="memdesc:ga91e273c825b35ca762018f3763c9fd04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reduces a virial tensor from a virial buffer and compares to the reference values with a margin of <code>eps</code>.  <a href="group__test.html#ga91e273c825b35ca762018f3763c9fd04">More...</a><br /></td></tr>
 <tr class="separator:ga91e273c825b35ca762018f3763c9fd04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga69e86dfc28af6d0e1df671cedbac5e2c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga69e86dfc28af6d0e1df671cedbac5e2c">COMPARE_VIR2</a>(gpuptr,  gpuptr2,  ref_v,  eps)</td></tr>
-<tr class="memdesc:ga69e86dfc28af6d0e1df671cedbac5e2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reduces two virial tensors from two virial buffers and compares the sum to the reference with a margin of <code>eps</code>.  <a href="group__test.html#ga69e86dfc28af6d0e1df671cedbac5e2c">More...</a><br /></td></tr>
 <tr class="separator:ga69e86dfc28af6d0e1df671cedbac5e2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad3a3e60271e184f6ce15d90c88e9517a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gad3a3e60271e184f6ce15d90c88e9517a">COMPARE_GRADIENT</a>(ref_grad,  eps)&#160;&#160;&#160;<a class="el" href="group__test.html#gad5eab462c8de2d5f2663b12570b357f0">COMPARE_GRADIENT2</a>(ref_grad, eps, [](int, int) { return true; })</td></tr>
-<tr class="memdesc:gad3a3e60271e184f6ce15d90c88e9517a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies out gradients from device to host and compares to the reference values with a margin of <code>eps</code>.  <a href="group__test.html#gad3a3e60271e184f6ce15d90c88e9517a">More...</a><br /></td></tr>
 <tr class="separator:gad3a3e60271e184f6ce15d90c88e9517a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad5eab462c8de2d5f2663b12570b357f0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gad5eab462c8de2d5f2663b12570b357f0">COMPARE_GRADIENT2</a>(ref_grad,  eps,  check_ij)</td></tr>
-<tr class="memdesc:gad5eab462c8de2d5f2663b12570b357f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares the flitered gradients[i][j] components.  <a href="group__test.html#gad5eab462c8de2d5f2663b12570b357f0">More...</a><br /></td></tr>
 <tr class="separator:gad5eab462c8de2d5f2663b12570b357f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga398ae1a71c38a28e1922c047e96aaa86"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga398ae1a71c38a28e1922c047e96aaa86">tinker::testGetEps</a> (double epsSingle, double epsDouble)</td></tr>
-<tr class="memdesc:ga398ae1a71c38a28e1922c047e96aaa86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns tolerance eps depending on the predefined floating-point precision.  <a href="group__test.html#ga398ae1a71c38a28e1922c047e96aaa86">More...</a><br /></td></tr>
 <tr class="separator:ga398ae1a71c38a28e1922c047e96aaa86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2e2e1d17176d8956cc393c2e3f629ab8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga2e2e1d17176d8956cc393c2e3f629ab8">tinker::testBeginWithArgs</a> (int argc, const char **argv)</td></tr>
-<tr class="memdesc:ga2e2e1d17176d8956cc393c2e3f629ab8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the test.  <a href="group__test.html#ga2e2e1d17176d8956cc393c2e3f629ab8">More...</a><br /></td></tr>
 <tr class="separator:ga2e2e1d17176d8956cc393c2e3f629ab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4fbe121cde1c7d8d911aaae030276119"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga4fbe121cde1c7d8d911aaae030276119">tinker::testEnd</a> ()</td></tr>
-<tr class="memdesc:ga4fbe121cde1c7d8d911aaae030276119"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends the test.  <a href="group__test.html#ga4fbe121cde1c7d8d911aaae030276119">More...</a><br /></td></tr>
 <tr class="separator:ga4fbe121cde1c7d8d911aaae030276119"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabe8c25e3bc350ef8b353158181c9788b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gabe8c25e3bc350ef8b353158181c9788b">tinker::testMdInit</a> (double t=0, double atm=0)</td></tr>
-<tr class="memdesc:gabe8c25e3bc350ef8b353158181c9788b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes MD in the test.  <a href="group__test.html#gabe8c25e3bc350ef8b353158181c9788b">More...</a><br /></td></tr>
 <tr class="separator:gabe8c25e3bc350ef8b353158181c9788b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -153,13 +137,10 @@ Functions</h2></td></tr>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Public Member Functions</h3></td></tr>
 <tr class="memitem:a0627af3d4170d0aa72373c3c3c421460"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#a0627af3d4170d0aa72373c3c3c421460">TestFile</a> (std::string src, std::string dst=&quot;&quot;, std::string extra=&quot;&quot;)</td></tr>
-<tr class="memdesc:a0627af3d4170d0aa72373c3c3c421460"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies file from <code>src</code> to <code>dst</code> and append <code>extra</code> text to the file if <code>extra</code> is not empty. If <code>dst</code> is an empty string, the new file will be written to the current working directory with the same name as <code>src</code>. If <code>src</code> is an empty string, <code>dst</code> must be a valid name for the new file.  <a href="group__test.html#a0627af3d4170d0aa72373c3c3c421460">More...</a><br /></td></tr>
 <tr class="separator:a0627af3d4170d0aa72373c3c3c421460"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae45292591a75c41b6d2bbaa47e93653f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ae45292591a75c41b6d2bbaa47e93653f">~TestFile</a> ()</td></tr>
-<tr class="memdesc:ae45292591a75c41b6d2bbaa47e93653f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the file on disk on exit.  <a href="group__test.html#ae45292591a75c41b6d2bbaa47e93653f">More...</a><br /></td></tr>
 <tr class="separator:ae45292591a75c41b6d2bbaa47e93653f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0a169d64b79c106d335d0088d9cbe8c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ad0a169d64b79c106d335d0088d9cbe8c">__keep</a> ()</td></tr>
-<tr class="memdesc:ad0a169d64b79c106d335d0088d9cbe8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prevents the file being deleted.  <a href="group__test.html#ad0a169d64b79c106d335d0088d9cbe8c">More...</a><br /></td></tr>
 <tr class="separator:ad0a169d64b79c106d335d0088d9cbe8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h4 class="groupheader">Constructor &amp; Destructor Documentation</h4>
@@ -967,7 +948,7 @@ Functions</h2></td></tr>
 </div>
 </div><!-- contents -->
 <div class="ttc" id="anamespacetinker_html_aacf2cc0b57d3253af639886930bb30d9"><div class="ttname"><a href="namespacetinker.html#aacf2cc0b57d3253af639886930bb30d9">tinker::energyReduce</a></div><div class="ttdeci">energy_prec energyReduce(const EnergyBuffer b)</div><div class="ttdoc">Gets the number of the non-bonded interactions, energy, and virial from a buffer.</div></div>
-<div class="ttc" id="agroup__ff_html_gad2e089162a2f11d8850f715592d9acdb"><div class="ttname"><a href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">tinker::n</a></div><div class="ttdeci">int n</div><div class="ttdoc">Number of atoms padded by WARP_SIZE.</div><div class="ttdef"><b>Definition:</b> atom.h:52</div></div>
+<div class="ttc" id="agroup__ff_html_gad2e089162a2f11d8850f715592d9acdb"><div class="ttname"><a href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">tinker::n</a></div><div class="ttdeci">int n</div><div class="ttdoc">Number of atoms padded by WARP_SIZE.</div></div>
 <div class="ttc" id="anamespacetinker_html_a7cd0a4b251c0c6b96b12e7892a527285"><div class="ttname"><a href="namespacetinker.html#a7cd0a4b251c0c6b96b12e7892a527285">tinker::countReduce</a></div><div class="ttdeci">int countReduce(const CountBuffer b)</div><div class="ttdoc">Gets the number of the non-bonded interactions, energy, and virial from a buffer.</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

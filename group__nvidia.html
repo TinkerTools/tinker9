@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -75,7 +75,7 @@ $(function() {
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
-<div class="title">NVIDIA GPU<div class="ingroups"><a class="el" href="group__platform.html">Platforms and Syntaxes</a></div></div>  </div>
+<div class="title">NVIDIA GPU<div class="ingroups"><a class="el" href="group__platform.html">Platforms</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
@@ -98,13 +98,10 @@ Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:ga7ee59091eab316e45b0c9dc6d382f3d0"><td class="memItemLeft" align="right" valign="top">constexpr unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#ga7ee59091eab316e45b0c9dc6d382f3d0">tinker::WARP_SIZE</a> = 32</td></tr>
-<tr class="memdesc:ga7ee59091eab316e45b0c9dc6d382f3d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of threads in a warp.  <a href="group__nvidia.html#ga7ee59091eab316e45b0c9dc6d382f3d0">More...</a><br /></td></tr>
 <tr class="separator:ga7ee59091eab316e45b0c9dc6d382f3d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab293ee936bb3df46085aeb4cde02e0d2"><td class="memItemLeft" align="right" valign="top">constexpr unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#gab293ee936bb3df46085aeb4cde02e0d2">tinker::ALL_LANES</a> = 0xFFFFFFFF</td></tr>
-<tr class="memdesc:gab293ee936bb3df46085aeb4cde02e0d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for all of the lanes in a warp.  <a href="group__nvidia.html#gab293ee936bb3df46085aeb4cde02e0d2">More...</a><br /></td></tr>
 <tr class="separator:gab293ee936bb3df46085aeb4cde02e0d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga973f6264fed111432b9d49f9f9cc209d"><td class="memItemLeft" align="right" valign="top">constexpr unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d">tinker::BLOCK_DIM</a> = 128</td></tr>
-<tr class="memdesc:ga973f6264fed111432b9d49f9f9cc209d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default dimension of thread blocks.  <a href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d">More...</a><br /></td></tr>
 <tr class="separator:ga973f6264fed111432b9d49f9f9cc209d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga040b0470b3b8c4da9840ce2abaf87842"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#ga040b0470b3b8c4da9840ce2abaf87842">tinker::PME_BLOCKDIM</a> = 64</td></tr>
 <tr class="separator:ga040b0470b3b8c4da9840ce2abaf87842"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -122,7 +119,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<div class="textblock"></div><table class="memberdecls">
+<div class="textblock"><p>Device attributes. </p>
+</div><table class="memberdecls">
 <tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
 <tr class="memitem:a0967a24d5541c2d25e0d1f327e8ce8b8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a0967a24d5541c2d25e0d1f327e8ce8b8">device</a></td></tr>
 <tr class="separator:a0967a24d5541c2d25e0d1f327e8ce8b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,6 +174,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Compute capability multiplied by 10. </p>
+
 </div>
 </div>
 <a id="a71f83c5e04ca9d0db65b57b01ec13db5"></a>
@@ -189,6 +189,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Major compute capability. </p>
 
 </div>
 </div>
@@ -204,6 +206,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Minor compute capability. </p>
+
 </div>
 </div>
 <a id="a932ba267b3517a6d9f56148b957a9082"></a>
@@ -217,6 +221,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Clock frequency in kHz, not memory clock rate. </p>
 
 </div>
 </div>
@@ -232,6 +238,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><code>exclusive thread</code>, <code>prohibited</code>, <code>exclusive process</code>, or <code>default</code>. </p>
+
 </div>
 </div>
 <a id="afa421b203b67da2c61a513a271b9c90a"></a>
@@ -245,6 +253,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Number of cores per multiprocessor. </p>
 
 </div>
 </div>
@@ -260,6 +270,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Device number. </p>
+
 </div>
 </div>
 <a id="a4fcdda459fa79907aed042f93766d51e"></a>
@@ -273,6 +285,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p><code>on</code>, or <code>off</code>. </p>
 
 </div>
 </div>
@@ -288,6 +302,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Free device memory in bytes. </p>
+
 </div>
 </div>
 <a id="a1b5dae6c1906a03de4ba5abee9779547"></a>
@@ -301,6 +317,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Maximum thread blocks per multiporcessor. </p>
 
 </div>
 </div>
@@ -316,6 +334,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Maximum shared memory per block in bytes. </p>
+
 </div>
 </div>
 <a id="a6031fde2e5864451702448574faea179"></a>
@@ -329,6 +349,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Maximum shared memory per mutiprocessor in bytes. </p>
 
 </div>
 </div>
@@ -344,6 +366,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Maximum threads per block. </p>
+
 </div>
 </div>
 <a id="a9b2b1af9d6c1e4201b0a7baae14dedb0"></a>
@@ -357,6 +381,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Maximum threads per multiprocessor. </p>
 
 </div>
 </div>
@@ -372,6 +398,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Multiprocessor count. </p>
+
 </div>
 </div>
 <a id="aed0064e375b1fa3520ac0ea9d24ff667"></a>
@@ -385,6 +413,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Device name. </p>
 
 </div>
 </div>
@@ -400,6 +430,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>PCI Bus ID. </p>
+
 </div>
 </div>
 <a id="a3f7c7ac4f21d9b6a93a776c72d7af1c7"></a>
@@ -414,6 +446,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Single to double precision performance ratio. </p>
+
 </div>
 </div>
 <a id="aba91df463feebea41f5e6b83eab2e370"></a>
@@ -427,6 +461,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Total device memory in bytes. </p>
 
 </div>
 </div>
@@ -448,6 +484,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Max CUDA runtime version supported by the driver. </dd></dl>
 
 </div>
 </div>
@@ -465,6 +502,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>CUDA runtime version. </dd></dl>
 
 </div>
 </div>
@@ -482,6 +520,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Attributes of all visible devices. </dd></dl>
 
 </div>
 </div>
@@ -499,6 +538,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Version of the Thrust Library. </dd></dl>
 
 </div>
 </div>
@@ -570,6 +610,8 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Dimension of the thread blocks for some <a class="el" href="group__pme.html#structtinker_1_1_p_m_e" title="Particle mesh ewald girds and parameters.">PME</a> kernels. </p>
 
 </div>
 </div>

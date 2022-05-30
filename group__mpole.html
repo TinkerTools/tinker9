@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -81,14 +81,12 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:structtinker_1_1_pair_m_pole_grad"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mpole.html#structtinker_1_1_pair_m_pole_grad">tinker::PairMPoleGrad</a></td></tr>
-<tr class="memdesc:structtinker_1_1_pair_m_pole_grad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Components of the pairwise multipole electrostatic gradient between atoms <code>i</code> and <code>k</code>, where <code>i</code> is less than <code>k</code>.  <a href="group__mpole.html#structtinker_1_1_pair_m_pole_grad">More...</a><br /></td></tr>
 <tr class="separator:structtinker_1_1_pair_m_pole_grad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:gad7d36dfc9a8ebcef6d46f7af264c495e"><td class="memTemplParams" colspan="2">template&lt;bool do_e, bool do_g, class ETYP &gt; </td></tr>
 <tr class="memitem:gad7d36dfc9a8ebcef6d46f7af264c495e"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__mpole.html#gad7d36dfc9a8ebcef6d46f7af264c495e">tinker::pair_mpole</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r2, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> xr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> yr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> zr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> mscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ci, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dix, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> diy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> diz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qiyy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qiyz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qizz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ck, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dkx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dky, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dkz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkyy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkyz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkzz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> f, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> aewald, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ e, <a class="el" href="group__mpole.html#structtinker_1_1_pair_m_pole_grad">PairMPoleGrad</a> &amp;__restrict__ pgrad)</td></tr>
-<tr class="memdesc:gad7d36dfc9a8ebcef6d46f7af264c495e"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenACC pairwise multipole electrostatic energy.  <a href="group__mpole.html#gad7d36dfc9a8ebcef6d46f7af264c495e">More...</a><br /></td></tr>
 <tr class="separator:gad7d36dfc9a8ebcef6d46f7af264c495e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5af894cb85cbfc73baafeb6a3475295c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mpole.html#ga5af894cb85cbfc73baafeb6a3475295c">tinker::empoleData</a> (<a class="el" href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">RcOp</a>)</td></tr>
 <tr class="separator:ga5af894cb85cbfc73baafeb6a3475295c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -118,20 +116,15 @@ Functions</h2></td></tr>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
 <tr class="memitem:a153b60aa41211c9949c6b0028952bb22"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mpole.html#a153b60aa41211c9949c6b0028952bb22">ttmi</a> [3]</td></tr>
-<tr class="memdesc:a153b60aa41211c9949c6b0028952bb22"><td class="mdescLeft">&#160;</td><td class="mdescRight">x, y, and z torques on atom <code>i</code>.  <a href="group__mpole.html#a153b60aa41211c9949c6b0028952bb22">More...</a><br /></td></tr>
 <tr class="separator:a153b60aa41211c9949c6b0028952bb22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6af38c187168b916b37f9d42b0355263"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mpole.html#a6af38c187168b916b37f9d42b0355263">ttmk</a> [3]</td></tr>
-<tr class="memdesc:a6af38c187168b916b37f9d42b0355263"><td class="mdescLeft">&#160;</td><td class="mdescRight">x, y, and z torques on atom <code>k</code>.  <a href="group__mpole.html#a6af38c187168b916b37f9d42b0355263">More...</a><br /></td></tr>
 <tr class="separator:a6af38c187168b916b37f9d42b0355263"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader"></div></td></tr>
 <tr class="memitem:a1442006d43714865386bfd4caf05e61d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mpole.html#a1442006d43714865386bfd4caf05e61d">frcx</a></td></tr>
-<tr class="memdesc:a1442006d43714865386bfd4caf05e61d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Incomplete x, y, or z gradients of atom <code>i</code>.  <a href="group__mpole.html#a1442006d43714865386bfd4caf05e61d">More...</a><br /></td></tr>
 <tr class="separator:a1442006d43714865386bfd4caf05e61d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f2d53e0a0d15cac1dd0e60f4a164f6c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mpole.html#a0f2d53e0a0d15cac1dd0e60f4a164f6c">frcy</a></td></tr>
-<tr class="memdesc:a0f2d53e0a0d15cac1dd0e60f4a164f6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Incomplete x, y, or z gradients of atom <code>i</code>.  <a href="group__mpole.html#a0f2d53e0a0d15cac1dd0e60f4a164f6c">More...</a><br /></td></tr>
 <tr class="separator:a0f2d53e0a0d15cac1dd0e60f4a164f6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a629d165e719b3fb97e0e71e019e27713"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mpole.html#a629d165e719b3fb97e0e71e019e27713">frcz</a></td></tr>
-<tr class="memdesc:a629d165e719b3fb97e0e71e019e27713"><td class="mdescLeft">&#160;</td><td class="mdescRight">Incomplete x, y, or z gradients of atom <code>i</code>.  <a href="group__mpole.html#a629d165e719b3fb97e0e71e019e27713">More...</a><br /></td></tr>
 <tr class="separator:a629d165e719b3fb97e0e71e019e27713"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h4 class="groupheader">Member Data Documentation</h4>

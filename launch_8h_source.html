@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -84,62 +84,64 @@ $(function() {
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;tool/gpucard.h&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacetinker.html">tinker</a> {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga294329a3b32a96c65f96f082bcc4a298">   19</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#ga294329a3b32a96c65f96f082bcc4a298">launch_k4</a>(cudaStream_t st, <span class="keywordtype">size_t</span> sh, <span class="keywordtype">int</span> bs, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;   <span class="keywordtype">int</span> gs = (np + bs - 1) / bs;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;   k&lt;&lt;&lt;gs, bs, sh, st&gt;&gt;&gt;(std::forward&lt;Ts&gt;(a)...);</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;}</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
-<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga8f2171e3c6fbc4cdb4172834ec2ce677">   38</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#ga8f2171e3c6fbc4cdb4172834ec2ce677">launch_k4b</a>(cudaStream_t st, <span class="keywordtype">size_t</span> sh, <span class="keywordtype">int</span> bs, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;{</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;   np = std::min(np, <a class="code" href="group__ff.html#gaa307072bd9033e67292db9efc9175f50">nelem_buffer</a>);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;   <span class="keywordtype">int</span> gs = (np + bs - 1) / bs;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;   k&lt;&lt;&lt;gs, bs, sh, st&gt;&gt;&gt;(std::forward&lt;Ts&gt;(a)...);</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;}</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">   51</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">launch_k2s</a>(cudaStream_t st, <span class="keywordtype">int</span> bs, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;{</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;   <span class="keyword">const</span> <span class="keywordtype">size_t</span> sh = 0;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;   <a class="code" href="group__cuda__syntax.html#ga294329a3b32a96c65f96f082bcc4a298">launch_k4</a>(st, sh, bs, np, k, std::forward&lt;Ts&gt;(a)...);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;}</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
-<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga69e50cfdc7432f9f52f4a613f0a78e41">   63</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#ga69e50cfdc7432f9f52f4a613f0a78e41">launch_k2b</a>(cudaStream_t st, <span class="keywordtype">int</span> bs, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;{</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;   <span class="keyword">const</span> <span class="keywordtype">size_t</span> sh = 0;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;   <a class="code" href="group__cuda__syntax.html#ga8f2171e3c6fbc4cdb4172834ec2ce677">launch_k4b</a>(st, sh, bs, np, k, std::forward&lt;Ts&gt;(a)...);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;}</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga8639262bb9c65dd4eeb8953f5f8bc69d">   76</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#ga8639262bb9c65dd4eeb8953f5f8bc69d">launch_k1s</a>(cudaStream_t st, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;{</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;   <span class="keyword">const</span> <span class="keywordtype">int</span> bs = <a class="code" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d">BLOCK_DIM</a>;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;   <a class="code" href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">launch_k2s</a>(st, bs, np, k, std::forward&lt;Ts&gt;(a)...);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;}</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
-<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga26a3ab4a08126272a8c2a8e7b1adcc82">   89</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#ga26a3ab4a08126272a8c2a8e7b1adcc82">launch_k1b</a>(cudaStream_t st, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;{</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;   <span class="keyword">const</span> <span class="keywordtype">int</span> bs = <a class="code" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d">BLOCK_DIM</a>;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;   <a class="code" href="group__cuda__syntax.html#ga69e50cfdc7432f9f52f4a613f0a78e41">launch_k2b</a>(st, bs, np, k, std::forward&lt;Ts&gt;(a)...);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga4dcbc2fad7e98df99c3eb5b890794202">   21</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#ga4dcbc2fad7e98df99c3eb5b890794202">launch_k3s</a>(cudaStream_t st, <span class="keywordtype">size_t</span> sh, <span class="keywordtype">int</span> bs, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;   <span class="keywordtype">int</span> gs = (np + bs - 1) / bs;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;   k&lt;&lt;&lt;gs, bs, sh, st&gt;&gt;&gt;(std::forward&lt;Ts&gt;(a)...);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;}</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga6674b108bcc5730f2a448473920538fa">   39</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#ga6674b108bcc5730f2a448473920538fa">launch_k3b</a>(cudaStream_t st, <span class="keywordtype">size_t</span> sh, <span class="keywordtype">int</span> bs, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;   np = std::min(np, <a class="code" href="group__ff.html#gaa307072bd9033e67292db9efc9175f50">nelem_buffer</a>);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;   <span class="keywordtype">int</span> gs = (np + bs - 1) / bs;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;   k&lt;&lt;&lt;gs, bs, sh, st&gt;&gt;&gt;(std::forward&lt;Ts&gt;(a)...);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;}</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">   50</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">launch_k2s</a>(cudaStream_t st, <span class="keywordtype">int</span> bs, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;{</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;   <span class="keyword">const</span> <span class="keywordtype">size_t</span> sh = 0;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;   <a class="code" href="group__cuda__syntax.html#ga4dcbc2fad7e98df99c3eb5b890794202">launch_k3s</a>(st, sh, bs, np, k, std::forward&lt;Ts&gt;(a)...);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;}</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga69e50cfdc7432f9f52f4a613f0a78e41">   61</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#ga69e50cfdc7432f9f52f4a613f0a78e41">launch_k2b</a>(cudaStream_t st, <span class="keywordtype">int</span> bs, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;{</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;   <span class="keyword">const</span> <span class="keywordtype">size_t</span> sh = 0;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;   <a class="code" href="group__cuda__syntax.html#ga6674b108bcc5730f2a448473920538fa">launch_k3b</a>(st, sh, bs, np, k, std::forward&lt;Ts&gt;(a)...);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;}</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga8639262bb9c65dd4eeb8953f5f8bc69d">   72</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#ga8639262bb9c65dd4eeb8953f5f8bc69d">launch_k1s</a>(cudaStream_t st, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;{</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;   <span class="keyword">const</span> <span class="keywordtype">int</span> bs = <a class="code" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d">BLOCK_DIM</a>;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;   <a class="code" href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">launch_k2s</a>(st, bs, np, k, std::forward&lt;Ts&gt;(a)...);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;}</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>K, <span class="keyword">class</span>... Ts&gt;</div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga26a3ab4a08126272a8c2a8e7b1adcc82">   84</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__cuda__syntax.html#ga26a3ab4a08126272a8c2a8e7b1adcc82">launch_k1b</a>(cudaStream_t st, <span class="keywordtype">int</span> np, K k, Ts&amp;&amp;... a)</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;{</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;   <span class="keyword">const</span> <span class="keywordtype">int</span> bs = <a class="code" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d">BLOCK_DIM</a>;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;   <a class="code" href="group__cuda__syntax.html#ga69e50cfdc7432f9f52f4a613f0a78e41">launch_k2b</a>(st, bs, np, k, std::forward&lt;Ts&gt;(a)...);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga4f2f73bf7c4dade71e79ca23af4d926f">   92</a></span>&#160;<span class="preprocessor">#define ITHREAD threadIdx.x + blockIdx.x* blockDim.x</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga351d54267048643c4365f6a24641d0cf">   93</a></span>&#160;<span class="preprocessor">#define STRIDE  blockDim.x* gridDim.x</span></div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#define ITHREAD threadIdx.x + blockIdx.x* blockDim.x</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#define STRIDE  blockDim.x* gridDim.x</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="agroup__cuda__syntax_html_ga69e50cfdc7432f9f52f4a613f0a78e41"><div class="ttname"><a href="group__cuda__syntax.html#ga69e50cfdc7432f9f52f4a613f0a78e41">tinker::launch_k2b</a></div><div class="ttdeci">void launch_k2b(cudaStream_t st, int bs, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:63</div></div>
-<div class="ttc" id="agroup__cuda__syntax_html_ga294329a3b32a96c65f96f082bcc4a298"><div class="ttname"><a href="group__cuda__syntax.html#ga294329a3b32a96c65f96f082bcc4a298">tinker::launch_k4</a></div><div class="ttdeci">void launch_k4(cudaStream_t st, size_t sh, int bs, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:19</div></div>
-<div class="ttc" id="agroup__cuda__syntax_html_ga26a3ab4a08126272a8c2a8e7b1adcc82"><div class="ttname"><a href="group__cuda__syntax.html#ga26a3ab4a08126272a8c2a8e7b1adcc82">tinker::launch_k1b</a></div><div class="ttdeci">void launch_k1b(cudaStream_t st, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:89</div></div>
-<div class="ttc" id="agroup__cuda__syntax_html_gac6e2d373b6ca6844c2693bf9bfa4f993"><div class="ttname"><a href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">tinker::launch_k2s</a></div><div class="ttdeci">void launch_k2s(cudaStream_t st, int bs, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:51</div></div>
-<div class="ttc" id="agroup__nvidia_html_ga973f6264fed111432b9d49f9f9cc209d"><div class="ttname"><a href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d">tinker::BLOCK_DIM</a></div><div class="ttdeci">constexpr unsigned BLOCK_DIM</div><div class="ttdoc">Default dimension of thread blocks.</div><div class="ttdef"><b>Definition:</b> gpucard.h:71</div></div>
-<div class="ttc" id="agroup__cuda__syntax_html_ga8f2171e3c6fbc4cdb4172834ec2ce677"><div class="ttname"><a href="group__cuda__syntax.html#ga8f2171e3c6fbc4cdb4172834ec2ce677">tinker::launch_k4b</a></div><div class="ttdeci">void launch_k4b(cudaStream_t st, size_t sh, int bs, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:38</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:6</div></div>
-<div class="ttc" id="agroup__cuda__syntax_html_ga8639262bb9c65dd4eeb8953f5f8bc69d"><div class="ttname"><a href="group__cuda__syntax.html#ga8639262bb9c65dd4eeb8953f5f8bc69d">tinker::launch_k1s</a></div><div class="ttdeci">void launch_k1s(cudaStream_t st, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:76</div></div>
-<div class="ttc" id="agroup__ff_html_gaa307072bd9033e67292db9efc9175f50"><div class="ttname"><a href="group__ff.html#gaa307072bd9033e67292db9efc9175f50">tinker::nelem_buffer</a></div><div class="ttdeci">int nelem_buffer</div><div class="ttdef"><b>Definition:</b> energybuffer.h:141</div></div>
+<div class="ttc" id="agroup__cuda__syntax_html_ga69e50cfdc7432f9f52f4a613f0a78e41"><div class="ttname"><a href="group__cuda__syntax.html#ga69e50cfdc7432f9f52f4a613f0a78e41">tinker::launch_k2b</a></div><div class="ttdeci">void launch_k2b(cudaStream_t st, int bs, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:61</div></div>
+<div class="ttc" id="agroup__cuda__syntax_html_ga26a3ab4a08126272a8c2a8e7b1adcc82"><div class="ttname"><a href="group__cuda__syntax.html#ga26a3ab4a08126272a8c2a8e7b1adcc82">tinker::launch_k1b</a></div><div class="ttdeci">void launch_k1b(cudaStream_t st, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:84</div></div>
+<div class="ttc" id="agroup__cuda__syntax_html_gac6e2d373b6ca6844c2693bf9bfa4f993"><div class="ttname"><a href="group__cuda__syntax.html#gac6e2d373b6ca6844c2693bf9bfa4f993">tinker::launch_k2s</a></div><div class="ttdeci">void launch_k2s(cudaStream_t st, int bs, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:50</div></div>
+<div class="ttc" id="agroup__nvidia_html_ga973f6264fed111432b9d49f9f9cc209d"><div class="ttname"><a href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d">tinker::BLOCK_DIM</a></div><div class="ttdeci">constexpr unsigned BLOCK_DIM</div><div class="ttdoc">Default dimension of thread blocks.</div><div class="ttdef"><b>Definition:</b> gpucard.h:84</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="agroup__cuda__syntax_html_ga4dcbc2fad7e98df99c3eb5b890794202"><div class="ttname"><a href="group__cuda__syntax.html#ga4dcbc2fad7e98df99c3eb5b890794202">tinker::launch_k3s</a></div><div class="ttdeci">void launch_k3s(cudaStream_t st, size_t sh, int bs, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:21</div></div>
+<div class="ttc" id="agroup__cuda__syntax_html_ga8639262bb9c65dd4eeb8953f5f8bc69d"><div class="ttname"><a href="group__cuda__syntax.html#ga8639262bb9c65dd4eeb8953f5f8bc69d">tinker::launch_k1s</a></div><div class="ttdeci">void launch_k1s(cudaStream_t st, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:72</div></div>
+<div class="ttc" id="agroup__cuda__syntax_html_ga6674b108bcc5730f2a448473920538fa"><div class="ttname"><a href="group__cuda__syntax.html#ga6674b108bcc5730f2a448473920538fa">tinker::launch_k3b</a></div><div class="ttdeci">void launch_k3b(cudaStream_t st, size_t sh, int bs, int np, K k, Ts &amp;&amp;... a)</div><div class="ttdef"><b>Definition:</b> launch.h:39</div></div>
+<div class="ttc" id="agroup__ff_html_gaa307072bd9033e67292db9efc9175f50"><div class="ttname"><a href="group__ff.html#gaa307072bd9033e67292db9efc9175f50">tinker::nelem_buffer</a></div><div class="ttdeci">int nelem_buffer</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

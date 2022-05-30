@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tinker9_3a_20next_20generation_20of_20tinker_20with_20gpu_20support_3471',['Tinker9: Next Generation of Tinker with GPU Support',['../index.html',1,'']]]
+  ['notes_20on_20the_20image_20distance_3514',['Notes on the image distance',['../group__box.html',1,'']]]
 ];

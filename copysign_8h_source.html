@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -82,14 +82,14 @@ $(function() {
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; </div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacetinker.html">tinker</a> {</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;__device__</div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#gad370b71fad00d420ad405f9d748035ef">    9</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="group__cuda__syntax.html#gad370b71fad00d420ad405f9d748035ef">intCopysignShift</a>(<span class="keywordtype">int</span> a, <span class="keywordtype">int</span> b)</div>
+<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="group__math.html#gad370b71fad00d420ad405f9d748035ef">    9</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="group__math.html#gad370b71fad00d420ad405f9d748035ef">intCopysignShift</a>(<span class="keywordtype">int</span> a, <span class="keywordtype">int</span> b)</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;{</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;   <span class="keywordtype">int</span> mask = (a ^ b) &gt;&gt; 31;</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;   <span class="keywordflow">return</span> (mask + a) ^ mask;</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;}</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;__device__</div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">   18</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="group__cuda__syntax.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">intCopysignIf</a>(<span class="keywordtype">int</span> a, <span class="keywordtype">int</span> b)</div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="group__math.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">   18</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code" href="group__math.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">intCopysignIf</a>(<span class="keywordtype">int</span> a, <span class="keywordtype">int</span> b)</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;{</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;   <span class="keywordtype">int</span> ans = abs(a);</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;   <span class="keywordflow">if</span> (b &lt; 0)</div>
@@ -97,12 +97,12 @@ $(function() {
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;   <span class="keywordflow">return</span> ans;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;}</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#gace905349e3cca47762bee79ec7643ce9">   29</a></span>&#160;<span class="preprocessor">#define INT_COPYSIGN intCopysignShift</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="group__math.html#gace905349e3cca47762bee79ec7643ce9">   29</a></span>&#160;<span class="preprocessor">#define INT_COPYSIGN intCopysignShift</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="agroup__cuda__syntax_html_ga4a82a27bb0a0ec92f3e348e5a6c3c2b1"><div class="ttname"><a href="group__cuda__syntax.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">tinker::intCopysignIf</a></div><div class="ttdeci">__device__ int intCopysignIf(int a, int b)</div><div class="ttdoc">If b &lt; 0, returns -abs(a), otherwise, returns abs(a).</div><div class="ttdef"><b>Definition:</b> copysign.h:18</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:6</div></div>
-<div class="ttc" id="agroup__cuda__syntax_html_gad370b71fad00d420ad405f9d748035ef"><div class="ttname"><a href="group__cuda__syntax.html#gad370b71fad00d420ad405f9d748035ef">tinker::intCopysignShift</a></div><div class="ttdeci">__device__ int intCopysignShift(int a, int b)</div><div class="ttdoc">If b &lt; 0, returns -abs(a), otherwise, returns abs(a). Similar to the 32-bit integer version of Fortra...</div><div class="ttdef"><b>Definition:</b> copysign.h:9</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="agroup__math_html_gad370b71fad00d420ad405f9d748035ef"><div class="ttname"><a href="group__math.html#gad370b71fad00d420ad405f9d748035ef">tinker::intCopysignShift</a></div><div class="ttdeci">__device__ int intCopysignShift(int a, int b)</div><div class="ttdoc">If b &lt; 0, returns -abs(a), otherwise, returns abs(a). Similar to the 32-bit integer version of Fortra...</div><div class="ttdef"><b>Definition:</b> copysign.h:9</div></div>
+<div class="ttc" id="agroup__math_html_ga4a82a27bb0a0ec92f3e348e5a6c3c2b1"><div class="ttname"><a href="group__math.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">tinker::intCopysignIf</a></div><div class="ttdeci">__device__ int intCopysignIf(int a, int b)</div><div class="ttdoc">If b &lt; 0, returns -abs(a), otherwise, returns abs(a).</div><div class="ttdef"><b>Definition:</b> copysign.h:18</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

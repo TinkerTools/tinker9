@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Tinker9: Neighbor List and Spatial Decomposition</title>
+<title>Tinker9: Neighbor List</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -30,7 +30,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Tinker9
-   &#160;<span id="projectnumber">6f8e2d8 (Sat May 28 19:17:59 2022 -0500)</span>
+   &#160;<span id="projectnumber">2319f34 (Mon May 30 05:35:03 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -76,14 +76,13 @@ $(function() {
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">Neighbor List and Spatial Decomposition<div class="ingroups"><a class="el" href="group__ff.html">Force Fields</a></div></div>  </div>
+<div class="title">Neighbor List</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:structtinker_1_1_n_b_list"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#structtinker_1_1_n_b_list">tinker::NBList</a></td></tr>
-<tr class="memdesc:structtinker_1_1_n_b_list"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verlet list: pairwise neighbor list indices and storage.  <a href="group__nblist.html#structtinker_1_1_n_b_list">More...</a><br /></td></tr>
 <tr class="separator:structtinker_1_1_n_b_list"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:structtinker_1_1_spatial"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#structtinker_1_1_spatial">tinker::Spatial</a></td></tr>
 <tr class="separator:structtinker_1_1_spatial"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -107,10 +106,8 @@ Enumerations</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:gabdf09268b561163414ae78a7522ea417"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__nblist.html#ga3327619a9a5948ff8de3f4ccef82fe2f">Nbl</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#gabdf09268b561163414ae78a7522ea417">tinker::vlistVersion</a> ()</td></tr>
-<tr class="memdesc:gabdf09268b561163414ae78a7522ea417"><td class="mdescLeft">&#160;</td><td class="mdescRight">For Halgren Buffered 14-7 potential only, otherwise returns <a class="el" href="group__nblist.html#gga3327619a9a5948ff8de3f4ccef82fe2fa0db45d2a4141101bdfe48e3314cfbca3" title="Undefined.">Nbl::UNDEFINED</a>.  <a href="group__nblist.html#gabdf09268b561163414ae78a7522ea417">More...</a><br /></td></tr>
 <tr class="separator:gabdf09268b561163414ae78a7522ea417"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga60fc129e1862bd1ec874a10af51e3faa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__nblist.html#ga3327619a9a5948ff8de3f4ccef82fe2f">Nbl</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#ga60fc129e1862bd1ec874a10af51e3faa">tinker::clistVersion</a> ()</td></tr>
-<tr class="memdesc:ga60fc129e1862bd1ec874a10af51e3faa"><td class="mdescLeft">&#160;</td><td class="mdescRight">For partial charge models and for VDW models that do not have a separate set of coordinates.  <a href="group__nblist.html#ga60fc129e1862bd1ec874a10af51e3faa">More...</a><br /></td></tr>
 <tr class="separator:ga60fc129e1862bd1ec874a10af51e3faa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga8d4702eecfb14103dff0f27ab5e93468"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__nblist.html#ga3327619a9a5948ff8de3f4ccef82fe2f">Nbl</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#ga8d4702eecfb14103dff0f27ab5e93468">tinker::mlistVersion</a> ()</td></tr>
 <tr class="separator:ga8d4702eecfb14103dff0f27ab5e93468"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -152,6 +149,7 @@ Functions</h2></td></tr>
 <tr class="separator:gaf337a1ec2504c86935de2861603a7a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<p>Neighbor lists and spatial decomposition. </p>
 <hr/><h2 class="groupheader">Class Documentation</h2>
 <a name="structtinker_1_1_n_b_list" id="structtinker_1_1_n_b_list"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1_n_b_list">&#9670;&nbsp;</a></span>tinker::NBList</h2>
@@ -171,40 +169,28 @@ Functions</h2></td></tr>
 <tr class="separator:a5242a5ccb4ebd95bead11611badeee59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
 <tr class="memitem:adfd8e8b83ddb90176ff219bc5976fb73"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#adfd8e8b83ddb90176ff219bc5976fb73">nlst</a></td></tr>
-<tr class="memdesc:adfd8e8b83ddb90176ff219bc5976fb73"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of sites in list for each atom  <a href="group__nblist.html#adfd8e8b83ddb90176ff219bc5976fb73">More...</a><br /></td></tr>
 <tr class="separator:adfd8e8b83ddb90176ff219bc5976fb73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b08d8a346088b93b1526c1c73abc0f9"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#a0b08d8a346088b93b1526c1c73abc0f9">lst</a></td></tr>
-<tr class="memdesc:a0b08d8a346088b93b1526c1c73abc0f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">all of the sites in list  <a href="group__nblist.html#a0b08d8a346088b93b1526c1c73abc0f9">More...</a><br /></td></tr>
 <tr class="separator:a0b08d8a346088b93b1526c1c73abc0f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abef74bb3000e0f3ac793df2357da3273"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#abef74bb3000e0f3ac793df2357da3273">update</a></td></tr>
-<tr class="memdesc:abef74bb3000e0f3ac793df2357da3273"><td class="mdescLeft">&#160;</td><td class="mdescRight">update flag for each atom  <a href="group__nblist.html#abef74bb3000e0f3ac793df2357da3273">More...</a><br /></td></tr>
 <tr class="separator:abef74bb3000e0f3ac793df2357da3273"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a656742303e8cbc22ae124fdd6c2133b2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#a656742303e8cbc22ae124fdd6c2133b2">xold</a></td></tr>
-<tr class="memdesc:a656742303e8cbc22ae124fdd6c2133b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">old x coordinates  <a href="group__nblist.html#a656742303e8cbc22ae124fdd6c2133b2">More...</a><br /></td></tr>
 <tr class="separator:a656742303e8cbc22ae124fdd6c2133b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afabe6ac2fd4cf54ee192cd8c7bda308b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#afabe6ac2fd4cf54ee192cd8c7bda308b">yold</a></td></tr>
-<tr class="memdesc:afabe6ac2fd4cf54ee192cd8c7bda308b"><td class="mdescLeft">&#160;</td><td class="mdescRight">old y coordinates  <a href="group__nblist.html#afabe6ac2fd4cf54ee192cd8c7bda308b">More...</a><br /></td></tr>
 <tr class="separator:afabe6ac2fd4cf54ee192cd8c7bda308b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97a93da5a9b5046e417a74cee9236e7a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#a97a93da5a9b5046e417a74cee9236e7a">zold</a></td></tr>
-<tr class="memdesc:a97a93da5a9b5046e417a74cee9236e7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">old z coordinates  <a href="group__nblist.html#a97a93da5a9b5046e417a74cee9236e7a">More...</a><br /></td></tr>
 <tr class="separator:a97a93da5a9b5046e417a74cee9236e7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98bd9df446051dbec6b78adfc76e3bad"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#a98bd9df446051dbec6b78adfc76e3bad">x</a></td></tr>
-<tr class="memdesc:a98bd9df446051dbec6b78adfc76e3bad"><td class="mdescLeft">&#160;</td><td class="mdescRight">current x coordinates  <a href="group__nblist.html#a98bd9df446051dbec6b78adfc76e3bad">More...</a><br /></td></tr>
 <tr class="separator:a98bd9df446051dbec6b78adfc76e3bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93d628cc9e7270737fd27e3bfaa44bbb"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#a93d628cc9e7270737fd27e3bfaa44bbb">y</a></td></tr>
-<tr class="memdesc:a93d628cc9e7270737fd27e3bfaa44bbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">current y coordinates  <a href="group__nblist.html#a93d628cc9e7270737fd27e3bfaa44bbb">More...</a><br /></td></tr>
 <tr class="separator:a93d628cc9e7270737fd27e3bfaa44bbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45efb0d783bec0b9de3b376b1ec349f8"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#a45efb0d783bec0b9de3b376b1ec349f8">z</a></td></tr>
-<tr class="memdesc:a45efb0d783bec0b9de3b376b1ec349f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">current z coordinates  <a href="group__nblist.html#a45efb0d783bec0b9de3b376b1ec349f8">More...</a><br /></td></tr>
 <tr class="separator:a45efb0d783bec0b9de3b376b1ec349f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ef986aaac9a4755ebc6ad0e2dbf98a4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#a0ef986aaac9a4755ebc6ad0e2dbf98a4">maxnlst</a></td></tr>
-<tr class="memdesc:a0ef986aaac9a4755ebc6ad0e2dbf98a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">max number of neighbors for each atom  <a href="group__nblist.html#a0ef986aaac9a4755ebc6ad0e2dbf98a4">More...</a><br /></td></tr>
 <tr class="separator:a0ef986aaac9a4755ebc6ad0e2dbf98a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97d19617e01443b11f7f7ab1af1dfe91"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#a97d19617e01443b11f7f7ab1af1dfe91">cutoff</a></td></tr>
-<tr class="memdesc:a97d19617e01443b11f7f7ab1af1dfe91"><td class="mdescLeft">&#160;</td><td class="mdescRight">list cutoff distance  <a href="group__nblist.html#a97d19617e01443b11f7f7ab1af1dfe91">More...</a><br /></td></tr>
 <tr class="separator:a97d19617e01443b11f7f7ab1af1dfe91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66784206259d68bb991181dd1c99bb21"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nblist.html#a66784206259d68bb991181dd1c99bb21">buffer</a></td></tr>
-<tr class="memdesc:a66784206259d68bb991181dd1c99bb21"><td class="mdescLeft">&#160;</td><td class="mdescRight">width of the neighbor list buffer region  <a href="group__nblist.html#a66784206259d68bb991181dd1c99bb21">More...</a><br /></td></tr>
 <tr class="separator:a66784206259d68bb991181dd1c99bb21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h4 class="groupheader">Constructor &amp; Destructor Documentation</h4>
