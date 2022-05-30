@@ -192,6 +192,8 @@ void boxExtent(double newExtent)
    recipa.x = w1x;
    recipb.y = w1x;
    recipc.z = w1x;
+
+   boxCopyin();
 }
 
 void boxSetCurrent(const Box& p)
