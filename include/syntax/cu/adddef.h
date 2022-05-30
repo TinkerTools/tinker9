@@ -20,9 +20,11 @@ inline double atomicAdd(double* ptr, double v)
 #endif
 
 namespace tinker {
-/// \ingroup cuda_syntax
-/// \brief Adds `value` to `buffer[offset]`.
-/// \note `value` and `buffer` elements are of the same type.
+/// \addtogroup cuda_syntax
+/// \{
+
+/// Adds \c value to `buffer[offset]`.
+/// \note \c value and \c buffer elements are of the same type.
 template <class T>
 __device__
 inline void atomic_add(T value, T* buffer, size_t offset = 0)
@@ -30,9 +32,8 @@ inline void atomic_add(T value, T* buffer, size_t offset = 0)
    atomicAdd(&buffer[offset], value);
 }
 
-/// \ingroup cuda_syntax
-/// \brief Adds `value` to `buffer[offset]` via fixed-point arithmetic.
-/// \tparam T  Must be of floating-point type.
+/// \brief Adds \c value to `buffer[offset]` via fixed-point arithmetic.
+/// \tparam T  A floating-point type.
 template <class T,
    class = typename std::enable_if<std::is_same<T, float>::value ||
       std::is_same<T, double>::value>::type>
@@ -43,8 +44,7 @@ inline void atomic_add(T value, fixed* buffer, size_t offset = 0)
    atomicAdd(&buffer[offset], static_cast<fixed>(static_cast<long long>(value * 0x100000000ull)));
 }
 
-/// \ingroup cuda_syntax
-/// \brief Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]`.
+/// Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]`.
 template <class T>
 __device__
 inline void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8], size_t offset = 0)
@@ -57,8 +57,7 @@ inline void atomic_add(T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T (*buffer)[8],
    atomic_add(vzz, buffer[offset], 5);
 }
 
-/// \ingroup cuda_syntax
-/// \brief Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]` via fixed-point arithmetic.
+/// Adds virial `{xx,yx,zx,yy,zy,zz}` to `buffer[offset][0 to 7]` via fixed-point arithmetic.
 template <class T,
    class = typename std::enable_if<std::is_same<T, float>::value ||
       std::is_same<T, double>::value>::type>
@@ -74,8 +73,7 @@ inline void atomic_add(
    atomic_add(vzz, buffer[offset], 5);
 }
 
-/// \ingroup cuda_syntax
-/// \brief Converts `val` of floating-point from its original type to type `G`.
+/// Converts \c val of floating-point to type \c G.
 template <class G, class T>
 __device__
 inline G floatTo(T val)
@@ -87,8 +85,7 @@ inline G floatTo(T val)
       return static_cast<G>(val);
 }
 
-/// \ingroup cuda_syntax
-/// \brief Converts `val` of fixed-point to floating-point.
+/// Converts \c val of fixed-point to floating-point.
 template <class T>
 __device__
 inline T fixedTo(fixed val)
@@ -96,7 +93,7 @@ inline T fixedTo(fixed val)
    return static_cast<T>(static_cast<long long>(val)) / 0x100000000ull;
 }
 
-/// \brief Converts a gradient to a floating-point value.
+/// Converts a fixed-point value \c g to floating-point value.
 template <class T>
 __device__
 inline T toFloatGrad(fixed g)
@@ -104,6 +101,7 @@ inline T toFloatGrad(fixed g)
    return fixedTo<T>(g);
 }
 
+/// Converts a double-precision value \c g to floating-point value.
 template <class T>
 __device__
 inline T toFloatGrad(double g)
@@ -111,6 +109,7 @@ inline T toFloatGrad(double g)
    return g;
 }
 
+/// Converts a single-precision value \c g to floating-point value.
 template <class T>
 __device__
 inline T toFloatGrad(float g)
@@ -118,8 +117,7 @@ inline T toFloatGrad(float g)
    return g;
 }
 
-/// \ingroup cuda_syntax
-/// \brief Used as `eq<T1,T2>()` for two type identifiers.
+/// Used as \c eq<T1,T2>() for two type identifiers.
 template <class T, class U>
 __device__
 __host__
@@ -127,4 +125,6 @@ constexpr bool eq()
 {
    return std::is_same<T, U>::value;
 }
+
+/// \}
 }

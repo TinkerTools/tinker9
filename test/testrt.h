@@ -1,5 +1,6 @@
 #pragma once
 #include "ff/energy.h"
+#include "tinker9.h"
 #include <string>
 #include <vector>
 

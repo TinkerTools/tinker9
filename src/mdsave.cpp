@@ -84,7 +84,7 @@ static void mdsaveDupThenWrite(int istep, time_prec dt)
    // get gpu buffer and write to external files
 
    energy_prec epot = dup_buf_esum;
-   boxSetTinkerModule(dup_buf_box);
+   boxSetTinker(dup_buf_box);
    if (sizeof(pos_prec) == sizeof(double)) {
       darray::copyout(g::q1, n, atoms::x, dup_buf_x);
       darray::copyout(g::q1, n, atoms::y, dup_buf_y);

@@ -1,7 +1,7 @@
 #pragma once
 
 namespace tinker {
-/// \ingroup cuda_syntax
+/// \ingroup math
 /// \brief If `b < 0`, returns `-abs(a)`, otherwise, returns `abs(a)`.
 /// Similar to the 32-bit integer version of Fortran `SIGN(A,B)`.
 /// \note Standard C and CUDA math libraries only have float and double versions.
@@ -12,7 +12,7 @@ inline int intCopysignShift(int a, int b)
    return (mask + a) ^ mask;
 }
 
-/// \ingroup cuda_syntax
+/// \ingroup math
 /// \brief If `b < 0`, returns `-abs(a)`, otherwise, returns `abs(a)`.
 __device__
 inline int intCopysignIf(int a, int b)
@@ -24,7 +24,7 @@ inline int intCopysignIf(int a, int b)
 }
 
 /// \def INT_COPYSIGN
-/// \ingroup cuda_syntax
+/// \ingroup math
 /// \brief Defines the implementation of `int copysign(int,int);` function.
 #define INT_COPYSIGN intCopysignShift
 }

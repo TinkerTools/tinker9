@@ -3,18 +3,20 @@
 #include "tool/rcman.h"
 
 namespace tinker {
-/// \ingroup box
+/// \addtogroup box
+/// \{
+
+/// Shapes of the periodic box.
 enum class BoxShape
 {
-   UNBOUND,
-   ORTHO,
-   MONO,
-   TRI,
-   OCT
+   UNBOUND, ///< unbound
+   ORTHO,   ///< orthorgonal
+   MONO,    ///< monoclinic
+   TRI,     ///< triclinic
+   OCT      ///< truncated octahedron
 };
 
-/// \ingroup box
-/// \brief Periodic boundary conditions (PBC).
+/// Internal data for the periodic boundary condition (PBC).
 ///
 /// PBC in Tinker is defined by lengths of three axes and three angles:
 /// `a-axis`, `b-axis`, `c-axis`, `alpha`, `beta`, and `gamma`.
@@ -51,47 +53,41 @@ enum class BoxShape
 /// Reciprocal lattice (`recip`), is the inverse of `lvec`:
 ///    - Fortran: `recip(:,1)`, `recip(:,2)`, `recip(:,3)`;
 ///    - C++: `recip[0][]`, `recip[1][]`, `recip[2][]`;
-///    - Fractional coordinates `fi (i=1,2,3) = recip(:,i) (xr,yr,zr)`;
-///    - Cartesian coordinates `wr (w=1,2,3 or x,y,z) = inv_recip(:,w) (f1,f2,f3)
-///       = lvec(:,w) (f1,f2,f3)`.
+///    - Fractional coordinates `fi = recip(:,i) (xr,yr,zr), (i=1,2,3)`;
+///    - Cartesian coordinates `wr = inv_recip(:,w) (f1,f2,f3)
+///       = lvec(:,w) (f1,f2,f3), (w=1,2,3 or x,y,z)`.
 struct Box
 {
    BoxShape box_shape;
    real3 lvec1, lvec2, lvec3;
    real3 recipa, recipb, recipc;
 };
-}
 
-namespace tinker {
-/// \ingroup box
-void boxData(RcOp);
-void boxDataP1(RcOp);
-/// \ingroup box
-void boxExtent(double newExtent);
-/// \ingroup box
-void boxSetCurrent(const Box& p);
-/// \ingroup box
-void boxGetCurrent(Box& p);
-/// \ingroup box
-void boxSetCurrentRecip();
-/// \ingroup box
-void boxSetTinkerModule(const Box& p);
+void boxData(RcOp);               ///< Sets up box data on device.
+void boxDataP1(RcOp);             ///< Internal function used in the setup.
+void boxExtent(double newExtent); ///< Sets up a hypothetical orthogonal box for the unbound box
+                                  ///< whose a-axis equals the new extent.
+void boxSetCurrent(const Box& p); ///< Sets the box by the input and updates the box on device.
+void boxGetCurrent(Box& p);       ///< Copies the current PBC box to the output variable.
+void boxSetCurrentRecip();        ///< Calculates the \c recip arrays by new \c lvec arrays and
+                                  ///< updates the box on device
+void boxSetTinker(const Box& p);  ///< Updates the related PBC modules of Tinker by \c p.
 
-/// \ingroup box
-/// \brief Similar to Tinker `lattice` subroutine.
-void boxLattice(Box& p, BoxShape sh, double a, double b, double c, //
-   double alphaDeg, double betaDeg, double gammaDeg);
-
-/// \ingroup box
+/// OpenACC only: Copies the current box data to device asynchronously.
+/// The implementations are empty for CPU and CUDA code because it is only in
+/// the OpenACC code that a copy of the PBC box is created on device.
 void boxCopyin();
 
-/// \ingroup box
-/// \brief Get the volume of the PBC box.
+/// Sets up the internal PBC data. Similar to Tinker \c lattice subroutine.
+void boxLattice(Box& p, BoxShape sh, //
+   double a, double b, double c,     //
+   double alphaDeg, double betaDeg, double gammaDeg);
+
+/// Gets the volume of the PBC box.
 /// \note This function may calculate the volume on-the-fly instead of using
 /// an internal variable to save the volume.
 /// \note The volume is undefined for the unbound box.
 real boxVolume();
-}
 
 //====================================================================//
 //                                                                    //
@@ -99,34 +95,14 @@ real boxVolume();
 //                                                                    //
 //====================================================================//
 
-namespace tinker {
-/// \ingroup box
 TINKER_EXTERN BoxShape box_shape;
-/// \ingroup box
 TINKER_EXTERN real3 lvec1;
-/// \ingroup box
 TINKER_EXTERN real3 lvec2;
-/// \ingroup box
 TINKER_EXTERN real3 lvec3;
-/// \ingroup box
 TINKER_EXTERN real3 recipa;
-/// \ingroup box
 TINKER_EXTERN real3 recipb;
-/// \ingroup box
 TINKER_EXTERN real3 recipc;
 
-/// \def TINKER_IMAGE_LVEC_PARAMS
-/// \ingroup box
-/// \def TINKER_IMAGE_LVEC_ARGS
-/// \ingroup box
-/// \def TINKER_IMAGE_RECIP_PARAMS
-/// \ingroup box
-/// \def TINKER_IMAGE_RECIP_ARGS
-/// \ingroup box
-/// \def TINKER_IMAGE_PARAMS
-/// \ingroup box
-/// \def TINKER_IMAGE_ARGS
-/// \ingroup box
 #define TINKER_IMAGE_LVEC_PARAMS  real3 lvec1, real3 lvec2, real3 lvec3
 #define TINKER_IMAGE_LVEC_ARGS    lvec1, lvec2, lvec3
 #define TINKER_IMAGE_RECIP_PARAMS real3 recipa, real3 recipb, real3 recipc
@@ -134,7 +110,7 @@ TINKER_EXTERN real3 recipc;
 #define TINKER_IMAGE_PARAMS       BoxShape box_shape, TINKER_IMAGE_LVEC_PARAMS, TINKER_IMAGE_RECIP_PARAMS
 #define TINKER_IMAGE_ARGS         box_shape, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS
 
-/// \ingroup box
-/// \brief Host pointer to the PBC boxes of a trajectory.
-TINKER_EXTERN Box* trajbox;
+TINKER_EXTERN Box* trajbox; ///< Host pointer to the PBC boxes of a trajectory.
+
+/// \}
 }

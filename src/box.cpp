@@ -225,7 +225,7 @@ void boxSetCurrentRecip()
    boxCopyin();
 }
 
-void boxSetTinkerModule(const Box& p)
+void boxSetTinker(const Box& p)
 {
    if (p.box_shape == BoxShape::UNBOUND)
       return;

@@ -1,26 +1,34 @@
 #error This header file should never have been included.
 
-/// \defgroup general  General Information
-
-/// \defgroup platform  Platforms and Syntaxes
-///    \defgroup cpp_syntax  C++ Syntax
-///    \ingroup platform
-///    \defgroup cuda_syntax  CUDA Specific Code
-///    \ingroup platform
-///    \defgroup acc_syntax  OpenACC Specific Code
-///    \ingroup platform
-///    \defgroup nvidia  NVIDIA GPU
-///    \ingroup platform
+/**
+ * \defgroup general                    General
+ * \brief Version numbers, program entries, data construction and destruction
+ *
+ * \defgroup platform                   Platforms
+ * \brief Platforms and platform-specific syntaxes
+ *    \defgroup cpp_syntax              C++ Syntax
+ *    \ingroup platform
+ *    \defgroup cuda_syntax             CUDA Syntax
+ *    \ingroup platform
+ *    \defgroup acc_syntax              OpenACC Syntax
+ *    \ingroup platform
+ *    \defgroup nvidia                  NVIDIA GPU
+ *    \ingroup platform
+ *
+ * \defgroup prec                       Precision
+ * \brief Definitions of data types used in the MD simulations
+ *
+ * \defgroup box                        Box
+ * \brief Periodic boundary conditions and image distance
+ *
+ * \defgroup nblist                     Neighbor List
+ * \brief Neighbor lists and spatial decomposition
+ *
+ * \defgroup egv                        Energy
+ * \brief Energy, gradient, virial tensor, and number of interactions
+ */
 
 /// \defgroup ff  Force Fields
-///    \defgroup prec  Precisions
-///    \ingroup ff
-///    \defgroup box  Periodic Boundary Box
-///    \ingroup ff
-///    \defgroup nblist  Neighbor List and Spatial Decomposition
-///    \ingroup ff
-///    \defgroup egv  Energy, Gradient, and Virial Tensor
-///    \ingroup ff
 ///    \defgroup bonded  Valence Terms
 ///    \ingroup ff
 ///    \defgroup vdw  Van der Waals (VDW)
@@ -83,26 +91,27 @@
 
 //====================================================================//
 
-/// \ingroup cpp_syntax
-/// \brief Macro for the Intel C++ compiler.
-#define TINKER_ICPC
-/// \ingroup cpp_syntax
-/// \brief Macro for the GNU C++ compiler.
-#define TINKER_GCC
-/// \ingroup cpp_syntax
-/// \brief Macro for the Clang C++ (either Apple or LLVM) compiler.
-#define TINKER_CLANG
-/// \ingroup cpp_syntax
-/// \brief Macro for the Clang C++ (Apple) compiler.
-#define TINKER_APPLE_CLANG
-/// \ingroup cpp_syntax
-/// \brief Macro for the Clang C++ (LLVM) compiler.
-#define TINKER_LLVM_CLANG
-/// \ingroup cpp_syntax
-/// \brief Macro for the PGI or NVHPC C++ compiler.
-#define TINKER_PGI
 #define TINKER_EXTERN_DEFINITION_FILE
 #define TINKER9_DIR
+
+/// \addtogroup cpp_syntax
+/// \{
+
+/// Macro for the Intel C++ compiler.
+#define TINKER_ICPC
+/// Macro for the GNU C++ compiler.
+#define TINKER_GCC
+/// Macro for the Clang C++ (either Apple or LLVM) compiler.
+#define TINKER_CLANG
+/// Macro for the Clang C++ (Apple) compiler.
+#define TINKER_APPLE_CLANG
+/// Macro for the Clang C++ (LLVM) compiler.
+#define TINKER_LLVM_CLANG
+/// Macro for the PGI or NVHPC C++ compiler.
+#define TINKER_PGI
+
+/// \}
+
 /*
  *
  * Data structures and procedures to construct the spatial decomposition

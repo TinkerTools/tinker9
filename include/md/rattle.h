@@ -4,12 +4,12 @@
 
 extern "C"
 {
-   struct RATTLE
+   class RATTLE
    {
       int foo;
    };
 
-   struct SHAKE
+   class SHAKE
    {
       int foo;
    };

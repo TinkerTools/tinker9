@@ -13,7 +13,7 @@ CREATE_SUBDIRS         = NO
 CREATE_SUBDIRS_LEVEL   = 8
 ALLOW_UNICODE_NAMES    = NO
 OUTPUT_LANGUAGE        = English
-BRIEF_MEMBER_DESC      = YES
+BRIEF_MEMBER_DESC      = NO
 REPEAT_BRIEF           = YES
 ABBREVIATE_BRIEF       = "The $name class" \
                          "The $name widget" \
@@ -130,6 +130,7 @@ INPUT                  = ../README.md ../doc ../test \
                          ../include/math \
                          ../include/md \
                          ../include/seq \
+                         ../include/syntax/acc \
                          ../include/syntax/cu \
                          ../include/tool
 INPUT_ENCODING         = UTF-8
@@ -308,7 +309,6 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = NDEBUG \
                          TINKER_MIXED_PRECISION \
                          TINKER_CUDART \
-                         TINKER_EXTERN_DEFINITION_FILE \
                          __cplusplus \
                          __CUDACC__
 EXPAND_AS_DEFINED      = YES

@@ -5,52 +5,69 @@
 
 #if TINKER_CUDART
 namespace tinker {
-/// \ingroup nvidia
+/// \addtogroup nvidia
+/// \{
+
+/// Device attributes
 struct DeviceAttribute
 {
-   int device;
-   std::string name;
-   std::string pci_string;
+   int device;             ///< Device number.
+   std::string name;       ///< Device name.
+   std::string pci_string; ///< PCI Bus ID.
 
-   int cc_major, cc_minor;
-   int cc;
-   int single_double_ratio;
+   int cc_major;            ///< Major compute capability.
+   int cc_minor;            ///< Minor compute capability.
+   int cc;                  ///< Compute capability multiplied by 10.
+   int single_double_ratio; ///< Single to double precision performance ratio.
 
-   std::string compute_mode_string;
-   std::string ecc_string;
+   std::string
+      compute_mode_string; ///< `exclusive thread`, `prohibited`, `exclusive process`, or `default`.
+   std::string ecc_string; ///< `on`, or `off`.
 
-   size_t free_mem_bytes, total_mem_bytes;
+   size_t free_mem_bytes;  ///< Free device memory in bytes.
+   size_t total_mem_bytes; ///< Total device memory in bytes.
 
-   int max_threads_per_block;
-   int max_shared_bytes_per_block;
+   int max_threads_per_block;      ///< Maximum threads per block.
+   int max_shared_bytes_per_block; ///< Maximum shared memory per block in bytes.
 
-   int multiprocessor_count;
-   int max_threads_per_multiprocessor;
-   int max_shared_bytes_per_multiprocessor;
-   int max_blocks_per_multiprocessor;
-   int cores_per_multiprocessor;
+   int multiprocessor_count;                ///< Multiprocessor count.
+   int max_threads_per_multiprocessor;      ///< Maximum threads per multiprocessor.
+   int max_shared_bytes_per_multiprocessor; ///< Maximum shared memory per mutiprocessor in bytes.
+   int max_blocks_per_multiprocessor;       ///< Maximum thread blocks per multiporcessor.
+   int cores_per_multiprocessor;            ///< Number of cores per multiprocessor.
 
-   int clock_rate_kHz; // not memory clock rate
+   int clock_rate_kHz; ///< Clock frequency in kHz, not memory clock rate.
 };
 
-/// \ingroup nvidia
+/// \return  CUDA runtime version.
 std::string gpuCudaRuntimeVersion();
-/// \ingroup nvidia
+/// \return  Max CUDA runtime version supported by the driver.
 std::string gpuCudaDriverVersion();
-/// \ingroup nvidia
+/// \return  Version of the Thrust Library.
 std::string gpuThrustVersion();
-/// \ingroup nvidia
+/// \return  Attributes of all visible devices.
 std::vector<DeviceAttribute>& gpuDeviceAttributes();
+
+/// \}
 }
 #endif
 
 namespace tinker {
-/// \ingroup platform
+/// \addtogroup platform
+/// \{
+
+/// Sets up the GPU card.
 void gpuData(RcOp);
-/// \ingroup platform
-int gpuGridSize(int nthreads_per_block);
-/// \ingroup platform
+
+/// \param nthreadsPerBlock  Dimension of the thread blocks.
+/// \return                  Recommended dimension of the thread grids.
+int gpuGridSize(int nthreadsPerBlock);
+
+/// \param idev  Device number.
+/// \return      Maximum number of parallel threads on the device.
 int gpuMaxNParallel(int idev);
+
+///\}
 }
 
 //====================================================================//
@@ -60,19 +77,17 @@ int gpuMaxNParallel(int idev);
 //====================================================================//
 
 namespace tinker {
-/// \ingroup nvidia
-/// \brief Number of threads in a warp.
-constexpr unsigned WARP_SIZE = 32;
-/// \ingroup nvidia
-/// \brief Mask for all of the lanes in a warp.
-constexpr unsigned ALL_LANES = 0xFFFFFFFF;
-/// \ingroup nvidia
-/// \brief Default dimension of thread blocks.
-constexpr unsigned BLOCK_DIM = /* 64 */ 128 /* 256 */;
-/// \ingroup nvidia
-constexpr int PME_BLOCKDIM = 64;
-/// \ingroup platform
-TINKER_EXTERN int ndevice;
-/// \ingroup platform
-TINKER_EXTERN int idevice;
+/// \addtogroup nvidia
+/// \{
+constexpr unsigned WARP_SIZE = 32;         ///< Number of threads in a warp.
+constexpr unsigned ALL_LANES = 0xFFFFFFFF; ///< Mask for all of the lanes in a warp.
+constexpr unsigned BLOCK_DIM = 128;        ///< Default dimension of thread blocks.
+constexpr int PME_BLOCKDIM = 64;           ///< Dimension of the thread blocks for some PME kernels.
+/// \}
+
+/// \addtogroup platform
+/// \{
+TINKER_EXTERN int ndevice; ///< Total number of visible devices.
+TINKER_EXTERN int idevice; ///< Device ID number in use.
+/// \}
 }

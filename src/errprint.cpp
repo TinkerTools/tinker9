@@ -10,7 +10,7 @@ void printError()
 {
    Box p;
    boxGetCurrent(p);
-   boxSetTinkerModule(p);
+   boxSetTinker(p);
    darray::copyout(g::q0, n, atoms::x, xpos);
    darray::copyout(g::q0, n, atoms::y, ypos);
    darray::copyout(g::q0, n, atoms::z, zpos);

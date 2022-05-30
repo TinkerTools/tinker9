@@ -2,7 +2,10 @@
 #include "math/realn.h"
 
 namespace tinker {
-/// \ingroup box
+/// \addtogroup box
+/// \{
+
+/// Fractional to cartesian: triclinic.
 __device__
 inline real3 ftoc_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -12,7 +15,7 @@ inline real3 ftoc_triclinic(real3 f, real3 l1, real3 l2, real3 l3)
    return f;
 }
 
-/// \ingroup box
+/// Fractional to cartesian: monoclinic.
 __device__
 inline real3 ftoc_monoclinic(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -22,7 +25,7 @@ inline real3 ftoc_monoclinic(real3 f, real3 l1, real3 l2, real3 l3)
    return f;
 }
 
-/// \ingroup box
+/// Fractional to cartesian: orthogonal.
 __device__
 inline real3 ftoc_orthogonal(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -32,7 +35,7 @@ inline real3 ftoc_orthogonal(real3 f, real3 l1, real3 l2, real3 l3)
    return f;
 }
 
-/// \ingroup box
+/// Fractional to cartesian.
 __device__
 inline real3 ftoc_general(real3 f, real3 l1, real3 l2, real3 l3)
 {
@@ -45,7 +48,7 @@ inline real3 ftoc_general(real3 f, real3 l1, real3 l2, real3 l3)
    }
 }
 
-/// \ingroup box
+/// PBC image of the fractional coordinates.
 __device__
 inline real3 imageFrac(real3 f)
 {
@@ -55,7 +58,7 @@ inline real3 imageFrac(real3 f)
    return f;
 }
 
-/// \ingroup box
+/// Cartesian to fractional: triclinic.
 __device__
 inline real3 ctof_triclinic(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
@@ -66,7 +69,7 @@ inline real3 ctof_triclinic(real xr, real yr, real zr, real3 ra, real3 rb, real3
    return f;
 }
 
-/// \ingroup box
+/// Cartesian to fractional: monoclinic.
 __device__
 inline real3 ctof_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
@@ -77,7 +80,7 @@ inline real3 ctof_monoclinic(real xr, real yr, real zr, real3 ra, real3 rb, real
    return f;
 }
 
-/// \ingroup box
+/// Cartesian to fractional: orthogonal.
 __device__
 inline real3 ctof_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
@@ -88,7 +91,7 @@ inline real3 ctof_orthogonal(real xr, real yr, real zr, real3 ra, real3 rb, real
    return f;
 }
 
-/// \ingroup box
+/// Cartesian to fractional.
 __device__
 inline real3 imagectof_general(real xr, real yr, real zr, real3 ra, real3 rb, real3 rc)
 {
@@ -101,9 +104,5 @@ inline real3 imagectof_general(real xr, real yr, real zr, real3 ra, real3 rb, re
    }
 }
 
-#ifndef imagectof
-/// \def imagectof
-/// \ingroup box
-#   define imagectof(xr, yr, zr) imagectof_general(xr, yr, zr, recipa, recipb, recipc)
-#endif
+/// \}
 }

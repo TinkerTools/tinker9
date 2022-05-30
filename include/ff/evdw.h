@@ -6,27 +6,27 @@
 
 extern "C"
 {
-   struct LJ
+   class LJ
    {
       int foo;
    };
 
-   struct BUCK
+   class BUCK
    {
       int foo;
    };
 
-   struct MM3HB
+   class MM3HB
    {
       int foo;
    };
 
-   struct HAL
+   class HAL
    {
       int foo;
    };
 
-   struct GAUSS
+   class GAUSS
    {
       int foo;
    };

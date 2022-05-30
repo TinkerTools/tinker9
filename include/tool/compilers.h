@@ -2,10 +2,10 @@
 #include <string>
 
 namespace tinker {
-/// \ingroup platform
-std::string cxxCompilerName();
-/// \ingroup platform
-std::string accCompilerName();
-/// \ingroup platform
-std::string cudaCompilerName();
+/// \addtogroup platform
+/// \{
+std::string cxxCompilerName();  ///< \return  Name of the C++ compiler.
+std::string accCompilerName();  ///< \return  Name of the OpenACC compiler.
+std::string cudaCompilerName(); ///< \return  Name of the CUDA compiler.
+/// \}
 }

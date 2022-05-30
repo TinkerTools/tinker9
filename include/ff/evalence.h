@@ -4,22 +4,22 @@
 
 extern "C"
 {
-   struct HARMONIC
+   class HARMONIC
    {
       int foo;
    };
 
-   struct MORSE
+   class MORSE
    {
       int foo;
    };
 
-   struct WDC
+   class WDC
    {
       int foo;
    };
 
-   struct ALLINGER
+   class ALLINGER
    {
       int foo;
    };
@@ -178,7 +178,8 @@ TINKER_EXTERN virial_prec virial_eub[9];
 #include <tinker/detail/ktrtor.hh>
 
 namespace tinker {
-/// \defgroup tors  Torsion, Improper Torsion,  Pi-Torsion, and Torsion Coupling Terms
+/// \defgroup tors  Torsions
+/// \brief Torsion, Improper Torsion,  Pi-Torsion, and Torsion Coupling Terms
 /// \ingroup bonded
 /// \{
 void eimpropData(RcOp); // CHARMM

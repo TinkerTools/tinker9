@@ -2,22 +2,24 @@
 #include <cstddef>
 
 namespace tinker {
-/// \ingroup cuda_syntax
-/// \brief Device memory cache for the Thrust Library.
+/// \ingroup platform
+/// Device memory cache (allocator) for the Thrust Library.
+///
+/// The strategy of this allocator is as follows:
+/// it only expands the size of the allocated memory, and does not free the memory
+/// on calling \c deallocate(value_type*, size_t), until \c clear() is called.
 class ThrustCache
 {
 public:
-   // required
    using value_type = char;
    ThrustCache();
    value_type* allocate(ptrdiff_t);
    void deallocate(value_type*, size_t);
    void clear();
 
-   // custom
-   static ThrustCache& instance();
-   static void allocate();
-   static void deallocate();
+   static ThrustCache& instance(); ///< Reference to the singleton object.
+   static void allocate();         ///< Allocates the memory managed by the singleton object.
+   static void deallocate();       ///< Deallocates the memory managed by the singleton object.
 
 private:
    value_type* ptr;

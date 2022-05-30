@@ -4,8 +4,8 @@
 
 namespace tinker {
 /// \ingroup platform
-/// \brief Sets up the CUDA variables including but not limited to CUDA streams,
-/// CUDA library handles, and CUDA memory buffers, and integer units for the queues.
+/// Sets up the CUDA variables including but not limited to CUDA streams, CUDA library handles,
+/// and CUDA memory buffers, and integer units for the queues.
 void cudalibData(RcOp);
 }
 
@@ -38,12 +38,12 @@ TINKER_EXTERN cublasHandle_t h0;
 TINKER_EXTERN cublasHandle_t h1;
 }
 
-/// \ingroup cuda_syntax
-/// \brief Preallocated pinned host memory.
-TINKER_EXTERN void* pinned_buf;
-/// \ingroup cuda_syntax
-/// \brief Preallocated device memory.
-TINKER_EXTERN void* dptr_buf;
+/// \addtogroup platform
+/// \{
+TINKER_EXTERN void* pinned_buf; ///< Preallocated pinned host memory.
+TINKER_EXTERN void* dptr_buf;   ///< Preallocated device memory.
+/// \}
+
 /// \ingroup pme
 TINKER_EXTERN cudaEvent_t pme_event_start;
 /// \ingroup pme

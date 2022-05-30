@@ -74,9 +74,9 @@ void copyGradient(int vers, double* grdx, double* grdy, double* grdz, //
          darray::copyout(queue, n, hgz.data(), gz_src);
          waitFor(queue);
          for (int i = 0; i < n; ++i) {
-            grdx[i] = toFloat<double>(hgx[i]);
-            grdy[i] = toFloat<double>(hgy[i]);
-            grdz[i] = toFloat<double>(hgz[i]);
+            grdx[i] = toFloatingPoint<double>(hgx[i]);
+            grdy[i] = toFloatingPoint<double>(hgy[i]);
+            grdz[i] = toFloatingPoint<double>(hgz[i]);
          }
 #else
          if (sizeof(grad_prec) < sizeof(double)) {

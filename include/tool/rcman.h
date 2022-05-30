@@ -84,14 +84,6 @@ public:
 using RcMan = ResourceManagement;
 
 /// \ingroup rc
-/// \brief Sets up host and device environment.
-void initialize();
-
-/// \ingroup rc
-/// \brief Cleans up host and device environment.
-void finish();
-
-/// \ingroup rc
 /// \brief Set up and clean up device environment.
 void deviceData(RcOp);
 }

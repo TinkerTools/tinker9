@@ -4,24 +4,34 @@
 #include <type_traits>
 
 namespace tinker {
-/// \ingroup prec
-/// \brief Converts a fixed-point value to floating-point value on host.
+/// \addtogroup cpp_syntax
+/// \{
+
+/// Converts a fixed-point value \c g to floating-point value on host.
 template <class F>
-inline F toFloat(fixed val)
+inline F toFloatingPoint(fixed g)
 {
    static_assert(std::is_same<F, float>::value or std::is_same<F, double>::value, "");
-   return static_cast<F>(static_cast<long long>(val)) / 0x100000000ull;
+   return static_cast<F>(static_cast<long long>(g)) / 0x100000000ull;
 }
 
-/// \ingroup prec
-/// \brief Converts to floating-point value on host.
-template <class F, class T>
-inline F toFloat(T val)
+/// Converts a double-precision \c g to floating-point value on host.
+template <class F>
+inline F toFloatingPoint(double g)
 {
    static_assert(std::is_same<F, float>::value or std::is_same<F, double>::value, "");
-   static_assert(std::is_same<T, float>::value or std::is_same<T, double>::value, "");
-   return val;
+   return g;
 }
+
+/// Converts a single-precision \c g to floating-point value on host.
+template <class F>
+inline F toFloatingPoint(float g)
+{
+   static_assert(std::is_same<F, float>::value or std::is_same<F, double>::value, "");
+   return g;
+}
+
+/// \}
 }
 
 namespace tinker {

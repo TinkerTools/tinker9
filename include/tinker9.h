@@ -2,15 +2,15 @@
 #include "tool/macro.h"
 #include <string>
 
+/// \addtogroup general
+/// \{
 /// \def TINKER9_VERSION_MAJOR
-/// \ingroup general
 /// \def TINKER9_VERSION_MINOR
-/// \ingroup general
 /// \def TINKER9_VERSION_PATCH
-/// \ingroup general
 #define TINKER9_VERSION_MAJOR 1
 #define TINKER9_VERSION_MINOR 0
 #define TINKER9_VERSION_PATCH 0
+/// \}
 
 // clang-format off
 #ifdef TINKER9_GIT_SHORT_HASH
@@ -45,7 +45,7 @@ TINKER9_PROMO1__                                                                
 // clang-format on
 
 namespace tinker {
-/// \ingroup general
+/// \addtogroup general
 /// \{
 void xAnalyze(int, char**);  ///< Entry point of the \c analyze program.
 void xBar(int, char**);      ///< Entry point of the \c bar program.
@@ -54,19 +54,15 @@ void xHelp(int, char**);     ///< Entry point of the \c help program.
 void xInfo(int, char**);     ///< Entry point of the \c info program.
 void xMinimize(int, char**); ///< Entry point of the \c minimize program.
 void xTestgrad(int, char**); ///< Entry point of the \c testgrad program.
-/// \}
-}
 
-namespace tinker {
-/// \ingroup general
-/// \{
-/// \brief Writes a banner message.
-void promo();
-/// \brief Sets up original values. This function must be translated
-/// from the Fortran \c initial subroutine line-by-line.
-void initial();
-/// \brief Sets up extra parameters and selectable options
-/// in addition to the Fortran \c mechanic subroutine.
-void mechanic2();
+void promo();      ///< Writes a banner message.
+void initial();    ///< Sets up original values for some variables and parameters
+                   ///  that might not otherwise get initialized.
+                   ///  This function is a line-by-line translation of
+                   ///  the Fortran \c initial subroutine.
+void mechanic2();  ///< Sets up extra parameters and options
+                   ///  in addition to the Fortran \c mechanic subroutine.
+void initialize(); ///< Sets up host and device environment.
+void finish();     ///< Cleans up host and device environment.
 /// \}
 }

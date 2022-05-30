@@ -4,6 +4,15 @@
 #include "seq/seq.h"
 
 namespace tinker {
+/// \addtogroup box
+/// \{
+
+/// \page box_image  Notes on the image distance
+/// The image distances are coded as macro instead of inlined functions.
+/// This is because of a [bug](https://forums.developer.nvidia.com/t/136445)
+/// I found in pgc++ 19.10.
+
+/// Image displacement for the triclinic PBC.
 #define IMAGE_TRI__(xr, yr, zr, l1, l2, l3, ra, rb, rc)                                            \
    {                                                                                               \
       real fx = REAL_FLOOR(0.5f + zr * ra.z + yr * ra.y + xr * ra.x);                              \
@@ -14,6 +23,7 @@ namespace tinker {
       zr -= (fz * l3.z);                                                                           \
    }
 
+/// Image displacement for the monoclinic PBC.
 #define IMAGE_MONO__(xr, yr, zr, l1, l2, l3, ra, rb, rc)                                           \
    {                                                                                               \
       real fx = REAL_FLOOR(0.5f + zr * ra.z + xr * ra.x);                                          \
@@ -24,6 +34,7 @@ namespace tinker {
       zr -= (fz * l3.z);                                                                           \
    }
 
+/// Image displacement for the orthogonal PBC.
 #define IMAGE_ORTHO__(xr, yr, zr, l1, l2, l3, ra, rb, rc)                                          \
    {                                                                                               \
       real fx = REAL_FLOOR(0.5f + xr * ra.x);                                                      \
@@ -33,6 +44,8 @@ namespace tinker {
       yr -= (fy * l2.y);                                                                           \
       zr -= (fz * l3.z);                                                                           \
    }
+
+/// Image displacement for the truncated octahedron PBC.
 #define IMAGE_OCT__(xr, yr, zr, l1, l2, l3, ra, rb, rc)                                            \
    {                                                                                               \
       real fx = xr * ra.x;                                                                         \
@@ -50,6 +63,8 @@ namespace tinker {
       yr = fy * l1.x;                                                                              \
       zr = fz * l1.x;                                                                              \
    }
+
+/// \}
 
 inline namespace v1 {
 class PbcOrtho
@@ -186,19 +201,18 @@ inline real imagen2General(real& xr, real& yr, real& zr, BoxShape sh, real3 l1, 
 
 /// \def image
 /// \ingroup box
-/// \brief Applies periodic boundary conditions to displacement (`xr, yr, zr`) and
+/// Applies periodic boundary conditions to displacement `(xr,yr,zr)` and
 /// preserves the correct signs.
 ///
 /// For testing purpose, defining it in the source code before including this
-/// header file will overwrite the default macro definition. Otherwise, it needs
-/// to be undef-ed.
+/// header file will overwrite the default macro definition.
 #ifndef image
 #   define image(x, y, z) imageGeneral(x, y, z, TINKER_IMAGE_ARGS)
 #endif
 
 /// \def image2
 /// \ingroup box
-/// \brief Applies periodic boundary conditions to displacement (`xr, yr, zr`) and
+/// Applies periodic boundary conditions to displacement `(xr,yr,zr)` and
 /// preserves the correct signs. Returns the displacement squared.
 #ifndef image2
 #   define image2(x, y, z) image2General(x, y, z, TINKER_IMAGE_ARGS)
@@ -206,7 +220,7 @@ inline real imagen2General(real& xr, real& yr, real& zr, BoxShape sh, real3 l1, 
 
 /// \def imagen2
 /// \ingroup box
-/// \brief Applies periodic boundary conditions to displacement (`xr, yr, zr`).
+/// Applies periodic boundary conditions to displacement `(xr,yr,zr)`.
 /// Correct signs may not be preserved. Returns the displacement squared.
 #ifndef imagen2
 #   define imagen2(x, y, z) imagen2General(x, y, z, TINKER_IMAGE_ARGS)

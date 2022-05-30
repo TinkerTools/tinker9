@@ -7,13 +7,13 @@ namespace tinker {
 void platformData(RcOp op)
 {
    if (op & RcOp::DEALLOC) {
-      pltfm_config = Platform::UNSET;
+      pltfm_config = Platform::UNKNOWN;
    }
 
    if (op & RcOp::INIT) {
 #if TINKER_GPULANG_OPENACC
       // Feature: If the platform has been hard-coded, do not change it.
-      if (pltfm_config == Platform::UNSET) {
+      if (pltfm_config == Platform::UNKNOWN) {
          std::string gpu_package = "";
          if (const char* str = std::getenv("gpu_package")) {
             gpu_package = str;

@@ -1,7 +1,7 @@
 #pragma once
 
 namespace tinker {
-/// \ingroup cuda_syntax
+/// \ingroup math
 /// \brief Find the position of the n-th least significant bit set in a 32-bit integer.
 /// Returns a value from 0 to 32.
 ///    - If `c1` equals 0, always returns 0.
@@ -32,7 +32,7 @@ inline int ffsnShift(int c1, int n)
    return r + 1;
 }
 
-/// \ingroup cuda_syntax
+/// \ingroup math
 /// \brief An alternative implementation of ffsn using loop.
 __device__
 inline int ffsnLoop(int c1, int n)

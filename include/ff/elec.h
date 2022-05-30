@@ -4,57 +4,57 @@
 
 extern "C"
 {
-   struct PCHG
+   class PCHG
    {
       int foo;
    };
 
-   struct MPOLE
+   class MPOLE
    {
       int foo;
    };
 
-   struct UIND
+   class UIND
    {
       int foo;
    };
 
-   struct UIND2
+   class UIND2
    {
       int foo;
    };
 
-   struct DISP
+   class DISP
    {
       int foo;
    };
 
-   struct EWALD
+   class EWALD
    {
       int foo;
    };
 
-   struct DEWALD
+   class DEWALD
    {
       int foo;
    };
 
-   struct NON_EWALD
+   class NON_EWALD
    {
       int foo;
    };
 
-   struct NON_EWALD_TAPER
+   class NON_EWALD_TAPER
    {
       int foo;
    };
 
-   struct GORDON1
+   class GORDON1
    {
       int foo;
    };
 
-   struct GORDON2
+   class GORDON2
    {
       int foo;
    };

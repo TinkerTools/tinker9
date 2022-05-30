@@ -153,7 +153,7 @@ void spatialStep1(int n, int pz, int2* restrict b2num, //
       real xr = x[i];
       real yr = y[i];
       real zr = z[i];
-      real3 f = imagectof(xr, yr, zr);
+      real3 f = imagectof_general(xr, yr, zr, recipa, recipb, recipc);
 
       int ix, iy, iz;
       fracToIxyz(ix, iy, iz, pz, pz, pz, f.x, f.y, f.z);
