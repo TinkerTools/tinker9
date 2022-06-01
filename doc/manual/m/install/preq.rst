@@ -8,33 +8,21 @@ The oldest NVIDIA GPU Tinker9 has been tested on is GeForce GTX 675MX (compute c
 
 **Operating Systems and Compilers**
 
-In order to compile the GPU code with full functionality, a recent
-`NVIDIA HPC SDK <https://www.developer.nvidia.com/hpc-sdk>`_
-is preferred for the OpenACC directives. Due to its limitations,
-the *full* version is unavailable on macOS.
+=================  ===========================
+OS and Toolchain   Version
+=================  ===========================
+OS                 Linux, WSL2, macOS <= 10.13
+CMake              >= 3.15
+Fortran            GNU or Intel
+C++                [a]
+CUDA/nvcc          [b]
+OpenACC/NVHPC/PGI  [c]
+=================  ===========================
 
-For Linux, we need:
-
-- GNU or Intel Fortran compiler.
-- Recent C++ compiler that supports C++11 syntax.
-- CMake 3.15 or newer.
-- (GPU code only) NVIDIA HPC SDK with OpenACC support, and CUDA with nvcc.
-- If NVIDIA driver has been installed correctly, *nvidia-smi* should be
-  available.
-
-For Windows, we have successfully built Tinker9 on Windows WSL2 Ubuntu with
-CUDA 11.0 and NVHPC 20.9. Please proceed to
-`this NVIDIA webpage <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>`_
-for more details.
-
-The majority of the functionalities are also implemented in CUDA.
-To compile this subset (PureCuda) of the GPU kernels, NVIDIA HPC SDK is not mandatory.
-Please refer to *Build Tinker9 with CMake* for the flags to compile
-the *PureCuda* GPU kernels.
-It is even possible to compile and run the *PureCuda* version on macOS
-(El Capitan 10.13 or earlier), if suitable drivers and CUDA toolkits are installed.
-If the calculation selects one of the missing functionalities that is only implemented
-in OpenACC, the program will throw a runtime error.
+- [a] Recent C++ compiler that supports C++11 syntax.
+- [b] GPU code only. Version >= 9.0.
+- [c] Optional for the GPU code. A recent `NVIDIA HPC SDK <https://www.developer.nvidia.com/hpc-sdk>`_ is preferred.
+- [d] We have successfully built Tinker9 on Windows WSL2 Ubuntu with CUDA 11.0 and NVHPC 20.9. Please `check this link <https://docs.nvidia.com/cuda/wsl-user-guide/index.html>`_ for more details.
 
 **Using NVIDIA HPC SDK on Clusters**
 

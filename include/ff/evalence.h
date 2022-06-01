@@ -27,13 +27,12 @@ extern "C"
 
 namespace tinker {
 /// \ingroup bonded
+/// Computes the total valence potential energy.
 void evalence(int vers);
-}
 
-namespace tinker {
-/// \defgroup bond  Bond Term
-/// \ingroup bonded
+/// \addtogroup bond
 /// \{
+
 enum class Bond : int
 {
    HARMONIC,
@@ -59,13 +58,12 @@ TINKER_EXTERN grad_prec* deby;
 TINKER_EXTERN grad_prec* debz;
 TINKER_EXTERN energy_prec energy_eb;
 TINKER_EXTERN virial_prec virial_eb[9];
-/// \}
-}
 
-namespace tinker {
-/// \defgroup angle  Angle and Out-of-Plane Bend Terms
-/// \ingroup bonded
+/// \}
+
+/// \addtogroup angle
 /// \{
+
 enum class Angle : int
 {
    IN_PLANE,
@@ -125,13 +123,12 @@ TINKER_EXTERN grad_prec* deopby;
 TINKER_EXTERN grad_prec* deopbz;
 TINKER_EXTERN energy_prec energy_eopb;
 TINKER_EXTERN virial_prec virial_eopb[9];
-/// \}
-}
 
-namespace tinker {
-/// \defgroup strbnd  Bond Stretching Term
-/// \ingroup bonded
+/// \}
+
+/// \addtogroup strbnd
 /// \{
+
 void estrbndData(RcOp);
 void estrbnd(int vers);
 
@@ -146,13 +143,12 @@ TINKER_EXTERN grad_prec* debay;
 TINKER_EXTERN grad_prec* debaz;
 TINKER_EXTERN energy_prec energy_eba;
 TINKER_EXTERN virial_prec virial_eba[9];
-/// \}
-}
 
-namespace tinker {
-/// \defgroup urey  Urey-Bradley Term
-/// \ingroup bonded
+/// \}
+
+/// \addtogroup urey
 /// \{
+
 void eureyData(RcOp);
 void eurey(int vers);
 
@@ -172,16 +168,16 @@ TINKER_EXTERN grad_prec* deuby;
 TINKER_EXTERN grad_prec* deubz;
 TINKER_EXTERN energy_prec energy_eub;
 TINKER_EXTERN virial_prec virial_eub[9];
+
 /// \}
 }
 
 #include <tinker/detail/ktrtor.hh>
 
 namespace tinker {
-/// \defgroup tors  Torsions
-/// \brief Torsion, Improper Torsion,  Pi-Torsion, and Torsion Coupling Terms
-/// \ingroup bonded
+/// \addtogroup tors
 /// \{
+
 void eimpropData(RcOp); // CHARMM
 void eimprop(int vers);
 
@@ -338,13 +334,12 @@ TINKER_EXTERN grad_prec* detty;
 TINKER_EXTERN grad_prec* dettz;
 TINKER_EXTERN energy_prec energy_ett;
 TINKER_EXTERN virial_prec virial_ett[9];
-/// \}
-}
 
-namespace tinker {
-/// \defgroup geom  Geometric Restraints
-/// \ingroup bonded
+/// \}
+
+/// \addtogroup geom
 /// \{
+
 void egeomData(RcOp);
 void egeom(int vers);
 
@@ -385,5 +380,6 @@ TINKER_EXTERN grad_prec* degy;
 TINKER_EXTERN grad_prec* degz;
 TINKER_EXTERN energy_prec energy_eg;
 TINKER_EXTERN virial_prec virial_eg[9];
+
 /// \}
 }

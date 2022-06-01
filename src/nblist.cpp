@@ -282,7 +282,7 @@ static void spatialAlloc( //
    int ns4 = 0, int (*js4)[2] = nullptr)
 {
 #if TINKER_CUDART
-   spatialDataAlloc(unt, n, cut, buf, x, y, z, nstype, //
+   Spatial::dataAlloc(unt, n, cut, buf, x, y, z, nstype, //
       ns1, js1, ns2, js2, ns3, js3, ns4, js4);
    alloc_thrust_cache = true;
 #endif
@@ -298,7 +298,7 @@ static void nblistBuild(NBListUnit u)
 // RcOp::INIT
 static void spatialBuild(SpatialUnit unt)
 {
-   spatialDataInit(unt);
+   Spatial::dataInit(unt);
 }
 
 void nblistData(RcOp op)
@@ -491,16 +491,16 @@ static void nblistUpdate(NBListUnit u)
 
 TINKER_FVOID2(acc1, cu1, spatialCheck, int&, int, real, int*, const real*, const real*, const real*,
    real*, real*, real*);
-static void spatialUpdate(SpatialUnit unt)
+void spatialUpdate(SpatialUnit unt)
 {
    MAYBE_UNUSED auto& st = *unt;
    int answer = 0;
    TINKER_FCALL2(acc1, cu1, spatialCheck, answer, st.n, st.buffer, st.update, st.x, st.y, st.z,
       st.xold, st.yold, st.zold);
    if (answer) {
-      spatialDataInit(unt);
+      Spatial::dataInit(unt);
    } else {
-      spatialDataUpdateSorted(unt);
+      Spatial::dataUpdateSorted(unt);
    }
 }
 

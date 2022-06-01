@@ -114,8 +114,10 @@ static void spatialCut(int& px, int& py, int& pz, int level)
    py = pmax;
    pz = pmax;
 }
+}
 
-void spatialDataAlloc(SpatialUnit& u, int n, double cutoff, double buffer, const real* x,
+namespace tinker {
+void Spatial::dataAlloc(SpatialUnit& u, int n, double cutoff, double buffer, const real* x,
    const real* y, const real* z,                   //
    int nstype,                                     //
    int ns1, int (*js1)[2], int ns2, int (*js2)[2], //
@@ -181,17 +183,15 @@ void spatialDataAlloc(SpatialUnit& u, int n, double cutoff, double buffer, const
       darray::allocate(32 * st.cap_nakpl, &st.si4.bit0);
    }
 }
-}
 
-namespace tinker {
 TINKER_FVOID2(acc0, cu1, spatialDataInit, SpatialUnit);
-void spatialDataInit(SpatialUnit u)
+void Spatial::dataInit(SpatialUnit u)
 {
    TINKER_FCALL2(acc0, cu1, spatialDataInit, u);
 }
 
 TINKER_FVOID2(acc0, cu1, spatialDataUpdateSorted, SpatialUnit);
-void spatialDataUpdateSorted(SpatialUnit u)
+void Spatial::dataUpdateSorted(SpatialUnit u)
 {
    TINKER_FCALL2(acc0, cu1, spatialDataUpdateSorted, u);
 }

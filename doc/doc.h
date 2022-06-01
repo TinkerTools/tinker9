@@ -6,12 +6,16 @@
  *
  * \defgroup platform                   Platforms
  * \brief Platforms and platform-specific syntaxes
+ *
  *    \defgroup cpp_syntax              C++ Syntax
  *    \ingroup platform
+ *
  *    \defgroup cuda_syntax             CUDA Syntax
  *    \ingroup platform
+ *
  *    \defgroup acc_syntax              OpenACC Syntax
  *    \ingroup platform
+ *
  *    \defgroup nvidia                  NVIDIA GPU
  *    \ingroup platform
  *
@@ -26,11 +30,37 @@
  *
  * \defgroup egv                        Energy
  * \brief Energy, gradient, virial tensor, and number of interactions
+ *
+ * \defgroup bonded                     Valence
+ * \brief Valence potential energies
+ *
+ *    \defgroup bond                    Bond
+ *    \ingroup bonded
+ *    \brief Bond stretching
+ *
+ *    \defgroup angle                   Angle
+ *    \ingroup bonded
+ *    \brief Angle bending and Out-of-Plane bend
+ *
+ *    \defgroup strbnd                  Stretch-Bend
+ *    \ingroup bonded
+ *    \brief Stretch-bend cross term
+ *
+ *    \defgroup urey                    Urey-Bradley
+ *    \ingroup bonded
+ *    \brief Urey-Bradley term
+ *
+ *    \defgroup torsion                 Torsion
+ *    \ingroup bonded
+ *    \brief Torsion, improper torsion, improper dihedral, Pi-orbital torsion coupling,
+ *           stretch-torsion coupling, angle-torsion coupling, and torsion-torsion coupling
+ *
+ *    \defgroup geom                    Restraint
+ *    \ingroup bonded
+ *    \brief Geometric Restraints
  */
 
 /// \defgroup ff  Force Fields
-///    \defgroup bonded  Valence Terms
-///    \ingroup ff
 ///    \defgroup vdw  Van der Waals (VDW)
 ///    \ingroup ff
 ///    \defgroup charge  Partial Charge Electrostatics

@@ -20,11 +20,6 @@ void zeroEGV(int vers)
       zeroOnDevice9Async(n, gx, gy, gz, gx_vdw, gy_vdw, gz_vdw, gx_elec, gy_elec, gz_elec);
    }
 }
-
-void zeroEGV()
-{
-   zeroEGV(rc_flag);
-}
 }
 
 namespace tinker {

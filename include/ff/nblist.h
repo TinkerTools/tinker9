@@ -4,7 +4,9 @@
 #include "tool/rcman.h"
 
 namespace tinker {
-/// \ingroup nblist
+/// \addtogroup nblist
+/// \{
+
 enum class Nbl
 {
    UNDEFINED = 0x00,   ///< Undefined.
@@ -14,8 +16,7 @@ enum class Nbl
 };
 TINKER_ENABLE_ENUM_BITMASK(Nbl);
 
-/// \ingroup nblist
-/// \brief Verlet list: pairwise neighbor list indices and storage.
+/// Verlet list: pairwise neighbor list indices and storage.
 struct NBList
 {
    int* nlst;     ///< number of sites in list for each atom
@@ -33,41 +34,17 @@ struct NBList
 
    ~NBList();
 };
-/// \ingroup nblist
-using NBListUnit = GenericUnit<NBList, GenericUnitVersion::ENABLE_ON_DEVICE>;
+typedef GenericUnit<NBList, GenericUnitVersion::ENABLE_ON_DEVICE> NBListUnit;
 
-/// \ingroup nblist
-/// \brief
-/// For Halgren Buffered 14-7 potential only, otherwise returns Nbl::UNDEFINED.
-///
-/// |                  | PBC                            | Unbound         |
-/// |------------------|--------------------------------|-----------------|
-/// | Inf. Cutoff      | N/A                            | double loop     |
-/// | Cutoff + No List | double loop                    | double loop     |
-/// | Cutoff + List    | verlet list or sptaial decomp. | verlet list (a) |
-///
-/// (a) We cannot use spatial decomposition because Tinker only set up a cubic
-///     box for nonperiodic PME once. There is no guarantee that all of the atoms
-///     will stay within the cubic box even if we moved the center of mass to
-///     origin.
-Nbl vlistVersion();
-/// \ingroup nblist
-/// \brief For partial charge models and for VDW models that do not
-/// have a separate set of coordinates.
-Nbl clistVersion();
-/// \ingroup nblist
-Nbl mlistVersion();
-/// \ingroup nblist
-Nbl ulistVersion();
-/// \ingroup nblist
-Nbl dsplistVersion();
-
-/// \ingroup nblist
-void nblistData(RcOp);
-
-/// \ingroup nblist
-void nblistRefresh();
-}
+Nbl vlistVersion();    ///< For Halgren Buffered 14-7 potential only,
+                       ///< otherwise returns Nbl::UNDEFINED.
+Nbl clistVersion();    ///< For partial charge models and for VDW models that do not have
+                       ///< a separate set of coordinates.
+Nbl mlistVersion();    ///< For multipole, polarization, repulsion, etc.
+Nbl ulistVersion();    ///< For sparse preconditioner.
+Nbl dsplistVersion();  ///< For dispersion.
+void nblistData(RcOp); ///< Sets up data on device.
+void nblistRefresh();  ///< Updates the neighbor lists.
 
 //====================================================================//
 //                                                                    //
@@ -75,13 +52,11 @@ void nblistRefresh();
 //                                                                    //
 //====================================================================//
 
-namespace tinker {
-/// \ingroup nblist
-/// \{
 TINKER_EXTERN NBListUnit vlist_unit;
 TINKER_EXTERN NBListUnit clist_unit;
 TINKER_EXTERN NBListUnit mlist_unit;
 TINKER_EXTERN NBListUnit ulist_unit;
 TINKER_EXTERN NBListUnit dsplist_unit;
+
 /// \}
 }

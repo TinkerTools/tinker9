@@ -163,7 +163,7 @@
 
 /// \def TINKER_DOUBLE_PRECISION
 /// \ingroup prec
-/// \brief Macro for the precision mode. Types `real` and `mixed` have different
+/// Macro for the precision mode. Types `real` and `mixed` have different
 /// definitions in different modes.
 ///
 /// | Macros | real   | mixed  |

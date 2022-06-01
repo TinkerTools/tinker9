@@ -670,16 +670,16 @@ void spatialStep5(const int* restrict bnum, const int* iakpl_rev, int nstype,
 }
 
 template <class IMG>
-static void spatialRunStep5(SpatialUnit u)
+void Spatial::RunStep5(SpatialUnit u)
 {
    u->niak = 0;
    int* dev_niak = &u->update[2];
    real cutbuf = u->cutoff + u->buffer;
    launch_k1s(g::s0, u->nakp, spatialStep5<IMG>, //
       u->bnum, u->iakpl_rev, u->nstype, u->si1, u->si2, u->si3,
-      u->si4,                               //
-      dev_niak, u->iak, u->lst,             //
-      n, u->nak, cutbuf, TINKER_IMAGE_ARGS, //
+      u->si4,                                  //
+      dev_niak, u->iak, u->lst,                //
+      u->n, u->nak, cutbuf, TINKER_IMAGE_ARGS, //
       u->akpf, u->sorted, u->akc, u->half);
    darray::copyout(g::q0, 1, &u->niak, dev_niak);
    waitFor(g::q0);
@@ -763,15 +763,15 @@ void spatialDataInit_cu(SpatialUnit u)
       si1.bit0, si2.bit0, si3.bit0, si4.bit0);
 
    if (box_shape == BoxShape::ORTHO) {
-      spatialRunStep5<PbcOrtho>(u);
+      Spatial::RunStep5<PbcOrtho>(u);
    } else if (box_shape == BoxShape::MONO) {
-      spatialRunStep5<PbcMono>(u);
+      Spatial::RunStep5<PbcMono>(u);
    } else if (box_shape == BoxShape::TRI) {
-      spatialRunStep5<PbcTri>(u);
+      Spatial::RunStep5<PbcTri>(u);
    } else if (box_shape == BoxShape::OCT) {
-      spatialRunStep5<PbcOct>(u);
+      Spatial::RunStep5<PbcOct>(u);
    } else if (box_shape == BoxShape::UNBOUND) {
-      spatialRunStep5<PbcUnbound>(u);
+      Spatial::RunStep5<PbcUnbound>(u);
    } else {
       assert(false);
    }
