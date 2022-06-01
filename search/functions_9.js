@@ -11,7 +11,7 @@ var searchData=
   ['induce_8',['induce',['../group__polar.html#ga981f2577dba43f008860231fba040b56',1,'tinker']]],
   ['induce2_9',['induce2',['../group__hippopolar.html#gaa753b3c44a28ee783b7378cfecd21721',1,'tinker']]],
   ['induceprint_10',['inducePrint',['../group__polar.html#gaa221783c995c85d35b026f8c25ab3ce8',1,'tinker']]],
-  ['init_11',['init',['../structtinker_1_1_spatial_1_1_scale_info.html#a21010d495175bed15e51dff151543b07',1,'tinker::Spatial::ScaleInfo::init()'],['../structtinker_1_1_op_logic_or.html#af57e3832303649b0622485239df0bbf4',1,'tinker::OpLogicOr::init()'],['../structtinker_1_1_op_plus.html#a36f09e74a249662b61a4a894461851cc',1,'tinker::OpPlus::init()']]],
+  ['init_11',['init',['../group__nblist.html#a21010d495175bed15e51dff151543b07',1,'tinker::Spatial::ScaleInfo::init()'],['../structtinker_1_1_op_logic_or.html#af57e3832303649b0622485239df0bbf4',1,'tinker::OpLogicOr::init()'],['../structtinker_1_1_op_plus.html#a36f09e74a249662b61a4a894461851cc',1,'tinker::OpPlus::init()']]],
   ['initial_12',['initial',['../group__general.html#gac1e608e55901de8b485a988ed23cd39a',1,'tinker']]],
   ['initialize_13',['initialize',['../group__general.html#ga37ed75e8bc382ed9c6258c5b69c31bb6',1,'tinker']]],
   ['instance_14',['instance',['../group__platform.html#a5aecf8ec7fcccb27d4d1fd1d262c2c14',1,'tinker::ThrustCache']]],

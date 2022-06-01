@@ -196,4 +196,5 @@ var menudata={children:[
 {text:"x",url:"functions_vars_x.html#index_x"},
 {text:"y",url:"functions_vars_y.html#index_y"},
 {text:"z",url:"functions_vars_z.html#index_z"}]},
-{text:"Typedefs",url:"functions_type.html"}]}]}]}
+{text:"Typedefs",url:"functions_type.html"},
+{text:"Related Functions",url:"functions_rela.html"}]}]}]}

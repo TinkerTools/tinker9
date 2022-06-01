@@ -2,7 +2,7 @@ var searchData=
 [
   ['balist_0',['balist',['../namespacetinker.html#ae4cec338d0423b21bec43e732087c2fe',1,'tinker']]],
   ['bflx_1',['bflx',['../namespacetinker.html#ac8744872a645ff5dc6c68377b00e6123',1,'tinker']]],
-  ['bit0_2',['bit0',['../structtinker_1_1_spatial_1_1_scale_info.html#a98eaf91dd13e8b7287b5da2813b5e248',1,'tinker::Spatial::ScaleInfo']]],
+  ['bit0_2',['bit0',['../group__nblist.html#a98eaf91dd13e8b7287b5da2813b5e248',1,'tinker::Spatial::ScaleInfo']]],
   ['bk_3',['bk',['../group__bond.html#ga4356e9e00cdd34b4ff20aaaef5290559',1,'tinker']]],
   ['bl_4',['bl',['../group__bond.html#gabe052556d2444dcc2ca8788bc1077637',1,'tinker']]],
   ['block_5',['BLOCK',['../group__nblist.html#a93d40c5372c63c4724965722eece10d2',1,'tinker::Spatial']]],

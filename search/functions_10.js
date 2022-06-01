@@ -24,7 +24,7 @@ var searchData=
   ['replace_21',['replace',['../group__io__text.html#a5086b01777ef62cf40a8103a4226d61b',1,'tinker::Text']]],
   ['resize_22',['resize',['../group__rc.html#af00896053fb54c73634e962a6ace8f68',1,'tinker::GenericUnit']]],
   ['resourcemanagement_23',['ResourceManagement',['../group__rc.html#a9c2dc223f3d5271b4c4677126e9e757f',1,'tinker::ResourceManagement']]],
-  ['respadevice_24',['RespaDevice',['../group__mdintg.html#ae4b062333328de1a4c30fd70faeadcd8',1,'tinker::RespaDevice::RespaDevice()'],['../group__mdintg.html#ab2f86048ca9ed2373db2980f49a359a5',1,'tinker::RespaDevice::RespaDevice(int nrspa)']]],
+  ['respadevice_24',['RespaDevice',['../group__mdintg.html#ab2f86048ca9ed2373db2980f49a359a5',1,'tinker::RespaDevice::RespaDevice(int nrspa)'],['../group__mdintg.html#ae4b062333328de1a4c30fd70faeadcd8',1,'tinker::RespaDevice::RespaDevice()']]],
   ['respaintegrator_25',['RespaIntegrator',['../group__mdintg.html#a22c60825f2c715e8b5064a349e07f544',1,'tinker::RespaIntegrator']]],
   ['respatsconfig_26',['respaTSConfig',['../group__mdintg.html#gaf0821e7d81c701eff49150a47e293879',1,'tinker']]],
   ['rotpoleaddby_27',['rotpoleAddBy',['../namespacetinker.html#acf32bee7de27796fa82b3d1b3685f9c5',1,'tinker']]],
@@ -32,5 +32,6 @@ var searchData=
   ['rotpoleatomi_29',['rotpoleAtomI',['../namespacetinker.html#a4f2e6fb5850764c8509091c52f937690',1,'tinker']]],
   ['rotpolenorm_30',['rotpoleNorm',['../namespacetinker.html#a371e4bc5a9426f2a2f8a4938a56ae728',1,'tinker']]],
   ['rotsite_31',['rotsite',['../namespacetinker.html#a45e870b28b00412e32dc8a58e663a65d',1,'tinker']]],
-  ['rpoletocmp_32',['rpoleToCmp',['../group__pme.html#gac036e07edb44ca944ea5a55df97d677e',1,'tinker']]]
+  ['rpoletocmp_32',['rpoleToCmp',['../group__pme.html#gac036e07edb44ca944ea5a55df97d677e',1,'tinker']]],
+  ['runstep5_33',['RunStep5',['../group__nblist.html#a74c9efd59567f3d27dc80908a0b4299a',1,'tinker::Spatial']]]
 ];

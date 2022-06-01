@@ -35,7 +35,7 @@ var searchData=
   ['uk_32',['uk',['../group__urey.html#ga73ba43b678f48a96fe3c9c144fa3ccc6',1,'tinker']]],
   ['ul_33',['ul',['../group__urey.html#gab5c17676fc1b26ddc80a851ccae12017',1,'tinker']]],
   ['ulist_5funit_34',['ulist_unit',['../group__nblist.html#gae16f8c3e20b012cc04f5eededbabd0ab',1,'tinker']]],
-  ['unsorted_35',['unsorted',['../structtinker_1_1_spatial_1_1_sorted_atom.html#a1c8db044b5f0461e46d8332ed3edbc8e',1,'tinker::Spatial::SortedAtom']]],
+  ['unsorted_35',['unsorted',['../group__nblist.html#a1c8db044b5f0461e46d8332ed3edbc8e',1,'tinker::Spatial::SortedAtom']]],
   ['upalt_5f00_36',['upalt_00',['../namespacetinker.html#a85f825fb9e01e7d34bc1e3349123053d',1,'tinker']]],
   ['upalt_5f01_37',['upalt_01',['../namespacetinker.html#aa878e84e49d84aac3235712851c6acac',1,'tinker']]],
   ['upalt_5f02_38',['upalt_02',['../namespacetinker.html#a364e817fd8d8f8bb5aafbac15548aec4',1,'tinker']]],

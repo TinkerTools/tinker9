@@ -1,13 +1,39 @@
 Build Tinker9 with CMake
 ========================
 
+Quick Start
+-----------
+
+For a GPU card with compute capability 7.0,
+an example to compile the GPU code without OpenACC:
+
+.. code-block:: bash
+
+   cd tinker9 && mkdir build
+   FC=gfortran compute_capability=70 gpu_lang=cuda cmake ..
+   make
+   make test
+
+Assuming separate CUDA and NVHPC are properly installed,
+another example to compile the GPU code with both OpenACC and CUDA:
+
+.. code-block:: bash
+
+   cd tinker9 && mkdir build
+   cmake -DCMAKE_Fortran_COMPILER=gfortran -DCOMPUTE_CAPABILITY=70 ..
+   make
+   make test
+
+For the options of other GPU devices and features,
+please refer to the subsequent sections.
+
 Configure CMake
 ---------------
 You can skip this section if you are familar with CMake.
 
 Suppose the current working directory is */home/tinker9* and we
-want to create a build directory called *build-cmake* in
-*/home/tinker9*. We can do *mkdir build-cmake* then *cd build-cmake*.
+want to create a build directory called *build* in
+*/home/tinker9*. We can do *mkdir build* then *cd build*.
 Because the top-level CMakeLists.txt file is in the parent directory,
 if there was nothing else to configure, command *cmake ..* would generate
 the Makefile. The alternative way is to specify the build and source
@@ -15,7 +41,7 @@ directories to CMake, e.g.,
 
 .. code-block:: bash
 
-   cmake -B /home/tinker9/build-cmake -S /home/tinker9
+   cmake -B /home/tinker9/build -S /home/tinker9
 
 Some CMake installations also provide a command line gui *ccmake* and a
 simple gui program *cmake-gui* that can replace *cmake* in the commands
@@ -46,32 +72,6 @@ two standard ways to let users customize the values:
 In addition to these two canonical methods, default value can also be set
 by its corresponding environmental variable, documented as **(env)** here.
 Note that there is no **-D** prefix for the environmental variables.
-
-Here are two equivalent examples to have Tinker9 configured as follows
-
-=======================  ===================
-Item                     Value
-=======================  ===================
-opt                      release
-host                     0
-prec                     m
-cuda_dir                 /usr/local/cuda
-compute_capability       75
-CMakeLists.txt Location  /home/tinker9
-=======================  ===================
-
-.. code-block:: bash
-
-   # use environmental variables
-   opt=release host=0 prec=m \
-   cuda_dir=/usr/local/cuda compute_capability=75 \
-   cmake /home/tinker9
-
-   # use cmake -DOPTIONS
-   cmake /home/tinker9 \
-   -DCMAKE_BUILD_TYPE=Release -DHOST=0 -DPREC=m \
-   -DCUDA_DIR=/usr/local/cuda -DCOMPUTE_CAPABILITY=75
-
 
 **-DCMAKE_BUILD_TYPE (opt) = Release**
 

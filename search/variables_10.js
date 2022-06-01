@@ -41,8 +41,5 @@ var searchData=
   ['ptorunit_38',['ptorunit',['../group__tors.html#ga916932f1632bf5c63ccfd0e19c5f6825',1,'tinker']]],
   ['pval_39',['pval',['../namespacetinker.html#aa18311598432bc89f01826cc72fe0eaa',1,'tinker']]],
   ['pval0_40',['pval0',['../namespacetinker.html#ad6083f7c8e9fda4d625b6e1fba37c018',1,'tinker']]],
-  ['pvpme_5funit_41',['pvpme_unit',['../group__pme.html#gad49ca2b4325486eef764f2e178ce3dbf',1,'tinker']]],
-  ['px_42',['px',['../group__nblist.html#add1a373b924df2d93e6459fac6a61d1c',1,'tinker::Spatial']]],
-  ['py_43',['py',['../group__nblist.html#a1c71c91f8ca4619c534cddceec6635dc',1,'tinker::Spatial']]],
-  ['pz_44',['pz',['../group__nblist.html#adb1aa761f146d516408d31baa75161d0',1,'tinker::Spatial']]]
+  ['pvpme_5funit_41',['pvpme_unit',['../group__pme.html#gad49ca2b4325486eef764f2e178ce3dbf',1,'tinker']]]
 ];

@@ -1,10 +1,10 @@
 var searchData=
 [
   ['zero_0',['zero',['../group__rc.html#aa83f9059b44de0420cc811b1b57bcff1',1,'tinker::darray::zero()'],['../namespacetinker.html#ab522d23b8ea6e5afcec0f35f78583237',1,'tinker::zero(PairMPoleGrad &amp;pgrad)'],['../namespacetinker.html#a16b56ade8c463f851f2cdc45a5025449',1,'tinker::zero(PairPolarGrad &amp;pgrad)'],['../namespacetinker.html#a5125508de61b65e3c1667a5b554ad2b2',1,'tinker::zero(PairRepelGrad &amp;pgrad)'],['../group__rc.html#a4a8714a9ee602d8283f8b0221ea0ccde',1,'tinker::darray::zero()']]],
-  ['zeroegv_1',['zeroEGV',['../group__egv.html#gaec619c1a8e648a65ef4db9fff05984ad',1,'tinker::zeroEGV(int vers)'],['../group__egv.html#gadc2504e7ba5301d20ff71cd0ab26d4a9',1,'tinker::zeroEGV()']]],
+  ['zeroegv_1',['zeroEGV',['../group__egv.html#ga6706ddcd5c1d0b9c7e7c30626102ac78',1,'tinker']]],
   ['zeroondevice3async_2',['zeroOnDevice3Async',['../group__math.html#gae3612abae6df700cf5052b7bd21a8517',1,'tinker::zeroOnDevice3Async(int nelem, T *a1, T *a2, T *a3)'],['../group__math.html#gafe48b0e9d05173dc70184287c68abe8e',1,'tinker::zeroOnDevice3Async(int nelem, T(*a1)[N], T(*a2)[N], T(*a3)[N])']]],
   ['zeroondevice3async_5facc_3',['zeroOnDevice3Async_acc',['../namespacetinker.html#aefb2fb8505cdccc72e9384e7899d112e',1,'tinker::zeroOnDevice3Async_acc(int nelem, T *a1, T *a2, T *a3)'],['../namespacetinker.html#aa5ccf7878e90c95a0dc08418eb90a5f9',1,'tinker::zeroOnDevice3Async_acc(int nelem, T(*a1)[N], T(*a2)[N], T(*a3)[N])']]],
-  ['zeroondevice3async_5fcu_4',['zeroOnDevice3Async_cu',['../namespacetinker.html#ace00bb1cc832357d3f556ab5950ed6ad',1,'tinker::zeroOnDevice3Async_cu(int nelem, T *a1, T *a2, T *a3)'],['../namespacetinker.html#aa2d66ff575f091ed37ec2faa609c4869',1,'tinker::zeroOnDevice3Async_cu(int nelem, T(*a1)[N], T(*a2)[N], T(*a3)[N])']]],
+  ['zeroondevice3async_5fcu_4',['zeroOnDevice3Async_cu',['../namespacetinker.html#aa2d66ff575f091ed37ec2faa609c4869',1,'tinker::zeroOnDevice3Async_cu(int nelem, T(*a1)[N], T(*a2)[N], T(*a3)[N])'],['../namespacetinker.html#ace00bb1cc832357d3f556ab5950ed6ad',1,'tinker::zeroOnDevice3Async_cu(int nelem, T *a1, T *a2, T *a3)']]],
   ['zeroondevice9async_5',['zeroOnDevice9Async',['../group__math.html#ga629306a4481f1525d6bc6ac68098de45',1,'tinker']]],
   ['zeroondevice9async_5facc_6',['zeroOnDevice9Async_acc',['../namespacetinker.html#adf6ec99ba2f52f3117eedaedd41353e7',1,'tinker']]],
   ['zeroondevice9async_5fcu_7',['zeroOnDevice9Async_cu',['../namespacetinker.html#a82eee56d94debab13313bb53847fe0dc',1,'tinker']]],

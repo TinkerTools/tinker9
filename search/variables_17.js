@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['w_0',['w',['../group__acc__syntax.html#aa565faa8817e280c4be441f9c0fabbec',1,'tinker::int4::w()'],['../group__acc__syntax.html#a6b11250673d8ca4666fe0ba3789b7f94',1,'tinker::float4::w()'],['../group__acc__syntax.html#a59d59705c48bbb862475f06f3bf543af',1,'tinker::double4::w()'],['../structtinker_1_1_spatial_1_1_center.html#a8ad0de5645e250eb406b4c3fde2d49c7',1,'tinker::Spatial::Center::w()']]],
+  ['w_0',['w',['../group__acc__syntax.html#aa565faa8817e280c4be441f9c0fabbec',1,'tinker::int4::w()'],['../group__acc__syntax.html#a6b11250673d8ca4666fe0ba3789b7f94',1,'tinker::float4::w()'],['../group__acc__syntax.html#a59d59705c48bbb862475f06f3bf543af',1,'tinker::double4::w()'],['../group__nblist.html#a8ad0de5645e250eb406b4c3fde2d49c7',1,'tinker::Spatial::Center::w()']]],
   ['w2scale_1',['w2scale',['../namespacetinker.html#a6f6ec4cf698a9ce8a5bf1748f36ef9da',1,'tinker']]],
   ['w3scale_2',['w3scale',['../namespacetinker.html#ac155c2f8d382b7e557cab6bf1c1391f3',1,'tinker']]],
   ['w4scale_3',['w4scale',['../namespacetinker.html#ac62d53e592a04991331b683cebbf556c',1,'tinker']]],
