@@ -31,6 +31,9 @@
  * \defgroup egv                        Energy
  * \brief Energy, gradient, virial tensor, and number of interactions
  *
+ * \defgroup ff  Force Fields
+ * \brief Shared modules across force fields calculation.
+ *
  * \defgroup bonded                     Valence
  * \brief Valence potential energies
  *
@@ -50,7 +53,7 @@
  *    \ingroup bonded
  *    \brief Urey-Bradley term
  *
- *    \defgroup torsion                 Torsion
+ *    \defgroup tors                    Torsion
  *    \ingroup bonded
  *    \brief Torsion, improper torsion, improper dihedral, Pi-orbital torsion coupling,
  *           stretch-torsion coupling, angle-torsion coupling, and torsion-torsion coupling
@@ -58,35 +61,26 @@
  *    \defgroup geom                    Restraint
  *    \ingroup bonded
  *    \brief Geometric Restraints
+ *
+ * \defgroup vdw                        VDW
+ * \brief Van der Waals
+ *
+ * \defgroup fft                        FFT
+ * \brief Fast Fourier Transform
  */
 
-/// \defgroup ff  Force Fields
-///    \defgroup vdw  Van der Waals (VDW)
-///    \ingroup ff
 ///    \defgroup charge  Partial Charge Electrostatics
-///    \ingroup ff
 ///    \defgroup chglj  Charge & LJ
-///    \ingroup ff
 ///    \defgroup mpole  AMOEBA Multipole Electrostatics
-///    \ingroup ff
 ///    \defgroup polar  AMOEBA Polarization Electrostatics
-///    \ingroup ff
 ///    \defgroup mplar  AMOEBA Multipole & Polarization
-///    \ingroup ff
 ///    \defgroup pme  Particle Mesh Ewald
-///    \ingroup ff
 ///    \defgroup cflux  Charge Flux
-///    \ingroup ff
 ///    \defgroup disp  HIPPO Dispersion
-///    \ingroup ff
 ///    \defgroup repel  HIPPO Repulsion
-///    \ingroup ff
 ///    \defgroup chgtrn  Charge Transfer
-///    \ingroup ff
 ///    \defgroup hippompole  HIPPO Multipole Electrostatics
-///    \ingroup ff
 ///    \defgroup hippopolar  HIPPO Polarization
-///    \ingroup ff
 
 /// \defgroup md  Molecular Dynamics
 ///    \defgroup mdpq  Positions and Velocities
@@ -116,7 +110,6 @@
 
 /// \defgroup async  Asynchronous Flow Control
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
-/// \defgroup fft  Fast Fourier Transform
 /// \defgroup test  Unit Tests
 
 //====================================================================//

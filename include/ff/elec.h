@@ -61,11 +61,11 @@ extern "C"
 }
 
 namespace tinker {
-/// \ingroup ff
+/// \addtogroup ff
+/// \{
+
 bool useEwald();
-/// \ingroup ff
 void elecData(RcOp);
-}
 
 //====================================================================//
 //                                                                    //
@@ -73,9 +73,8 @@ void elecData(RcOp);
 //                                                                    //
 //====================================================================//
 
-namespace tinker {
-/// \ingroup ff
 TINKER_EXTERN real electric;
-/// \ingroup ff
 TINKER_EXTERN real dielec;
+
+/// \}
 }

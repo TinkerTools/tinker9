@@ -4,26 +4,23 @@
 #include <istream>
 
 namespace tinker {
-/// \ingroup ff
+/// \addtogroup ff
+/// \{
+
 void nData(RcOp);
-/// \ingroup ff
 void massData(RcOp);
-/// \ingroup ff
 void xyzData(RcOp);
 
-/// \ingroup ff
-/// \brief Update #x, #y, #z by #xpos, #ypos, and #zpos.
+/// Update #x, #y, #z by #xpos, #ypos, and #zpos.
 /// If #xpos etc. are only aliases, return directly.
 void copyPosToXyz();
 
-/// \ingroup ff
-/// \brief Update #x, #y, #z by #xpos, #ypos, and #zpos.
+/// Update #x, #y, #z by #xpos, #ypos, and #zpos.
 /// If #xpos etc. are only aliases, return directly.
-/// \param refreshNBList  If `true`, refresh the neighbor lists by the end.
+/// \param refreshNBList  If `true`, refresh the neighbor lists at the end.
 void copyPosToXyz(bool refreshNBList);
 
-/// \ingroup ff
-/// \brief Finds the geometric center of each molecule and translate any stray
+/// Finds the geometric center of each molecule and translate any stray
 /// molecules back into the periodic box on GPU.
 /// \note
 ///    - Updating #x, #y, #z is the goal.
@@ -32,9 +29,7 @@ void copyPosToXyz(bool refreshNBList);
 ///    - Tinker uses centers of mass.
 void bounds();
 
-/// \ingroup ff
 void readFrameCopyinToXyz(std::istream& input, int& done);
-}
 
 //====================================================================//
 //                                                                    //
@@ -42,40 +37,23 @@ void readFrameCopyinToXyz(std::istream& input, int& done);
 //                                                                    //
 //====================================================================//
 
-namespace tinker {
-/// \ingroup ff
-/// \brief Number of atoms.
-TINKER_EXTERN int padded_n;
-/// \ingroup ff
-/// \brief Number of atoms padded by #WARP_SIZE.
-/// \see WARP_SIZE
-TINKER_EXTERN int n;
-/// \ingroup ff
-/// \brief Number of the trajectory frames.
-TINKER_EXTERN int trajn;
+TINKER_EXTERN int padded_n; /// \brief Number of atoms padded by #WARP_SIZE.
+TINKER_EXTERN int n;        /// \brief Number of atoms.
+TINKER_EXTERN int trajn;    /// \brief Number of the trajectory frames.
 
-/// \ingroup ff
-/// \{
-/// \var x
-/// \brief Current coordinates used in energy evaluation and neighbor lists.
-/// \var y
-/// \copydoc x
-/// \var z
-/// \copydoc x
-///
-/// \var trajx
-/// \brief Coordinates of all the trajectory frames.
-/// \var trajy
-/// \copydoc trajx
-/// \var trajz
-/// \copydoc trajx
-///
+TINKER_EXTERN real* x;     ///< Current coordinates used in energy evaluation and neighbor lists.
+TINKER_EXTERN real* y;     ///< Current coordinates used in energy evaluation and neighbor lists.
+TINKER_EXTERN real* z;     ///< Current coordinates used in energy evaluation and neighbor lists.
+TINKER_EXTERN real* trajx; ///< Coordinates of all the trajectory frames.
+TINKER_EXTERN real* trajy; ///< Coordinates of all the trajectory frames.
+TINKER_EXTERN real* trajz; ///< Coordinates of all the trajectory frames.
+
 /// \var xpos
-/// \brief Coordinates used in integrators.
+/// Coordinates used in integrators.
 /// \note
 ///    - New arrays will be allocated only if `sizeof(pos_prec) > sizeof(real)`,
 ///    otherwise, they will be aliases of #x, #y, and #z.
-///    - Whenever #xpos, #ypos, #zpos get updated by integrators, barostats etc.,
+///    - Whenever #xpos, #ypos, #zpos get updated by the integrator,
 ///    #x, #y, #z must be updated immediately.
 /// \see pos_prec
 /// \see real
@@ -83,16 +61,11 @@ TINKER_EXTERN int trajn;
 /// \copydoc xpos
 /// \var zpos
 /// \copydoc xpos
-/// \}
-TINKER_EXTERN real *x, *y, *z;
-TINKER_EXTERN real *trajx, *trajy, *trajz;
 TINKER_EXTERN pos_prec *xpos, *ypos, *zpos;
 static_assert(sizeof(pos_prec) >= sizeof(real), "Type pos_prec cannot be shorter than type real.");
 
-/// \ingroup ff
-/// \brief Atomic mass.
-TINKER_EXTERN double* mass;
-/// \ingroup ff
-/// \brief Inversed atomic mass.
-TINKER_EXTERN double* massinv;
+TINKER_EXTERN double* mass;    ///< Atomic mass.
+TINKER_EXTERN double* massinv; ///< Inversed atomic mass.
+
+/// \}
 }

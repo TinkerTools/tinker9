@@ -4,17 +4,13 @@
 
 namespace tinker {
 /// \ingroup fft
-/// \page fft
 ///
 /// \warning
-///
 /// %PME grid sizes `nfft1`, `nfft2`, and `nfft3` in Tinker are associated with
 /// `x`, `y`, and `z` directions, respectively. These three numbers also
 /// correspond to a Fortran array `qgrid(2,nfft1,nfft2,nfft3)`, where `nfft1` is
 /// the fastest changing dimension and `nfft3` is the slowest changing dimension
 /// among the three.
-///
-/// <br>
 ///
 /// The multi-dimensional `FFTW3` Fortran API in Tinker is called as follows,
 /// \code{.f}
@@ -22,10 +18,8 @@ namespace tinker {
 /// \endcode
 /// which is different from the C API.
 ///
-/// <br>
-///
-/// The difference is described on the [FFTW website]
-/// (http://fftw.org/doc/Reversing-array-dimensions.html#Reversing-array-dimensions):
+/// The difference is described on the [FFTW
+/// website](http://fftw.org/doc/Reversing-array-dimensions.html#Reversing-array-dimensions):
 ///
 /// > A minor annoyance in calling FFTW from Fortran is that FFTW’s array
 /// > dimensions are defined in the C convention (row-major order), while
@@ -35,8 +29,8 @@ namespace tinker {
 /// > that, whenever you create an FFTW plan for a multi-dimensional transform,
 /// > you must always reverse the ordering of the dimensions.
 ///
-/// [`cuFFT` C API]
-/// (https://docs.nvidia.com/cuda/cufft/index.html#function-cufftplan3d)
+/// [cuFFT C
+/// API](https://docs.nvidia.com/cuda/cufft/index.html#function-cufftplan3d)
 /// is similar to FFTW C API:
 ///
 /// \code{.cpp}
@@ -59,6 +53,7 @@ struct FFTPlan
 
    virtual ~FFTPlan() {}
 };
+
 /// \ingroup fft
-using FFTPlanUnit = GenericUnit<FFTPlan, GenericUnitVersion::DISABLE_ON_DEVICE>;
+typedef GenericUnit<FFTPlan, GenericUnitVersion::DISABLE_ON_DEVICE> FFTPlanUnit;
 }

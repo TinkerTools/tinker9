@@ -2,7 +2,7 @@
 
 namespace tinker {
 /// \ingroup ff
-/// \brief Tags of the potential energies.
+/// Tags of the potential energies.
 enum class Potent
 {
    BOND,    ///< Bond stretch potential.
@@ -40,10 +40,10 @@ enum class Potent
 };
 
 /// \ingroup ff
-/// \brief Returns the logical value that governs the given energy term.
+/// \return Logical flag that governs the given energy term.
 bool use(Potent term);
 
 /// \ingroup ff
-/// \brief Returns the prestored number of bonded interactions.
+/// \return Pre-stored number of bonded interactions.
 int countBondedTerm(Potent term);
 }

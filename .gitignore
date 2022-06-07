@@ -1,39 +1,4 @@
-# Qt Creator
-CMakeLists.txt.user
-
-# docker
-docker/Dockerfile*
-docker/*.dockerfile
-
-# macOS
-.DS_Store
-._.DS_Store
-
-# Wiki
-*.wiki
-*.wiki/*
-
-# example
-example/*.arc
-example/*.dyn
-
-# Manual
-doc/manual/_build/*
-
-# Nsight
-Debug/*
-Release/*
-.cproject
-.project
-.settings/*
-
-# CLion
-.idea
-.idea/*
-
-# VSCode
-.vscode
-.vscode/*
+## Tinker9 Project
 
 # bin
 bin/*
@@ -44,8 +9,51 @@ build
 build/*
 build*/*
 
-# vi
-*.swp
+# Docker
+docker/Dockerfile*
+docker/*.dockerfile
+
+# Example
+example/*.arc
+example/*.dyn
+
+# Manual
+doc/manual/_build/*
+
+# Wiki
+*.wiki
+*.wiki/*
+
+
+## OS
+
+# macOS
+.DS_Store
+._.DS_Store
+
+
+## Text Editors and IDEs
+
+# CLion
+.idea
+.idea/*
 
 # gdb
 *.out
+
+# Nsight
+Debug/*
+Release/*
+.cproject
+.project
+.settings/*
+
+# Qt Creator
+CMakeLists.txt.user
+
+# VSCode
+.vscode
+.vscode/*
+
+# vi
+*.swp

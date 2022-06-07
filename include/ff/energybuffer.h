@@ -37,10 +37,10 @@ inline F toFloatingPoint(float g)
 namespace tinker {
 inline namespace v1 {
 /// \ingroup ff
-/// \brief Traits of the energy buffers on device.
+/// Traits of the energy buffers on device.
 ///
 /// This table shows a few possible definitions of the buffers (which may or
-/// may not be the definitions actually used).
+/// may not be the definitions actually got used).
 ///
 /// |                | `T[N]`         | `type (*)[value]` | `type[value]`       |
 /// |----------------|----------------|-------------------|---------------------|
@@ -68,7 +68,7 @@ struct BufferTraits
 };
 
 /// \ingroup ff
-/// \brief Special rules for `float` elements where fixed-point buffer is used.
+/// Special rules for \c float elements where fixed-point buffer is used.
 template <size_t Nincr>
 struct BufferTraits<float, Nincr>
 {
@@ -78,21 +78,22 @@ struct BufferTraits<float, Nincr>
 };
 }
 
-/// \ingroup ff
+/// \addtogroup ff
 /// \{
-/// \brief The lengths of all of the energy buffers are the same and are implicitly
+
+/// The lengths of all of the energy buffers are the same and are implicitly
 /// dependent on the number of atoms in the system.
 /// \note Must be a power of 2.
 size_t bufferSize();
 
-using CountBufferTraits = BufferTraits<int, 1>;
-using EnergyBufferTraits = BufferTraits<e_prec, 1>;
-using VirialBufferTraits = BufferTraits<v_prec, 6>;
-using CountBuffer = CountBufferTraits::type*;
-using EnergyBuffer = EnergyBufferTraits::type*;
-using VirialBuffer = VirialBufferTraits::type (*)[VirialBufferTraits::value];
+typedef BufferTraits<int, 1> CountBufferTraits;
+typedef BufferTraits<e_prec, 1> EnergyBufferTraits;
+typedef BufferTraits<v_prec, 6> VirialBufferTraits;
+typedef CountBufferTraits::type* CountBuffer;
+typedef EnergyBufferTraits::type* EnergyBuffer;
+typedef VirialBufferTraits::type (*VirialBuffer)[VirialBufferTraits::value];
 
-/// \brief Allocates a set of variables for an energy term as necessary.
+/// Allocates a set of variables for an energy term as necessary.
 /// \param flag  Controls the variables to be allocated.
 /// \param pe    Pointer of the EnergyBuffer.
 /// \param pv    Pointer of the VirialBuffer.
@@ -102,7 +103,7 @@ using VirialBuffer = VirialBufferTraits::type (*)[VirialBufferTraits::value];
 void bufferAllocate(int flag, EnergyBuffer* pe, VirialBuffer* pv, //
    grad_prec** px, grad_prec** py, grad_prec** pz);
 
-/// \brief Deallocates a set of variables for an energy term as necessary.
+/// Deallocates a set of variables for an energy term as necessary.
 /// \param flag  Controls the variables to be deallocated.
 /// \param e     The EnergyBuffer.
 /// \param v     The VirialBuffer.
@@ -112,17 +113,17 @@ void bufferAllocate(int flag, EnergyBuffer* pe, VirialBuffer* pv, //
 void bufferDeallocate(int flag, EnergyBuffer e, VirialBuffer v, //
    grad_prec* gx, grad_prec* gy, grad_prec* gz);
 
-/// \brief Allocates a CountBuffer for an energy term as necessary.
+/// Allocates a CountBuffer for an energy term as necessary.
 /// \param flag  Controls the variable to be allocated.
 /// \param pc    Pointer of the CountBuffer.
 void bufferAllocate(int flag, CountBuffer* pc);
 
-/// \brief Deallocates a CountBuffer for an energy term as necessary.
+/// Deallocates a CountBuffer for an energy term as necessary.
 /// \param flag  Controls the variable to be deallocated.
 /// \param c     The CountBuffer.
 void bufferDeallocate(int flag, CountBuffer c);
 
-/// \brief Gets the number of the non-bonded interactions, energy, and virial from a buffer.
+/// Gets the number of the non-bonded interactions, energy, and virial from a buffer.
 /// \note These operations unnecessarily finish within `O(1)` time complexity.
 int countReduce(const CountBuffer b);
 
@@ -135,10 +136,8 @@ void virialReduce(virial_prec (&)[VirialBufferTraits::N], const VirialBuffer b);
 /// \copydoc countReduce
 void virialReduce(virial_prec (&)[9], const VirialBuffer b);
 
-/// \brief Transforms the shape of a virial variable.
+/// Transforms the shape of a virial variable.
 void virialReshape(virial_prec (&output)[9], const virial_prec (&input)[VirialBufferTraits::N]);
-/// \}
-}
 
 //====================================================================//
 //                                                                    //
@@ -146,7 +145,7 @@ void virialReshape(virial_prec (&output)[9], const virial_prec (&input)[VirialBu
 //                                                                    //
 //====================================================================//
 
-namespace tinker {
-/// \ingroup ff
 TINKER_EXTERN int nelem_buffer;
+
+/// \}
 }
