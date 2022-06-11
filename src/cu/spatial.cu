@@ -686,7 +686,7 @@ void Spatial::RunStep5(SpatialUnit u)
    if (u->niak > u->nak * Spatial::LSTCAP) {
       int cap = Spatial::LSTCAP;
       printError();
-      TINKER_THROW(format("An internal array in Spatial2 requested %1$d elements, "
+      TINKER_THROW(format("An internal array in Spatial requested %1$d elements, "
                           "but only %4$d (%3$d*%2$d) were allocated. "
                           "Please increase Spatial::LSTCAP (current value %3$d) "
                           "so as to make Spatial::LSTCAP*%2$d >= %1$d.\n",
