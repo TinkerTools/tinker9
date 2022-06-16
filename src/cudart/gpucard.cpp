@@ -114,8 +114,7 @@ static void getDeviceAttribute(DeviceAttribute& a, int device = 0)
    else
       found_cc = false;
 
-   // Number of CUDA cores per multiprocessor, not tabulated in
-   // cuda-c-programming-guide;
+   // Number of CUDA cores per multiprocessor, not tabulated in cuda-c-programming-guide;
    // documented in "Compute Capability - architecture"
    // 8.6: 128
    // 7.0 7.2 7.5 8.0: 64
