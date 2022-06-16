@@ -125,12 +125,12 @@ void mdrest_cu(int istep)
    auto totmass = molcul::totmass;
    vel_prec vtot1 = 0, vtot2 = 0, vtot3 = 0;
 
-   bool copyout = inform::debug or not bound::use_bounds;
+   bool copyout = static_cast<bool>(inform::debug) or not static_cast<bool>(bound::use_bounds);
    mdrestRemovePbcMomentum_cu(copyout, vtot1, vtot2, vtot3);
 
    // print the translational velocity of the overall system
 
-   mdrestPrintP1(inform::debug, vtot1, vtot2, vtot3, totmass);
+   mdrestPrintP1(static_cast<bool>(inform::debug), vtot1, vtot2, vtot3, totmass);
 
    if (not bound::use_bounds) {
       throwExceptionMissingFunction("mdrestRemoveAngularMomentum_cu", __FILE__, __LINE__);

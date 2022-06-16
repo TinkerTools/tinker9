@@ -12,7 +12,7 @@ void eangtorData(RcOp op)
    if (not use(Potent::ANGTOR))
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       nangtor = 0;
@@ -54,10 +54,10 @@ void eangtorData(RcOp op)
 TINKER_FVOID1(acc1, cu0, eangtor, int);
 void eangtor(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    if (rc_a) {
       zeroOnHost(energy_eat, virial_eat);

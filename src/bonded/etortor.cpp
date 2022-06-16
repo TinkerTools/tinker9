@@ -16,7 +16,7 @@ void etortorData(RcOp op)
    if (not use(Potent::TORTOR))
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       darray::deallocate(ibitor, itt, tnx, tny, ttx, tty, tbf, tbx, tby, tbxy, chkttor_ia_);
@@ -139,10 +139,10 @@ void etortorData(RcOp op)
 TINKER_FVOID1(acc1, cu0, etortor, int);
 void etortor(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    if (rc_a) {
       zeroOnHost(energy_ett, virial_ett);

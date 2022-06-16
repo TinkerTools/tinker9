@@ -14,7 +14,7 @@ void ebondData(RcOp op)
       not use(Potent::CHGFLX))
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       darray::deallocate(ibnd, bl, bk);
@@ -66,10 +66,10 @@ void ebondData(RcOp op)
 TINKER_FVOID1(acc1, cu0, ebond, int);
 void ebond(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    if (rc_a) {
       zeroOnHost(energy_eb, virial_eb);

@@ -12,7 +12,7 @@ void eimptorData(RcOp op)
    if (not use(Potent::IMPTORS))
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       darray::deallocate(iitors, itors1, itors2, itors3);
@@ -54,10 +54,10 @@ void eimptorData(RcOp op)
 TINKER_FVOID1(acc1, cu0, eimptor, int);
 void eimptor(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    if (rc_a) {
       zeroOnHost(energy_eit, virial_eit);

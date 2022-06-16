@@ -817,10 +817,10 @@ void evalence_cu2(int vers, bool flag_bond, bool flag_angle, bool flag_strbnd, b
 
 void evalence_cu(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    bool flag_bond = use(Potent::BOND);
    bool flag_angle = use(Potent::ANGLE);

@@ -12,7 +12,7 @@ void etorsData(RcOp op)
    if (not use(Potent::TORSION) and not use(Potent::STRTOR) and not use(Potent::ANGTOR))
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       darray::deallocate(itors, tors1, tors2, tors3, tors4, tors5, tors6);
@@ -59,10 +59,10 @@ void etorsData(RcOp op)
 TINKER_FVOID1(acc1, cu0, etors, int);
 void etors(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    if (rc_a) {
       zeroOnHost(energy_et, virial_et);
