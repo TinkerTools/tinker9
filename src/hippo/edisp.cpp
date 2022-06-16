@@ -14,7 +14,7 @@
 namespace tinker {
 bool useDEwald()
 {
-   return use(Potent::DISP) and limits::use_dewald;
+   return use(Potent::DISP) and static_cast<bool>(limits::use_dewald);
 }
 
 void edispData(RcOp op)
@@ -22,7 +22,7 @@ void edispData(RcOp op)
    if (not use(Potent::DISP))
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       darray::deallocate(csix, adisp);
@@ -166,9 +166,9 @@ static void edispEwald(int vers)
    TINKER_FCALL2(acc1, cu1, edispEwaldReal, vers);
 
    // recip and self
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
    PMEUnit u = dpme_unit;
 
    gridDisp(u, csix);
@@ -201,11 +201,11 @@ static void edispEwald(int vers)
 
 void edisp(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_a = vers & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_a = vers & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    zeroOnHost(energy_edsp, virial_edsp);
    size_t bsize = bufferSize();

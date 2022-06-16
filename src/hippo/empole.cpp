@@ -19,7 +19,7 @@ void empoleChgpenData(RcOp op)
    if (not mplpot::use_chgpen)
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       if (rc_a) {
@@ -83,12 +83,12 @@ static void empoleChgpenEwald(int vers, int use_cf)
 namespace tinker {
 void empoleChgpen(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_a = vers & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
-   int use_cf = use(Potent::CHGFLX);
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_a = vers & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
+   auto use_cf = use(Potent::CHGFLX);
    int use_cfgrad = use_cf and do_g;
 
    zeroOnHost(energy_em, virial_em);

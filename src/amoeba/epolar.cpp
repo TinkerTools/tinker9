@@ -28,7 +28,7 @@ void epolarData(RcOp op)
    if (mplpot::use_chgpen and not polpot::use_dirdamp) // HIPPO Polarization
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       nuexclude = 0;
@@ -514,9 +514,9 @@ static void epolarNonEwald(int vers)
    // v4: EG = E_dot + G
    // v5: G
    // v6: GV
-   bool edot = vers & calc::energy; // if not do_e, edot = false
+   auto edot = vers & calc::energy; // if not do_e, edot = false
    if (vers & calc::energy and vers & calc::analyz)
-      edot = false; // if do_e and do_a, edot = false
+      edot = 0; // if do_e and do_a, edot = false
    int ver2 = vers;
    if (edot)
       ver2 &= ~calc::energy; // toggle off the calc::energy flag
@@ -548,9 +548,9 @@ static void epolarEwald(int vers)
    // v4: EG = E_dot + G
    // v5: G
    // v6: GV
-   bool edot = vers & calc::energy; // if not do_e, edot = false
+   auto edot = vers & calc::energy; // if not do_e, edot = false
    if (vers & calc::energy and vers & calc::analyz)
-      edot = false; // if do_e and do_a, edot = false
+      edot = 0; // if do_e and do_a, edot = false
    int ver2 = vers;
    if (edot)
       ver2 &= ~calc::energy; // toggle off the calc::energy flag
@@ -566,13 +566,13 @@ static void epolarEwald(int vers)
 
 void epolar(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_a = vers & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_a = vers & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
    bool use_cf = use(Potent::CHGFLX);
-   bool use_cfgrad = use_cf and do_g;
+   bool use_cfgrad = use_cf and static_cast<bool>(do_g);
 
    zeroOnHost(energy_ep, virial_ep);
    size_t bsize = bufferSize();

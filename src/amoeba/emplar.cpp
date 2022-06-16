@@ -8,7 +8,7 @@ namespace tinker {
 TINKER_FVOID2(acc0, cu1, emplar, int);
 void emplar(int vers)
 {
-   bool do_v = vers & calc::virial;
+   auto do_v = vers & calc::virial;
 
    zeroOnHost(energy_em, virial_em);
 

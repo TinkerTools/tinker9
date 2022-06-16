@@ -62,7 +62,7 @@ void mdrest_acc(int istep)
 
    // print the translational velocity of the overall system
 
-   mdrestPrintP1(inform::debug, vtot1, vtot2, vtot3, totmass);
+   mdrestPrintP1(static_cast<bool>(inform::debug), vtot1, vtot2, vtot3, totmass);
 
    if (not bound::use_bounds) {
       energy_prec erot = 0;

@@ -219,11 +219,11 @@ void osrw_altvdw(double vl)
 
 void osrw_energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 {
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
-   bool do_a = vers & calc::analyz;
-   bool rc_a = rc_flag & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
+   auto do_a = vers & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    double sele1 = osrw_lam_expr1(osrw_ele, osrw_lambda);
    double svdw1 = osrw_lam_expr1(osrw_vdw, osrw_lambda);

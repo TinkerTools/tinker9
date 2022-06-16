@@ -17,7 +17,7 @@ void erepelData(RcOp op)
    if (not use(Potent::REPULS))
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       darray::deallocate(sizpr, dmppr, elepr);
@@ -137,11 +137,11 @@ void erepelData(RcOp op)
 TINKER_FVOID2(acc1, cu1, erepel, int);
 void erepel(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_a = vers & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_a = vers & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    zeroOnHost(energy_er, virial_er);
    size_t bsize = bufferSize();

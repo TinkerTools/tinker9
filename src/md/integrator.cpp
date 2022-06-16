@@ -159,7 +159,7 @@ void BasicIntegrator::dynamic(int istep, time_prec dt)
    else
       m_prop->velR2(dt2, nrespa);
    // rattle2 does not change the molecular virial
-   m_prop->rattle2(dt, (vers1 & calc::virial) and atomic);
+   m_prop->rattle2(dt, static_cast<bool>(vers1 & calc::virial) and atomic);
 
    m_thermo->control2(dt, save);
    m_baro->control2(dt);
@@ -319,7 +319,7 @@ static void hoover(time_prec dt, virial_prec press)
 static void nhc_npt(int istep, time_prec dt)
 {
    int vers1 = rc_flag & calc::vmask;
-   bool save = !(istep % inform::iwrite);
+   bool save = 0 == (istep % inform::iwrite);
    if (!save)
       vers1 &= ~calc::energy;
 

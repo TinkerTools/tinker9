@@ -34,7 +34,7 @@ BasicPropagator::BasicPropagator(int nrspa)
    if (semiiso)
       aniso = true;
    else
-      aniso = bath::anisotrop;
+      aniso = static_cast<bool>(bath::anisotrop);
 
    if (aniso) {
       indexArray = semiiso ? SemiArray : AnisoArray;
