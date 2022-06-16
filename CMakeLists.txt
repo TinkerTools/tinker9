@@ -237,7 +237,7 @@ set (HOST ${hostValue} CACHE BOOL "Build Executables for GPU Platform (OFF) or C
 
 
 #[[
-!!/ **-DGPU_LANG (gpu_lang) = OPENACC** (experimental, in progress)
+!!/ **-DGPU_LANG (gpu_lang) = OPENACC**
 !!/
 !!/ If set to *CUDA*, the GPU code will only use the cuda source files.
 !!/ And the program will crash at runtime if it falls into an OpenACC code path.
@@ -255,14 +255,17 @@ set (GPU_LANG ${gpuLangValue} CACHE STRING
 
 
 #[[
-!!/ **-DCOMPUTE_CAPABILITY (compute_capability) = 60,70**
+!!/ **-DCOMPUTE_CAPABILITY (compute_capability) = AUTO**
 !!/
 !!/ GPU code only.
 !!/
 !!/ CUDA compute capability (multiplied by 10) of GPU.
-!!/ Valid values (noninclusive) are 35, 50, 60, 70, 75 etc., and can be
+!!/ Valid values (noninclusive) are 35, 50, 60, 70, 75, etc., and can be
 !!/ comma-separated, e.g. 35,60.
 !!/ Multiple compute capabilites will increase the size of executables.
+!!/ If left unspecified, the script will attempt to detect the GPU,
+!!/ although the detection may fail due to different reasons, which would
+!!/ then require this option to be specified explicitly.
 !!/
 !!/ If new cards are released but the newer compute capabilities
 !!/ are not supported, please inform us.
@@ -274,11 +277,20 @@ set (GPU_LANG ${gpuLangValue} CACHE STRING
 if (DEFINED ENV{compute_capability})
    set (compCapValue $ENV{compute_capability})
 else ()
-   set (compCapValue 60,70)
+   set (compCapValue AUTO)
 endif ()
 set (COMPUTE_CAPABILITY ${compCapValue} CACHE STRING
    "[GPU ONLY] CUDA Compute Capability Multiplied by 10 (Comma-Separated)"
 )
+if ("${COMPUTE_CAPABILITY}" STREQUAL AUTO)
+   find_package (Python3 COMPONENTS Interpreter)
+   if (Python3_FOUND)
+      execute_process (
+         COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/nvidiacc.py"
+         OUTPUT_VARIABLE COMPUTE_CAPABILITY
+      )
+   endif ()
+endif ()
 ## Compute Capability 60,70 -> 60;70
 string (REPLACE "," ";" T9_CUCCLIST ${COMPUTE_CAPABILITY}) # 60;70
 

@@ -122,19 +122,22 @@ cost of slightly slower simulation speed, a more "deterministic" force
 Flag to compile to GPU (with value 0 or OFF) or CPU (with value 1 or ON)
 version.
 
-**-DGPU_LANG (gpu_lang) = OPENACC** (experimental, in progress)
+**-DGPU_LANG (gpu_lang) = OPENACC**
 
 If set to *CUDA*, the GPU code will only use the cuda source files.
 And the program will crash at runtime if it falls into an OpenACC code path.
 
-**-DCOMPUTE_CAPABILITY (compute_capability) = 60,70**
+**-DCOMPUTE_CAPABILITY (compute_capability) = AUTO**
 
 GPU code only.
 
 CUDA compute capability (multiplied by 10) of GPU.
-Valid values (noninclusive) are 35, 50, 60, 70, 75 etc., and can be
+Valid values (noninclusive) are 35, 50, 60, 70, 75, etc., and can be
 comma-separated, e.g. 35,60.
 Multiple compute capabilites will increase the size of executables.
+If left unspecified, the script will attempt to detect the GPU,
+although the detection may fail due to different reasons, which would
+then require this option to be specified explicitly.
 
 If new cards are released but the newer compute capabilities
 are not supported, please inform us.
