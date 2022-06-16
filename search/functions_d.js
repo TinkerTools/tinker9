@@ -4,7 +4,7 @@ var searchData=
   ['nblistdata_1',['nblistData',['../group__nblist.html#ga9c87bb6f310453b91a8213a262391c78',1,'tinker']]],
   ['nblistrefresh_2',['nblistRefresh',['../group__nblist.html#ga9bbf7edc972da3f6305150a081f42388',1,'tinker']]],
   ['ndata_3',['nData',['../group__ff.html#gade422ab1f26aad6143ad7821d61e6f72',1,'tinker']]],
-  ['nextarg_4',['nextarg',['../namespacetinker.html#abe9e26c08ef5aab451bbe918e9983b34',1,'tinker::nextarg(char(&amp;str)[Len], int &amp;exist)'],['../namespacetinker.html#a184973bf4e5345b2a47bedfe150a8f9b',1,'tinker::nextarg(size_t len, char *str, int &amp;exist)']]],
+  ['nextarg_4',['nextarg',['../namespacetinker.html#a83dd56a894804918d59ee85b9c49d355',1,'tinker::nextarg(char(&amp;str)[Len], bool &amp;exist)'],['../namespacetinker.html#ae047ac5804038c12ef9be1427c144acc',1,'tinker::nextarg(size_t len, char *str, bool &amp;exist)']]],
   ['nhc06barostat_5',['Nhc06Barostat',['../group__mdpt.html#a0c57a78940333bf8bce4502b21ff79dc',1,'tinker::Nhc06Barostat']]],
   ['nhc06integrator_6',['Nhc06Integrator',['../classtinker_1_1_nhc06_integrator.html#a8005cac84676e49029949aef6e34c138',1,'tinker::Nhc06Integrator']]],
   ['nhc06thermostat_7',['Nhc06Thermostat',['../group__mdpt.html#a462eb5f0a9c23679841dd13c0e56e115',1,'tinker::Nhc06Thermostat']]],

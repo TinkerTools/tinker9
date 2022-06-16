@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;2d672a5 (Wed Jun 15 20:52:45 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;cae970e (Thu Jun 16 06:07:34 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -83,12 +83,12 @@ $(function() {
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetinker.html">tinker</a> {</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="namespacetinker.html#a184973bf4e5345b2a47bedfe150a8f9b">    7</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetinker.html#a184973bf4e5345b2a47bedfe150a8f9b">nextarg</a>(<span class="keywordtype">size_t</span> len, <span class="keywordtype">char</span>* str, <span class="keywordtype">int</span>&amp; exist);</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="namespacetinker.html#ae047ac5804038c12ef9be1427c144acc">    7</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetinker.html#ae047ac5804038c12ef9be1427c144acc">nextarg</a>(<span class="keywordtype">size_t</span> len, <span class="keywordtype">char</span>* str, <span class="keywordtype">bool</span>&amp; exist);</div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Len&gt;</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="namespacetinker.html#abe9e26c08ef5aab451bbe918e9983b34">   10</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetinker.html#a184973bf4e5345b2a47bedfe150a8f9b">nextarg</a>(<span class="keywordtype">char</span> (&amp;str)[Len], <span class="keywordtype">int</span>&amp; exist)</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="namespacetinker.html#a83dd56a894804918d59ee85b9c49d355">   10</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetinker.html#ae047ac5804038c12ef9be1427c144acc">nextarg</a>(<span class="keywordtype">char</span> (&amp;str)[Len], <span class="keywordtype">bool</span>&amp; exist)</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>   <a class="code hl_function" href="namespacetinker.html#a184973bf4e5345b2a47bedfe150a8f9b">nextarg</a>(Len, str, exist);</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>   <a class="code hl_function" href="namespacetinker.html#ae047ac5804038c12ef9be1427c144acc">nextarg</a>(Len, str, exist);</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>}</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T1, <span class="keyword">class</span> T2&gt;</div>
@@ -98,8 +98,8 @@ $(function() {
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="namespacetinker.html#ada584de2c7d01e020d1016b89c3eda8c">   19</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetinker.html#a354dd68da8d6f5b4d8af41bfc7f86b4b">getKV</a>(std::string k, std::vector&lt;T&gt;&amp; v);</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>}</div>
 <div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
-<div class="ttc" id="anamespacetinker_html_a184973bf4e5345b2a47bedfe150a8f9b"><div class="ttname"><a href="namespacetinker.html#a184973bf4e5345b2a47bedfe150a8f9b">tinker::nextarg</a></div><div class="ttdeci">void nextarg(size_t len, char *str, int &amp;exist)</div></div>
 <div class="ttc" id="anamespacetinker_html_a354dd68da8d6f5b4d8af41bfc7f86b4b"><div class="ttname"><a href="namespacetinker.html#a354dd68da8d6f5b4d8af41bfc7f86b4b">tinker::getKV</a></div><div class="ttdeci">void getKV(std::string k, T1 &amp;v, T2 vIfKNotFound)</div></div>
+<div class="ttc" id="anamespacetinker_html_ae047ac5804038c12ef9be1427c144acc"><div class="ttname"><a href="namespacetinker.html#ae047ac5804038c12ef9be1427c144acc">tinker::nextarg</a></div><div class="ttdeci">void nextarg(size_t len, char *str, bool &amp;exist)</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

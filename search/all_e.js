@@ -31,7 +31,7 @@ var searchData=
   ['nem_28',['nem',['../namespacetinker.html#a389cdd7b1141324673e08644183b2417',1,'tinker']]],
   ['nep_29',['nep',['../namespacetinker.html#a0613e006b7acda69df2dd1698dd46495',1,'tinker']]],
   ['nev_30',['nev',['../namespacetinker.html#ae9bd09e2ca8b349c906ce244181c92e1',1,'tinker']]],
-  ['nextarg_31',['nextarg',['../namespacetinker.html#a184973bf4e5345b2a47bedfe150a8f9b',1,'tinker::nextarg(size_t len, char *str, int &amp;exist)'],['../namespacetinker.html#abe9e26c08ef5aab451bbe918e9983b34',1,'tinker::nextarg(char(&amp;str)[Len], int &amp;exist)']]],
+  ['nextarg_31',['nextarg',['../namespacetinker.html#ae047ac5804038c12ef9be1427c144acc',1,'tinker::nextarg(size_t len, char *str, bool &amp;exist)'],['../namespacetinker.html#a83dd56a894804918d59ee85b9c49d355',1,'tinker::nextarg(char(&amp;str)[Len], bool &amp;exist)']]],
   ['nfft1_32',['nfft1',['../structtinker_1_1_p_m_e_1_1_params.html#a8855e9bb8ac990e087aa9e2999893a26',1,'tinker::PME::Params::nfft1()'],['../group__pme.html#abf52ebb7a559d9fbb17494dd1abc6ca3',1,'tinker::PME::nfft1()']]],
   ['nfft2_33',['nfft2',['../structtinker_1_1_p_m_e_1_1_params.html#a91a66f934a6a4fa9dccdbb955e2c4d78',1,'tinker::PME::Params::nfft2()'],['../group__pme.html#ac93545bad463520efdfe6f12da74890d',1,'tinker::PME::nfft2()']]],
   ['nfft3_34',['nfft3',['../structtinker_1_1_p_m_e_1_1_params.html#ae41dfeb360d24131d85cf55a7584e4e1',1,'tinker::PME::Params::nfft3()'],['../group__pme.html#a91d247c9ab9936b67472e23a8b7638dd',1,'tinker::PME::nfft3()']]],

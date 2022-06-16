@@ -6,7 +6,7 @@ var searchData=
   ['rattle2_3',['rattle2',['../group__mdintg.html#a41dfff904cbd9f52eafbc8087e578c0d',1,'tinker::BasicPropagator::rattle2()'],['../group__mdhc.html#gace1597fafd16489d30dfdde945528459',1,'tinker::rattle2(time_prec dt, bool do_v)']]],
   ['rattledata_4',['rattleData',['../group__mdhc.html#gad3431aa21cb146c8e73c1fda28b23067',1,'tinker']]],
   ['rattlesave_5',['rattleSave',['../group__mdintg.html#a4b80b50fb66832bfc7706bc51d120a7c',1,'tinker::BasicPropagator']]],
-  ['readframecopyintoxyz_6',['readFrameCopyinToXyz',['../group__ff.html#ga757a87da6af82291bf8a7e5b0f1ca546',1,'tinker']]],
+  ['readframecopyintoxyz_6',['readFrameCopyinToXyz',['../group__ff.html#ga46296a148d7c96b0aef388f26eece8e9',1,'tinker']]],
   ['reduce_7',['reduce',['../namespacetinker.html#a460baced6ae097184f02a36beb24f95e',1,'tinker']]],
   ['reduce2_8',['reduce2',['../namespacetinker.html#a66d8f2fd2ee8831cd11ba03ef301d683',1,'tinker']]],
   ['reducesum_9',['reduceSum',['../group__math__parallel.html#ga7357c38f749a48b7aa8eb1e598e928c3',1,'tinker']]],
