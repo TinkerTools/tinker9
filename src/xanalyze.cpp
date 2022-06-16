@@ -17,7 +17,6 @@
 #include "tool/ioprint.h"
 #include "tool/ioread.h"
 #include "tool/iotext.h"
-#include <fstream>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
 #include <tinker/detail/bound.hh>
@@ -33,6 +32,8 @@
 #include <tinker/routines.h>
 
 #include "tinker9.h"
+
+#include <fstream>
 
 namespace tinker {
 static void xAnalyzeE()
