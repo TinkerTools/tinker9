@@ -57,7 +57,7 @@ void sumGradient(double s, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, const
 }
 
 namespace tinker {
-void copyGradient(int vers, double* grdx, double* grdy, double* grdz, //
+void copyGradientSync(int vers, double* grdx, double* grdy, double* grdz, //
    const grad_prec* gx_src, const grad_prec* gy_src, const grad_prec* gz_src, int queue)
 {
    if (vers & calc::grad) {
@@ -99,7 +99,7 @@ void copyGradient(int vers, double* grdx, double* grdy, double* grdz, //
 void copyGradient(int vers, double* grdx, double* grdy, double* grdz, //
    const grad_prec* gx_src, const grad_prec* gy_src, const grad_prec* gz_src)
 {
-   copyGradient(vers, grdx, grdy, grdz, gx_src, gy_src, gz_src, g::q0);
+   copyGradientSync(vers, grdx, grdy, grdz, gx_src, gy_src, gz_src, g::q0);
 }
 
 void copyGradient(int vers, double* grdx, double* grdy, double* grdz)

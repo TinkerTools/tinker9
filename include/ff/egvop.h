@@ -21,7 +21,7 @@ void sumGradient(double scale, grad_prec* g0x, grad_prec* g0y, grad_prec* g0z, /
    const grad_prec* g1x, const grad_prec* g1y, const grad_prec* g1z);
 
 /// Copies the energy gradients from device to host.
-void copyGradient(int vers, double* grdx, double* grdy, double* grdz, //
+void copyGradientSync(int vers, double* grdx, double* grdy, double* grdz, //
    const grad_prec* gx_src, const grad_prec* gy_src, const grad_prec* gz_src, int queue);
 
 /// Copies the energy gradients from device to host.

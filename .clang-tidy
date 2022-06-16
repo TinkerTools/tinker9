@@ -1,0 +1,13 @@
+# for f in $(find src test -type f -name '*.cpp'); do clang-tidy --quiet --config-file=.clang-tidy -p BUILD_DIR $f; done
+
+---
+Checks:            '-*,readability-implicit-bool-conversion'
+WarningsAsErrors:  ''
+HeaderFilterRegex: ''
+FormatStyle:       none
+CheckOptions:
+  - key:           readability-implicit-bool-conversion.AllowIntegerConditions
+    value:         true
+  - key:           readability-implicit-bool-conversion.AllowPointerConditions
+    value:         true
+...
