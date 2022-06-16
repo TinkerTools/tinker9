@@ -20,8 +20,8 @@ var searchData=
   ['bsplgen_17',['bsplgen',['../group__pme.html#ga6dfbf8f676787f499fd67bf5e9e6902b',1,'tinker']]],
   ['bsplgen2_18',['bsplgen2',['../namespacetinker.html#a9ae9f8a3667ceb93dd3e1097fcce53d0',1,'tinker']]],
   ['bsplinefill_19',['bsplineFill',['../group__pme.html#gaff594a3daa9c34ea9f106dceb281918c',1,'tinker']]],
-  ['bufferallocate_20',['bufferAllocate',['../namespacetinker.html#a1af243497b0c9d4a3f3f7d63a4642c62',1,'tinker::bufferAllocate(int flag, EnergyBuffer *pe, VirialBuffer *pv, grad_prec **px, grad_prec **py, grad_prec **pz)'],['../namespacetinker.html#ac2b5441926ae642d7cbbd781127d33c3',1,'tinker::bufferAllocate(int flag, CountBuffer *pc)']]],
-  ['bufferdeallocate_21',['bufferDeallocate',['../namespacetinker.html#a544ab75325f85eeb970738c8c233eae6',1,'tinker::bufferDeallocate(int flag, EnergyBuffer e, VirialBuffer v, grad_prec *gx, grad_prec *gy, grad_prec *gz)'],['../namespacetinker.html#a4402ff47f477c4da8b6bafec4132b924',1,'tinker::bufferDeallocate(int flag, CountBuffer c)']]],
+  ['bufferallocate_20',['bufferAllocate',['../group__ff.html#ga1af243497b0c9d4a3f3f7d63a4642c62',1,'tinker::bufferAllocate(int flag, EnergyBuffer *pe, VirialBuffer *pv, grad_prec **px, grad_prec **py, grad_prec **pz)'],['../group__ff.html#gac2b5441926ae642d7cbbd781127d33c3',1,'tinker::bufferAllocate(int flag, CountBuffer *pc)']]],
+  ['bufferdeallocate_21',['bufferDeallocate',['../group__ff.html#ga544ab75325f85eeb970738c8c233eae6',1,'tinker::bufferDeallocate(int flag, EnergyBuffer e, VirialBuffer v, grad_prec *gx, grad_prec *gy, grad_prec *gz)'],['../group__ff.html#ga4402ff47f477c4da8b6bafec4132b924',1,'tinker::bufferDeallocate(int flag, CountBuffer c)']]],
   ['buffersize_22',['bufferSize',['../group__ff.html#gae5140b65fb408069b3151082e0dbe69b',1,'tinker']]],
   ['bussithermostat_23',['bussiThermostat',['../group__mdpt.html#ga43eae19109a55b45702c90926347f74a',1,'tinker']]]
 ];

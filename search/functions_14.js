@@ -9,7 +9,7 @@ var searchData=
   ['velr2_6',['velR2',['../group__mdintg.html#ab2309ef2bb5db26cfee62fcecbdfaa71',1,'tinker::BasicPropagator::velR2()'],['../group__mdintg.html#ad445798b4d9467f515b02ec3491ee3ca',1,'tinker::RespaDevice::velR2()'],['../group__mdintg.html#ab439ae2a6802d10c620b9b746cd84e9c',1,'tinker::LogVDevice::velR2()']]],
   ['verletdevice_7',['VerletDevice',['../group__mdintg.html#a080de1465c250829820edc9653de1b06',1,'tinker::VerletDevice']]],
   ['verletintegrator_8',['VerletIntegrator',['../group__mdintg.html#afc28636b1ee60e4b0c526923eafa1b77',1,'tinker::VerletIntegrator']]],
-  ['virialreduce_9',['virialReduce',['../namespacetinker.html#a03ca6867024c1bf2abc200fa1ec50e76',1,'tinker::virialReduce(virial_prec(&amp;)[VirialBufferTraits::N], const VirialBuffer b)'],['../namespacetinker.html#ae2dfea03e83981c4d80a89969635a9ed',1,'tinker::virialReduce(virial_prec(&amp;)[9], const VirialBuffer b)']]],
-  ['virialreshape_10',['virialReshape',['../namespacetinker.html#a25b9e472ad8d55e9c2fa3e0b92e17447',1,'tinker']]],
+  ['virialreduce_9',['virialReduce',['../group__ff.html#ga03ca6867024c1bf2abc200fa1ec50e76',1,'tinker::virialReduce(virial_prec(&amp;)[VirialBufferTraits::N], const VirialBuffer b)'],['../group__ff.html#gae2dfea03e83981c4d80a89969635a9ed',1,'tinker::virialReduce(virial_prec(&amp;)[9], const VirialBuffer b)']]],
+  ['virialreshape_10',['virialReshape',['../group__ff.html#ga25b9e472ad8d55e9c2fa3e0b92e17447',1,'tinker']]],
   ['vlistversion_11',['vlistVersion',['../group__nblist.html#gabdf09268b561163414ae78a7522ea417',1,'tinker']]]
 ];

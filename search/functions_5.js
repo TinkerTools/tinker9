@@ -46,7 +46,7 @@ var searchData=
   ['energy_43',['energy',['../group__egv.html#gaf59b2838238604f0d1fb4582c7b0d84c',1,'tinker::energy(int vers, unsigned tsflag, const TimeScaleConfig &amp;tsconfig)'],['../group__egv.html#ga6de3f41e1e5a4280a6fd8f9edce1fdda',1,'tinker::energy(int vers)']]],
   ['energy_5fcore_44',['energy_core',['../group__egv.html#ga209441fda9a531eb4f7cca67df0b295d',1,'tinker']]],
   ['energydata_45',['energyData',['../group__egv.html#ga3082556d9ad67d41e731db22ad1d95e4',1,'tinker']]],
-  ['energyreduce_46',['energyReduce',['../namespacetinker.html#aacf2cc0b57d3253af639886930bb30d9',1,'tinker']]],
+  ['energyreduce_46',['energyReduce',['../group__ff.html#gaacf2cc0b57d3253af639886930bb30d9',1,'tinker']]],
   ['eopbend_47',['eopbend',['../group__angle.html#gadf6f982a74a8d8d2a38d99b3136eb66b',1,'tinker']]],
   ['eopbenddata_48',['eopbendData',['../group__angle.html#gada68fc1f1ce77204d67e78136ead3517',1,'tinker']]],
   ['epitors_49',['epitors',['../group__tors.html#ga1d0904b91d3b9b31052dd1eac14cdb39',1,'tinker']]],

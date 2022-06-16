@@ -10,6 +10,6 @@ var searchData=
   ['value_5ftype_7',['value_type',['../structtinker_1_1_device_allocator.html#a4b7314c739d8943585a6d51f57f7a874',1,'tinker::DeviceAllocator::value_type()'],['../group__platform.html#ab016712515f38326c818979030022481',1,'tinker::ThrustCache::value_type()']]],
   ['vel_5fprec_8',['vel_prec',['../group__prec.html#ga89f966e3a683215443c60ce1327eaa9b',1,'tinker']]],
   ['virial_5fprec_9',['virial_prec',['../group__prec.html#ga2272914c98224d4730e398aacfa17190',1,'tinker']]],
-  ['virialbuffer_10',['VirialBuffer',['../namespacetinker.html#a4f4cab12e966403785de28e01c975d55',1,'tinker']]],
-  ['virialbuffertraits_11',['VirialBufferTraits',['../namespacetinker.html#ae30dc6aec06debb145c883e52ad8e154',1,'tinker']]]
+  ['virialbuffer_10',['VirialBuffer',['../group__ff.html#gaaabc63e12650d0a0832198a8766a8735',1,'tinker']]],
+  ['virialbuffertraits_11',['VirialBufferTraits',['../group__ff.html#ga05329b1318b65cb706c8f17e129ec44f',1,'tinker']]]
 ];

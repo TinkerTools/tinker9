@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;09e1bfc (Wed Jun 1 02:54:13 2022 -0400)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;2d672a5 (Wed Jun 15 20:52:45 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -172,11 +172,12 @@ $(function() {
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><a class="code hl_define" href="group__cpp__syntax.html#gad007fe0cc7bedd195c0642d4622daf81">TINKER_EXTERN</a> <a class="code hl_typedef" href="group__prec.html#ga8286f2194addf403df0dda44fc758703">energy_prec</a> <a class="code hl_variable" href="group__mdhc.html#ga3117e6088df793c8aa87f1273fc53b16">hc_eksum</a>;</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><a class="code hl_define" href="group__cpp__syntax.html#gad007fe0cc7bedd195c0642d4622daf81">TINKER_EXTERN</a> <a class="code hl_typedef" href="group__prec.html#ga8286f2194addf403df0dda44fc758703">energy_prec</a> <a class="code hl_variable" href="group__mdhc.html#ga081dd5fb2c8e0e13145ac0b630fdeae5">hc_ekin</a>[3][3];</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><a class="code hl_define" href="group__cpp__syntax.html#gad007fe0cc7bedd195c0642d4622daf81">TINKER_EXTERN</a> <a class="code hl_typedef" href="group__prec.html#ga2272914c98224d4730e398aacfa17190">virial_prec</a> <a class="code hl_variable" href="group__mdhc.html#ga354e8b195d9fa6d9a13750022b1eb1c8">hc_vir</a>[9];</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><a class="code hl_define" href="group__cpp__syntax.html#gad007fe0cc7bedd195c0642d4622daf81">TINKER_EXTERN</a> <a class="code hl_typedef" href="namespacetinker.html#a4f4cab12e966403785de28e01c975d55">VirialBuffer</a> <a class="code hl_variable" href="group__mdhc.html#gac88c6bb7fb6b3e6b8db049d2e1200ab3">hc_vir_buf</a>;</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><a class="code hl_define" href="group__cpp__syntax.html#gad007fe0cc7bedd195c0642d4622daf81">TINKER_EXTERN</a> <a class="code hl_typedef" href="group__ff.html#gaaabc63e12650d0a0832198a8766a8735">VirialBuffer</a> <a class="code hl_variable" href="group__mdhc.html#gac88c6bb7fb6b3e6b8db049d2e1200ab3">hc_vir_buf</a>;</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>}</div>
 <div class="ttc" id="aclass_r_a_t_t_l_e_html"><div class="ttname"><a href="class_r_a_t_t_l_e.html">RATTLE</a></div><div class="ttdef"><b>Definition:</b> rattle.h:8</div></div>
 <div class="ttc" id="aclass_s_h_a_k_e_html"><div class="ttname"><a href="class_s_h_a_k_e.html">SHAKE</a></div><div class="ttdef"><b>Definition:</b> rattle.h:13</div></div>
 <div class="ttc" id="agroup__cpp__syntax_html_gad007fe0cc7bedd195c0642d4622daf81"><div class="ttname"><a href="group__cpp__syntax.html#gad007fe0cc7bedd195c0642d4622daf81">TINKER_EXTERN</a></div><div class="ttdeci">#define TINKER_EXTERN</div><div class="ttdef"><b>Definition:</b> macro.h:104</div></div>
+<div class="ttc" id="agroup__ff_html_gaaabc63e12650d0a0832198a8766a8735"><div class="ttname"><a href="group__ff.html#gaaabc63e12650d0a0832198a8766a8735">tinker::VirialBuffer</a></div><div class="ttdeci">VirialBufferTraits::type(* VirialBuffer)[VirialBufferTraits::value]</div><div class="ttdef"><b>Definition:</b> energybuffer.h:94</div></div>
 <div class="ttc" id="agroup__mdhc_html_ga05058a9b3ff7884bb1dad61662d5fc7f"><div class="ttname"><a href="group__mdhc.html#ga05058a9b3ff7884bb1dad61662d5fc7f">tinker::iratwt</a></div><div class="ttdeci">int(* iratwt)[3]</div></div>
 <div class="ttc" id="agroup__mdhc_html_ga07cb5df9efc43f19f425208b57749c8a"><div class="ttname"><a href="group__mdhc.html#ga07cb5df9efc43f19f425208b57749c8a">tinker::nratwt</a></div><div class="ttdeci">int nratwt</div></div>
 <div class="ttc" id="agroup__mdhc_html_ga081dd5fb2c8e0e13145ac0b630fdeae5"><div class="ttname"><a href="group__mdhc.html#ga081dd5fb2c8e0e13145ac0b630fdeae5">tinker::hc_ekin</a></div><div class="ttdeci">energy_prec hc_ekin[3][3]</div></div>
@@ -229,7 +230,6 @@ $(function() {
 <div class="ttc" id="agroup__prec_html_ga89f966e3a683215443c60ce1327eaa9b"><div class="ttname"><a href="group__prec.html#ga89f966e3a683215443c60ce1327eaa9b">tinker::vel_prec</a></div><div class="ttdeci">mixed vel_prec</div><div class="ttdoc">Floating-point type for velocities.</div><div class="ttdef"><b>Definition:</b> precision.h:92</div></div>
 <div class="ttc" id="agroup__rc_html_gaa2180c702b53e2f135f4238ea3fa0cfa"><div class="ttname"><a href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">tinker::ResourceOperation</a></div><div class="ttdeci">ResourceOperation</div><div class="ttdef"><b>Definition:</b> rcman.h:44</div></div>
 <div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
-<div class="ttc" id="anamespacetinker_html_a4f4cab12e966403785de28e01c975d55"><div class="ttname"><a href="namespacetinker.html#a4f4cab12e966403785de28e01c975d55">tinker::VirialBuffer</a></div><div class="ttdeci">VirialBufferTraits::type(*)[VirialBufferTraits::value] VirialBuffer</div><div class="ttdoc">The lengths of all of the energy buffers are the same and are implicitly dependent on the number of a...</div><div class="ttdef"><b>Definition:</b> energybuffer.h:93</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

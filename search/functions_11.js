@@ -8,7 +8,7 @@ var searchData=
   ['scalevelocityatomic_5',['scaleVelocityAtomic',['../group__mdpt.html#a179cd64ee1802e24ae815f25cea98a89',1,'tinker::NhcDevice']]],
   ['scalevelocityrattlegroup_6',['scaleVelocityRattleGroup',['../group__mdpt.html#ae5615f5f237e3c163b3baf76977e9b75',1,'tinker::Nhc06Thermostat']]],
   ['scalevelocityvbar_7',['scaleVelocityVbar',['../group__mdpt.html#aa534005a635bd314d9179e1a32836c95',1,'tinker::Nhc06Thermostat']]],
-  ['self_8',['self',['../structtinker_1_1_f_f_t_plan.html#ae8c033cc11a7b9cf7858732b98e95bec',1,'tinker::FFTPlan']]],
+  ['self_8',['self',['../group__fft.html#ae8c033cc11a7b9cf7858732b98e95bec',1,'tinker::FFTPlan']]],
   ['set_9',['set',['../group__nblist.html#a40e06bc8283b5cd62790e63fc0539b8c',1,'tinker::Spatial::ScaleInfo']]],
   ['setparams_10',['setParams',['../group__pme.html#a0b326ad4e60c21bcd21a0de9d3271d98',1,'tinker::PME']]],
   ['setprintpressure_11',['setPrintPressure',['../group__mdpt.html#aad4397276b07c919965645f540ca717f',1,'tinker::BasicBarostat::setPrintPressure()'],['../group__mdpt.html#a889774a697d03f6a8f433eded6fde439',1,'tinker::MonteCarloBarostat::setPrintPressure()']]],

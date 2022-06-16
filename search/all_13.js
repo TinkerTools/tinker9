@@ -17,7 +17,7 @@ var searchData=
   ['scalevelocityvbar_14',['scaleVelocityVbar',['../group__mdpt.html#aa534005a635bd314d9179e1a32836c95',1,'tinker::Nhc06Thermostat']]],
   ['scalpha_15',['scalpha',['../group__vdw.html#ga2883c5d4a640e1093509af12f7a57114',1,'tinker']]],
   ['scexp_16',['scexp',['../group__vdw.html#gaa527c396cad7466116d6878483feeb44',1,'tinker']]],
-  ['self_17',['self',['../structtinker_1_1_f_f_t_plan.html#ae8c033cc11a7b9cf7858732b98e95bec',1,'tinker::FFTPlan']]],
+  ['self_17',['self',['../group__fft.html#ae8c033cc11a7b9cf7858732b98e95bec',1,'tinker::FFTPlan']]],
   ['semiarray_18',['SemiArray',['../group__mdintg.html#a0531f3d88a52b09230ea74f69dee065a',1,'tinker::IntegratorStaticData']]],
   ['semiiso_19',['semiiso',['../group__mdintg.html#a8b4c4797ce186b339c9461cf03a1ebbf',1,'tinker::IntegratorStaticData']]],
   ['semimono_20',['SemiMono',['../group__mdintg.html#a4489dfc8f6306d1ce3c9ffddfc4480e8',1,'tinker::IntegratorStaticData']]],

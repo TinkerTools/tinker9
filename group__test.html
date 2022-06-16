@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;09e1bfc (Wed Jun 1 02:54:13 2022 -0400)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;2d672a5 (Wed Jun 15 20:52:45 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -477,9 +477,10 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
-<div class="line">      int count = countReduce(gpuptr);                                                             \</div>
+<div class="line">      int count = <a class="code hl_function" href="group__ff.html#ga7cd0a4b251c0c6b96b12e7892a527285">countReduce</a>(gpuptr);                                                             \</div>
 <div class="line">      REQUIRE(count == ref_count);                                                                 \</div>
 <div class="line">   }</div>
+<div class="ttc" id="agroup__ff_html_ga7cd0a4b251c0c6b96b12e7892a527285"><div class="ttname"><a href="group__ff.html#ga7cd0a4b251c0c6b96b12e7892a527285">tinker::countReduce</a></div><div class="ttdeci">int countReduce(const CountBuffer b)</div></div>
 </div><!-- fragment -->
 <p>Reduces the number of interactions from the count buffer and compares to the reference value. </p>
 
@@ -517,9 +518,10 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
-<div class="line">      double eng = energyReduce(gpuptr);                                                           \</div>
+<div class="line">      double eng = <a class="code hl_function" href="group__ff.html#gaacf2cc0b57d3253af639886930bb30d9">energyReduce</a>(gpuptr);                                                           \</div>
 <div class="line">      REQUIRE(eng == Approx(ref_eng).margin(eps));                                                 \</div>
 <div class="line">   }</div>
+<div class="ttc" id="agroup__ff_html_gaacf2cc0b57d3253af639886930bb30d9"><div class="ttname"><a href="group__ff.html#gaacf2cc0b57d3253af639886930bb30d9">tinker::energyReduce</a></div><div class="ttdeci">energy_prec energyReduce(const EnergyBuffer b)</div></div>
 </div><!-- fragment -->
 <p>Reduces the energy from the energy buffer and compares to the reference value with a margin of <code>eps</code>. </p>
 

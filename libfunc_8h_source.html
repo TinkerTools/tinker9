@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;09e1bfc (Wed Jun 1 02:54:13 2022 -0400)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;2d672a5 (Wed Jun 15 20:52:45 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -90,9 +90,9 @@ $(function() {
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>   <span class="comment">// The helper function for the complementary error function.</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>   <span class="comment">// \param ex2  exp(-x*x)</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>   <a class="code hl_define" href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>   <span class="keyword">inline</span> <span class="keywordtype">float</span> tinkerErfcfHastings2Args(<span class="keywordtype">float</span> <a class="code hl_variable" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, <span class="keywordtype">float</span> ex2)</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>   <span class="keyword">inline</span> <span class="keywordtype">float</span> tinkerErfcfHastings2Args(<span class="keywordtype">float</span> <a class="code hl_variable" href="group__ff.html#ga7df8577dd8de8254608b1ceea1f1d448">x</a>, <span class="keywordtype">float</span> ex2)</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>   {</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>      <span class="keywordtype">float</span> t = 1.0f / (1.0f + 0.3275911f * <a class="code hl_variable" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>);</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>      <span class="keywordtype">float</span> t = 1.0f / (1.0f + 0.3275911f * <a class="code hl_variable" href="group__ff.html#ga7df8577dd8de8254608b1ceea1f1d448">x</a>);</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>      <span class="keywordflow">return</span> (0.254829592f +</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>                (-0.284496736f + (1.421413741f + (-1.453152027f + 1.061405429f * t) * t) * t) * t) *</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>         t * ex2;</div>
@@ -101,10 +101,10 @@ $(function() {
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>   <span class="comment">// The complementary error function.</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>   <span class="comment">// C. Hastings. Approximations for Digital Computers. Princeton Univ. Press. (1955) p. 167.</span></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>   <a class="code hl_define" href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>   <span class="keyword">inline</span> <span class="keywordtype">float</span> tinkerErfcfHastings(<span class="keywordtype">float</span> <a class="code hl_variable" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>)</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>   <span class="keyword">inline</span> <span class="keywordtype">float</span> tinkerErfcfHastings(<span class="keywordtype">float</span> <a class="code hl_variable" href="group__ff.html#ga7df8577dd8de8254608b1ceea1f1d448">x</a>)</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>   {</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>      <span class="keywordtype">float</span> exp2a = expf(-<a class="code hl_variable" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a> * <a class="code hl_variable" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>      <span class="keywordflow">return</span> tinkerErfcfHastings2Args(<a class="code hl_variable" href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">x</a>, exp2a);</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>      <span class="keywordtype">float</span> exp2a = expf(-<a class="code hl_variable" href="group__ff.html#ga7df8577dd8de8254608b1ceea1f1d448">x</a> * <a class="code hl_variable" href="group__ff.html#ga7df8577dd8de8254608b1ceea1f1d448">x</a>);</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>      <span class="keywordflow">return</span> tinkerErfcfHastings2Args(<a class="code hl_variable" href="group__ff.html#ga7df8577dd8de8254608b1ceea1f1d448">x</a>, exp2a);</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>   }</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>}</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
@@ -214,7 +214,7 @@ $(function() {
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span><span class="preprocessor">#pragma acc routine(copysignf) seq</span></div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="agroup__acc__syntax_html_gae1187d8dadd78f33bac11eec7b297eb4"><div class="ttname"><a href="group__acc__syntax.html#gae1187d8dadd78f33bac11eec7b297eb4">SEQ_ROUTINE</a></div><div class="ttdeci">#define SEQ_ROUTINE</div><div class="ttdef"><b>Definition:</b> acc/seqdef.h:7</div></div>
-<div class="ttc" id="agroup__ff_html_ga954874b9e04814a23c2cab07a2abd9d0"><div class="ttname"><a href="group__ff.html#ga954874b9e04814a23c2cab07a2abd9d0">tinker::x</a></div><div class="ttdeci">real * x</div><div class="ttdoc">Current coordinates used in energy evaluation and neighbor lists.</div></div>
+<div class="ttc" id="agroup__ff_html_ga7df8577dd8de8254608b1ceea1f1d448"><div class="ttname"><a href="group__ff.html#ga7df8577dd8de8254608b1ceea1f1d448">tinker::x</a></div><div class="ttdeci">real * x</div><div class="ttdoc">Number of the trajectory frames.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

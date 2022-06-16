@@ -4,7 +4,7 @@ var searchData=
   ['_7ebasicintegrator_1',['~BasicIntegrator',['../group__mdintg.html#a17a3bcf84711e484d7dcdac7368db8c1',1,'tinker::BasicIntegrator']]],
   ['_7ebasicpropagator_2',['~BasicPropagator',['../group__mdintg.html#a8dac4eb5ea2702a7ccb134c9fcbbb4c8',1,'tinker::BasicPropagator']]],
   ['_7ebasicthermostat_3',['~BasicThermostat',['../group__mdpt.html#a081e300b00c0b678f946ac10fd8105d7',1,'tinker::BasicThermostat']]],
-  ['_7efftplan_4',['~FFTPlan',['../structtinker_1_1_f_f_t_plan.html#a6c8030173e763f89fe3b2e7f1b9d0f9c',1,'tinker::FFTPlan']]],
+  ['_7efftplan_4',['~FFTPlan',['../group__fft.html#a6c8030173e763f89fe3b2e7f1b9d0f9c',1,'tinker::FFTPlan']]],
   ['_7eleapfroglpintegrator_5',['~LeapFrogLPIntegrator',['../group__mdintg.html#aca59a43273d0e5c5fbf418662fbfec1d',1,'tinker::LeapFrogLPIntegrator']]],
   ['_7elogvdevice_6',['~LogVDevice',['../group__mdintg.html#adeec2ddb5d0e0135b2246a18bcbd6453',1,'tinker::LogVDevice']]],
   ['_7elp22barostat_7',['~LP22Barostat',['../group__mdpt.html#ae177f88e89a53a03c69b6883d95d821b',1,'tinker::LP22Barostat']]],

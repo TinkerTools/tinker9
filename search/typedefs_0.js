@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['countbuffer_0',['CountBuffer',['../namespacetinker.html#a43ccb73f132b6532f8bc22062b5590a1',1,'tinker']]],
-  ['countbuffertraits_1',['CountBufferTraits',['../namespacetinker.html#a8501b743c0ad12b11ebde25850652c5a',1,'tinker']]]
+  ['countbuffer_0',['CountBuffer',['../group__ff.html#ga029dc213837a2551f1fb3554bb6d1780',1,'tinker']]],
+  ['countbuffertraits_1',['CountBufferTraits',['../group__ff.html#ga66eae64310bc6a6e8e9dc290ef23b2a6',1,'tinker']]]
 ];
