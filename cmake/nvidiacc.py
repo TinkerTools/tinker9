@@ -24,6 +24,8 @@ import sys
 
 
 def CommaSeparatedCCString():
+    unknown_cc = 'UnknownCC'
+
     libnames = ('libcuda.so', 'libcuda.dylib', 'nvcuda.dll', 'cuda.dll')
     for libname in libnames:
         try:
@@ -33,7 +35,7 @@ def CommaSeparatedCCString():
         else:
             break
     else:
-        raise OSError('could not load any of: ' + ' '.join(libnames))
+        return unknown_cc
 
     ############################################################
 
@@ -83,8 +85,8 @@ def CommaSeparatedCCString():
             cc_str = cc_str + ',{}'.format(cc_list[i])
         return cc_str
     else:
-        return ''
+        return unknown_cc
 
 
 if __name__ == '__main__':
-    print(CommaSeparatedCCString())
+    print(CommaSeparatedCCString(), end='')
