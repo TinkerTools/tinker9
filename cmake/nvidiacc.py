@@ -79,7 +79,7 @@ def CommaSeparatedCCString():
     cc_len = len(cc_list)
     if cc_len:
         cc_str = '{}'.format(cc_list[0])
-        for i in range(2, cc_len):
+        for i in range(1, cc_len):
             cc_str = cc_str + ',{}'.format(cc_list[i])
         return cc_str
     else:
