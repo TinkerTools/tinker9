@@ -18,7 +18,7 @@ namespace tinker {
 void xDynamic(int, char**)
 {
    char string[240];
-   int exist = false;
+   bool exist = false;
 
    initial();
    tinker_f_getxyz();
@@ -27,8 +27,8 @@ void xDynamic(int, char**)
 
    bath::kelvin = 0;
    bath::atmsph = 0;
-   bath::isothermal = false;
-   bath::isobaric = false;
+   bath::isothermal = 0;
+   bath::isobaric = 0;
 
    // check for keywords containing any altered parameters
 
@@ -116,7 +116,7 @@ void xDynamic(int, char**)
       }
 
       if (mode == 2 || mode == 4) {
-         bath::isothermal = true;
+         bath::isothermal = 1;
          bath::kelvin = -1;
          nextarg(string, exist);
          if (exist) {
@@ -126,7 +126,7 @@ void xDynamic(int, char**)
       }
 
       if (mode == 3 || mode == 4) {
-         bath::isobaric = true;
+         bath::isobaric = 1;
          bath::atmsph = -1;
          nextarg(string, exist);
          if (exist) {
@@ -147,7 +147,7 @@ void xDynamic(int, char**)
       ioReadStream(mode, prompt, 1, [](int i) { return i <= 0; });
 
       if (mode == 2) {
-         bath::isothermal = true;
+         bath::isothermal = 1;
          bath::kelvin = -1;
          nextarg(string, exist);
          if (exist) {
@@ -164,7 +164,7 @@ void xDynamic(int, char**)
    int flags = calc::md;
    flags += (calc::xyz + calc::vel + calc::mass);
    flags += (calc::energy + calc::grad);
-   if (bath::isobaric == true)
+   if (bath::isobaric)
       flags += calc::virial;
 
    rc_flag = flags;

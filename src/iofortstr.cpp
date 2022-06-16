@@ -28,7 +28,7 @@ bool FortranStringView::ifEq(const char* src, size_t len) const
    } else {
       copyWithBlank(&buffer[0], lc, src, len);
    }
-   return !std::strncmp(ptr, buffer.c_str(), lc);
+   return 0 == std::strncmp(ptr, buffer.c_str(), lc);
 }
 
 size_t FortranStringView::size() const

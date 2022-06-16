@@ -273,8 +273,8 @@ TINKER_FVOID2(acc0, cu1, echgljRadArithEpsGeomNonEwald, int);
 TINKER_FVOID2(acc0, cu1, echgljRadArithEpsGeomEwaldReal, int);
 void echglj(int vers)
 {
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
 
    zeroOnHost(energy_ec, virial_ec);
    zeroOnHost(energy_ev, virial_ev);

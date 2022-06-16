@@ -46,7 +46,7 @@ static bool fts(std::string eng, bool& use_flag, unsigned tsflag, const TimeScal
    auto local_flag = tsflag;
    const auto& local_cfg = tsconfig;
    try {
-      bool f = local_flag & (1 << local_cfg.at(eng));
+      bool f = static_cast<bool>(local_flag & (1 << local_cfg.at(eng)));
       use_flag = use_flag or f;
       return f;
    } catch (const std::out_of_range&) {
@@ -267,7 +267,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
       if (tscfg("erepel", ecore_vdw))
          erepel(vers);
 
-   pmeStreamFinishWait(use_pme_stream and not(vers & calc::analyz));
+   pmeStreamFinishWait(use_pme_stream and not static_cast<bool>(vers & calc::analyz));
 
 #undef tscfg
 }
@@ -300,10 +300,10 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    zeroEGV(vers);
    energy_core(vers, tsflag, tsconfig);
 
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    bool must_wait = false;
    ev_hobj.e_val = 0;
@@ -498,7 +498,7 @@ bool useEnergyElec()
 namespace tinker {
 void egvData(RcOp op)
 {
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       deviceMemoryDeallocate(ev_dptr);

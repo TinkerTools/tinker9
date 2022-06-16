@@ -19,7 +19,7 @@
 namespace tinker {
 bool use(Potent term)
 {
-   bool val = false;
+   int val = 0;
    switch (term) {
 
       // bonded terms
@@ -103,7 +103,7 @@ bool use(Potent term)
       assert(false);
       break;
    }
-   return val;
+   return static_cast<bool>(val);
 }
 
 int countBondedTerm(Potent term)

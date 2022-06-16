@@ -83,49 +83,49 @@ void initial()
    planb = 0;
 
    using namespace inform;
-   silent = false;
-   verbose = false;
-   debug = false;
-   abort = false;
+   silent = 0;
+   verbose = 0;
+   debug = 0;
+   abort = 0;
 
    using namespace group;
-   use_group = false;
+   use_group = 0;
 
    using namespace bound;
-   use_bounds = false;
-   use_replica = false;
-   use_polymer = false;
+   use_bounds = 0;
+   use_replica = 0;
+   use_polymer = 0;
 
    using namespace neigh;
-   dovlst = true;
-   dodlst = true;
-   doclst = true;
-   domlst = true;
-   doulst = true;
+   dovlst = 1;
+   dodlst = 1;
+   doclst = 1;
+   domlst = 1;
+   doulst = 1;
 
    using namespace bath;
-   isothermal = false;
-   isobaric = false;
+   isothermal = 0;
+   isobaric = 0;
 
    using namespace virial;
-   use_virial = true;
+   use_virial = 1;
 
    using namespace rigid;
-   use_rigid = false;
+   use_rigid = 0;
 
    using namespace scales;
-   set_scale = false;
+   set_scale = 0;
 
    using namespace socket;
-   sktstart = false;
-   use_socket = false;
+   sktstart = 0;
+   use_socket = 0;
 
    using namespace warp;
-   use_smooth = false;
-   use_dem = false;
-   use_gda = false;
-   use_tophat = false;
-   use_stophat = false;
+   use_smooth = 0;
+   use_dem = 0;
+   use_gda = 0;
+   use_tophat = 0;
+   use_stophat = 0;
 
    FstrView coordtype = output::coordtype;
    coordtype = "NONE";

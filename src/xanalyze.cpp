@@ -423,7 +423,7 @@ void xAnalyze(int, char**)
    mechanic2();
 
    char string[240];
-   int exist = false;
+   bool exist = false;
    std::string opt;
    nextarg(string, exist);
    if (exist) {
@@ -457,7 +457,7 @@ void xAnalyze(int, char**)
    FstrView fsw = files::filename;
    std::string fname = fsw.trim();
    std::ifstream ipt(fname);
-   int done = false;
+   bool done = false;
    int nframe_processed = 0;
    do {
       readFrameCopyinToXyz(ipt, done);

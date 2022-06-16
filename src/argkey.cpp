@@ -4,7 +4,7 @@
 #include <tinker/detail/keys.hh>
 
 namespace tinker {
-void nextarg(size_t len, char* str, int& exist)
+void nextarg(size_t len, char* str, bool& exist)
 {
    const char blank = ' ';
    std::memset(str, blank, len);
@@ -14,7 +14,7 @@ void nextarg(size_t len, char* str, int& exist)
       size_t length = std::min(len, sizeof(argue::arg[argue::maxarg]));
       for (int i = 1; i <= argue::narg; ++i) {
          if (argue::listarg[i]) {
-            argue::listarg[i] = false;
+            argue::listarg[i] = 0;
             std::strncpy(str, argue::arg[i], length);
             exist = true;
             break;

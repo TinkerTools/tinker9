@@ -67,7 +67,7 @@ void xMinimize(int, char**)
    tinker_f_optinit();
 
    // get termination criterion as RMS gradient per atom
-   int exist = false;
+   bool exist = false;
    char string[240];
    double grdmin = -1.0;
    nextarg(string, exist);
@@ -100,7 +100,7 @@ void xMinimize(int, char**)
 
    // set scaling parameter for function and derivative values;
    // use square root of median eigenvalue of typical Hessian
-   scales::set_scale = true;
+   scales::set_scale = 1;
    int nvar = 0;
    for (int i = 0; i < n; ++i) {
       for (int j = 0; j < 3; ++j) {

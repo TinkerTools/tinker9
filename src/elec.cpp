@@ -794,7 +794,7 @@ static void chgpenData(RcOp op)
 namespace tinker {
 bool useEwald()
 {
-   bool flag = useEnergyElec() and limits::use_ewald;
+   bool flag = useEnergyElec() and static_cast<bool>(limits::use_ewald);
    return flag;
 }
 

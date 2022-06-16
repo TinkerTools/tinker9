@@ -4,10 +4,10 @@
 #include <vector>
 
 namespace tinker {
-void nextarg(size_t len, char* str, int& exist);
+void nextarg(size_t len, char* str, bool& exist);
 
 template <size_t Len>
-void nextarg(char (&str)[Len], int& exist)
+void nextarg(char (&str)[Len], bool& exist)
 {
    nextarg(Len, str, exist);
 }

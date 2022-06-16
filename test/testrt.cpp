@@ -201,15 +201,15 @@ void testMdInit(double t, double atm)
 {
    if (t > 0) {
       bath::kelvin = t;
-      bath::isothermal = true;
+      bath::isothermal = 1;
    } else
-      bath::isothermal = false;
+      bath::isothermal = 0;
 
    if (atm > 0) {
       bath::atmsph = atm;
-      bath::isobaric = true;
+      bath::isobaric = 1;
    } else
-      bath::isobaric = false;
+      bath::isobaric = 0;
 
    double dt = 0.001;
    tinker_f_mdinit(&dt);

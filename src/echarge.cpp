@@ -17,7 +17,7 @@ void echargeData(RcOp op)
    if (not use(Potent::CHARGE))
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       ncexclude = 0;
@@ -173,11 +173,11 @@ void echargeEwaldRecipSelf(int vers)
 TINKER_FVOID2(acc1, cu1, echargeEwaldReal, int);
 void echarge(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_a = vers & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_a = vers & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    zeroOnHost(energy_ec, virial_ec);
    size_t bsize = bufferSize();
@@ -195,7 +195,7 @@ void echarge(int vers)
    if (useEwald()) {
       echargeEwaldRecipSelf(vers);
       TINKER_FCALL2(acc1, cu1, echargeEwaldReal, vers);
-      pmeStreamFinishWait(use_pme_stream and (vers & calc::analyz));
+      pmeStreamFinishWait(use_pme_stream and static_cast<bool>(vers & calc::analyz));
    } else
       echargeNonEwald(vers);
 

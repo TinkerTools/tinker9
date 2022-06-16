@@ -40,7 +40,7 @@ TEST_CASE("Bounds", "[ff][box]")
    FstrView fsw = files::filename;
    std::string fname = fsw.trim();
    std::ifstream ipt(fname);
-   int done = false;
+   bool done = false;
    readFrameCopyinToXyz(ipt, done);
    bounds();
 

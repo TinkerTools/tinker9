@@ -29,7 +29,7 @@ void copyPosToXyz(bool refreshNBList);
 ///    - Tinker uses centers of mass.
 void bounds();
 
-void readFrameCopyinToXyz(std::istream& input, int& done);
+void readFrameCopyinToXyz(std::istream& input, bool& done);
 
 //====================================================================//
 //                                                                    //

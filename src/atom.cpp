@@ -154,7 +154,7 @@ void bounds()
    copyPosToXyz();
 }
 
-void readFrameCopyinToXyz(std::istream& ipt, int& done)
+void readFrameCopyinToXyz(std::istream& ipt, bool& done)
 {
    if (done)
       return;

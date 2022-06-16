@@ -175,7 +175,7 @@ static std::map<int, size_t> hc_dict;
 namespace tinker {
 bool useRattle()
 {
-   return freeze::use_rattle;
+   return static_cast<bool>(freeze::use_rattle);
 }
 
 void rattleData(RcOp op)

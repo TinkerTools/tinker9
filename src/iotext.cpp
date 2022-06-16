@@ -16,7 +16,7 @@ void Text::replace(std::string& src, std::string old, char r)
    std::bitset<256> alphabets;
    for (char ic : old) {
       unsigned char c = ic;
-      alphabets[c] = 1;
+      alphabets[c] = true;
    }
    for (char& rc : src) {
       unsigned char c = rc;

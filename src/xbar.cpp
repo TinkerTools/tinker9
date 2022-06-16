@@ -59,7 +59,7 @@ static void xBarMake()
       std::memcpy(keys0[i].data(), keys::keyline[i], MAX_NCHAR);
 
    // find the original temperature value for trajectory A
-   int exist = false;
+   bool exist = false;
    tempa = -1;
    nextarg(string, exist);
    if (exist)
@@ -73,7 +73,7 @@ static void xBarMake()
    tinker_f_getarc(&iarc);
    tinker_f_close(&iarc);
    tinker_f_mechanic();
-   inform::silent = true;
+   inform::silent = 1;
 
    // store the filename for trajectory B
    std::memcpy(fileb, files::filename, MAX_NCHAR);
@@ -98,7 +98,7 @@ static void xBarMake()
       298.0, invalid_temperature);
 
    // decide whether to use energies from trajectory log files
-   int recompute = true;
+   bool recompute = true;
    char answer = ' ';
    nextarg(string, exist);
    if (exist)
@@ -112,7 +112,7 @@ static void xBarMake()
 
    //====================================================================//
 
-   int done;
+   bool done;
    const char* log_fmt = " Current Potential %lf\n";
    const char* process_fmt = "       Completed%8d Coordinate Frames\n";
    std::memcpy(string, filea, lenga);
@@ -352,8 +352,8 @@ static void xBarMake()
 static void xBarCalc()
 {
    auto out = stdout;
-   int exist = false;
-   int query;
+   bool exist = false;
+   bool query;
    char string[MAX_NCHAR];
    std::string str;
    auto invalid_barfile = [&](const std::string& s) {
@@ -876,7 +876,7 @@ void xBar(int, char**)
 
    char string[MAX_NCHAR];
    auto out = stdout;
-   int exist;
+   bool exist;
    int mode = 0;
    auto invalid_mode = [](int m) { return m != 1 and m != 2; };
    const char* mode_string1 = R"(

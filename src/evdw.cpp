@@ -31,7 +31,7 @@ void evdwData(RcOp op)
    if (not use(Potent::VDW))
       return;
 
-   bool rc_a = rc_flag & calc::analyz;
+   auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
       // local static variables
@@ -406,11 +406,11 @@ void evdwData(RcOp op)
 
 void evdw(int vers)
 {
-   bool rc_a = rc_flag & calc::analyz;
-   bool do_a = vers & calc::analyz;
-   bool do_e = vers & calc::energy;
-   bool do_v = vers & calc::virial;
-   bool do_g = vers & calc::grad;
+   auto rc_a = rc_flag & calc::analyz;
+   auto do_a = vers & calc::analyz;
+   auto do_e = vers & calc::energy;
+   auto do_v = vers & calc::virial;
+   auto do_g = vers & calc::grad;
 
    zeroOnHost(energy_ev, virial_ev);
    size_t bsize = bufferSize();
