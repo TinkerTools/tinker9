@@ -2,9 +2,11 @@
 #include "tool/argkey.h"
 #include "tool/error.h"
 #include "tool/exec.h"
-#include <algorithm>
+
 #include <cuda_runtime.h>
 #include <thrust/version.h>
+
+#include <algorithm>
 
 extern "C" int tinkerGpuUtilizationInt32_macos(int);
 
@@ -142,7 +144,6 @@ static void getDeviceAttribute(DeviceAttribute& a, int device = 0)
    a.clock_rate_kHz = prop.clockRate;
 
    check_rt(cudaDeviceReset());
-   cudaDeviceSynchronize();
 
    if (not found_cc) {
       TINKER_THROW(format("The source code should be updated for compute capability %d; "
@@ -268,58 +269,62 @@ void gpuData(RcOp op)
 #if 1
       cuda_device_flags |= cudaDeviceScheduleBlockingSync;
 #elif 0
-      // Using this flag may reduce the latency
-      // for cudaStreamSynchronize() calls.
+      // Using this flag may reduce the latency for the cudaStreamSynchronize() calls.
       cuda_device_flags |= cudaDeviceScheduleSpin;
 #endif
+
+      // cudaError_t cudaSetDeviceFlags (unsigned int flags);
+      //
+      // v10.2.89
+      //
+      // Records flags as the flags to use when initializing the current device.
+      // If no device has been made current to the calling thread, then flags will
+      // be applied to the initialization of any device initialized by the calling
+      // host thread, unless that device has had its initialization flags set
+      // explicitly by this or any host thread.
+      //
+      // If the current device has been set and that device has already been
+      // initialized then this call will fail with the error cudaErrorSetOnActiveProcess.
+      // In this case it is necessary to reset device using cudaDeviceReset()
+      // before the device's initialization flags may be set.
+      //
+      // v11.0.3
+      //
+      // Records flags as the flags for the current device. If the current device
+      // has been set and that device has already been initialized, the previous
+      // flags are overwritten. If the current device has not been initialized,
+      // it is initialized with the provided flags. If no device has been made
+      // current to the calling thread, a default device is selected and initialized
+      // with the provided flags.
+      //
+      // Conclusion
+      //
+      // Since CUDA 11, cudaSetDeviceFlags should be called after cudaSetDevice.
+      // Prior to CUDA 11, cudaSetDeviceFlags must be called before cudaSetDevice.
+
+#if CUDART_VERSION < 11000
       always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
+#endif
 
       always_check_rt(cudaGetDeviceCount(&ndevice));
       auto& all = gpuDeviceAttributes();
       all.resize(ndevice);
       for (int i = 0; i < ndevice; ++i)
          getDeviceAttribute(all[i], i);
-
       idevice = recommendDevice(ndevice);
+
       check_rt(cudaSetDevice(idevice));
+#if CUDART_VERSION >= 11000
+      check_rt(cudaSetDeviceFlags(cuda_device_flags));
+#endif
+
       int kdevice = -1;
       check_rt(cudaGetDevice(&kdevice));
       if (kdevice != idevice)
          TINKER_THROW(
             format("Device %d in use is different than the selected Device %d.", kdevice, idevice));
 
-      unsigned int kflags;
-      // BEGIN HACK
-      // I failed to just call cudaGetDeviceFlags() only once in the code.
-      // I think this is due to an undocumented change in the Cuda runtime,
-      // e.g., 10.1 vs. 11.2, at least I didn't find anything related
-      // on the internet. Consider the following logic
-      //
-      // #A
-      // loop k over all devices (even if all == 1)
-      //    cudaSetDevice(k)
-      //    check the properties of device k
-      //    cudaDeviceReset()
-      //    cudaDeviceSynchronize()
-      // end loop
-      // idevice = select one device
-      // #B
-      // cudaSetDevice(idevice)
-      // #C
-      //
-      // where there are 3 lines (#A, #B, and #C) we can put the function
-      // cudaGetDeviceFlags() in. For Cuda 10.1, #A is the only option,
-      // otherwise, errno 708 (cudaErrorSetOnActiveProcess) will be returned.
-      // What it seems to me is that cudaDeviceReset() didn't actually reset
-      // the device. For Cuda 11.2, no error is returned, but the desired flags
-      // are not set correctly if cudaGetDeviceFlags() is put in #A. Therefore,
-      // I need to put cudaGetDeviceFlags() in #A and add a hack like this.
-      kflags = 0;
-      check_rt(cudaGetDeviceFlags(&kflags));
-      if (kflags != cuda_device_flags)
-         always_check_rt(cudaSetDeviceFlags(cuda_device_flags));
-      // END HACK
-      kflags = 0;
+      unsigned int kflags = 0;
       check_rt(cudaGetDeviceFlags(&kflags));
       if (kflags != cuda_device_flags)
          TINKER_THROW(
