@@ -65,3 +65,19 @@ TINKER_EXTERN virial_prec virial_ect[9];
 
 TINKER_EXTERN Chgtrn ctrntyp;
 }
+
+// kexpl and expol
+namespace tinker {
+TINKER_EXTERN real* pepk;
+TINKER_EXTERN real* peppre;
+TINKER_EXTERN real* pepdmp;
+TINKER_EXTERN int* pepl;
+
+TINKER_EXTERN CountBuffer nexpol;
+TINKER_EXTERN real* kpep;
+TINKER_EXTERN real* prepep;
+TINKER_EXTERN real* dmppep;
+TINKER_EXTERN real* polscale;
+TINKER_EXTERN real* invpolscale;
+TINKER_EXTERN int* lpep;
+}
