@@ -2,29 +2,29 @@
 #include "ff/atom.h"
 #include "ff/hippomod.h"
 #include "tool/darray.h"
-#include <tinker/detail/kexpl.hh>
+#include <tinker/detail/expol.hh>
 #include <tinker/detail/polpot.hh>
 
 namespace tinker {
 void expolData(RcOp op)
 {
-   // TODO Return if expol not used
+   // TODO Use format like "Potent::EXPOL"
    if (not polpot::use_expol)
       return;
 
    if (op & RcOp::DEALLOC) {
-      darray::deallocate(pepk, peppre, pepdmp, pepl);
+      darray::deallocate(kpep, prepep, dmppep, lpep);
    }
 
    if (op & RcOp::ALLOC) {
-      darray::allocate(n, &pepk, &peppre, &pepdmp, &pepl);
+      darray::allocate(n, &kpep, &prepep, &dmppep, &lpep);
    }
 
    if (op & RcOp::INIT) {
-      darray::copyin(g::q0, n, pepk, kexpl::pepk);
-      darray::copyin(g::q0, n, peppre, kexpl::peppre);
-      darray::copyin(g::q0, n, pepdmp, kexpl::pepdmp);
-      darray::copyin(g::q0, n, pepl, kexpl::pepl);
+      darray::copyin(g::q0, n, kpep, expol::kpep);
+      darray::copyin(g::q0, n, prepep, expol::prepep);
+      darray::copyin(g::q0, n, dmppep, expol::dmppep);
+      darray::copyin(g::q0, n, lpep, expol::lpep);
    }
 }
 }
