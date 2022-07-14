@@ -2,6 +2,7 @@
 #include "ff/energybuffer.h"
 #include "ff/hippo/chgpen.h"
 #include "ff/hippo/echgtrn.h"
+#include "ff/hippo/expolscrtyp.h"
 
 // mplpot
 namespace tinker {
@@ -68,11 +69,10 @@ TINKER_EXTERN Chgtrn ctrntyp;
 
 // expol
 namespace tinker {
-TINKER_EXTERN CountBuffer nexpol;
 TINKER_EXTERN real* kpep;
 TINKER_EXTERN real* prepep;
 TINKER_EXTERN real* dmppep;
-TINKER_EXTERN real* polscale;
-TINKER_EXTERN real* invpolscale;
 TINKER_EXTERN int* lpep;
+TINKER_EXTERN real (*polscale)[3][3];
+TINKER_EXTERN ExpolScr scrtyp;
 }
