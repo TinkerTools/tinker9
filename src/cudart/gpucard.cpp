@@ -317,6 +317,7 @@ void gpuData(RcOp op)
 #if CUDART_VERSION >= 11000
       check_rt(cudaSetDeviceFlags(cuda_device_flags));
 #endif
+      check_rt(cudaDeviceSynchronize());
 
       int kdevice = -1;
       check_rt(cudaGetDevice(&kdevice));
