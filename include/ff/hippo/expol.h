@@ -6,4 +6,12 @@ namespace tinker {
 void expolData(RcOp);
 
 void alterpol();
+
+enum class ExpolScr
+{
+   NONE,
+   S2U,
+   S2,
+   G
+};
 }
