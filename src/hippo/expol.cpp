@@ -14,14 +14,14 @@ void expolData(RcOp op)
 
    if (op & RcOp::DEALLOC) {
       darray::deallocate(kpep, prepep, dmppep, lpep);
-      darray::deallocate(polscale);
+      darray::deallocate(polscale, polinv);
 
       scrtyp = ExpolScr::NONE;
    }
 
    if (op & RcOp::ALLOC) {
       darray::allocate(n, &kpep, &prepep, &dmppep, &lpep);
-      darray::allocate(n, &polscale);
+      darray::allocate(n, &polscale, &polinv);
    }
 
    if (op & RcOp::INIT) {

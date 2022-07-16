@@ -39,13 +39,23 @@ static void induceMutualPcg3(real (*uind)[3])
    TINKER_FCALL2(acc1, cu1, induceMutualPcg3, uind);
 }
 
+// TODO add cuda implementation later
+void induceMutualPcg4_acc(real (*)[3]);
+static void induceMutualPcg4(real (*uind)[3])
+{
+   induceMutualPcg4_acc(uind);
+}
+
 void induce2(real (*ud)[3])
 {
    if (polpot::use_dirdamp) {
       induceMutualPcg3(ud);
       ulspredSave(ud, nullptr);
    } else {
-      induceMutualPcg2(ud);
+      if (polpot::use_expol)
+         induceMutualPcg4(ud);
+      else
+         induceMutualPcg2(ud);
       ulspredSave(ud, nullptr);
    }
    inducePrint(ud);

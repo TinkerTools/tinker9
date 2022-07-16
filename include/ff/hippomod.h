@@ -74,5 +74,6 @@ TINKER_EXTERN real* prepep;
 TINKER_EXTERN real* dmppep;
 TINKER_EXTERN int* lpep;
 TINKER_EXTERN real (*polscale)[3][3];
+TINKER_EXTERN real (*polinv)[3][3];
 TINKER_EXTERN ExpolScr scrtyp;
 }
