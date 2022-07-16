@@ -34,6 +34,7 @@ estrtor.cpp
 etors.cpp
 etortor.cpp
 eurey.cpp
+hippo/alterpol.cpp
 hippo/cflux.cpp
 hippo/echgtrn.cpp
 hippo/edisp.cpp
