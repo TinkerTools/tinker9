@@ -5,7 +5,8 @@
 namespace tinker {
 void expolData(RcOp);
 
-void alterpol();
+void alterpol(real (*polscale)[3][3], real (*polinv)[3][3]);
+void dexpol();
 
 enum class ExpolScr
 {

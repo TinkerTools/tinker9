@@ -5,8 +5,8 @@
 #include "ff/hippomod.h"
 #include "ff/switch.h"
 #include "tool/darray.h"
-#include "tool/ioprint.h"
 #include "tool/error.h"
+#include "tool/ioprint.h"
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/polpcg.hh>
 #include <tinker/detail/polpot.hh>
@@ -46,21 +46,21 @@ void induceMutualPcg4_acc(real (*uind)[3])
          udir[i][j] = poli * field[i][j];
    }
 
-   // call alterpol
+   alterpol(polscale, polinv);
 
    // initial induced dipole
    if (predict) {
       ulspredSum(uind, nullptr);
    } else if (dirguess) {
       #pragma acc parallel loop independent async\
-              deviceptr(polarity,uind,field,polinv)
+              deviceptr(polarity,field,polinv,uind)
       for (int i = 0; i < n; ++i) {
          real poli = polarity[i];
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
-            uind[i][j] = poli * (polinv[i][j][1]*field[i][1]
-                               + polinv[i][j][2]*field[i][2]
-                               + polinv[i][j][3]*field[i][3]);
+            uind[i][j] = poli *
+               (polinv[i][0][j] * field[i][0] + polinv[i][1][j] * field[i][1] +
+                  polinv[i][2][j] * field[i][2]);
          }
       }
    } else {
@@ -68,7 +68,7 @@ void induceMutualPcg4_acc(real (*uind)[3])
    }
    // initial residual r(0)
 
-      // if do not use pcgguess, r(0) = E - T Zero = E
+   // if do not use pcgguess, r(0) = E - T Zero = E
    // if use pcgguess, r(0) = E - (inv_alpha + Tu) alpha E
    //                       = E - E -Tu udir
    //                       = -Tu udir
@@ -76,18 +76,21 @@ void induceMutualPcg4_acc(real (*uind)[3])
    if (predict) {
       ufieldChgpen(uind, field);
       #pragma acc parallel loop independent async\
-              deviceptr(polarity_inv,rsd,udir,uind,field,polscale)
+              deviceptr(polarity_inv,udir,uind,field,polscale,rsd)
       for (int i = 0; i < n; ++i) {
          real pol = polarity_inv[i];
          #pragma acc loop seq
-         for (int j = 0; j < 3; ++j)
-            rsd[i][j] = (udir[i][j] - uind[i][1]*polscale[i][j][1]
-                                    - uind[i][2]*polscale[i][j][2]
-                                    - uind[i][3]*polscale[i][j][3])
-                        * pol + field[i][j];
+         for (int j = 0; j < 3; ++j) {
+            rsd[i][j] = (udir[i][j] - uind[i][0] * polscale[i][0][j] -
+                           uind[i][1] * polscale[i][1][j] - uind[i][2] * polscale[i][2][j]) *
+                  pol +
+               field[i][j];
+         }
       }
    } else if (dirguess) {
-      ufieldChgpen(udir, rsd);
+      // uind is used here instead of udir since without exchange polarization udir = uind
+      // but with exchange polarization udir != uind (for dirguess).
+      ufieldChgpen(uind, rsd);
    } else {
       darray::copy(g::q0, n, rsd, field);
    }
@@ -136,15 +139,15 @@ void induceMutualPcg4_acc(real (*uind)[3])
       // vec = inv_alpha * conj - field
       ufieldChgpen(conj, field);
       #pragma acc parallel loop independent async\
-                  deviceptr(polarity_inv,vec,conj,field,polscale)
+                  deviceptr(polarity_inv,conj,field,polscale,vec)
       for (int i = 0; i < n; ++i) {
          real poli_inv = polarity_inv[i];
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j)
-            vec[i][j] = poli_inv * (conj[i][1]*polscale[i][j][1]
-                                  + conj[i][2]*polscale[i][j][2]
-                                  + conj[i][3]*polscale[i][j][3])
-                      - field[i][j];
+            vec[i][j] = poli_inv *
+                  (conj[i][0] * polscale[i][0][j] + conj[i][1] * polscale[i][1][j] +
+                     conj[i][2] * polscale[i][2][j]) -
+               field[i][j];
       }
 
       // a <- p T p
@@ -157,7 +160,7 @@ void induceMutualPcg4_acc(real (*uind)[3])
       // u <- u + a p
       // r <- r - a T p
       #pragma acc parallel loop independent async\
-                  deviceptr(polarity,uind,conj,rsd,vec)
+                  deviceptr(polarity,conj,vec,uind,rsd)
       for (int i = 0; i < n; ++i) {
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
@@ -221,7 +224,7 @@ void induceMutualPcg4_acc(real (*uind)[3])
 
       if (done) {
          #pragma acc parallel loop independent async\
-                     deviceptr(polarity,uind,rsd)
+                     deviceptr(polarity,rsd,uind)
          for (int i = 0; i < n; ++i) {
             real term = pcgpeek * polarity[i];
             #pragma acc loop seq

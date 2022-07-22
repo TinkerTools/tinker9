@@ -41,10 +41,6 @@ TINKER_EXTERN int nmdwexclude;
 TINKER_EXTERN int (*mdwexclude)[2];
 TINKER_EXTERN real (*mdwexclude_scale)[3];
 
-TINKER_EXTERN int ndexclude;
-TINKER_EXTERN int (*dexclude)[2];
-TINKER_EXTERN real* dexclude_scale;
-
 TINKER_EXTERN int nwexclude;
 TINKER_EXTERN int (*wexclude)[2];
 TINKER_EXTERN real* wexclude_scale;

@@ -10,6 +10,7 @@
 #include "math/zero.h"
 #include "tool/externfunc.h"
 #include "tool/iofortstr.h"
+#include "ff/hippo/expol.h"
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polpot.hh>
@@ -236,6 +237,8 @@ void epolarChgpen(int vers)
    torque(vers, depx, depy, depz);
    if (use_cfgrad)
       dcflux(vers, depx, depy, depz, vir_ep);
+   if (polpot::use_expol)
+      dexpol();
    if (do_v) {
       VirialBuffer u2 = vir_trq;
       virial_prec v2[9];
