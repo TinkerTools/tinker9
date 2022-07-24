@@ -4,13 +4,13 @@
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/hippo/cflux.h"
+#include "ff/hippo/expol.h"
 #include "ff/hippo/induce.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
 #include "tool/externfunc.h"
 #include "tool/iofortstr.h"
-#include "ff/hippo/expol.h"
 #include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polpot.hh>
@@ -238,7 +238,7 @@ void epolarChgpen(int vers)
    if (use_cfgrad)
       dcflux(vers, depx, depy, depz, vir_ep);
    if (polpot::use_expol)
-      dexpol();
+      dexpol(uind, depx, depy, depz, vir_ep);
    if (do_v) {
       VirialBuffer u2 = vir_trq;
       virial_prec v2[9];

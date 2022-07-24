@@ -6,7 +6,8 @@ namespace tinker {
 void expolData(RcOp);
 
 void alterpol(real (*polscale)[3][3], real (*polinv)[3][3]);
-void dexpol();
+void dexpol(const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz,
+   VirialBuffer restrict vir_ep);
 
 enum class ExpolScr
 {

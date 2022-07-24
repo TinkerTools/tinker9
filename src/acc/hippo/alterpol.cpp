@@ -1,16 +1,14 @@
 #include "ff/amoebamod.h"
 #include "ff/atom.h"
+#include "ff/elec.h"
 #include "ff/hippomod.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
-//#include "ff/pme.h"
 #include "ff/switch.h"
+#include "seq/add.h"
 #include "seq/pair_alterpol.h"
-#include <tinker/routines.h>
-// #include "seq/pair_polar_chgpen.h"
 #include "tool/gpucard.h"
-// #include <array>
-// #include <fstream>
+#include <tinker/routines.h>
 
 namespace tinker {
 void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
@@ -43,13 +41,13 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
                deviceptr(x,y,z,kpep,prepep,dmppep,lpep,mlst,polscale)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
       real springi = kpep[i];
       real sizi = prepep[i];
       real alphai = dmppep[i];
       int epli = lpep[i];
-      real xi = x[i];
-      real yi = y[i];
-      real zi = z[i];
 
       int nmlsti = mlst->nlst[i];
       int base = i * maxnlst;
@@ -74,8 +72,8 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
             for (int l = 0; l < 3; ++l) {
                #pragma acc loop seq
                for (int m = 0; m < 3; ++m) {
-                  polscale[i][m][l] = polscale[i][m][l] + ks2i[m][l];
-                  polscale[k][m][l] = polscale[k][m][l] + ks2k[m][l];
+                  polscale[i][m][l] += ks2i[m][l];
+                  polscale[k][m][l] += ks2k[m][l];
                }
             }
          }
@@ -89,19 +87,17 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
       int k = mdwexclude[ii][1];
       real dscale = mdwexclude_scale[ii][1] - 1;
 
+      real xr = x[k] - x[i];
+      real yr = y[k] - y[i];
+      real zr = z[k] - z[i];
       real springi = kpep[i];
       real sizi = prepep[i];
       real alphai = dmppep[i];
       int epli = lpep[i];
-
       real springk = kpep[k];
       real sizk = prepep[k];
       real alphak = dmppep[k];
       int eplk = lpep[k];
-
-      real xr = x[k] - x[i];
-      real yr = y[k] - y[i];
-      real zr = z[k] - z[i];
 
       real r2 = image2(xr, yr, zr);
       bool incl1 = dscale != 0;
@@ -121,36 +117,152 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
          }
       }
    }
-   
+
    // invert
    #pragma acc parallel loop independent async\
                deviceptr(polscale,polinv)
    for (int i = 0; i < n; ++i) {
-      real tmp[3][3];
-      #pragma acc loop seq
-      for (int j = 0; j < 3; ++j) {
-         #pragma acc loop seq
-         for (int k = 0; k < 3; ++k) {
-            tmp[j][k] = polscale[i][j][k];
-         }
-      }
       real det;
-      det = tmp[0][0] * (tmp[1][1] * tmp[2][2] - tmp[1][2] * tmp[2][1]) -
-         tmp[1][0] * (tmp[0][1] * tmp[2][2] - tmp[2][1] * tmp[0][2]) +
-         tmp[2][0] * (tmp[0][1] * tmp[1][2] - tmp[1][1] * tmp[0][2]);
-      polinv[i][0][0] = (tmp[1][1] * tmp[2][2] - tmp[1][2] * tmp[2][1]) / det;
-      polinv[i][1][0] = (tmp[2][0] * tmp[1][2] - tmp[1][0] * tmp[2][2]) / det;
-      polinv[i][2][0] = (tmp[1][0] * tmp[2][1] - tmp[2][0] * tmp[1][1]) / det;
-      polinv[i][0][1] = (tmp[2][1] * tmp[0][2] - tmp[0][1] * tmp[2][2]) / det;
-      polinv[i][1][1] = (tmp[0][0] * tmp[2][2] - tmp[2][0] * tmp[0][2]) / det;
-      polinv[i][2][1] = (tmp[0][1] * tmp[2][0] - tmp[0][0] * tmp[2][1]) / det;
-      polinv[i][0][2] = (tmp[0][1] * tmp[1][2] - tmp[0][2] * tmp[1][1]) / det;
-      polinv[i][1][2] = (tmp[0][2] * tmp[1][0] - tmp[0][0] * tmp[1][2]) / det;
-      polinv[i][2][2] = (tmp[0][0] * tmp[1][1] - tmp[0][1] * tmp[1][0]) / det;
+      real(&ps)[3][3] = polscale[i];
+      det = ps[0][0] * (ps[1][1] * ps[2][2] - ps[1][2] * ps[2][1]) -
+         ps[1][0] * (ps[0][1] * ps[2][2] - ps[2][1] * ps[0][2]) +
+         ps[2][0] * (ps[0][1] * ps[1][2] - ps[1][1] * ps[0][2]);
+      polinv[i][0][0] = (ps[1][1] * ps[2][2] - ps[1][2] * ps[2][1]) / det;
+      polinv[i][1][0] = (ps[2][0] * ps[1][2] - ps[1][0] * ps[2][2]) / det;
+      polinv[i][2][0] = (ps[1][0] * ps[2][1] - ps[2][0] * ps[1][1]) / det;
+      polinv[i][0][1] = (ps[2][1] * ps[0][2] - ps[0][1] * ps[2][2]) / det;
+      polinv[i][1][1] = (ps[0][0] * ps[2][2] - ps[2][0] * ps[0][2]) / det;
+      polinv[i][2][1] = (ps[0][1] * ps[2][0] - ps[0][0] * ps[2][1]) / det;
+      polinv[i][0][2] = (ps[0][1] * ps[1][2] - ps[0][2] * ps[1][1]) / det;
+      polinv[i][1][2] = (ps[0][2] * ps[1][0] - ps[0][0] * ps[1][2]) / det;
+      polinv[i][2][2] = (ps[0][0] * ps[1][1] - ps[0][1] * ps[1][0]) / det;
    }
 }
 
-void dexpol() {
+void dexpol(const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz,
+   VirialBuffer restrict vir_ep)
+{
+   real cut = switchCut(Switch::REPULS);
+   real off = switchOff(Switch::REPULS);
 
+   const real off2 = off * off;
+   const int maxnlst = mlist_unit->maxnlst;
+   const auto* mlst = mlist_unit.deviceptr();
+
+   size_t bufsize = bufferSize();
+
+   const real f = 0.5f * electric / dielec;
+
+   for (int i = 0; i < n; ++i) {
+      real xi = x[i];
+      real yi = y[i];
+      real zi = z[i];
+      real springi = kpep[i];
+      real sizi = prepep[i];
+      real alphai = dmppep[i];
+      int epli = lpep[i];
+      real uix = uind[i][0];
+      real uiy = uind[i][1];
+      real uiz = uind[i][2];
+
+      MAYBE_UNUSED real gxi = 0., gyi = 0., gzi = 0.;
+
+      int nmlsti = mlst->nlst[i];
+      int base = i * maxnlst;
+      for (int kk = 0; kk < nmlsti; ++kk) {
+         int offset = kk & (bufsize - 1);
+         int k = mlst->lst[base + kk];
+         real xr = x[k] - xi;
+         real yr = y[k] - yi;
+         real zr = z[k] - zi;
+         real r2 = image2(xr, yr, zr);
+         int eplk = lpep[k];
+         bool incl = (epli || eplk);
+         if (r2 <= off2 and incl) {
+            real r = REAL_SQRT(r2);
+            real springk = kpep[k];
+            real sizk = prepep[k];
+            real alphak = dmppep[k];
+            real ukx = uind[k][0];
+            real uky = uind[k][1];
+            real ukz = uind[k][2];
+            real frc[3];
+            pair_dexpol(scrtyp, r, r2, 1, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz,
+               springi, sizi, alphai, springk, sizk, alphak, f, frc);
+
+            gxi += frc[0];
+            gyi += frc[1];
+            gzi += frc[2];
+            atomic_add(-frc[0], depx, k);
+            atomic_add(-frc[1], depy, k);
+            atomic_add(-frc[2], depz, k);
+
+            // // add "if CONSTEXPR (do_v)"
+            // real vxx = -xr * frc[0];
+            // real vxy = -0.5f * (yr * frc[0] + xr * frc[1]);
+            // real vxz = -0.5f * (zr * frc[0] + xr * frc[2]);
+            // real vyy = -yr * frc[1];
+            // real vyz = -0.5f * (zr * frc[1] + yr * frc[2]);
+            // real vzz = -zr * frc[2];
+            // atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
+         }
+      }
+      atomic_add(gxi, depx, i);
+      atomic_add(gyi, depy, i);
+      atomic_add(gzi, depz, i);
+   }
+
+   for (int ii = 0; ii < nmdwexclude; ++ii) {
+      int offset = ii & (bufsize - 1);
+
+      int i = mdwexclude[ii][0];
+      int k = mdwexclude[ii][1];
+      real dscale = mdwexclude_scale[ii][1] - 1;
+
+      real xr = x[k] - x[i];
+      real yr = y[k] - y[i];
+      real zr = z[k] - z[i];
+      real springi = kpep[i];
+      real sizi = prepep[i];
+      real alphai = dmppep[i];
+      int epli = lpep[i];
+      real uix = uind[i][0];
+      real uiy = uind[i][1];
+      real uiz = uind[i][2];
+      real springk = kpep[k];
+      real sizk = prepep[k];
+      real alphak = dmppep[k];
+      int eplk = lpep[k];
+      real ukx = uind[k][0];
+      real uky = uind[k][1];
+      real ukz = uind[k][2];
+
+      real r2 = image2(xr, yr, zr);
+      bool incl1 = dscale != 0;
+      bool incl2 = (epli || eplk);
+
+      if (r2 <= off2 and incl1 and incl2) {
+         real r = REAL_SQRT(r2);
+         real frc[3];
+         pair_dexpol(scrtyp, r, r2, 1, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz, springi,
+            sizi, alphai, springk, sizk, alphak, f, frc);
+
+         atomic_add(frc[0], depx, i);
+         atomic_add(frc[1], depy, i);
+         atomic_add(frc[2], depz, i);
+         atomic_add(-frc[0], depx, k);
+         atomic_add(-frc[1], depy, k);
+         atomic_add(-frc[2], depz, k);
+
+         // // add "if CONSTEXPR (do_v)"
+         // real vxx = -xr * frc[0];
+         // real vxy = -0.5f * (yr * frc[0] + xr * frc[1]);
+         // real vxz = -0.5f * (zr * frc[0] + xr * frc[2]);
+         // real vyy = -yr * frc[1];
+         // real vyz = -0.5f * (zr * frc[1] + yr * frc[2]);
+         // real vzz = -zr * frc[2];
+         // atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
+      }
+   }
 }
 }
