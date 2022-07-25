@@ -47,6 +47,8 @@ inline void pair_alterpol(ExpolScr scrtyp, real r, real r2, real pscale, real cu
    }
 }
 
+#pragma acc routine seq
+SEQ_CUDA
 inline void pair_dexpol(ExpolScr scrtyp, real r, real r2, real pscale, real cut, real off, real xr,
    real yr, real zr, real uix, real uiy, real uiz, real ukx, real uky, real ukz, real springi,
    real sizi, real alphai, real springk, real sizk, real alphak, const real f, real frc[3])
@@ -62,8 +64,8 @@ inline void pair_dexpol(ExpolScr scrtyp, real r, real r2, real pscale, real cut,
    if (r2 > cut2) {
       real taper, dtaper;
       switchTaper5<1>(r, cut, off, taper, dtaper);
-      s2 = s2 * taper;
       ds2 = ds2 * taper + s2 * dtaper;
+      s2 = s2 * taper;
    }
    real s2i = springi * s2 * pscale;
    real s2k = springk * s2 * pscale;
