@@ -105,7 +105,7 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
       if (r2 <= off2 and incl1 and incl2) {
          real r = REAL_SQRT(r2);
          real ks2i[3][3], ks2k[3][3];
-         pair_alterpol(scrtyp, r, r2, 1, cut, off, xr, yr, zr, springi, sizi, alphai, springk, sizk,
+         pair_alterpol(scrtyp, r, r2, dscale, cut, off, xr, yr, zr, springi, sizi, alphai, springk, sizk,
             alphak, ks2i, ks2k);
          #pragma acc loop seq
          for (int l = 0; l < 3; ++l) {
@@ -139,9 +139,10 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
    }
 }
 
-void dexpol(const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz,
+void dexpol(const int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz,
    VirialBuffer restrict vir_ep)
 {
+   auto do_v = vers & calc::virial;
    real cut = switchCut(Switch::REPULS);
    real off = switchOff(Switch::REPULS);
 
@@ -157,7 +158,7 @@ void dexpol(const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* 
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real springi = kpep[i];
+      real springi = kpep[i]/polarity[i];
       real sizi = prepep[i];
       real alphai = dmppep[i];
       int epli = lpep[i];
@@ -180,7 +181,7 @@ void dexpol(const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* 
          bool incl = (epli || eplk);
          if (r2 <= off2 and incl) {
             real r = REAL_SQRT(r2);
-            real springk = kpep[k];
+            real springk = kpep[k]/polarity[k];
             real sizk = prepep[k];
             real alphak = dmppep[k];
             real ukx = uind[k][0];
@@ -189,7 +190,6 @@ void dexpol(const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* 
             real frc[3];
             pair_dexpol(scrtyp, r, r2, 1, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz,
                springi, sizi, alphai, springk, sizk, alphak, f, frc);
-
             gxi += frc[0];
             gyi += frc[1];
             gzi += frc[2];
@@ -197,14 +197,15 @@ void dexpol(const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* 
             atomic_add(-frc[1], depy, k);
             atomic_add(-frc[2], depz, k);
 
-            // // add "if CONSTEXPR (do_v)"
-            // real vxx = -xr * frc[0];
-            // real vxy = -0.5f * (yr * frc[0] + xr * frc[1]);
-            // real vxz = -0.5f * (zr * frc[0] + xr * frc[2]);
-            // real vyy = -yr * frc[1];
-            // real vyz = -0.5f * (zr * frc[1] + yr * frc[2]);
-            // real vzz = -zr * frc[2];
-            // atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
+            if (do_v) {
+               real vxx = -xr * frc[0];
+               real vxy = -0.5f * (yr * frc[0] + xr * frc[1]);
+               real vxz = -0.5f * (zr * frc[0] + xr * frc[2]);
+               real vyy = -yr * frc[1];
+               real vyz = -0.5f * (zr * frc[1] + yr * frc[2]);
+               real vzz = -zr * frc[2];
+               atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
+            }
          }
       }
       atomic_add(gxi, depx, i);
@@ -244,7 +245,7 @@ void dexpol(const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* 
       if (r2 <= off2 and incl1 and incl2) {
          real r = REAL_SQRT(r2);
          real frc[3];
-         pair_dexpol(scrtyp, r, r2, 1, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz, springi,
+         pair_dexpol(scrtyp, r, r2, dscale, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz, springi,
             sizi, alphai, springk, sizk, alphak, f, frc);
 
          atomic_add(frc[0], depx, i);
@@ -253,15 +254,16 @@ void dexpol(const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* 
          atomic_add(-frc[0], depx, k);
          atomic_add(-frc[1], depy, k);
          atomic_add(-frc[2], depz, k);
-
-         // // add "if CONSTEXPR (do_v)"
-         // real vxx = -xr * frc[0];
-         // real vxy = -0.5f * (yr * frc[0] + xr * frc[1]);
-         // real vxz = -0.5f * (zr * frc[0] + xr * frc[2]);
-         // real vyy = -yr * frc[1];
-         // real vyz = -0.5f * (zr * frc[1] + yr * frc[2]);
-         // real vzz = -zr * frc[2];
-         // atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
+         
+         if (do_v) {
+            real vxx = -xr * frc[0];
+            real vxy = -0.5f * (yr * frc[0] + xr * frc[1]);
+            real vxz = -0.5f * (zr * frc[0] + xr * frc[2]);
+            real vyy = -yr * frc[1];
+            real vyz = -0.5f * (zr * frc[1] + yr * frc[2]);
+            real vzz = -zr * frc[2];
+            atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
+         }
       }
    }
 }
