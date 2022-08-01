@@ -62,7 +62,7 @@ static void bndangChg_cu1(real* restrict pdelta,                                
          real dot, angle, cosine;
          dot = xab * xcb + yab * ycb + zab * zcb;
          cosine = dot / (rab * rcb);
-         cosine = REAL_MIN(1.0, REAL_MAX(-1, cosine));
+         cosine = REAL_MIN((real)1, REAL_MAX((real)-1, cosine));
          angle = radian * REAL_ACOS(cosine);
 
          int ab = balist[i][0];
