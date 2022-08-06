@@ -1,0 +1,100 @@
+KERNEL_NAME: dexpol_cu1
+TEMPLATE_PARAMS: template<class Ver>
+CONSTEXPR_FLAGS: |
+  constexpr bool do_v = Ver::v;
+
+VIRIAL:
+  - vep
+GRADIENT:
+  - gx
+  - gy
+  - gz
+
+CUT_DISTANCE:
+  - 'cut'
+
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - 'dinfo'
+
+SCALE_1X_TYPE: real3_const_array,1
+
+EXTRA_PARAMS: |
+  , const real* restrict polarity, const real (*restrict uind)[3]
+  , const real* restrict kpep, const real* restrict prepep
+  , const real* restrict dmppep, const int* restrict lpep
+  , ExpolScr scrtyp, real f
+
+I_POSITION:
+  - def: shared real xi from:x
+  - def: shared real yi from:y
+  - def: shared real zi from:z
+K_POSITION:
+  - def: register real xk from:x
+  - def: register real yk from:y
+  - def: register real zk from:z
+
+I_FORCE:
+  - def: shared real frcxi addto:gx
+  - def: shared real frcyi addto:gy
+  - def: shared real frczi addto:gz
+
+K_FORCE:
+  - def: register real frcxk addto:gx
+  - def: register real frcyk addto:gy
+  - def: register real frczk addto:gz
+
+I_VARIABLES:
+  - def: shared real uix from:uind,0
+  - def: shared real uiy from:uind,1
+  - def: shared real uiz from:uind,2
+  - def: shared real springi from:kpep
+  - def: shared real sizi from:prepep
+  - def: shared real alphai from:dmppep
+  - def: shared int epli from:lpep
+  - def: shared real poli from:polarity
+
+K_VARIABLES:
+  - def: register real ukx from:uind,0
+  - def: register real uky from:uind,1
+  - def: register real ukz from:uind,2
+  - def: register real springk from:kpep
+  - def: register real sizk from:prepep
+  - def: register real alphak from:dmppep
+  - def: register int eplk from:lpep
+  - def: register real polk from:polarity
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
+  real r2 = image2(xr, yr, zr);
+  if ((eplk or @epli@) and r2 <= off * off and incl) {
+    real r = REAL_SQRT(r2);
+    real frc[3];
+    pair_dexpol(scrtyp, r, r2, scaleb, cut, off, xr, yr, zr, @uix@, @uiy@, @uiz@, ukx, uky, ukz,
+               @springi@/@poli@, @sizi@, @alphai@, springk/polk, sizk, alphak, f, frc);
+    @frcxi@ += frc[0];
+    @frcyi@ += frc[1];
+    @frczi@ += frc[2];
+    frcxk -= frc[0];
+    frcyk -= frc[1];
+    frczk -= frc[2];
+
+    if CONSTEXPR (do_v) {
+      real vxx = -xr * frc[0];
+      real vxy = -0.5f * (yr * frc[0] + xr * frc[1]);
+      real vxz = -0.5f * (zr * frc[0] + xr * frc[2]);
+      real vyy = -yr * frc[1];
+      real vyz = -0.5f * (zr * frc[1] + yr * frc[2]);
+      real vzz = -zr * frc[2];
+      veptlxx += floatTo<vbuf_prec>(vxx);
+      veptlyx += floatTo<vbuf_prec>(vxy);
+      veptlzx += floatTo<vbuf_prec>(vxz);
+      veptlyy += floatTo<vbuf_prec>(vyy);
+      veptlzy += floatTo<vbuf_prec>(vyz);
+      veptlzz += floatTo<vbuf_prec>(vzz);
+    }
+  }

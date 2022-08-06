@@ -78,12 +78,12 @@ void induceMutualPcg4_acc(real (*uind)[3])
       #pragma acc parallel loop independent async\
               deviceptr(polarity_inv,udir,uind,field,polscale,rsd)
       for (int i = 0; i < n; ++i) {
-         real pol = polarity_inv[i];
+         real poli_inv = polarity_inv[i];
          #pragma acc loop seq
          for (int j = 0; j < 3; ++j) {
             rsd[i][j] = (udir[i][j] - uind[i][0] * polscale[i][0][j] -
                            uind[i][1] * polscale[i][1][j] - uind[i][2] * polscale[i][2][j]) *
-                  pol +
+                  poli_inv +
                field[i][j];
          }
       }

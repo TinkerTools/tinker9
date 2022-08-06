@@ -11,7 +11,7 @@
 #include <tinker/routines.h>
 
 namespace tinker {
-void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
+void alterpol_acc(real (*polscale)[3][3], real (*polinv)[3][3])
 {
    real cut = switchCut(Switch::REPULS);
    real off = switchOff(Switch::REPULS);
@@ -38,6 +38,7 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
    // find variable polarizability scale matrix at each site
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,kpep,prepep,dmppep,lpep,mlst,polscale)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
@@ -72,8 +73,8 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
             for (int l = 0; l < 3; ++l) {
                #pragma acc loop seq
                for (int m = 0; m < 3; ++m) {
-                  polscale[i][m][l] += ks2i[m][l];
-                  polscale[k][m][l] += ks2k[m][l];
+                  atomic_add(ks2i[m][l], &polscale[i][m][l]);
+                  atomic_add(ks2k[m][l], &polscale[k][m][l]);
                }
             }
          }
@@ -81,6 +82,7 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
    }
 
    #pragma acc parallel loop independent async\
+               present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,kpep,prepep,dmppep,lpep,mlst,mdwexclude,mdwexclude_scale,polscale)
    for (int ii = 0; ii < nmdwexclude; ++ii) {
       int i = mdwexclude[ii][0];
@@ -111,8 +113,8 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
          for (int l = 0; l < 3; ++l) {
             #pragma acc loop seq
             for (int m = 0; m < 3; ++m) {
-               polscale[i][m][l] = polscale[i][m][l] + ks2i[m][l];
-               polscale[k][m][l] = polscale[k][m][l] + ks2k[m][l];
+               atomic_add(ks2i[m][l], &polscale[i][m][l]);
+               atomic_add(ks2k[m][l], &polscale[k][m][l]);
             }
          }
       }
@@ -139,7 +141,7 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
    }
 }
 
-void dexpol(const int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy,
+void dexpol_acc(const int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy,
    grad_prec* depz, VirialBuffer restrict vir_ep)
 {
    auto do_v = vers & calc::virial;
@@ -156,7 +158,7 @@ void dexpol(const int vers, const real (*uind)[3], grad_prec* depx, grad_prec* d
 
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(x,y,z,polarity,kpep,prepep,dmppep,lpep,uind,depx,depy,depz,vir_ep,mlst,polscale)
+               deviceptr(x,y,z,polarity,kpep,prepep,dmppep,lpep,uind,depx,depy,depz,vir_ep,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -220,7 +222,7 @@ void dexpol(const int vers, const real (*uind)[3], grad_prec* depx, grad_prec* d
 
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,polarity,kpep,prepep,dmppep,lpep,uind,depx,depy,depz,\
-                         vir_ep,mlst,mdwexclude,mdwexclude_scale,polscale)
+                         vir_ep,mlst,mdwexclude,mdwexclude_scale)
    for (int ii = 0; ii < nmdwexclude; ++ii) {
       int offset = ii & (bufsize - 1);
 

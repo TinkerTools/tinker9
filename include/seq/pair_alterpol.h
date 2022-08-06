@@ -38,9 +38,9 @@ inline void pair_alterpol(ExpolScr scrtyp, real r, real r2, real pscale, real cu
    ak[1] = -ai[1];
    ak[2] = -ai[2];
    #pragma acc loop seq
-   for (int i{0}; i < 3; ++i) {
+   for (int i = 0; i < 3; ++i) {
       #pragma acc loop seq
-      for (int j{0}; j < 3; ++j) {
+      for (int j = 0; j < 3; ++j) {
          ks2i[j][i] = p33i * ai[i] * ai[j];
          ks2k[j][i] = p33k * ak[i] * ak[j];
       }

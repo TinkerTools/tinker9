@@ -39,10 +39,13 @@ static void induceMutualPcg3(real (*uind)[3])
    TINKER_FCALL2(acc1, cu1, induceMutualPcg3, uind);
 }
 
-// TODO add cuda implementation later
-void induceMutualPcg4_acc(real (*)[3]);
+// void induceMutualPcg4_cu(real (*uind)[3]);
+void induceMutualPcg4_acc(real (*uind)[3]);
+// TINKER_FVOID2(acc1, cu1, induceMutualPcg4, real (*)[3]);
 static void induceMutualPcg4(real (*uind)[3])
 {
+   // TINKER_FCALL2(acc1, cu1, induceMutualPcg4, uind);
+   // induceMutualPcg4_cu(uind);
    induceMutualPcg4_acc(uind);
 }
 
