@@ -82,7 +82,7 @@ inline void pair_dexpol(ExpolScr scrtyp, real r, real r2, real pscale, real cut,
    zr = 0.;
    real dot = ai[0][2];
    real eps = 1. / REAL_SQRT(2);
-   if (abs(dot) >= eps) {
+   if (fabs(dot) > eps) {
       xr = 0.;
       yr = 1.;
       dot = ai[1][2];
@@ -90,10 +90,10 @@ inline void pair_dexpol(ExpolScr scrtyp, real r, real r2, real pscale, real cut,
    xr = xr - dot * ai[0][2];
    yr = yr - dot * ai[1][2];
    zr = zr - dot * ai[2][2];
-   r = REAL_SQRT(xr * xr + yr * yr + zr * zr);
-   ai[0][0] = xr / r;
-   ai[1][0] = yr / r;
-   ai[2][0] = zr / r;
+   real dr = REAL_SQRT(xr * xr + yr * yr + zr * zr);
+   ai[0][0] = xr / dr;
+   ai[1][0] = yr / dr;
+   ai[2][0] = zr / dr;
    ai[0][1] = ai[2][0] * ai[1][2] - ai[1][0] * ai[2][2];
    ai[1][1] = ai[0][0] * ai[2][2] - ai[2][0] * ai[0][2];
    ai[2][1] = ai[1][0] * ai[0][2] - ai[0][0] * ai[1][2];

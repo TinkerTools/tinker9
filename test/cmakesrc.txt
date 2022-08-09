@@ -13,6 +13,7 @@ chgtrn.cpp
 disp.cpp
 emhippo.cpp
 ephippo.cpp
+expol.cpp
 geom.cpp
 improp.cpp
 imptor.cpp
