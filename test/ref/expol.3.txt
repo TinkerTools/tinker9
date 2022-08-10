@@ -1,4 +1,4 @@
- expol.cpp -- Clwater
+ expol.cpp -- Cl- Water
 
  Energy Component Breakdown :           Kcal/mole        Interactions
  Polarization                         -4.26380832                3
