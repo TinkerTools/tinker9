@@ -65,7 +65,7 @@ static void angchg_acc1()
       if (rab != 0 and rcb != 0) {
          dot = xab * xcb + yab * ycb + zab * zcb;
          cosine = dot / (rab * rcb);
-         cosine = REAL_MIN(1.0, REAL_MAX(-1, cosine));
+         cosine = REAL_MIN((real)1, REAL_MAX((real)-1, cosine));
          angle = radian * REAL_ACOS(cosine);
 
          int ab = balist[i][0];
