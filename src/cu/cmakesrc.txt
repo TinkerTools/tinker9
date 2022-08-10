@@ -23,14 +23,13 @@ ehal.cu
 elj.cu
 epolarrecip.cu
 evalence.cu
-hippo/alterpol.cu
 hippo/cflux.cu
 hippo/echgtrn.cu
 hippo/edisp.cu
 hippo/empole.cu
 hippo/epolar.cu
 hippo/erepel.cu
-hippo/expolpcg.cu
+hippo/expol.cu
 hippo/field.cu
 hippo/pcg.cu
 hippo/precond.cu

@@ -34,14 +34,13 @@ estrtor.cpp
 etors.cpp
 etortor.cpp
 eurey.cpp
-hippo/alterpol.cpp
 hippo/cflux.cpp
 hippo/echgtrn.cpp
 hippo/edisp.cpp
 hippo/empole.cpp
 hippo/epolar.cpp
 hippo/erepel.cpp
-hippo/expolinduce.cpp
+hippo/expol.cpp
 hippo/field.cpp
 hippo/induce.cpp
 lflpiston.cpp
