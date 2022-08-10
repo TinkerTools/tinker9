@@ -43,27 +43,17 @@ void expolData(RcOp op)
    }
 }
 
-// void alterpol_cu(real (*polscale)[3][3], real (*polinv)[3][3]);
-// void alterpol_acc(real (*polscale)[3][3], real (*polinv)[3][3]);
 TINKER_FVOID2(acc1, cu1, alterpol, real (*)[3][3], real (*)[3][3]);
 void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
 {
    TINKER_FCALL2(acc1, cu1, alterpol, polscale, polinv);
-   // alterpol_cu(polscale, polinv);
-   // alterpol_acc(polscale, polinv);
 }
 
-// void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec*
-// depz, VirialBuffer restrict vir_ep);
-void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz,
-   VirialBuffer restrict vir_ep);
-TINKER_FVOID2(acc1, cu1, dexpol, int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy,
-   grad_prec* depz, VirialBuffer restrict vir_ep);
+TINKER_FVOID2(
+   acc1, cu1, dexpol, int, const real (*)[3], grad_prec*, grad_prec*, grad_prec*, VirialBuffer);
 void dexpol(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz,
-   VirialBuffer restrict vir_ep)
+   VirialBuffer vir_ep)
 {
    TINKER_FCALL2(acc1, cu1, dexpol, vers, uind, depx, depy, depz, vir_ep);
-   // dexpol_cu(vers, uind, depx, depy, depz, vir_ep);
-   // dexpol_acc(vers, uind, depx, depy, depz, vir_ep);
 }
 }

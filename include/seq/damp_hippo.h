@@ -1,6 +1,4 @@
 #pragma once
-#include "ff/hippo/expol.h"
-#include "ff/hippomod.h"
 #include "math/sinhc.h"
 #include "seq/seq.h"
 
@@ -609,30 +607,5 @@ inline void damp_rep(real* restrict dmpik, real r, real rr1, real r2, real rr3, 
       dmpik[5] = pfac * 2 * (s * d5s + 5 * ds * d4s + 10 * d2s * d3s);
    }
    // clang-format on
-}
-
-#pragma acc routine seq
-SEQ_CUDA
-inline void damp_expl(ExpolScr scrtyp, real& restrict s2, real& restrict ds2, real r, real sizik,
-   real alphai, real alphak, bool do_g)
-{
-   real alphaik, dmpik2, dampik, dampik2, expik, s;
-
-   if (scrtyp == ExpolScr::S2U) {
-      alphaik = REAL_SQRT(alphai * alphak);
-      constexpr real inv2 = 1. / 2, inv3 = 1. / 3;
-      constexpr real one = 1.;
-      dmpik2 = inv2 * alphaik;
-      dampik = dmpik2 * r;
-      dampik2 = dampik * dampik;
-      expik = REAL_EXP(-dampik);
-      s = (one + dampik + dampik2 * inv3) * expik;
-      s2 = s * s;
-      if (do_g)
-         ds2 = s * (-alphaik * inv3) * (dampik + dampik2) * expik;
-   }
-   s2 = sizik * s2;
-   if (do_g)
-      ds2 = sizik * ds2;
 }
 }

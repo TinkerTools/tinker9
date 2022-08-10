@@ -66,7 +66,7 @@ FULL_PAIRWISE_INTERACTION: |
   if ((eplk or @epli@) and r2 <= off * off and incl) {
     real r = REAL_SQRT(r2);
     real ks2i[3][3], ks2k[3][3];
-    pair_alterpol(scrtyp, r, r2, scaleb, cut, off, xr, yr, zr, @springi@, @sizi@, @alphai@,
+    pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, @springi@, @sizi@, @alphai@,
       springk, sizk, alphak, ks2i, ks2k);
     @psci00@ = ks2i[0][0];
     @psci01@ = ks2i[0][1];

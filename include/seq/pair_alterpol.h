@@ -1,24 +1,49 @@
 #pragma once
-#include "ff/hippomod.h"
 #include "math/switch.h"
-#include "seq/damp_hippo.h"
+#include "seq/seq.h"
 
 namespace tinker {
 #pragma acc routine seq
+template <bool DO_G>
 SEQ_CUDA
-inline void pair_alterpol(ExpolScr scrtyp, real r, real r2, real pscale, real cut, real off,
-   real xr, real yr, real zr, real springi, real sizi, real alphai, real springk, real sizk,
-   real alphak, real ks2i[3][3], real ks2k[3][3])
+inline void damp_expl(ExpolScr scrtyp, real& restrict s2, real& restrict ds2, real r, real sizik,
+   real alphai, real alphak)
 {
-   real cut2 = cut * cut;
+   constexpr real inv2 = 1. / 2, inv3 = 1. / 3;
+   constexpr real one = 1.;
+
+   real alphaik, dmpik2, dampik, dampik2, expik, s;
+
+   if (scrtyp == ExpolScr::S2U) {
+      alphaik = REAL_SQRT(alphai * alphak);
+      dmpik2 = inv2 * alphaik;
+      dampik = dmpik2 * r;
+      dampik2 = dampik * dampik;
+      expik = REAL_EXP(-dampik);
+      s = (one + dampik + dampik2 * inv3) * expik;
+      s2 = s * s;
+      if (DO_G)
+         ds2 = s * (-alphaik * inv3) * (dampik + dampik2) * expik;
+   }
+
+   s2 = sizik * s2;
+   if (DO_G)
+      ds2 = sizik * ds2;
+}
+
+SEQ_ROUTINE
+inline void pair_alterpol(ExpolScr scrtyp, real r, real pscale, real cut, real off, real xr,
+   real yr, real zr, real springi, real sizi, real alphai, real springk, real sizk, real alphak,
+   real ks2i[3][3], real ks2k[3][3])
+{
    real sizik = sizi * sizk;
    real s2;
    real ds2;
-   bool do_g = false;
 
-   damp_expl(scrtyp, s2, ds2, r, sizik, alphai, alphak, do_g);
+   constexpr bool DO_G = false;
+   damp_expl<DO_G>(scrtyp, s2, ds2, r, sizik, alphai, alphak);
 
-   if (r2 > cut2) {
+   if (r > cut) {
       real taper, dtaper;
       switchTaper5<0>(r, cut, off, taper, dtaper);
       s2 = s2 * taper;
@@ -28,40 +53,35 @@ inline void pair_alterpol(ExpolScr scrtyp, real r, real r2, real pscale, real cu
    p33i = springi * s2 * pscale;
    p33k = springk * s2 * pscale;
 
-   real ai[3], ak[3];
+   real ai[3]; // ak = -ai
 
    ai[0] = xr / r;
    ai[1] = yr / r;
    ai[2] = zr / r;
 
-   ak[0] = -ai[0];
-   ak[1] = -ai[1];
-   ak[2] = -ai[2];
    #pragma acc loop seq
    for (int i = 0; i < 3; ++i) {
       #pragma acc loop seq
       for (int j = 0; j < 3; ++j) {
          ks2i[j][i] = p33i * ai[i] * ai[j];
-         ks2k[j][i] = p33k * ak[i] * ak[j];
+         ks2k[j][i] = p33k * ai[i] * ai[j]; // ak_i * ak_j = ai_i * ai_j
       }
    }
 }
 
-#pragma acc routine seq
-SEQ_CUDA
-inline void pair_dexpol(ExpolScr scrtyp, real r, real r2, real pscale, real cut, real off, real xr,
-   real yr, real zr, real uix, real uiy, real uiz, real ukx, real uky, real ukz, real springi,
-   real sizi, real alphai, real springk, real sizk, real alphak, const real f, real frc[3])
+SEQ_ROUTINE
+inline void pair_dexpol(ExpolScr scrtyp, real r, real pscale, real cut, real off, real xr, real yr,
+   real zr, real uix, real uiy, real uiz, real ukx, real uky, real ukz, real springi, real sizi,
+   real alphai, real springk, real sizk, real alphak, const real f, real frc[3])
 {
-   real cut2 = cut * cut;
    real sizik = sizi * sizk;
    real s2;
    real ds2;
-   bool do_g = true;
 
-   damp_expl(scrtyp, s2, ds2, r, sizik, alphai, alphak, do_g);
+   constexpr bool DO_G = true;
+   damp_expl<DO_G>(scrtyp, s2, ds2, r, sizik, alphai, alphak);
 
-   if (r2 > cut2) {
+   if (r > cut) {
       real taper, dtaper;
       switchTaper5<1>(r, cut, off, taper, dtaper);
       ds2 = ds2 * taper + s2 * dtaper;

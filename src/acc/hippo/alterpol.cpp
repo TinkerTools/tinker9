@@ -67,8 +67,8 @@ void alterpol_acc(real (*polscale)[3][3], real (*polinv)[3][3])
             real sizk = prepep[k];
             real alphak = dmppep[k];
             real ks2i[3][3], ks2k[3][3];
-            pair_alterpol(scrtyp, r, r2, 1, cut, off, xr, yr, zr, springi, sizi, alphai, springk,
-               sizk, alphak, ks2i, ks2k);
+            pair_alterpol(scrtyp, r, 1, cut, off, xr, yr, zr, springi, sizi, alphai, springk, sizk,
+               alphak, ks2i, ks2k);
             #pragma acc loop seq
             for (int l = 0; l < 3; ++l) {
                #pragma acc loop seq
@@ -107,7 +107,7 @@ void alterpol_acc(real (*polscale)[3][3], real (*polinv)[3][3])
       if (r2 <= off2 and incl1 and incl2) {
          real r = REAL_SQRT(r2);
          real ks2i[3][3], ks2k[3][3];
-         pair_alterpol(scrtyp, r, r2, dscale, cut, off, xr, yr, zr, springi, sizi, alphai, springk,
+         pair_alterpol(scrtyp, r, dscale, cut, off, xr, yr, zr, springi, sizi, alphai, springk,
             sizk, alphak, ks2i, ks2k);
          #pragma acc loop seq
          for (int l = 0; l < 3; ++l) {
@@ -195,8 +195,8 @@ void dexpol_acc(const int vers, const real (*uind)[3], grad_prec* depx, grad_pre
             real uky = uind[k][1];
             real ukz = uind[k][2];
             real frc[3];
-            pair_dexpol(scrtyp, r, r2, 1, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz,
-               springi, sizi, alphai, springk, sizk, alphak, f, frc);
+            pair_dexpol(scrtyp, r, 1, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz, springi,
+               sizi, alphai, springk, sizk, alphak, f, frc);
             gxi += frc[0];
             gyi += frc[1];
             gzi += frc[2];
@@ -255,8 +255,8 @@ void dexpol_acc(const int vers, const real (*uind)[3], grad_prec* depx, grad_pre
       if (r2 <= off2 and incl1 and incl2) {
          real r = REAL_SQRT(r2);
          real frc[3];
-         pair_dexpol(scrtyp, r, r2, dscale, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz,
-            springi, sizi, alphai, springk, sizk, alphak, f, frc);
+         pair_dexpol(scrtyp, r, dscale, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz, springi,
+            sizi, alphai, springk, sizk, alphak, f, frc);
 
          atomic_add(frc[0], depx, i);
          atomic_add(frc[1], depy, i);

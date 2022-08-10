@@ -108,7 +108,7 @@ static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off,
       if ((eplk or epli[klane]) and r2 <= off * off and incl) {
          real r = REAL_SQRT(r2);
          real ks2i[3][3], ks2k[3][3];
-         pair_alterpol(scrtyp, r, r2, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
+         pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
             alphai[klane], springk, sizk, alphak, ks2i, ks2k);
          psci00[klane] = ks2i[0][0];
          psci01[klane] = ks2i[0][1];
@@ -212,7 +212,7 @@ static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off,
          if ((eplk or epli[klane]) and r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             real ks2i[3][3], ks2k[3][3];
-            pair_alterpol(scrtyp, r, r2, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
+            pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
                alphai[klane], springk, sizk, alphak, ks2i, ks2k);
             psci00[klane] = ks2i[0][0];
             psci01[klane] = ks2i[0][1];
@@ -310,7 +310,7 @@ static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off,
          if ((eplk or epli[klane]) and r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             real ks2i[3][3], ks2k[3][3];
-            pair_alterpol(scrtyp, r, r2, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
+            pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
                alphai[klane], springk, sizk, alphak, ks2i, ks2k);
             psci00[klane] = ks2i[0][0];
             psci01[klane] = ks2i[0][1];
@@ -515,9 +515,9 @@ void dexpol_cu1(int n, TINKER_IMAGE_PARAMS, VirialBuffer restrict vep, grad_prec
       if ((eplk or epli[klane]) and r2 <= off * off and incl) {
          real r = REAL_SQRT(r2);
          real frc[3];
-         pair_dexpol(scrtyp, r, r2, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane],
-            uiz[klane], ukx, uky, ukz, springi[klane] / poli[klane], sizi[klane], alphai[klane],
-            springk / polk, sizk, alphak, f, frc);
+         pair_dexpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane], uiz[klane],
+            ukx, uky, ukz, springi[klane] / poli[klane], sizi[klane], alphai[klane], springk / polk,
+            sizk, alphak, f, frc);
          frcxi[klane] += frc[0];
          frcyi[klane] += frc[1];
          frczi[klane] += frc[2];
@@ -607,8 +607,8 @@ void dexpol_cu1(int n, TINKER_IMAGE_PARAMS, VirialBuffer restrict vep, grad_prec
          if ((eplk or epli[klane]) and r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             real frc[3];
-            pair_dexpol(scrtyp, r, r2, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane],
-               uiz[klane], ukx, uky, ukz, springi[klane] / poli[klane], sizi[klane], alphai[klane],
+            pair_dexpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane], uiz[klane],
+               ukx, uky, ukz, springi[klane] / poli[klane], sizi[klane], alphai[klane],
                springk / polk, sizk, alphak, f, frc);
             frcxi[klane] += frc[0];
             frcyi[klane] += frc[1];
@@ -693,8 +693,8 @@ void dexpol_cu1(int n, TINKER_IMAGE_PARAMS, VirialBuffer restrict vep, grad_prec
          if ((eplk or epli[klane]) and r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             real frc[3];
-            pair_dexpol(scrtyp, r, r2, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane],
-               uiz[klane], ukx, uky, ukz, springi[klane] / poli[klane], sizi[klane], alphai[klane],
+            pair_dexpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane], uiz[klane],
+               ukx, uky, ukz, springi[klane] / poli[klane], sizi[klane], alphai[klane],
                springk / polk, sizk, alphak, f, frc);
             frcxi[klane] += frc[0];
             frcyi[klane] += frc[1];
