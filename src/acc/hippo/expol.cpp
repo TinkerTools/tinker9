@@ -408,11 +408,12 @@ void induceMutualPcg4_acc(real (*uind)[3])
    const real debye = units::debye;
    const real pcgpeek = polpcg::pcgpeek;
    const int maxiter = 100; // see also subroutine induce0a in induce.f
+   const int miniter = std::min(3, n);
 
    bool done = false;
    int iter = 0;
    real eps = 100;
-   real epsold;
+   // real epsold;
 
    while (not done) {
       ++iter;
@@ -436,8 +437,7 @@ void induceMutualPcg4_acc(real (*uind)[3])
       real a;
       a = darray::dotThenReturn(g::q0, n, conj, vec);
       // a <- r M r / p T p
-      if (a != 0)
-         a = sum / a;
+      if (a != 0) a = sum / a;
 
       // u <- u + a p
       // r <- r - a T p
@@ -466,8 +466,7 @@ void induceMutualPcg4_acc(real (*uind)[3])
       real sum1;
       sum1 = darray::dotThenReturn(g::q0, n, rsd, zrsd);
       b = sum1 / sum;
-      if (sum == 0)
-         b = 0;
+      if (sum == 0) b = 0;
 
       // calculate/update p
       #pragma acc parallel loop independent async\
@@ -482,7 +481,7 @@ void induceMutualPcg4_acc(real (*uind)[3])
 
       real epsd;
       epsd = darray::dotThenReturn(g::q0, n, rsd, rsd);
-      epsold = eps;
+      // epsold = eps;
       eps = epsd;
       eps = debye * REAL_SQRT(eps / n);
 
@@ -495,12 +494,10 @@ void induceMutualPcg4_acc(real (*uind)[3])
          print(stdout, " %8d       %-16.10f\n", iter, eps);
       }
 
-      if (eps < poleps)
-         done = true;
-      // if (eps > epsold)
-      //    done = true;
-      if (iter >= politer)
-         done = true;
+      if (eps < poleps) done = true;
+      // if (eps > epsold) done = true;
+      if (iter < miniter) done = false;
+      if (iter >= politer) done = true;
 
       // apply a "peek" iteration to the mutual induced dipoles
 
@@ -520,14 +517,13 @@ void induceMutualPcg4_acc(real (*uind)[3])
 
    if (debug) {
       print(stdout,
-         " Induced Dipoles :    Iterations %4d      RMS "
-         "Residual %14.10f\n",
+         " Induced Dipoles :    Iterations %4d      RMS"
+         " Residual %14.10f\n",
          iter, eps);
    }
 
    // terminate the calculation if dipoles failed to converge
 
-   // if (iter >= maxiter || eps > epsold) {
    if (iter >= maxiter) {
       printError();
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
