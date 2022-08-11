@@ -238,7 +238,7 @@ void epolarChgpen(int vers)
    if (use_cfgrad)
       dcflux(vers, depx, depy, depz, vir_ep);
    if (polpot::use_expol and do_g)
-      dexpol(vers, uind, depx, depy, depz, vir_ep);
+      dexpol(vers);
    if (do_v) {
       VirialBuffer u2 = vir_trq;
       virial_prec v2[9];

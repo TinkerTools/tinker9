@@ -1,5 +1,6 @@
 #include "ff/amoebamod.h"
 #include "ff/elec.h"
+#include "ff/hippo/expol.h"
 #include "ff/hippomod.h"
 #include "ff/image.h"
 #include "ff/spatial.h"

@@ -1,4 +1,5 @@
 #include "ff/hippo/expol.h"
+#include "ff/amoebamod.h"
 #include "ff/atom.h"
 #include "ff/hippomod.h"
 #include "tool/darray.h"
@@ -50,8 +51,7 @@ void alterpol(real (*polscale)[3][3], real (*polinv)[3][3])
 
 TINKER_FVOID2(acc1, cu1, dexpol, //
    int, const real (*)[3], grad_prec*, grad_prec*, grad_prec*, VirialBuffer);
-void dexpol(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz,
-   VirialBuffer vir_ep)
+void dexpol(int vers)
 {
    TINKER_FCALL2(acc1, cu1, dexpol, vers, uind, depx, depy, depz, vir_ep);
 }

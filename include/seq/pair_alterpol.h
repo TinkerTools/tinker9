@@ -1,4 +1,5 @@
 #pragma once
+#include "ff/hippo/expolscr.h"
 #include "math/switch.h"
 #include "seq/seq.h"
 
