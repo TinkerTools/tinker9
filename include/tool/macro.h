@@ -38,6 +38,10 @@
 #ifdef TINKER_CLANG
 #   pragma clang diagnostic ignored "-Wextern-c-compat"
 #endif
+#ifdef __NVCC_DIAG_PRAGMA_SUPPORT__
+// #20199-D: unrecognized #pragma in device code
+#pragma nv_diag_suppress 20199
+#endif
 
 //====================================================================//
 

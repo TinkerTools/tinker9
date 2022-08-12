@@ -1,7 +1,6 @@
 #include "ff/amoebamod.h"
 #include "ff/atom.h"
 #include "ff/elec.h"
-#include "ff/hippo/expol.h"
 #include "ff/hippomod.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
@@ -9,7 +8,6 @@
 #include "seq/add.h"
 #include "seq/pair_alterpol.h"
 #include "tool/gpucard.h"
-#include <tinker/routines.h>
 
 namespace tinker {
 void alterpol_acc(real (*polscale)[3][3], real (*polinv)[3][3])
@@ -281,12 +279,8 @@ void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* dep
 }
 
 #include "ff/amoeba/induce.h"
-#include "ff/amoebamod.h"
-#include "ff/atom.h"
+#include "ff/hippo/expol.h"
 #include "ff/hippo/induce.h"
-#include "ff/hippomod.h"
-#include "ff/switch.h"
-#include "tool/darray.h"
 #include "tool/error.h"
 #include "tool/ioprint.h"
 #include <tinker/detail/inform.hh>
