@@ -735,7 +735,7 @@ void dexpol_cu1(int n, TINKER_IMAGE_PARAMS, VirialBuffer restrict vep, grad_prec
 }
 
 void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz,
-   VirialBuffer restrict vir_ep)
+   VirialBuffer vir_ep)
 {
    const auto& st = *mspatial_v2_unit;
    real cut = switchCut(Switch::REPULS);
@@ -766,6 +766,7 @@ void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy
 #include "ff/amoeba/induce.h"
 #include "ff/amoebamod.h"
 #include "ff/atom.h"
+#include "ff/cuinduce.h"
 #include "ff/hippo/induce.h"
 #include "ff/hippomod.h"
 #include "ff/switch.h"
@@ -780,20 +781,7 @@ void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy
 
 namespace tinker {
 __global__
-void eppcgUdirDonly(
-   int n, const real* restrict polarity, real (*restrict udir)[3], const real (*restrict field)[3])
-{
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      real poli = polarity[i];
-      #pragma unroll
-      for (int j = 0; j < 3; ++j) {
-         udir[i][j] = poli * field[i][j];
-      }
-   }
-}
-
-__global__
-void eppcgUdirGuess(int n, const real* restrict polarity, real (*restrict uind)[3],
+static void eppcgUdirGuess(int n, const real* restrict polarity, real (*restrict uind)[3],
    const real (*restrict field)[3], const real (*restrict polinv)[3][3])
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
@@ -803,24 +791,6 @@ void eppcgUdirGuess(int n, const real* restrict polarity, real (*restrict uind)[
          uind[i][j] = poli *
             (polinv[i][0][j] * field[i][0] + polinv[i][1][j] * field[i][1] +
                polinv[i][2][j] * field[i][2]);
-      }
-   }
-}
-
-__global__
-void eppcgRsd2(int n, const real* restrict polarity_inv, //
-   real (*restrict rsd)[3],                              //
-   const real (*restrict udir)[3], const real (*restrict uind)[3], const real (*restrict field)[3],
-   const real (*restrict polscale)[3][3])
-{
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      real poli_inv = polarity_inv[i];
-      #pragma unroll
-      for (int j = 0; j < 3; ++j) {
-         rsd[i][j] = (udir[i][j] - uind[i][0] * polscale[i][0][j] - uind[i][1] * polscale[i][1][j] -
-                        uind[i][2] * polscale[i][2][j]) *
-               poli_inv +
-            field[i][j];
       }
    }
 }
@@ -921,7 +891,7 @@ void induceMutualPcg4_cu(real (*uind)[3])
    // get the electrostatic field due to permanent multipoles
    dfieldChgpen(field);
    // direct induced dipoles
-   launch_k1s(g::s0, n, eppcgUdirDonly, n, polarity, udir, field);
+   launch_k1s(g::s0, n, pcgUdirV1, n, polarity, udir, field);
 
    alterpol(polscale, polinv);
 
@@ -936,7 +906,7 @@ void induceMutualPcg4_cu(real (*uind)[3])
 
    if (predict) {
       ufieldChgpen(uind, field);
-      launch_k1s(g::s0, n, eppcgRsd2, n, polarity_inv, rsd, udir, uind, field, polscale);
+      launch_k1s(g::s0, n, pcgRsd0V3, n, polarity_inv, rsd, udir, uind, field, polscale);
    } else if (dirguess) {
       // uind is used here instead of udir since without exchange polarization udir = uind
       // but with exchange polarization udir != uind (for dirguess).

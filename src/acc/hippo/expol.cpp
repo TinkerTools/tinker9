@@ -142,8 +142,8 @@ void alterpol_acc(real (*polscale)[3][3], real (*polinv)[3][3])
    }
 }
 
-void dexpol_acc(const int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy,
-   grad_prec* depz, VirialBuffer restrict vir_ep)
+void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz,
+   VirialBuffer vir_ep)
 {
    auto do_v = vers & calc::virial;
    real cut = switchCut(Switch::REPULS);

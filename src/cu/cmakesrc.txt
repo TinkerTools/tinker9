@@ -33,6 +33,7 @@ hippo/expol.cu
 hippo/field.cu
 hippo/pcg.cu
 hippo/precond.cu
+induce.cu
 mathparallel.cu
 mathzero.cu
 mdhc.cu
