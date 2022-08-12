@@ -111,24 +111,24 @@ static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off,
          real ks2i[3][3], ks2k[3][3];
          pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
             alphai[klane], springk, sizk, alphak, ks2i, ks2k);
-         psci00[klane] = ks2i[0][0];
-         psci01[klane] = ks2i[0][1];
-         psci02[klane] = ks2i[0][2];
-         psci10[klane] = ks2i[1][0];
-         psci11[klane] = ks2i[1][1];
-         psci12[klane] = ks2i[1][2];
-         psci20[klane] = ks2i[2][0];
-         psci21[klane] = ks2i[2][1];
-         psci22[klane] = ks2i[2][2];
-         psck00 = ks2k[0][0];
-         psck01 = ks2k[0][1];
-         psck02 = ks2k[0][2];
-         psck10 = ks2k[1][0];
-         psck11 = ks2k[1][1];
-         psck12 = ks2k[1][2];
-         psck20 = ks2k[2][0];
-         psck21 = ks2k[2][1];
-         psck22 = ks2k[2][2];
+         psci00[klane] += ks2i[0][0];
+         psci01[klane] += ks2i[0][1];
+         psci02[klane] += ks2i[0][2];
+         psci10[klane] += ks2i[1][0];
+         psci11[klane] += ks2i[1][1];
+         psci12[klane] += ks2i[1][2];
+         psci20[klane] += ks2i[2][0];
+         psci21[klane] += ks2i[2][1];
+         psci22[klane] += ks2i[2][2];
+         psck00 += ks2k[0][0];
+         psck01 += ks2k[0][1];
+         psck02 += ks2k[0][2];
+         psck10 += ks2k[1][0];
+         psck11 += ks2k[1][1];
+         psck12 += ks2k[1][2];
+         psck20 += ks2k[2][0];
+         psck21 += ks2k[2][1];
+         psck22 += ks2k[2][2];
       }
 
       atomic_add(psci00[threadIdx.x], &polscale[i][0]);
@@ -215,24 +215,24 @@ static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off,
             real ks2i[3][3], ks2k[3][3];
             pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
                alphai[klane], springk, sizk, alphak, ks2i, ks2k);
-            psci00[klane] = ks2i[0][0];
-            psci01[klane] = ks2i[0][1];
-            psci02[klane] = ks2i[0][2];
-            psci10[klane] = ks2i[1][0];
-            psci11[klane] = ks2i[1][1];
-            psci12[klane] = ks2i[1][2];
-            psci20[klane] = ks2i[2][0];
-            psci21[klane] = ks2i[2][1];
-            psci22[klane] = ks2i[2][2];
-            psck00 = ks2k[0][0];
-            psck01 = ks2k[0][1];
-            psck02 = ks2k[0][2];
-            psck10 = ks2k[1][0];
-            psck11 = ks2k[1][1];
-            psck12 = ks2k[1][2];
-            psck20 = ks2k[2][0];
-            psck21 = ks2k[2][1];
-            psck22 = ks2k[2][2];
+            psci00[klane] += ks2i[0][0];
+            psci01[klane] += ks2i[0][1];
+            psci02[klane] += ks2i[0][2];
+            psci10[klane] += ks2i[1][0];
+            psci11[klane] += ks2i[1][1];
+            psci12[klane] += ks2i[1][2];
+            psci20[klane] += ks2i[2][0];
+            psci21[klane] += ks2i[2][1];
+            psci22[klane] += ks2i[2][2];
+            psck00 += ks2k[0][0];
+            psck01 += ks2k[0][1];
+            psck02 += ks2k[0][2];
+            psck10 += ks2k[1][0];
+            psck11 += ks2k[1][1];
+            psck12 += ks2k[1][2];
+            psck20 += ks2k[2][0];
+            psck21 += ks2k[2][1];
+            psck22 += ks2k[2][2];
          }
 
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
@@ -313,24 +313,24 @@ static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off,
             real ks2i[3][3], ks2k[3][3];
             pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
                alphai[klane], springk, sizk, alphak, ks2i, ks2k);
-            psci00[klane] = ks2i[0][0];
-            psci01[klane] = ks2i[0][1];
-            psci02[klane] = ks2i[0][2];
-            psci10[klane] = ks2i[1][0];
-            psci11[klane] = ks2i[1][1];
-            psci12[klane] = ks2i[1][2];
-            psci20[klane] = ks2i[2][0];
-            psci21[klane] = ks2i[2][1];
-            psci22[klane] = ks2i[2][2];
-            psck00 = ks2k[0][0];
-            psck01 = ks2k[0][1];
-            psck02 = ks2k[0][2];
-            psck10 = ks2k[1][0];
-            psck11 = ks2k[1][1];
-            psck12 = ks2k[1][2];
-            psck20 = ks2k[2][0];
-            psck21 = ks2k[2][1];
-            psck22 = ks2k[2][2];
+            psci00[klane] += ks2i[0][0];
+            psci01[klane] += ks2i[0][1];
+            psci02[klane] += ks2i[0][2];
+            psci10[klane] += ks2i[1][0];
+            psci11[klane] += ks2i[1][1];
+            psci12[klane] += ks2i[1][2];
+            psci20[klane] += ks2i[2][0];
+            psci21[klane] += ks2i[2][1];
+            psci22[klane] += ks2i[2][2];
+            psck00 += ks2k[0][0];
+            psck01 += ks2k[0][1];
+            psck02 += ks2k[0][2];
+            psck10 += ks2k[1][0];
+            psck11 += ks2k[1][1];
+            psck12 += ks2k[1][2];
+            psck20 += ks2k[2][0];
+            psck21 += ks2k[2][1];
+            psck22 += ks2k[2][2];
          }
       }
 
@@ -861,8 +861,7 @@ void eppcgP5(int n, const real* restrict polarity, //
 {
    real kaval = *ka;
    real a = *ksum / kaval;
-   if (kaval == 0)
-      a = 0;
+   if (kaval == 0) a = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
@@ -883,8 +882,7 @@ void eppcgP6(int n, const real* restrict ksum, const real* restrict ksum1, real 
 {
    real ksumval = *ksum;
    real b = *ksum1 / ksumval;
-   if (ksumval == 0)
-      b = 0;
+   if (ksumval == 0) b = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j)
@@ -968,11 +966,12 @@ void induceMutualPcg4_cu(real (*uind)[3])
    const real debye = units::debye;
    const real pcgpeek = polpcg::pcgpeek;
    const int maxiter = 100; // see also subroutine induce0a in induce.f
+   const int miniter = std::min(3, n);
 
    bool done = false;
    int iter = 0;
    real eps = 100;
-   real epsold;
+   // real epsold;
 
    while (not done) {
       ++iter;
@@ -1013,7 +1012,7 @@ void induceMutualPcg4_cu(real (*uind)[3])
       check_rt(
          cudaMemcpyAsync((real*)pinned_buf, epsd, sizeof(real), cudaMemcpyDeviceToHost, g::s0));
       check_rt(cudaStreamSynchronize(g::s0));
-      epsold = eps;
+      // epsold = eps;
       eps = ((real*)pinned_buf)[0];
       eps = debye * REAL_SQRT(eps / n);
 
@@ -1026,16 +1025,13 @@ void induceMutualPcg4_cu(real (*uind)[3])
          print(stdout, " %8d       %-16.10f\n", iter, eps);
       }
 
-      if (eps < poleps)
-         done = true;
-      if (eps > epsold)
-         done = true;
-      if (iter >= politer)
-         done = true;
+      if (eps < poleps) done = true;
+      // if (eps > epsold) done = true;
+      if (iter < miniter) done = false;
+      if (iter >= politer) done = true;
 
       // apply a "peek" iteration to the mutual induced dipoles
-      if (done)
-         launch_k1s(g::s0, n, eppcgPeek1, n, pcgpeek, polarity, uind, rsd);
+      if (done) launch_k1s(g::s0, n, eppcgPeek1, n, pcgpeek, polarity, uind, rsd);
    }
 
    // print the results from the conjugate gradient iteration
@@ -1047,7 +1043,7 @@ void induceMutualPcg4_cu(real (*uind)[3])
    }
 
    // terminate the calculation if dipoles failed to converge
-   if (iter >= maxiter || eps > epsold) {
+   if (iter >= maxiter) {
       printError();
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }

@@ -129,7 +129,7 @@ TEST_CASE("ExchangePolarization-3", "[ff][hippo][expol]")
    int argc = 4;
 
    const double eps_e = testGetEps(0.0001, 0.0001);
-   const double eps_g = testGetEps(0.0001, 0.0001);
+   const double eps_g = testGetEps(0.0002, 0.0001);
    const double eps_v = testGetEps(0.001, 0.001);
 
    TestReference r(TINKER9_DIRSTR "/test/ref/expol.3.txt");

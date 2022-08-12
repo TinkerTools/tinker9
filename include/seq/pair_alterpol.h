@@ -23,13 +23,11 @@ inline void damp_expl(ExpolScr scrtyp, real& restrict s2, real& restrict ds2, re
       expik = REAL_EXP(-dampik);
       s = (one + dampik + dampik2 * inv3) * expik;
       s2 = s * s;
-      if (DO_G)
-         ds2 = s * (-alphaik * inv3) * (dampik + dampik2) * expik;
+      if (DO_G) ds2 = s * (-alphaik * inv3) * (dampik + dampik2) * expik;
    }
 
    s2 = sizik * s2;
-   if (DO_G)
-      ds2 = sizik * ds2;
+   if (DO_G) ds2 = sizik * ds2;
 }
 
 SEQ_ROUTINE
@@ -136,8 +134,8 @@ inline void pair_dexpol(ExpolScr scrtyp, real r, real pscale, real cut, real off
    real ukxl = -(ukx * ak[0][0] + uky * ak[1][0] + ukz * ak[2][0]);
    real ukyl = -(ukx * ak[0][1] + uky * ak[1][1] + ukz * ak[2][1]);
    real ukzl = -(ukx * ak[0][2] + uky * ak[1][2] + ukz * ak[2][2]);
-   frcil[2] = REAL_POW(uizl, 2) * ds2i;
-   frckl[2] = REAL_POW(ukzl, 2) * ds2k;
+   frcil[2] = uizl * uizl * ds2i;
+   frckl[2] = ukzl * ukzl * ds2k;
    // local frame torque
    constexpr real two = 2.;
    real tqxil = two * uiyl * uizl * s2i;
