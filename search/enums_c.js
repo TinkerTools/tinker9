@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['vdw_0',['Vdw',['../group__vdw.html#ga0d7208589eb41e900a617e7d1a72524b',1,'tinker']]]
+  ['upred_0',['UPred',['../namespacetinker.html#a3125ba69b9da41e85920605f54c8b6a4',1,'tinker']]]
 ];

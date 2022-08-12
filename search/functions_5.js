@@ -60,7 +60,7 @@ var searchData=
   ['epolarchgpenewaldrecipself_57',['epolarChgpenEwaldRecipSelf',['../group__hippopolar.html#ga67869695883fb31f156d7d1c136599a8',1,'tinker']]],
   ['epolardata_58',['epolarData',['../group__polar.html#ga0fdbb18ea5a36da817117affd35b6071',1,'tinker']]],
   ['epolarewaldrecipself_59',['epolarEwaldRecipSelf',['../group__polar.html#ga5e19da1ee09f5af237504716b433a458',1,'tinker']]],
-  ['eq_60',['eq',['../group__acc__syntax.html#ga8a768ea49f35fd0f7240752ddb711629',1,'tinker::eq()'],['../group__cuda__syntax.html#ga19e6a29d0385cd8f27e67d20fccdc83f',1,'tinker::eq()']]],
+  ['eq_60',['eq',['../group__cuda__syntax.html#ga19e6a29d0385cd8f27e67d20fccdc83f',1,'tinker::eq()'],['../group__acc__syntax.html#ga8a768ea49f35fd0f7240752ddb711629',1,'tinker::eq()']]],
   ['erepel_61',['erepel',['../group__repel.html#ga5da75d11f5fe291058f07dab773c6da7',1,'tinker']]],
   ['erepeldata_62',['erepelData',['../group__repel.html#ga7955042fb09128a08abfdea70999339c',1,'tinker']]],
   ['estrbnd_63',['estrbnd',['../group__strbnd.html#ga78dda77b3716af65db8f12c8dbb0c809',1,'tinker']]],
@@ -76,5 +76,6 @@ var searchData=
   ['evalence_73',['evalence',['../group__bonded.html#gaedc7fe2c9c920b5ed5090b7e0f43a1bd',1,'tinker']]],
   ['evdw_74',['evdw',['../group__vdw.html#ga6ad396cf45ab7713c7e9fcf28e839f7b',1,'tinker']]],
   ['evdwdata_75',['evdwData',['../group__vdw.html#gadbe2cc7bb0ba86658d4017b0fb6795d9',1,'tinker']]],
-  ['exec_76',['exec',['../group__platform.html#ga70dfce28e781db804b4dcc930116329d',1,'tinker']]]
+  ['exec_76',['exec',['../group__platform.html#ga70dfce28e781db804b4dcc930116329d',1,'tinker']]],
+  ['expoldata_77',['expolData',['../namespacetinker.html#a4258b5bc79fbc2b9b18160b4f19bc1ea',1,'tinker']]]
 ];

@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;6638f9f (Mon Aug 1 13:28:44 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;174bbe4 (Fri Aug 12 16:17:20 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -146,13 +146,13 @@ $(function() {
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> G, <span class="keyword">class</span> T&gt;</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>__device__</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga13b8f3f083445e998421fb82e5b192be">   79</a></span><span class="keyword">inline</span> G <a class="code hl_function" href="group__acc__syntax.html#ga3c5c70c14c0708cd64583bd1b5db5a6f">floatTo</a>(T val)</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="group__cuda__syntax.html#ga13b8f3f083445e998421fb82e5b192be">   79</a></span><span class="keyword">inline</span> <a class="code hl_enumvalue" href="namespacetinker.html#ac9f78e8319fe03dc7c6b30d31e85e1e8adfcf28d0734569a6a693bc8194de62bf">G</a> <a class="code hl_function" href="group__acc__syntax.html#ga3c5c70c14c0708cd64583bd1b5db5a6f">floatTo</a>(T val)</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>{</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>   <span class="keyword">static_assert</span>(std::is_same&lt;T, float&gt;::value || std::is_same&lt;T, double&gt;::value, <span class="stringliteral">&quot;&quot;</span>);</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>   <span class="keywordflow">if</span> <a class="code hl_define" href="group__cpp__syntax.html#gacaa06fbc27c59926a41e7575667e5280">CONSTEXPR</a> (std::is_same&lt;G, fixed&gt;::value)</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>      <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>G<span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">long</span> <span class="keywordtype">long</span><span class="keyword">&gt;</span>(val * 0x100000000ull));</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>      <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><a class="code hl_enumvalue" href="namespacetinker.html#ac9f78e8319fe03dc7c6b30d31e85e1e8adfcf28d0734569a6a693bc8194de62bf">G</a><span class="keyword">&gt;</span>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">long</span> <span class="keywordtype">long</span><span class="keyword">&gt;</span>(val * 0x100000000ull));</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>   <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>      <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>G<span class="keyword">&gt;</span>(val);</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>      <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><a class="code hl_enumvalue" href="namespacetinker.html#ac9f78e8319fe03dc7c6b30d31e85e1e8adfcf28d0734569a6a693bc8194de62bf">G</a><span class="keyword">&gt;</span>(val);</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>}</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
@@ -197,9 +197,10 @@ $(function() {
 <div class="ttc" id="agroup__acc__syntax_html_ga47b708b2c42affd1f96e149525f3f15b"><div class="ttname"><a href="group__acc__syntax.html#ga47b708b2c42affd1f96e149525f3f15b">tinker::fixedTo</a></div><div class="ttdeci">T fixedTo(fixed val)</div><div class="ttdoc">Converts val of fixed-point to floating-point.</div><div class="ttdef"><b>Definition:</b> acc/adddef.h:77</div></div>
 <div class="ttc" id="agroup__acc__syntax_html_ga6f53a25dbbcf814dd75b8d35d784d472"><div class="ttname"><a href="group__acc__syntax.html#ga6f53a25dbbcf814dd75b8d35d784d472">tinker::atomic_add</a></div><div class="ttdeci">void atomic_add(T value, T *buffer, size_t offset=0)</div><div class="ttdef"><b>Definition:</b> acc/adddef.h:14</div></div>
 <div class="ttc" id="agroup__acc__syntax_html_ga8a768ea49f35fd0f7240752ddb711629"><div class="ttname"><a href="group__acc__syntax.html#ga8a768ea49f35fd0f7240752ddb711629">tinker::eq</a></div><div class="ttdeci">constexpr bool eq()</div><div class="ttdoc">Used as eq&lt;T1,T2&gt;() for two type identifiers.</div><div class="ttdef"><b>Definition:</b> acc/adddef.h:108</div></div>
-<div class="ttc" id="agroup__cpp__syntax_html_gacaa06fbc27c59926a41e7575667e5280"><div class="ttname"><a href="group__cpp__syntax.html#gacaa06fbc27c59926a41e7575667e5280">CONSTEXPR</a></div><div class="ttdeci">#define CONSTEXPR</div><div class="ttdef"><b>Definition:</b> macro.h:57</div></div>
+<div class="ttc" id="agroup__cpp__syntax_html_gacaa06fbc27c59926a41e7575667e5280"><div class="ttname"><a href="group__cpp__syntax.html#gacaa06fbc27c59926a41e7575667e5280">CONSTEXPR</a></div><div class="ttdeci">#define CONSTEXPR</div><div class="ttdef"><b>Definition:</b> macro.h:61</div></div>
 <div class="ttc" id="agroup__prec_html_ga95b098320737289b637d13efebb5f74d"><div class="ttname"><a href="group__prec.html#ga95b098320737289b637d13efebb5f74d">tinker::fixed</a></div><div class="ttdeci">unsigned long long fixed</div><div class="ttdef"><b>Definition:</b> precision.h:68</div></div>
 <div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="anamespacetinker_html_ac9f78e8319fe03dc7c6b30d31e85e1e8adfcf28d0734569a6a693bc8194de62bf"><div class="ttname"><a href="namespacetinker.html#ac9f78e8319fe03dc7c6b30d31e85e1e8adfcf28d0734569a6a693bc8194de62bf">tinker::ExpolScr::G</a></div><div class="ttdeci">@ G</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -73,7 +73,7 @@ var searchData=
   ['enableenumbitmask_3c_20resourceoperation_20_3e_70',['EnableEnumBitMask&lt; ResourceOperation &gt;',['../structtinker_1_1_enable_enum_bit_mask_3_01_resource_operation_01_4.html',1,'tinker']]],
   ['endcopyout_71',['endCopyout',['../group__async.html#ae68a81d3cbe378b26441666a29ddbeaf',1,'tinker::v1::ExecQ']]],
   ['energy_72',['Energy',['../group__egv.html',1,'']]],
-  ['energy_73',['energy',['../group__egv.html#gaf59b2838238604f0d1fb4582c7b0d84c',1,'tinker::energy(int vers, unsigned tsflag, const TimeScaleConfig &amp;tsconfig)'],['../group__egv.html#ga6de3f41e1e5a4280a6fd8f9edce1fdda',1,'tinker::energy(int vers)'],['../group__rc.html#acb564bf4d2a501a53068564ce9ef65d9',1,'tinker::calc::energy()']]],
+  ['energy_73',['energy',['../group__egv.html#ga6de3f41e1e5a4280a6fd8f9edce1fdda',1,'tinker::energy(int vers)'],['../group__egv.html#gaf59b2838238604f0d1fb4582c7b0d84c',1,'tinker::energy(int vers, unsigned tsflag, const TimeScaleConfig &amp;tsconfig)'],['../group__rc.html#acb564bf4d2a501a53068564ce9ef65d9',1,'tinker::calc::energy()']]],
   ['energy_5fcore_74',['energy_core',['../group__egv.html#ga209441fda9a531eb4f7cca67df0b295d',1,'tinker']]],
   ['energy_5fea_75',['energy_ea',['../group__angle.html#gafade0e9f65f8c672b537eccfe22bd642',1,'tinker']]],
   ['energy_5feat_76',['energy_eat',['../group__tors.html#ga4260f500e990d983545b6705f12da8c1',1,'tinker']]],
@@ -156,5 +156,7 @@ var searchData=
   ['ewald_153',['EWALD',['../class_e_w_a_l_d.html',1,'EWALD'],['../group__ff.html#gga353da3f15f014bc8713fbc185d1a3c81aacea508c52b77cb2b529034dd9e25e43',1,'tinker::EWALD()']]],
   ['exec_154',['exec',['../group__platform.html#ga70dfce28e781db804b4dcc930116329d',1,'tinker']]],
   ['execq_155',['ExecQ',['../group__async.html#classtinker_1_1v1_1_1_exec_q',1,'tinker::ExecQ'],['../group__async.html#classtinker_1_1v1_1_1_exec_q',1,'tinker::v1::ExecQ']]],
-  ['extra_156',['EXTRA',['../group__ff.html#ggab46845f608a7164581dfe4b9a8ef4f10aa21f6af4d39dbd2643527651dd4e694b',1,'tinker']]]
+  ['expoldata_156',['expolData',['../namespacetinker.html#a4258b5bc79fbc2b9b18160b4f19bc1ea',1,'tinker']]],
+  ['expolscr_157',['ExpolScr',['../namespacetinker.html#ac9f78e8319fe03dc7c6b30d31e85e1e8',1,'tinker']]],
+  ['extra_158',['EXTRA',['../group__ff.html#ggab46845f608a7164581dfe4b9a8ef4f10aa21f6af4d39dbd2643527651dd4e694b',1,'tinker']]]
 ];

@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['resourceoperation_0',['ResourceOperation',['../group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa',1,'tinker']]]
+  ['platform_0',['Platform',['../group__platform.html#gabe00d9e69e7c7dd0f43eaab9bcf13a99',1,'tinker']]],
+  ['potent_1',['Potent',['../group__ff.html#gab46845f608a7164581dfe4b9a8ef4f10',1,'tinker']]],
+  ['propagatorenum_2',['PropagatorEnum',['../group__mdintg.html#gaeaf0ea94fb47f9ccf176ab1db2d26fc5',1,'tinker']]]
 ];
