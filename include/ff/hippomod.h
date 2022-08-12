@@ -2,6 +2,7 @@
 #include "ff/energybuffer.h"
 #include "ff/hippo/chgpen.h"
 #include "ff/hippo/echgtrn.h"
+#include "ff/hippo/expolscr.h"
 
 // mplpot
 namespace tinker {
@@ -40,10 +41,6 @@ TINKER_EXTERN int nmdwexclude;
 TINKER_EXTERN int (*mdwexclude)[2];
 TINKER_EXTERN real (*mdwexclude_scale)[3];
 
-TINKER_EXTERN int ndexclude;
-TINKER_EXTERN int (*dexclude)[2];
-TINKER_EXTERN real* dexclude_scale;
-
 TINKER_EXTERN int nwexclude;
 TINKER_EXTERN int (*wexclude)[2];
 TINKER_EXTERN real* wexclude_scale;
@@ -64,4 +61,15 @@ TINKER_EXTERN energy_prec energy_ect;
 TINKER_EXTERN virial_prec virial_ect[9];
 
 TINKER_EXTERN Chgtrn ctrntyp;
+}
+
+// expol
+namespace tinker {
+TINKER_EXTERN real* kpep;
+TINKER_EXTERN real* prepep;
+TINKER_EXTERN real* dmppep;
+TINKER_EXTERN int* lpep;
+TINKER_EXTERN real (*polscale)[3][3];
+TINKER_EXTERN real (*polinv)[3][3];
+TINKER_EXTERN ExpolScr scrtyp;
 }

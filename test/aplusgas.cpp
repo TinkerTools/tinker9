@@ -21,7 +21,7 @@ TEST_CASE("APlus-Gas-Alyz", "[ff][aplus]")
    auto ref_g = r.getGradient();
 
    const double eps_e = testGetEps(0.0030, 0.0001);
-   const double eps_g = testGetEps(0.0010, 0.0001);
+   const double eps_g = testGetEps(0.0013, 0.0001);
    const double eps_v = testGetEps(0.002, 0.001);
 
    const char* argv[] = {"dummy", xn};
@@ -77,7 +77,7 @@ TEST_CASE("APlus-Gas", "[ff][aplus]")
    auto ref_g = r.getGradient();
 
    const double eps_e = testGetEps(0.0030, 0.0001);
-   const double eps_g = testGetEps(0.0010, 0.0001);
+   const double eps_g = testGetEps(0.0013, 0.0001);
    const double eps_v = testGetEps(0.002, 0.001);
 
    const char* argv[] = {"dummy", xn};

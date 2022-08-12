@@ -40,6 +40,7 @@ hippo/edisp.cpp
 hippo/empole.cpp
 hippo/epolar.cpp
 hippo/erepel.cpp
+hippo/expol.cpp
 hippo/field.cpp
 hippo/induce.cpp
 lflpiston.cpp

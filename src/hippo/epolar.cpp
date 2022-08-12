@@ -4,6 +4,7 @@
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/hippo/cflux.h"
+#include "ff/hippo/expol.h"
 #include "ff/hippo/induce.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
@@ -236,6 +237,8 @@ void epolarChgpen(int vers)
    torque(vers, depx, depy, depz);
    if (use_cfgrad)
       dcflux(vers, depx, depy, depz, vir_ep);
+   if (polpot::use_expol and do_g)
+      dexpol(vers);
    if (do_v) {
       VirialBuffer u2 = vir_trq;
       virial_prec v2[9];

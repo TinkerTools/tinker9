@@ -1,0 +1,89 @@
+KERNEL_NAME: alterpol_cu1
+
+CUT_DISTANCE:
+  - 'cut'
+
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - 'dinfo'
+
+SCALE_1X_TYPE: real3_const_array,1
+
+EXTRA_PARAMS: |
+  , real (*restrict polscale)[9]
+  , const real* restrict kpep, const real* restrict prepep
+  , const real* restrict dmppep, const int* restrict lpep
+  , ExpolScr scrtyp
+
+I_POSITION:
+  - def: shared real xi from:x
+  - def: shared real yi from:y
+  - def: shared real zi from:z
+K_POSITION:
+  - def: register real xk from:x
+  - def: register real yk from:y
+  - def: register real zk from:z
+
+I_FORCE:
+  - def: shared real psci00 addto:polscale,0
+  - def: shared real psci01 addto:polscale,1
+  - def: shared real psci02 addto:polscale,2
+  - def: shared real psci10 addto:polscale,3
+  - def: shared real psci11 addto:polscale,4
+  - def: shared real psci12 addto:polscale,5
+  - def: shared real psci20 addto:polscale,6
+  - def: shared real psci21 addto:polscale,7
+  - def: shared real psci22 addto:polscale,8
+K_FORCE:
+  - def: register real psck00 addto:polscale,0
+  - def: register real psck01 addto:polscale,1
+  - def: register real psck02 addto:polscale,2
+  - def: register real psck10 addto:polscale,3
+  - def: register real psck11 addto:polscale,4
+  - def: register real psck12 addto:polscale,5
+  - def: register real psck20 addto:polscale,6
+  - def: register real psck21 addto:polscale,7
+  - def: register real psck22 addto:polscale,8
+
+I_VARIABLES:
+  - def: shared real springi from:kpep
+  - def: shared real sizi from:prepep
+  - def: shared real alphai from:dmppep
+  - def: shared int epli from:lpep
+K_VARIABLES:
+  - def: register real springk from:kpep
+  - def: register real sizk from:prepep
+  - def: register real alphak from:dmppep
+  - def: register int eplk from:lpep
+
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
+  real r2 = image2(xr, yr, zr);
+  if ((eplk or @epli@) and r2 <= off * off and incl) {
+    real r = REAL_SQRT(r2);
+    real ks2i[3][3], ks2k[3][3];
+    pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, @springi@, @sizi@, @alphai@,
+      springk, sizk, alphak, ks2i, ks2k);
+    @psci00@ += ks2i[0][0];
+    @psci01@ += ks2i[0][1];
+    @psci02@ += ks2i[0][2];
+    @psci10@ += ks2i[1][0];
+    @psci11@ += ks2i[1][1];
+    @psci12@ += ks2i[1][2];
+    @psci20@ += ks2i[2][0];
+    @psci21@ += ks2i[2][1];
+    @psci22@ += ks2i[2][2];
+    psck00 += ks2k[0][0];
+    psck01 += ks2k[0][1];
+    psck02 += ks2k[0][2];
+    psck10 += ks2k[1][0];
+    psck11 += ks2k[1][1];
+    psck12 += ks2k[1][2];
+    psck20 += ks2k[2][0];
+    psck21 += ks2k[2][1];
+    psck22 += ks2k[2][2];
+  }

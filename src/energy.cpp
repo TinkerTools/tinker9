@@ -275,6 +275,7 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
 
 #include "ff/elec.h"
 #include "ff/hippo/cflux.h"
+#include "ff/hippo/expol.h"
 #include "ff/pme.h"
 #include "math/zero.h"
 
@@ -457,6 +458,7 @@ void energyData(RcOp op)
    RcMan cflux43{cfluxData, op};
    RcMan empole43{empoleChgpenData, op};
    RcMan epolar43{epolarChgpenData, op};
+   RcMan expol42{expolData, op};
    RcMan echgtrn42{echgtrnData, op};
    RcMan erepel42{erepelData, op};
    RcMan edisp42{edispData, op};
