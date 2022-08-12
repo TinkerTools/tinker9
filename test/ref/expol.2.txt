@@ -1,4 +1,4 @@
- expol.cpp -- Nawater
+ expol.cpp -- Na+ Water
 
  Energy Component Breakdown :           Kcal/mole        Interactions
  Polarization                         -6.23244359                3

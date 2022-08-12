@@ -1,4 +1,4 @@
- expol.cpp -- water2Na2Clbox
+ expol.cpp -- Water 2Na 2Cl Box
 
  Energy Component Breakdown :           Kcal/mole        Interactions
  Polarization                       -106.45842892             1227

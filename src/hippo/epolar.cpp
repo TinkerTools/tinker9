@@ -237,12 +237,8 @@ void epolarChgpen(int vers)
    torque(vers, depx, depy, depz);
    if (use_cfgrad)
       dcflux(vers, depx, depy, depz, vir_ep);
-   if (polpot::use_expol)
-   {
-      if (do_g || do_v) {
-         dexpol(vers, uind, depx, depy, depz, vir_ep);
-      }      
-   }
+   if (polpot::use_expol and do_g)
+      dexpol(vers);
    if (do_v) {
       VirialBuffer u2 = vir_trq;
       virial_prec v2[9];

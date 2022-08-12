@@ -2,7 +2,7 @@
 #include "ff/energybuffer.h"
 #include "ff/hippo/chgpen.h"
 #include "ff/hippo/echgtrn.h"
-#include "ff/hippo/expol.h"
+#include "ff/hippo/expolscr.h"
 
 // mplpot
 namespace tinker {

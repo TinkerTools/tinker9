@@ -1,5 +1,6 @@
 #include "ff/amoeba/induce.h"
 #include "ff/amoebamod.h"
+#include "ff/cuinduce.h"
 #include "ff/switch.h"
 #include "seq/launch.h"
 #include "tool/error.h"
@@ -10,36 +11,6 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-__global__
-void pcgUdir(int n, const real* restrict polarity, real (*restrict udir)[3],
-   real (*restrict udirp)[3], const real (*restrict field)[3], const real (*restrict fieldp)[3])
-{
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      real poli = polarity[i];
-      #pragma unroll
-      for (int j = 0; j < 3; ++j) {
-         udir[i][j] = poli * field[i][j];
-         udirp[i][j] = poli * fieldp[i][j];
-      }
-   }
-}
-
-__global__
-void pcgRsd(int n, const real* restrict polarity_inv, //
-   real (*restrict rsd)[3], real (*restrict rsp)[3],  //
-   const real (*restrict udir)[3], const real (*restrict udip)[3], const real (*restrict uind)[3],
-   const real (*restrict uinp)[3], const real (*restrict field)[3], const real (*restrict fielp)[3])
-{
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      real poli_inv = polarity_inv[i];
-      #pragma unroll
-      for (int j = 0; j < 3; ++j) {
-         rsd[i][j] = (udir[i][j] - uind[i][j]) * poli_inv + field[i][j];
-         rsp[i][j] = (udip[i][j] - uinp[i][j]) * poli_inv + fielp[i][j];
-      }
-   }
-}
-
 __global__
 void pcgRsd0(
    int n, const real* restrict polarity, real (*restrict rsd)[3], real (*restrict rsdp)[3])
@@ -81,10 +52,8 @@ void pcgP2(int n, const real* restrict polarity,      //
 {
    real kaval = *ka, kapval = *kap;
    real a = *ksum / kaval, ap = *ksump / kapval;
-   if (kaval == 0)
-      a = 0;
-   if (kapval == 0)
-      ap = 0;
+   if (kaval == 0) a = 0;
+   if (kapval == 0) ap = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
@@ -111,10 +80,8 @@ void pcgP3(int n, const real* restrict ksum, const real* restrict ksump, const r
 {
    real kaval = *ksum, kapval = *ksump;
    real b = *ksum1 / kaval, bp = *ksump1 / kapval;
-   if (kaval == 0)
-      b = 0;
-   if (kapval == 0)
-      bp = 0;
+   if (kaval == 0) b = 0;
+   if (kapval == 0) bp = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
@@ -162,7 +129,7 @@ void induceMutualPcg1_cu(real (*uind)[3], real (*uinp)[3])
    // get the electrostatic field due to permanent multipoles
    dfield(field, fieldp);
    // direct induced dipoles
-   launch_k1s(g::s0, n, pcgUdir, n, polarity, udir, udirp, field, fieldp);
+   launch_k1s(g::s0, n, pcgUdirV2, n, polarity, udir, udirp, field, fieldp);
 
    // initial induced dipole
    if (predict) {
@@ -188,7 +155,7 @@ void induceMutualPcg1_cu(real (*uind)[3], real (*uinp)[3])
    if (predict) {
       ufield(uind, uinp, field, fieldp);
       launch_k1s(
-         g::s0, n, pcgRsd, n, polarity_inv, rsd, rsdp, udir, udirp, uind, uinp, field, fieldp);
+         g::s0, n, pcgRsd0V2, n, polarity_inv, rsd, rsdp, udir, udirp, uind, uinp, field, fieldp);
    } else if (dirguess) {
       ufield(udir, udirp, rsd, rsdp);
    } else {
@@ -285,17 +252,12 @@ void induceMutualPcg1_cu(real (*uind)[3], real (*uinp)[3])
          print(stdout, " %8d       %-16.10f\n", iter, eps);
       }
 
-      if (eps < poleps)
-         done = true;
-      if (eps > epsold)
-         done = true;
-      if (iter >= politer)
-         done = true;
+      if (eps < poleps) done = true;
+      if (eps > epsold) done = true;
+      if (iter >= politer) done = true;
 
       // apply a "peek" iteration to the mutual induced dipoles
-      if (done) {
-         launch_k1s(g::s0, n, pcgPeek, n, pcgpeek, polarity, uind, uinp, rsd, rsdp);
-      }
+      if (done) launch_k1s(g::s0, n, pcgPeek, n, pcgpeek, polarity, uind, uinp, rsd, rsdp);
    }
 
    // print the results from the conjugate gradient iteration

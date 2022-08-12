@@ -81,7 +81,7 @@ Damped Dispersion Model with Particle Mesh Ewald Summation, Journal
 of Chemical Physics, 149, 084115 (2018)
 
 J. A. Rackers, Q. Wang, C. Liu, J.-P. Piquemal, P. Ren and J. W. Ponder,
-An Optimized Charge Penetration Model for Use with the AMOEBA Force Field, 
+An Optimized Charge Penetration Model for Use with the AMOEBA Force Field,
 Physical Chemistry Chemical Physics, 19, 276-291 (2017)
 
 
@@ -308,5 +308,5 @@ polarize          22        0.420
 
 
 bndcflux      1    2           -0.027265
-angcflux      2    1    2       0.102621   0.102621  -0.039303  -0.039303 
+angcflux      2    1    2       0.102621   0.102621  -0.039303  -0.039303
 

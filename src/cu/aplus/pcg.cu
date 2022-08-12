@@ -1,6 +1,7 @@
 #include "ff/amoeba/induce.h"
 #include "ff/amoebamod.h"
 #include "ff/aplus/induce.h"
+#include "ff/cuinduce.h"
 #include "ff/switch.h"
 #include "seq/launch.h"
 #include "tool/error.h"
@@ -11,32 +12,6 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-__global__
-void pcgUdirAplus(
-   int n, const real* restrict polarity, real (*restrict udir)[3], const real (*restrict field)[3])
-{
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      real poli = polarity[i];
-      #pragma unroll
-      for (int j = 0; j < 3; ++j) {
-         udir[i][j] = poli * field[i][j];
-      }
-   }
-}
-
-__global__
-void pcgRsd4(int n, const real* restrict polarity_inv, //
-   real (*restrict rsd)[3],                            //
-   const real (*restrict udir)[3], const real (*restrict uind)[3], const real (*restrict field)[3])
-{
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      real poli_inv = polarity_inv[i];
-      #pragma unroll
-      for (int j = 0; j < 3; ++j)
-         rsd[i][j] = (udir[i][j] - uind[i][j]) * poli_inv + field[i][j];
-   }
-}
-
 __global__
 void pcgRsd3(int n, const real* restrict polarity, real (*restrict rsd)[3])
 {
@@ -69,8 +44,7 @@ void pcgP8(int n, const real* restrict polarity, //
 {
    real kaval = *ka;
    real a = *ksum / kaval;
-   if (kaval == 0)
-      a = 0;
+   if (kaval == 0) a = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
@@ -91,8 +65,7 @@ void pcgP9(int n, const real* restrict ksum, const real* restrict ksum1, real (*
 {
    real ksumval = *ksum;
    real b = *ksum1 / ksumval;
-   if (ksumval == 0)
-      b = 0;
+   if (ksumval == 0) b = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j)
@@ -131,7 +104,7 @@ void induceMutualPcg3_cu(real (*uind)[3])
    // get the electrostatic field due to permanent multipoles
    dfieldAplus(field);
    // direct induced dipoles
-   launch_k1s(g::s0, n, pcgUdirAplus, n, polarity, udir, field);
+   launch_k1s(g::s0, n, pcgUdirV1, n, polarity, udir, field);
 
    // initial induced dipole
    if (predict) {
@@ -155,7 +128,7 @@ void induceMutualPcg3_cu(real (*uind)[3])
    // if do not use pcgguess, r(0) = E - T Zero = E
    if (predict) {
       ufieldAplus(uind, field);
-      launch_k1s(g::s0, n, pcgRsd4, n, polarity_inv, rsd, udir, uind, field);
+      launch_k1s(g::s0, n, pcgRsd0V1, n, polarity_inv, rsd, udir, uind, field);
    } else if (dirguess) {
       ufieldAplus(udir, rsd);
    } else {
@@ -241,16 +214,12 @@ void induceMutualPcg3_cu(real (*uind)[3])
          print(stdout, " %8d       %-16.10f\n", iter, eps);
       }
 
-      if (eps < poleps)
-         done = true;
-      if (eps > epsold)
-         done = true;
-      if (iter >= politer)
-         done = true;
+      if (eps < poleps) done = true;
+      if (eps > epsold) done = true;
+      if (iter >= politer) done = true;
 
       // apply a "peek" iteration to the mutual induced dipoles
-      if (done)
-         launch_k1s(g::s0, n, pcgPeek2, n, pcgpeek, polarity, uind, rsd);
+      if (done) launch_k1s(g::s0, n, pcgPeek2, n, pcgpeek, polarity, uind, rsd);
    }
 
    // print the results from the conjugate gradient iteration

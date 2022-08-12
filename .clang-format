@@ -10,6 +10,7 @@ BreakConstructorInitializers:          BeforeComma
 PointerAlignment:                      Left
 AllowShortBlocksOnASingleLine:         Always
 AllowShortFunctionsOnASingleLine:      Empty
+AllowShortIfStatementsOnASingleLine:   WithoutElse
 
 MaxEmptyLinesToKeep:                   1
 AccessModifierOffset:                  -3

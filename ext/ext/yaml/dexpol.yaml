@@ -74,7 +74,7 @@ FULL_PAIRWISE_INTERACTION: |
   if ((eplk or @epli@) and r2 <= off * off and incl) {
     real r = REAL_SQRT(r2);
     real frc[3];
-    pair_dexpol(scrtyp, r, r2, scaleb, cut, off, xr, yr, zr, @uix@, @uiy@, @uiz@, ukx, uky, ukz,
+    pair_dexpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, @uix@, @uiy@, @uiz@, ukx, uky, ukz,
                @springi@/@poli@, @sizi@, @alphai@, springk/polk, sizk, alphak, f, frc);
     @frcxi@ += frc[0];
     @frcyi@ += frc[1];
