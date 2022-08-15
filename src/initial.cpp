@@ -16,13 +16,10 @@ void initial()
    input = 5;
    iout = 6;
 
-   if (first)
-      promo();
+   if (first) promo();
 
-   if (first)
-      tinker_f_command();
-   if (first)
-      first = false;
+   if (first) tinker_f_command();
+   if (first) first = false;
 
    using namespace openmp;
    nproc = 1;
@@ -83,10 +80,12 @@ void initial()
    planb = 0;
 
    using namespace inform;
-   silent = 0;
    verbose = 0;
    debug = 0;
+   silent = 0;
    abort = 0;
+
+   gpucard = 0;
 
    using namespace group;
    use_group = 0;
@@ -127,6 +126,8 @@ void initial()
    use_tophat = 0;
    use_stophat = 0;
 
+   output::archive = 1;
+   output::binary = 0;
    FstrView coordtype = output::coordtype;
    coordtype = "NONE";
 
