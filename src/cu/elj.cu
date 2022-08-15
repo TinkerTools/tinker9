@@ -401,13 +401,16 @@ void elj_cu2(CountBuffer restrict nebuf, EnergyBuffer restrict ebuf, VirialBuffe
       real zr = zi - z[k];
       int kmut = mut[k];
 
+      real r2 = image2(xr, yr, zr);
+      if (r2 > off * off)
+         continue;
+
       int pos = jit * njvdw + jkt;
       real rv = radmin[pos];
       real eps = epsilon[pos];
       real rv4 = radmin4[pos];
       real eps4 = epsilon4[pos];
 
-      real r2 = image2(xr, yr, zr);
       real r = REAL_SQRT(r2);
       real invr = REAL_RECIP(r);
 
