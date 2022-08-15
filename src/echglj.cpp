@@ -45,7 +45,7 @@ void echgljData(RcOp op)
                auto vs = Text::split(line);
                std::string ke = vs.at(0);
                Text::upcase(ke);
-               if (ke == "VDWPR") {
+               if (ke == "VDWPR" or ke == "VDWPAIR") {
                   i = std::stoi(vs.at(1));
                   k = std::stoi(vs.at(2));
                   rad = std::stod(vs.at(3));

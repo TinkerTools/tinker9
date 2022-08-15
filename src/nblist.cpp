@@ -408,10 +408,10 @@ void nblistData(RcOp op)
    if (u & Nbl::SPATIAL) {
       auto& un2 = mspatial_v2_unit;
       if (op & RcOp::ALLOC) {
-         if (mplpot::use_chgpen and not polpot::use_dirdamp) { // HIPPO
+         if (mplpot::use_chgpen and not polpot::use_tholed) { // HIPPO
             spatialAlloc(
                un2, n, cut, buf, x, y, z, 2, nmdwexclude, mdwexclude, nrepexclude, repexclude);
-         } else if (mplpot::use_chgpen and polpot::use_dirdamp) { // AMOEBA Plus
+         } else if (mplpot::use_chgpen and polpot::use_tholed) { // AMOEBA Plus
             spatialAlloc(un2, n, cut, buf, x, y, z, 3, nmdwexclude, mdwexclude, nmdpuexclude,
                mdpuexclude, nuexclude, uexclude);
          } else { // AMOEBA
@@ -441,7 +441,7 @@ void nblistData(RcOp op)
    if (u & Nbl::SPATIAL) {
       auto& un2 = uspatial_v2_unit;
       if (op & RcOp::ALLOC) {
-         if (mplpot::use_chgpen and not polpot::use_dirdamp) { // HIPPO
+         if (mplpot::use_chgpen and not polpot::use_tholed) { // HIPPO
             spatialAlloc(un2, n, cut, buf, x, y, z, 1, nwexclude, wexclude);
          } else { // AMOEBA and AMOEBA Plus
             spatialAlloc(un2, n, cut, buf, x, y, z, 1, nuexclude, uexclude);

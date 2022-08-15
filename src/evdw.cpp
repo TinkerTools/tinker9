@@ -6,7 +6,8 @@
 #include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include "tool/iotext.h"
-#include <cassert>
+#include <tinker/detail/atomid.hh>
+#include <tinker/detail/atoms.hh>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/keys.hh>
 #include <tinker/detail/mutant.hh>
@@ -15,6 +16,8 @@
 #include <tinker/detail/vdw.hh>
 #include <tinker/detail/vdwpot.hh>
 #include <tinker/routines.h>
+
+#include <cassert>
 
 namespace tinker {
 inline namespace v1 {
@@ -132,6 +135,7 @@ void evdwData(RcOp op)
       assert(jmap.size() == 0);
       assert(jvec.size() == 0);
       jcount = 0;
+#if 0
       for (int i = 0; i < n; ++i) {
          int jt = vdw::jvdw[i] - 1;
          auto iter = jmap.find(jt);
@@ -144,6 +148,19 @@ void evdwData(RcOp op)
             jvdwbuf[i] = iter->second;
          }
       }
+#else
+      // vdw::jvdw now stores the shortened class/index values
+      for (int i = 0; i < n; ++i) {
+         jvdwbuf[i] = vdw::jvdw[i] - 1;
+         int jt = (vdwindex == Vdw::ATOM_CLASS) ? atomid::class_[i] - 1 : atoms::type[i] - 1;
+         auto iter = jmap.find(jt);
+         if (iter == jmap.end()) {
+            jvec.push_back(jt);
+            jmap[jt] = jvdwbuf[i];
+            ++jcount;
+         }
+      }
+#endif
 
       darray::allocate(jcount * jcount, &radmin, &epsilon);
 
@@ -259,8 +276,17 @@ void evdwData(RcOp op)
             double r4, e4;
             bool okay = parse_v14(record, j, r4, e4);
             if (okay) {
+#if 0
                kvdws__rad4[j - 1] = r4;
                kvdws__eps4[j - 1] = e4;
+#else
+               auto iter = jmap.find(j - 1);
+               if (iter != jmap.end()) {
+                  int jt = iter->second;
+                  kvdws__rad4[jt] = r4;
+                  kvdws__eps4[jt] = e4;
+               }
+#endif
             }
          }
          // then key
@@ -271,8 +297,17 @@ void evdwData(RcOp op)
             double r4, e4;
             bool okay = parse_v14(record, j, r4, e4);
             if (okay) {
+#if 0
                kvdws__rad4[j - 1] = r4;
                kvdws__eps4[j - 1] = e4;
+#else
+               auto iter = jmap.find(j - 1);
+               if (iter != jmap.end()) {
+                  int jt = iter->second;
+                  kvdws__rad4[jt] = r4;
+                  kvdws__eps4[jt] = e4;
+               }
+#endif
             }
          }
 
@@ -345,11 +380,13 @@ void evdwData(RcOp op)
       // see also kvdw.f
       std::vector<double> radvec, epsvec;
       for (int it_new = 0; it_new < jcount; ++it_new) {
-         int it_old = jvec[it_new];
-         int base = it_old * sizes::maxclass;
+         // int it_old = jvec[it_new];
+         // int base = it_old * sizes::maxclass;
+         int base = it_new * njvdw;
          for (int jt_new = 0; jt_new < jcount; ++jt_new) {
-            int jt_old = jvec[jt_new];
-            int offset = base + jt_old;
+            // int jt_old = jvec[jt_new];
+            // int offset = base + jt_old;
+            int offset = base + jt_new;
             radvec.push_back(vdw::radmin[offset]);
             epsvec.push_back(vdw::epsilon[offset]);
          }
@@ -361,11 +398,13 @@ void evdwData(RcOp op)
       if (nvdw14) {
          std::vector<double> rad4buf, eps4buf;
          for (int it_new = 0; it_new < jcount; ++it_new) {
-            int it_old = jvec[it_new];
-            int base = it_old * sizes::maxclass;
+            // int it_old = jvec[it_new];
+            // int base = it_old * sizes::maxclass;
+            int base = it_new * njvdw;
             for (int jt_new = 0; jt_new < jcount; ++jt_new) {
-               int jt_old = jvec[jt_new];
-               int offset = base + jt_old;
+               // int jt_old = jvec[jt_new];
+               // int offset = base + jt_old;
+               int offset = base + jt_new;
                rad4buf.push_back(vdw::radmin4[offset]);
                eps4buf.push_back(vdw::epsilon4[offset]);
             }

@@ -36,7 +36,7 @@ void altpol0a_();
 #define tinker_f_altpol0a altpol0a_
 void altpol0b_();
 #define tinker_f_altpol0b altpol0b_
-void rotexpl_(double* xr, double* yr, double* zr, double* p33i, double* p33k, double* ks2i, double* ks2k);
+void rotexpl_(double* r, double* xr, double* yr, double* zr, double* p33i, double* p33k, double* ks2i, double* ks2k);
 #define tinker_f_rotexpl rotexpl_
 
 // analysis.f
@@ -236,8 +236,8 @@ void dampewald_(int* rorder, double* r, double* r2, double* scale, double* dmpe)
 #define tinker_f_dampewald dampewald_
 void dampthole_(int* i, int* k, int* rorder, double* r, double* dmpik);
 #define tinker_f_dampthole dampthole_
-void dampthole2_(int* i, int* k, int* rorder, double* r, double* dmpik);
-#define tinker_f_dampthole2 dampthole2_
+void damptholed_(int* i, int* k, int* rorder, double* r, double* dmpik);
+#define tinker_f_damptholed damptholed_
 void damppole_(double* r, int* rorder, double* alphai, double* alphak, double* dmpi, double* dmpk, double* dmpik);
 #define tinker_f_damppole damppole_
 void dampdir_(double* r, double* alphai, double* alphak, double* dmpi, double* dmpk);
@@ -270,7 +270,7 @@ void dexpol1a_();
 #define tinker_f_dexpol1a dexpol1a_
 void dexpol1b_();
 #define tinker_f_dexpol1b dexpol1b_
-void rotdexpl_(double* xr, double* yr, double* zr, double* ai, double* ak);
+void rotdexpl_(double* r, double* xr, double* yr, double* zr, double* ai, double* ak);
 #define tinker_f_rotdexpl rotdexpl_
 
 // diagq.f
@@ -1431,6 +1431,14 @@ double geometry_(int* ia, int* ib, int* ic, int* id);
 void getarc_(int* iarc);
 #define tinker_f_getarc getarc_
 
+// getcart.f
+void getcart_(int* ixyz);
+#define tinker_f_getcart getcart_
+
+// getdcd.f
+void getdcd_(int* idcd);
+#define tinker_f_getdcd getdcd_
+
 // getint.f
 void getint_();
 #define tinker_f_getint getint_
@@ -2145,8 +2153,16 @@ void nbondoff_();
 void promo_();
 #define tinker_f_promo promo_
 
+// prtarc.f
+void prtarc_(int* iarc, int* first);
+#define tinker_f_prtarc prtarc_
+void prtarcf_(int* iarc);
+#define tinker_f_prtarcf prtarcf_
+void prtarcb_(int* idcd, int* first);
+#define tinker_f_prtarcb prtarcb_
+
 // prtdcd.f
-void prtdcd_(int* idcd);
+void prtdcd_(int* idcd, int* first);
 #define tinker_f_prtdcd prtdcd_
 
 // prtdyn.f
@@ -2214,6 +2230,14 @@ void shake_(double* xold, double* yold, double* zold);
 #define tinker_f_shake shake_
 void shake2_(double* derivs);
 #define tinker_f_shake2 shake2_
+
+// readcart.f
+void readcart_(int* ixyz, int* first);
+#define tinker_f_readcart readcart_
+
+// readdcd.f
+void readdcd_(int* idcd, int* first);
+#define tinker_f_readdcd readdcd_
 
 // readdyn.f
 void readdyn_(int* idyn);

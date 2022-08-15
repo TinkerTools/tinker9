@@ -100,7 +100,7 @@ static bool amoeba_empole(int vers)
 
 static bool amoeba_epolar(int vers)
 {
-   if (mplpot::use_chgpen and not polpot::use_dirdamp) // HIPPO Polarization
+   if (mplpot::use_chgpen and not polpot::use_tholed) // HIPPO Polarization
       return false;
    if (amoeba_emplar(vers))
       return false;
@@ -153,7 +153,7 @@ static bool hippo_epolar(int vers)
 {
    if (not mplpot::use_chgpen)
       return false;
-   if (polpot::use_dirdamp) // AMOEBA Plus Polarization
+   if (polpot::use_tholed) // AMOEBA Plus Polarization
       return false;
    if (amoeba_emplar(vers))
       return false;

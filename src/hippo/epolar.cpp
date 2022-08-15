@@ -21,7 +21,7 @@ void epolarChgpenData(RcOp op)
 {
    if (not use(Potent::POLAR))
       return;
-   if (polpot::use_dirdamp) // AMOEBA Plus
+   if (polpot::use_tholed) // AMOEBA Plus
       return;
    if (not mplpot::use_chgpen)
       return;

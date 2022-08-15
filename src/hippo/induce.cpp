@@ -47,7 +47,7 @@ static void induceMutualPcg4(real (*uind)[3])
 
 void induce2(real (*ud)[3])
 {
-   if (polpot::use_dirdamp) {
+   if (polpot::use_tholed) {
       induceMutualPcg3(ud);
       ulspredSave(ud, nullptr);
    } else {
