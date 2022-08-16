@@ -8,15 +8,14 @@
 
 #include "tinker9.h"
 
-#include <fstream>
-
 #define TINKER_TESTGRAD_VIRIAL 0
 
 namespace tinker {
 void xTestgrad(int, char**)
 {
    initial();
-   tinker_f_getxyz();
+   int ixyz;
+   tinker_f_getcart(&ixyz);
    tinker_f_mechanic();
    mechanic2();
 
@@ -50,7 +49,8 @@ void xTestgrad(int, char**)
 
    FstrView fsw = files::filename;
    std::string fname = fsw.trim();
-   std::ifstream ipt(fname);
+   std::ifstream ipt;
+   readFrameOpen(fname, ipt);
    bool done = false;
    int nframe_processed = 0;
    do {
@@ -112,6 +112,7 @@ void xTestgrad(int, char**)
       print(out, fmt3, "Total Gradient Norm Value", totnorm, len3, digits);
       print(out, fmt3, "RMS Gradient over All Atoms", rms, len3, digits);
    } while (not done);
+   readFrameClose(ipt);
 
    finish();
    tinker_f_final();

@@ -1,7 +1,7 @@
 #pragma once
 #include "ff/precision.h"
 #include "tool/rcman.h"
-#include <istream>
+#include <fstream>
 
 namespace tinker {
 /// \addtogroup ff
@@ -29,7 +29,9 @@ void copyPosToXyz(bool refreshNBList);
 ///    - Tinker uses centers of mass.
 void bounds();
 
-void readFrameCopyinToXyz(std::istream& input, bool& done);
+void readFrameOpen(const std::string& filename, std::ifstream& input);
+void readFrameCopyinToXyz(std::ifstream& input, bool& done);
+void readFrameClose(std::ifstream& input);
 
 //====================================================================//
 //                                                                    //

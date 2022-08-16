@@ -33,8 +33,6 @@
 
 #include "tinker9.h"
 
-#include <fstream>
-
 namespace tinker {
 static void xAnalyzeE()
 {
@@ -419,7 +417,8 @@ namespace tinker {
 void xAnalyze(int, char**)
 {
    initial();
-   tinker_f_getxyz();
+   int ixyz;
+   tinker_f_getcart(&ixyz);
    tinker_f_mechanic();
    mechanic2();
 
@@ -457,7 +456,8 @@ void xAnalyze(int, char**)
    auto out = stdout;
    FstrView fsw = files::filename;
    std::string fname = fsw.trim();
-   std::ifstream ipt(fname);
+   std::ifstream ipt;
+   readFrameOpen(fname, ipt);
    bool done = false;
    int nframe_processed = 0;
    do {
@@ -473,6 +473,7 @@ void xAnalyze(int, char**)
       if (opt.find("V") != failed)
          xAnalyzeV();
    } while (not done);
+   readFrameClose(ipt);
 
    finish();
    tinker_f_final();

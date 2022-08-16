@@ -8,6 +8,7 @@
 #include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/keys.hh>
+#include <tinker/detail/output.hh>
 #include <tinker/detail/titles.hh>
 #include <tinker/detail/units.hh>
 #include <tinker/routines.h>
@@ -15,7 +16,6 @@
 #include "tinker9.h"
 
 #include <array>
-#include <fstream>
 
 namespace tinker {
 static constexpr int MAX_NCHAR = 240;
@@ -41,7 +41,7 @@ static void xBarMake()
    std::string str;
 
    // get trajectory A and setup mechanics calculation
-   int iarc;
+   int iarc, first;
    tinker_f_getarc(&iarc);
    tinker_f_close(&iarc);
    tinker_f_mechanic();
@@ -148,14 +148,17 @@ static void xBarMake()
       {string, MAX_NCHAR}, {const_cast<char*>("arc"), 3}, {const_cast<char*>("old"), 3});
    iarc = tinker_f_freeunit();
    str = FstrView(string).trim();
-   tinker_f_open(&iarc, str, "old");
-   std::ifstream a_arc(str);
+   if (output::archive)
+      tinker_f_open(&iarc, str, "old");
+   else if (output::binary)
+      tinker_f_open(&iarc, str, "unformatted", "old");
+   std::ifstream a_arc;
 
    if (ua0.size() == 0) {
       // reset trajectory A using the parameters for state 0
-      ioRewindStream(a_arc);
       tinker_f_rewind(&iarc);
-      tinker_f_readxyz(&iarc);
+      first = 1;
+      tinker_f_readcart(&iarc, &first);
       keys::nkey = nkey0;
       for (int i = 0; i < keys::nkey; ++i)
          std::memcpy(keys::keyline[i], keys0[i].data(), MAX_NCHAR);
@@ -163,6 +166,7 @@ static void xBarMake()
 
       // find potential energies for trajectory A in state 0
       initialize();
+      readFrameOpen(str, a_arc);
       done = false;
       do {
          readFrameCopyinToXyz(a_arc, done);
@@ -175,6 +179,7 @@ static void xBarMake()
             std::fflush(out);
          }
       } while (not done);
+      readFrameClose(a_arc);
       finish();
    } else {
       int ii = ua0.size();
@@ -186,9 +191,9 @@ static void xBarMake()
    }
 
    // reset trajectory A using the parameters for state 1
-   ioRewindStream(a_arc);
    tinker_f_rewind(&iarc);
-   tinker_f_readxyz(&iarc);
+   first = 1;
+   tinker_f_readcart(&iarc, &first);
    keys::nkey = nkey1;
    for (int i = 0; i < keys::nkey; ++i)
       std::memcpy(keys::keyline[i], keys1[i].data(), MAX_NCHAR);
@@ -203,6 +208,7 @@ static void xBarMake()
          "       Frame         State 0         State 1            Delta\n"
          "\n");
    initialize();
+   readFrameOpen(str, a_arc);
    done = false;
    do {
       readFrameCopyinToXyz(a_arc, done);
@@ -216,6 +222,7 @@ static void xBarMake()
          print(out, "%11d  %16.4lf%16.4lf%16.4lf\n", i + 1, ua0[i], ua1[i], ua1[i] - ua0[i]);
       }
    } while (not done);
+   readFrameClose(a_arc);
    finish();
 
    // save potential energies and volumes for trajectory A
@@ -261,14 +268,17 @@ static void xBarMake()
       {string, MAX_NCHAR}, {const_cast<char*>("arc"), 3}, {const_cast<char*>("old"), 3});
    iarc = tinker_f_freeunit();
    str = FstrView(string).trim();
-   tinker_f_open(&iarc, str, "old");
-   std::ifstream b_arc(str);
+   if (output::archive)
+      tinker_f_open(&iarc, str, "old");
+   else if (output::binary)
+      tinker_f_open(&iarc, str, "unformatted", "old");
+   std::ifstream b_arc;
 
    if (ub1.size() == 0) {
       // reset trajectory B using the parameters for state 1
-      ioRewindStream(b_arc);
       tinker_f_rewind(&iarc);
-      tinker_f_readxyz(&iarc);
+      first = 1;
+      tinker_f_readcart(&iarc, &first);
       keys::nkey = nkey1;
       for (int i = 0; i < keys::nkey; ++i)
          std::memcpy(keys::keyline[i], keys1[i].data(), MAX_NCHAR);
@@ -276,6 +286,7 @@ static void xBarMake()
 
       // find potential energies for trajectory B in state 1
       initialize();
+      readFrameOpen(str, b_arc);
       done = false;
       do {
          readFrameCopyinToXyz(b_arc, done);
@@ -288,6 +299,7 @@ static void xBarMake()
             std::fflush(out);
          }
       } while (not done);
+      readFrameClose(b_arc);
       finish();
    } else {
       int ii = ub1.size();
@@ -299,9 +311,9 @@ static void xBarMake()
    }
 
    // reset trajectory B using the parameters for state 0
-   ioRewindStream(b_arc);
    tinker_f_rewind(&iarc);
-   tinker_f_readxyz(&iarc);
+   first = 1;
+   tinker_f_readcart(&iarc, &first);
    keys::nkey = nkey0;
    for (int i = 0; i < keys::nkey; ++i)
       std::memcpy(keys::keyline[i], keys0[i].data(), MAX_NCHAR);
@@ -316,6 +328,7 @@ static void xBarMake()
          "       Frame         State 0         State 1            Delta\n"
          "\n");
    initialize();
+   readFrameOpen(str, b_arc);
    done = false;
    do {
       readFrameCopyinToXyz(b_arc, done);
@@ -329,6 +342,7 @@ static void xBarMake()
          print(out, "%11d  %16.4lf%16.4lf%16.4lf\n", i + 1, ub0[i], ub1[i], ub0[i] - ub1[i]);
       }
    } while (not done);
+   readFrameClose(b_arc);
    finish();
 
    // save potential energies and volumes for trajectory B

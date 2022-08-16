@@ -27,15 +27,15 @@
 
 
 #ifdef TINKER_SUPPL_DECL
-      void suppl_open_(int* unit, const char* file, const char* status,
-         tinker_fchar_len_t file_cap, tinker_fchar_len_t status_cap);
+      void suppl_open_(int* unit, const char* file, const char* form, const char* status,
+         tinker_fchar_len_t file_cap, tinker_fchar_len_t form_cap, tinker_fchar_len_t status_cap);
 #endif
 #ifdef TINKER_SUPPL_IMPL
-      subroutine suppl_open (unit,file,status)
+      subroutine suppl_open (unit,file,form,status)
       implicit none
       integer unit
-      character*(*) file,status
-      open (unit=unit,file=file,status=status)
+      character*(*) file,form,status
+      open (unit=unit,file=file,form=form,status=status)
       return
       end
 #endif
