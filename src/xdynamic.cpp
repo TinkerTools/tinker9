@@ -160,6 +160,7 @@ void xDynamic(int, char**)
 
    // perform the setup functions needed to run dynamics
 
+   inform::gpucard = 1;
    tinker_f_mdinit(&dt);
 
    int flags = calc::md;

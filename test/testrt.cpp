@@ -1,5 +1,6 @@
 #include "tool/error.h"
 #include <tinker/detail/bath.hh>
+#include <tinker/detail/inform.hh>
 #include <tinker/routines.h>
 
 #include "testrt.h"
@@ -211,6 +212,7 @@ void testMdInit(double t, double atm)
    } else
       bath::isobaric = 0;
 
+   inform::gpucard = 1;
    double dt = 0.001;
    tinker_f_mdinit(&dt);
 }
