@@ -4,15 +4,19 @@
 #include "md/misc.h"
 #include "md/pq.h"
 #include "tool/execq.h"
+#include "tool/iofortstr.h"
 #include <condition_variable>
 #include <future>
 #include <mutex>
 #include <tinker/detail/atomid.hh>
 #include <tinker/detail/atoms.hh>
+#include <tinker/detail/couple.hh>
 #include <tinker/detail/deriv.hh>
+#include <tinker/detail/files.hh>
 #include <tinker/detail/moldyn.hh>
 #include <tinker/detail/output.hh>
 #include <tinker/detail/polar.hh>
+#include <tinker/detail/titles.hh>
 #include <tinker/detail/units.hh>
 #include <tinker/routines.h>
 
@@ -172,6 +176,89 @@ void mdsaveAsync(int istep, time_prec dt)
    std::unique_lock<std::mutex> lck_copy(mtx_dup);
    cv_dup.wait(lck_copy, [=]() { return idle_dup; });
    idle_dup = false;
+}
+
+void mdDebugSaveSync()
+{
+   auto DOT3 = [](const double* a, const double* b) -> double {
+      return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+   };
+
+   static bool first = true;
+   static std::vector<pos_prec> qx, qy, qz;
+   static std::string fname, title;
+   if (first) {
+      first = false;
+      qx.resize(n);
+      qy.resize(n);
+      qz.resize(n);
+      FstrView fstr = files::filename;
+      fname = fstr.trim();
+      auto pos = fname.find_last_of('.');
+      fname = fname.substr(0, pos) + ".dbg";
+      FstrView ftitl = titles::title;
+      title = ftitl.trim();
+      FILE* ftmp = fopen(fname.c_str(), "w");
+      fclose(ftmp);
+   }
+
+   FILE* fout = fopen(fname.c_str(), "a");
+
+   darray::copyout(g::q0, n, qx.data(), xpos);
+   darray::copyout(g::q0, n, qy.data(), ypos);
+   darray::copyout(g::q0, n, qz.data(), zpos);
+   waitFor(g::q0);
+
+   bool bign = n > 999999;
+   if (bign)
+      fprintf(fout, "%8d  %s\n", n, title.c_str());
+   else
+      fprintf(fout, "%6d  %s\n", n, title.c_str());
+
+   if (box_shape != BoxShape::UNBOUND) {
+      double ax[3] = {lvec1.x, lvec2.x, lvec3.x};
+      double bx[3] = {lvec1.y, lvec2.y, lvec3.y};
+      double cx[3] = {lvec1.z, lvec2.z, lvec3.z};
+
+      double xb = std::sqrt(DOT3(ax, ax));
+      double yb = std::sqrt(DOT3(bx, bx));
+      double zb = std::sqrt(DOT3(cx, cx));
+
+      double cos_a = DOT3(bx, cx) / (yb * zb);
+      double cos_b = DOT3(cx, ax) / (zb * xb);
+      double cos_c = DOT3(ax, bx) / (xb * yb);
+
+      double al = 90.0;
+      double be = 90.0;
+      double ga = 90.0;
+      if (cos_a != 0.0) al = (180 / M_PI) * std::acos(cos_a);
+      if (cos_b != 0.0) be = (180 / M_PI) * std::acos(cos_b);
+      if (cos_c != 0.0) ga = (180 / M_PI) * std::acos(cos_c);
+
+      if (bign)
+         fprintf(fout, " %14.6lf%14.6lf%14.6lf%14.6lf%14.6lf%14.6lf\n", xb, yb, zb, al, be, ga);
+      else
+         fprintf(fout, " %12.6lf%12.6lf%12.6lf%12.6lf%12.6lf%12.6lf\n", xb, yb, zb, al, be, ga);
+   }
+
+   const char* fcord;
+   const char* fcoup;
+   if (bign) {
+      fcord = "%8d  %c%c%c%14.6lf%14.6lf%14.6lf%8d";
+      fcoup = "%8d";
+   } else {
+      fcord = "%6d  %c%c%c%12.6lf%12.6lf%12.6lf%6d";
+      fcoup = "%6d";
+   }
+   for (int i = 0; i < n; ++i) {
+      const char* nm = atomid::name[i];
+      fprintf(fout, fcord, i + 1, nm[0], nm[1], nm[2], qx[i], qy[i], qz[i], atoms::type[i]);
+      for (int k = 0; k < couple::n12[i]; ++k)
+         fprintf(fout, fcoup, couple::i12[i][k]);
+      fprintf(fout, "%s", "\n");
+   }
+
+   fclose(fout);
 }
 
 void mdsaveSynchronize()

@@ -68,6 +68,7 @@ const TimeScaleConfig& respaTSConfig();
 
 /// \ingroup md
 void mdsaveAsync(int istep, time_prec dt);
+void mdDebugSaveSync();
 /// \ingroup md
 void mdsaveSynchronize();
 /// \ingroup md

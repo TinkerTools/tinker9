@@ -77,9 +77,15 @@ static void boxGetAxesAngles(const Box& p, double& a, double& b, double& c, //
    double cos_a = DOT3(bx, cx) / (ybox * zbox);
    double cos_b = DOT3(cx, ax) / (zbox * xbox);
    double cos_c = DOT3(ax, bx) / (xbox * ybox);
-   double a_deg = (180 / M_PI) * std::acos(cos_a);
-   double b_deg = (180 / M_PI) * std::acos(cos_b);
-   double c_deg = (180 / M_PI) * std::acos(cos_c);
+   double a_deg = 90.0;
+   double b_deg = 90.0;
+   double c_deg = 90.0;
+   if (cos_a != 0.0)
+      a_deg = (180 / M_PI) * std::acos(cos_a);
+   if (cos_b != 0.0)
+      b_deg = (180 / M_PI) * std::acos(cos_b);
+   if (cos_c != 0.0)
+      c_deg = (180 / M_PI) * std::acos(cos_c);
 
    a = xbox;
    b = ybox;
