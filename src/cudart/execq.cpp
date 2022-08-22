@@ -23,7 +23,7 @@ void ExecQ::deallocate()
 void ExecQ::allocate()
 {
    ptr = new ExecQ::Impl;
-   ptr->ss = nullptr;
+   ptr->ss = g::s1;
    check_rt(cudaEventCreateWithFlags(&ptr->mdsave_begin_event, cudaEventDisableTiming));
    check_rt(cudaEventCreateWithFlags(&ptr->mdsave_end_event, cudaEventDisableTiming));
 }
