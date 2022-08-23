@@ -31,32 +31,45 @@ void dk_geom_group(real& restrict e, real& restrict vxx, real& restrict vyx, rea
    int jb1 = igrp[ib][0];
    int jb2 = igrp[ib][1];
 
-   real xacm = 0;
-   real yacm = 0;
-   real zacm = 0;
+   // image() calls are necessary here because atoms in the same group
+   // do not necessarily belong to the same molecule
+
+   real weigha = REAL_MAX((real)1, grpmass[ia]);
+   int ka1 = kgrp[ja1];
+   real xa1 = x[ka1], ya1 = y[ka1], za1 = z[ka1];
+   real xacm = xa1 * weigha, yacm = ya1 * weigha, zacm = za1 * weigha;
    #pragma acc loop seq
-   for (int j = ja1; j < ja2; ++j) {
+   for (int j = ja1 + 1; j < ja2; ++j) {
       int k = kgrp[j];
       real weigh = mass[k];
-      xacm += x[k] * weigh;
-      yacm += y[k] * weigh;
-      zacm += z[k] * weigh;
+      real xr = x[k] - xa1;
+      real yr = y[k] - ya1;
+      real zr = z[k] - za1;
+      if (molec[ka1] != molec[k])
+         image(xr, yr, zr);
+      xacm += xr * weigh;
+      yacm += yr * weigh;
+      zacm += zr * weigh;
    }
-   real weigha = REAL_MAX((real)1, grpmass[ia]);
    weigha = REAL_RECIP(weigha);
 
-   real xbcm = 0;
-   real ybcm = 0;
-   real zbcm = 0;
+   real weighb = REAL_MAX((real)1, grpmass[ib]);
+   int kb1 = kgrp[jb1];
+   real xb1 = x[kb1], yb1 = y[kb1], zb1 = z[kb1];
+   real xbcm = xb1 * weighb, ybcm = yb1 * weighb, zbcm = zb1 * weighb;
    #pragma acc loop seq
-   for (int j = jb1; j < jb2; ++j) {
+   for (int j = jb1 + 1; j < jb2; ++j) {
       int k = kgrp[j];
       real weigh = mass[k];
-      xbcm += x[k] * weigh;
-      ybcm += y[k] * weigh;
-      zbcm += z[k] * weigh;
+      real xr = x[k] - xb1;
+      real yr = y[k] - yb1;
+      real zr = z[k] - zb1;
+      if (molec[kb1] != molec[k])
+         image(xr, yr, zr);
+      xbcm += xr * weigh;
+      ybcm += yr * weigh;
+      zbcm += zr * weigh;
    }
-   real weighb = REAL_MAX((real)1, grpmass[ib]);
    weighb = REAL_RECIP(weighb);
 
    real xr = xacm * weigha - xbcm * weighb;
