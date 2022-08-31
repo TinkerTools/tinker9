@@ -25,5 +25,6 @@ var searchData=
   ['work07_5f_22',['work07_',['../namespacetinker.html#abb8161066032549ce271dea8500ea012',1,'tinker']]],
   ['work08_5f_23',['work08_',['../namespacetinker.html#a5f28a4c3e23fa47abafd4c52a39a13ee',1,'tinker']]],
   ['work09_5f_24',['work09_',['../namespacetinker.html#ab1b8a8b0f26a0c829153f86982cdfb04',1,'tinker']]],
-  ['work10_5f_25',['work10_',['../namespacetinker.html#afe00f6bdebf562effeb9eadad4afced2',1,'tinker']]]
+  ['work10_5f_25',['work10_',['../namespacetinker.html#afe00f6bdebf562effeb9eadad4afced2',1,'tinker']]],
+  ['writecurrent_26',['writeCurrent',['../classtinker_1_1_crd_writer.html#a17101aa1c4f1e808df63a2afad038010',1,'tinker::CrdWriter']]]
 ];

@@ -1,8 +1,8 @@
 var searchData=
 [
   ['oct_0',['OCT',['../group__box.html#ggad6800b16f8741fe22d6d4a192f306646a3926d07453f350556c4e2e8094e42a98',1,'tinker']]],
-  ['opbend_1',['OPBend',['../group__angle.html#ga4c7e9045b6af122a0482de031d3fd087',1,'tinker']]],
-  ['opbend_2',['OPBEND',['../group__ff.html#ggab46845f608a7164581dfe4b9a8ef4f10aa50308dde380f4453aa9e0545e2a7dfd',1,'tinker']]],
+  ['opbend_1',['OPBEND',['../group__ff.html#ggab46845f608a7164581dfe4b9a8ef4f10aa50308dde380f4453aa9e0545e2a7dfd',1,'tinker']]],
+  ['opbend_2',['OPBend',['../group__angle.html#ga4c7e9045b6af122a0482de031d3fd087',1,'tinker']]],
   ['opbk_3',['opbk',['../group__angle.html#ga16743949bd8691897ac148e60a6f3f3f',1,'tinker']]],
   ['opbtyp_4',['opbtyp',['../group__angle.html#gab66d8302d1ad43398dbb434ed49fb67c',1,'tinker']]],
   ['opbunit_5',['opbunit',['../group__angle.html#ga9425dc922129d1a6767354a2808da574',1,'tinker']]],

@@ -105,6 +105,8 @@ var searchData=
   ['ttqk_102',['ttqk',['../structtinker_1_1_pair_repel_grad.html#a31237df316ee39981f4a802c899b8c72',1,'tinker::PairRepelGrad']]],
   ['ttx_103',['ttx',['../group__tors.html#gab486cba9e9a450f24d14327f7a650d44',1,'tinker']]],
   ['tty_104',['tty',['../group__tors.html#ga80522e56de6fb0facc4809ddbdec7a13',1,'tinker']]],
-  ['type_105',['type',['../structtinker_1_1_ptr_trait_3_01_t_01_5_01_4.html#add6b6b42a5cc6698951053f78775c300',1,'tinker::PtrTrait&lt; T * &gt;::type()'],['../group__ff.html#a9f87cb848b7b4f40b8e5d34372dd869a',1,'tinker::v1::BufferTraits::type()'],['../group__ff.html#a9402a79949f7a3e0cdc4ae99636153c8',1,'tinker::v1::BufferTraits&lt; float, Nincr &gt;::type()'],['../structtinker_1_1_ptr_trait_3_01_t_07_5_08_0f_n_0e_4.html#a5dcb048ddb07fd81c154a968310bc338',1,'tinker::PtrTrait&lt; T(*)[N]&gt;::type()']]],
-  ['v1_106',['v1',['../namespacetinker_1_1v1.html',1,'tinker']]]
+  ['txyz1_105',['TXYZ1',['../namespacetinker.html#a7abefc13974b392283668d6d8d010a9bade8dd7d34c32351c853655b31d35282d',1,'tinker']]],
+  ['txyz2_5fpbc_106',['TXYZ2_PBC',['../namespacetinker.html#a7abefc13974b392283668d6d8d010a9ba6a89f9ebc96dcdd04557b61abce69325',1,'tinker']]],
+  ['type_107',['type',['../structtinker_1_1_ptr_trait_3_01_t_01_5_01_4.html#add6b6b42a5cc6698951053f78775c300',1,'tinker::PtrTrait&lt; T * &gt;::type()'],['../group__ff.html#a9f87cb848b7b4f40b8e5d34372dd869a',1,'tinker::v1::BufferTraits::type()'],['../group__ff.html#a9402a79949f7a3e0cdc4ae99636153c8',1,'tinker::v1::BufferTraits&lt; float, Nincr &gt;::type()'],['../structtinker_1_1_ptr_trait_3_01_t_07_5_08_0f_n_0e_4.html#a5dcb048ddb07fd81c154a968310bc338',1,'tinker::PtrTrait&lt; T(*)[N]&gt;::type()']]],
+  ['v1_108',['v1',['../namespacetinker_1_1v1.html',1,'tinker']]]
 ];
