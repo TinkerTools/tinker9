@@ -6,7 +6,6 @@ include (cmakesrc.txt)
 if (HOST)
    list (APPEND __T9_CPP_SRC
 host/darray.cpp
-host/execq.cpp
 host/fft.cpp
 host/gpucard.cpp
 host/pmestream.cpp
@@ -15,7 +14,6 @@ else ()
    list (APPEND __T9_CPP_SRC
 cudart/darray.cpp
 cudart/error.cpp
-cudart/execq.cpp
 cudart/fft.cpp
 cudart/gpucard.cpp
 cudart/pmestream.cpp

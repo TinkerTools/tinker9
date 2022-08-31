@@ -3,7 +3,7 @@
 #include "ff/potent.h"
 #include "md/misc.h"
 #include "md/pq.h"
-#include "tool/execq.h"
+#include "tool/cudalib.h"
 #include "tool/iofortstr.h"
 #include <condition_variable>
 #include <future>
@@ -37,7 +37,9 @@ static bool mdsaveUseUind()
    return static_cast<bool>(output::uindsave) and use(Potent::POLAR);
 }
 
-static ExecQ dup_stream;
+#if TINKER_CUDART
+static cudaEvent_t mdsave_begin_event, mdsave_end_event;
+#endif
 static real (*dup_buf_uind)[3];
 static energy_prec dup_buf_esum;
 static Box dup_buf_box;
@@ -72,13 +74,15 @@ static void mdsaveDupThenWrite(int istep, time_prec dt)
    darray::copy(g::q0, n, dup_buf_gy, gy);
    darray::copy(g::q0, n, dup_buf_gz, gz);
 
-   if (mdsaveUseUind()) {
+   if (mdsaveUseUind())
       darray::copy(g::q0, 3 * n, &dup_buf_uind[0][0], &uind[0][0]);
-   }
 
-   // Record mdsave_begin_event when g::s0 is available.
-   // g::s1 will wait until mdsave_begin_event is recorded.
-   dup_stream.beginCopyout();
+      // Record mdsave_begin_event when g::s0 is available.
+      // g::s1 will wait until mdsave_begin_event is recorded.
+#if TINKER_CUDART
+   check_rt(cudaEventRecord(mdsave_begin_event, g::s0));
+   check_rt(cudaStreamWaitEvent(g::s1, mdsave_begin_event, 0));
+#endif
 
    mtx_dup.lock();
    idle_dup = true;
@@ -123,8 +127,8 @@ static void mdsaveDupThenWrite(int istep, time_prec dt)
 
    {
       std::vector<double> arrx(n), arry(n), arrz(n);
-      copyGradientSync(calc::grad, arrx.data(), arry.data(), arrz.data(), dup_buf_gx, dup_buf_gy,
-         dup_buf_gz, g::q1);
+      copyGradientSync(calc::grad, arrx.data(), arry.data(), arrz.data(),
+         dup_buf_gx, dup_buf_gy, dup_buf_gz, g::q1);
       // convert gradient to acceleration
       const double ekcal = units::ekcal;
       for (int i = 0; i < n; ++i) {
@@ -150,7 +154,10 @@ static void mdsaveDupThenWrite(int istep, time_prec dt)
    // Record mdsave_end_event when g::s1 is available.
    // g::s0 will wait until mdsave_end_event is recorded, so that the dup_
    // arrays are idle and ready to be written.
-   dup_stream.endCopyout();
+#if TINKER_CUDART
+   check_rt(cudaEventRecord(mdsave_end_event, g::s1));
+   check_rt(cudaStreamWaitEvent(g::s0, mdsave_end_event, 0));
+#endif
 
    double dt1 = dt;
    double epot1 = epot;
@@ -171,7 +178,8 @@ void mdsaveAsync(int istep, time_prec dt)
    cv_write.wait(lck_write, [=]() { return idle_write; });
    idle_write = false;
 
-   fut_dup_then_write = std::async(std::launch::async, mdsaveDupThenWrite, istep, dt);
+   fut_dup_then_write = std::async(std::launch::async, mdsaveDupThenWrite,
+      istep, dt);
 
    std::unique_lock<std::mutex> lck_copy(mtx_dup);
    cv_dup.wait(lck_copy, [=]() { return idle_dup; });
@@ -180,18 +188,18 @@ void mdsaveAsync(int istep, time_prec dt)
 
 void mdsaveSynchronize()
 {
-   if (fut_dup_then_write.valid())
-      fut_dup_then_write.get();
+   if (fut_dup_then_write.valid()) fut_dup_then_write.get();
 }
 
 void mdsaveData(RcOp op)
 {
    if (op & RcOp::DEALLOC) {
-      dup_stream.deallocate();
+#if TINKER_CUDART
+      check_rt(cudaEventDestroy(mdsave_begin_event));
+      check_rt(cudaEventDestroy(mdsave_end_event));
+#endif
 
-      if (mdsaveUseUind()) {
-         darray::deallocate(dup_buf_uind);
-      }
+      if (mdsaveUseUind()) darray::deallocate(dup_buf_uind);
 
       darray::deallocate(dup_buf_x, dup_buf_y, dup_buf_z);
       darray::deallocate(dup_buf_vx, dup_buf_vy, dup_buf_vz);
@@ -199,7 +207,12 @@ void mdsaveData(RcOp op)
    }
 
    if (op & RcOp::ALLOC) {
-      dup_stream.allocate();
+#if TINKER_CUDART
+      check_rt(cudaEventCreateWithFlags(&mdsave_begin_event,
+         cudaEventDisableTiming));
+      check_rt(cudaEventCreateWithFlags(&mdsave_end_event,
+         cudaEventDisableTiming));
+#endif
 
       if (mdsaveUseUind()) {
          darray::allocate(n, &dup_buf_uind);

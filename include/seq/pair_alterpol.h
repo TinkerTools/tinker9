@@ -8,8 +8,8 @@ namespace tinker {
 #pragma acc routine seq
 template <bool DO_G>
 SEQ_CUDA
-inline void damp_expl(ExpolScr scrtyp, real& restrict s2, real& restrict ds2, real r, real sizik,
-   real alphai, real alphak)
+inline void damp_expl(ExpolScr scrtyp, real& restrict s2, real& restrict ds2,
+   real r, real sizik, real alphai, real alphak)
 {
    constexpr real inv2 = 1. / 2, inv3 = 1. / 3;
    constexpr real one = 1.;
@@ -67,9 +67,9 @@ inline void damp_expl(ExpolScr scrtyp, real& restrict s2, real& restrict ds2, re
 }
 
 SEQ_ROUTINE
-inline void pair_alterpol(ExpolScr scrtyp, real r, real pscale, real cut, real off, real xr,
-   real yr, real zr, real springi, real sizi, real alphai, real springk, real sizk, real alphak,
-   real ks2i[3][3], real ks2k[3][3])
+inline void pair_alterpol(ExpolScr scrtyp, real r, real pscale, real cut,
+   real off, real xr, real yr, real zr, real springi, real sizi, real alphai,
+   real springk, real sizk, real alphak, real ks2i[3][3], real ks2k[3][3])
 {
    real sizik = sizi * sizk;
    real s2;
@@ -94,9 +94,10 @@ inline void pair_alterpol(ExpolScr scrtyp, real r, real pscale, real cut, real o
    ai[1] = yr / r;
    ai[2] = zr / r;
 
-   #pragma acc loop seq
+#if _OPENACC
+#pragma acc loop seq collapse(2)
+#endif
    for (int i = 0; i < 3; ++i) {
-      #pragma acc loop seq
       for (int j = 0; j < 3; ++j) {
          ks2i[j][i] = p33i * ai[i] * ai[j];
          ks2k[j][i] = p33k * ai[i] * ai[j]; // ak_i * ak_j = ai_i * ai_j
@@ -105,9 +106,10 @@ inline void pair_alterpol(ExpolScr scrtyp, real r, real pscale, real cut, real o
 }
 
 SEQ_ROUTINE
-inline void pair_dexpol(ExpolScr scrtyp, real r, real pscale, real cut, real off, real xr, real yr,
-   real zr, real uix, real uiy, real uiz, real ukx, real uky, real ukz, real springi, real sizi,
-   real alphai, real springk, real sizk, real alphak, const real f, real frc[3])
+inline void pair_dexpol(ExpolScr scrtyp, real r, real pscale, real cut,
+   real off, real xr, real yr, real zr, real uix, real uiy, real uiz, real ukx,
+   real uky, real ukz, real springi, real sizi, real alphai, real springk,
+   real sizk, real alphak, const real f, real frc[3])
 {
    real sizik = sizi * sizk;
    real s2;

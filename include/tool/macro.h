@@ -39,8 +39,8 @@
 #   pragma clang diagnostic ignored "-Wextern-c-compat"
 #endif
 #ifdef __NVCC_DIAG_PRAGMA_SUPPORT__
-// #20199-D: unrecognized #pragma in device code
-#pragma nv_diag_suppress 20199
+// // #20199-D: unrecognized #pragma in device code
+// #pragma nv_diag_suppress 20199
 #endif
 
 //====================================================================//
@@ -176,7 +176,8 @@
 /// | MIXED  | float  | double |
 /// | SINGLE | float  | float  |
 ///
-/// Only one of the precision macros can be set to 1 and the others will be set to 0.
+/// Only one of the precision macros can be set to 1
+/// and the others will be set to 0.
 ///
 /// \def TINKER_MIXED_PRECISION
 /// \ingroup prec
@@ -203,6 +204,7 @@
 #else
 #   define TINKER_SINGLE_PRECISION 0
 #endif
-#if (TINKER_DOUBLE_PRECISION + TINKER_MIXED_PRECISION + TINKER_SINGLE_PRECISION) != 1
+#if (TINKER_DOUBLE_PRECISION + TINKER_MIXED_PRECISION + \
+   TINKER_SINGLE_PRECISION) != 1
 #   error Detected errors in TINKER_?_PRECISION macros.
 #endif

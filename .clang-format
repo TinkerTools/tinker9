@@ -2,15 +2,20 @@ BasedOnStyle:                          LLVM
 AlignAfterOpenBracket:                 DontAlign
 AlignOperands:                         false
 AlignConsecutiveMacros:                true
+AlignEscapedNewlines:                  Left
 AlwaysBreakTemplateDeclarations:       true
-ColumnLimit:                           100
+ColumnLimit:                           80
 IndentPPDirectives:                    AfterHash
 FixNamespaceComments:                  false
 BreakConstructorInitializers:          BeforeComma
 PointerAlignment:                      Left
+AllowAllArgumentsOnNextLine:           false
 AllowShortBlocksOnASingleLine:         Always
 AllowShortFunctionsOnASingleLine:      Empty
 AllowShortIfStatementsOnASingleLine:   WithoutElse
+PenaltyBreakAssignment:                1000
+PenaltyBreakBeforeFirstCallParameter:  1000
+PenaltyBreakOpenParenthesis:           1000
 
 MaxEmptyLinesToKeep:                   1
 AccessModifierOffset:                  -3
