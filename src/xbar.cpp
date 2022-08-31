@@ -1,5 +1,6 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
+#include "ff/rwcrd.h"
 #include "math/random.h"
 #include "tool/argkey.h"
 #include "tool/iofortstr.h"
@@ -112,7 +113,7 @@ static void xBarMake()
 
    //====================================================================//
 
-   bool done;
+   int done;
    const char* log_fmt = " Current Potential %lf\n";
    const char* process_fmt = "       Completed%8d Coordinate Frames\n";
    std::memcpy(string, filea, lenga);
@@ -152,7 +153,6 @@ static void xBarMake()
       tinker_f_open(&iarc, str, "old");
    else if (output::binary)
       tinker_f_open(&iarc, str, "unformatted", "old");
-   std::ifstream a_arc;
 
    if (ua0.size() == 0) {
       // reset trajectory A using the parameters for state 0
@@ -166,10 +166,10 @@ static void xBarMake()
 
       // find potential energies for trajectory A in state 0
       initialize();
-      readFrameOpen(str, a_arc);
-      done = false;
+      done = 0;
+      auto a_arc = CrdReader(str);
       do {
-         readFrameCopyinToXyz(a_arc, done);
+         done = a_arc.readCurrent();
          nblistRefresh();
          energy(calc::energy);
          ua0.push_back(esum);
@@ -179,7 +179,6 @@ static void xBarMake()
             std::fflush(out);
          }
       } while (not done);
-      readFrameClose(a_arc);
       finish();
    } else {
       int ii = ua0.size();
@@ -208,10 +207,10 @@ static void xBarMake()
          "       Frame         State 0         State 1            Delta\n"
          "\n");
    initialize();
-   readFrameOpen(str, a_arc);
-   done = false;
+   done = 0;
+   auto a_ar2 = CrdReader(str);
    do {
-      readFrameCopyinToXyz(a_arc, done);
+      done = a_ar2.readCurrent();
       nblistRefresh();
       energy(calc::energy);
       double vol = boxVolume();
@@ -222,7 +221,6 @@ static void xBarMake()
          print(out, "%11d  %16.4lf%16.4lf%16.4lf\n", i + 1, ua0[i], ua1[i], ua1[i] - ua0[i]);
       }
    } while (not done);
-   readFrameClose(a_arc);
    finish();
 
    // save potential energies and volumes for trajectory A
@@ -286,10 +284,10 @@ static void xBarMake()
 
       // find potential energies for trajectory B in state 1
       initialize();
-      readFrameOpen(str, b_arc);
-      done = false;
+      done = 0;
+      auto b_arc = CrdReader(str);
       do {
-         readFrameCopyinToXyz(b_arc, done);
+         done = b_arc.readCurrent();
          nblistRefresh();
          energy(calc::energy);
          ub1.push_back(esum);
@@ -299,7 +297,6 @@ static void xBarMake()
             std::fflush(out);
          }
       } while (not done);
-      readFrameClose(b_arc);
       finish();
    } else {
       int ii = ub1.size();
@@ -328,10 +325,10 @@ static void xBarMake()
          "       Frame         State 0         State 1            Delta\n"
          "\n");
    initialize();
-   readFrameOpen(str, b_arc);
-   done = false;
+   done = 0;
+   auto b_ar2 = CrdReader(str);
    do {
-      readFrameCopyinToXyz(b_arc, done);
+      done = b_ar2.readCurrent();
       nblistRefresh();
       energy(calc::energy);
       double vol = boxVolume();
@@ -342,7 +339,6 @@ static void xBarMake()
          print(out, "%11d  %16.4lf%16.4lf%16.4lf\n", i + 1, ub0[i], ub1[i], ub0[i] - ub1[i]);
       }
    } while (not done);
-   readFrameClose(b_arc);
    finish();
 
    // save potential energies and volumes for trajectory B

@@ -11,6 +11,7 @@
 #include "ff/hippomod.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
+#include "ff/rwcrd.h"
 #include "md/osrw.h"
 #include "tool/argkey.h"
 #include "tool/iofortstr.h"
@@ -426,9 +427,7 @@ void xAnalyze(int, char**)
    bool exist = false;
    std::string opt;
    nextarg(string, exist);
-   if (exist) {
-      ioReadString(opt, string);
-   }
+   if (exist) ioReadString(opt, string);
    std::string prompt = R"(
  The Tinker Energy Analysis Utility Can :
 
@@ -456,24 +455,19 @@ void xAnalyze(int, char**)
    auto out = stdout;
    FstrView fsw = files::filename;
    std::string fname = fsw.trim();
-   std::ifstream ipt;
-   readFrameOpen(fname, ipt);
-   bool done = false;
    int nframe_processed = 0;
+   int done = 0;
+   auto ipt = CrdReader(fname);
    do {
-      readFrameCopyinToXyz(ipt, done);
+      done = ipt.readCurrent();
       nblistRefresh();
       nframe_processed++;
       if (nframe_processed > 1)
          print(out, "\n Analysis for Archive Structure :%16d\n", nframe_processed);
-      if (opt.find("E") != failed)
-         xAnalyzeE();
-      if (opt.find("M") != failed)
-         xAnalyzeM();
-      if (opt.find("V") != failed)
-         xAnalyzeV();
+      if (opt.find("E") != failed) xAnalyzeE();
+      if (opt.find("M") != failed) xAnalyzeM();
+      if (opt.find("V") != failed) xAnalyzeV();
    } while (not done);
-   readFrameClose(ipt);
 
    finish();
    tinker_f_final();

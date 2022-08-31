@@ -1,6 +1,6 @@
 #include "ff/box.h"
+#include "ff/rwcrd.h"
 #include "tool/iofortstr.h"
-#include <fstream>
 #include <tinker/detail/files.hh>
 
 #include "test.h"
@@ -39,9 +39,8 @@ TEST_CASE("Bounds", "[ff][box]")
 
    FstrView fsw = files::filename;
    std::string fname = fsw.trim();
-   std::ifstream ipt(fname);
-   bool done = false;
-   readFrameCopyinToXyz(ipt, done);
+   auto ipt = CrdReader(fname);
+   ipt.readCurrent();
    bounds();
 
    double eps = 1.0e-5;

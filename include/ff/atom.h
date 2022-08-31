@@ -29,10 +29,6 @@ void copyPosToXyz(bool refreshNBList);
 ///    - Tinker uses centers of mass.
 void bounds();
 
-void readFrameOpen(const std::string& filename, std::ifstream& input);
-void readFrameCopyinToXyz(std::ifstream& input, bool& done);
-void readFrameClose(std::ifstream& input);
-
 //====================================================================//
 //                                                                    //
 //                          Global Variables                          //

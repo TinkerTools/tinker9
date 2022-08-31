@@ -1,20 +1,25 @@
+#include "ff/rwcrd.h"
 #include "math/pow2.h"
 #include "md/integrator.h"
 #include "md/misc.h"
 #include "md/pq.h"
+#include "tool/argkey.h"
+#include "tool/darray.h"
 #include "tool/error.h"
 #include "tool/externfunc.h"
 #include "tool/iofortstr.h"
-#include <cassert>
+#include "tool/tinkersuppl.h"
+#include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mdstuf.hh>
 #include <tinker/detail/units.hh>
 
+#include <cassert>
+
 namespace tinker {
 void mdData(RcOp op)
 {
-   if (not(calc::md & rc_flag))
-      return;
+   if (not(calc::md & rc_flag)) return;
 
    RcMan intg42{mdIntegrateData, op};
    RcMan save42{mdsaveData, op};
@@ -147,11 +152,31 @@ void mdrestPrintP1(bool prints, double vtot1, double vtot2, double vtot3, double
 
 void mdPropagate(int nsteps, time_prec dt_ps)
 {
+   bool useDebugArcFile = false;
+   getKV("T9-DBG-ARCHIVE", useDebugArcFile, false);
+   std::string dbgfile = "";
+   std::vector<pos_prec> qx, qy, qz;
+   if (useDebugArcFile) {
+      dbgfile = FstrView(files::filename)(1, files::leng).trim() + ".dbg";
+      dbgfile = tinker_f_version(dbgfile, "old");
+      qx.resize(n);
+      qy.resize(n);
+      qz.resize(n);
+   }
+   auto iarcdbg = CrdWriter(qx.data(), qy.data(), qz.data(), dbgfile);
+
    for (int istep = 1; istep <= nsteps; ++istep) {
       intg->dynamic(istep, dt_ps);
 
       // mdstat
       bool save = (istep % inform::iwrite == 0);
+      if (save and useDebugArcFile) {
+         darray::copyout(g::q0, n, qx.data(), xpos);
+         darray::copyout(g::q0, n, qy.data(), ypos);
+         darray::copyout(g::q0, n, qz.data(), zpos);
+         waitFor(g::q0);
+         iarcdbg.writeCurrent();
+      }
       if (save || (istep % BOUNDS_EVERY_X_STEPS) == 0)
          bounds();
       if (save) {

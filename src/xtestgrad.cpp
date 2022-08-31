@@ -1,5 +1,6 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
+#include "ff/rwcrd.h"
 #include "tool/iofortstr.h"
 #include "tool/ioprint.h"
 #include <tinker/detail/files.hh>
@@ -49,12 +50,11 @@ void xTestgrad(int, char**)
 
    FstrView fsw = files::filename;
    std::string fname = fsw.trim();
-   std::ifstream ipt;
-   readFrameOpen(fname, ipt);
-   bool done = false;
    int nframe_processed = 0;
+   int done = 0;
+   auto ipt = CrdReader(fname);
    do {
-      readFrameCopyinToXyz(ipt, done);
+      done = ipt.readCurrent();
       nblistRefresh();
       nframe_processed++;
       if (nframe_processed > 1)
@@ -112,7 +112,6 @@ void xTestgrad(int, char**)
       print(out, fmt3, "Total Gradient Norm Value", totnorm, len3, digits);
       print(out, fmt3, "RMS Gradient over All Atoms", rms, len3, digits);
    } while (not done);
-   readFrameClose(ipt);
 
    finish();
    tinker_f_final();
