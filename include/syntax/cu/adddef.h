@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <type_traits>
 
-// https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomic-functions
+// docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomic-functions
 #if defined(__CUDA_ARCH__) && __CUDA_ARCH__ < 600
 __device__
 inline double atomicAdd(double* ptr, double v)

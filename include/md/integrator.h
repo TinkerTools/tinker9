@@ -383,7 +383,8 @@ enum class IntegratorEnum
    LEAPFROGLP,
    LP2022,
    NHC1996,
-   NHC2006, // J. Phys. A, 39 5629 (2006), https://doi.org/10.1088/0305-4470/39/19/S18
+   NHC2006, // J. Phys. A, 39 5629 (2006),
+            // https://doi.org/10.1088/0305-4470/39/19/S18
 };
 
 /// \ingroup mdintg
@@ -403,7 +404,8 @@ protected:
 
 public:
    void printDetail(FILE*);
-   BasicIntegrator(int nRespaLogV, PropagatorEnum pe, ThermostatEnum te, BarostatEnum be);
+   BasicIntegrator(int nRespaLogV, PropagatorEnum pe, ThermostatEnum te,
+      BarostatEnum be);
    BasicIntegrator();
    virtual ~BasicIntegrator();
    virtual void dynamic(int istep, time_prec dt);

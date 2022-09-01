@@ -5,12 +5,14 @@
 
 namespace tinker {
 /// \ingroup mdpt
-void kineticEnergy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n, const double* mass,
-   const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
+void kineticEnergy(energy_prec& eksum_out, energy_prec (&ekin_out)[3][3], int n,
+   const double* mass, const vel_prec* vx, const vel_prec* vy,
+   const vel_prec* vz);
 
 /// \ingroup mdpt
-void kineticExplicit(T_prec& temp_out, energy_prec& eksum_out, energy_prec (&ekin_out)[3][3],
-   const vel_prec* vx, const vel_prec* vy, const vel_prec* vz);
+void kineticExplicit(T_prec& temp_out, energy_prec& eksum_out,
+   energy_prec (&ekin_out)[3][3], const vel_prec* vx, const vel_prec* vy,
+   const vel_prec* vz);
 
 /// \ingroup mdpt
 void kinetic(T_prec& temp);
@@ -32,9 +34,9 @@ void monteCarloBarostat(energy_prec epot, T_prec temp);
 
 /// \ingroup mdpt
 /// \brief Berendsen barostat by scaling the coordinates and box dimensions via
-/// coupling to an external constant pressure bath. Code for anisotropic pressure
-/// coupling was provided by Guido Raos, Dipartimento di Chimica, Politecnico di
-/// Milano, Italy.
+/// coupling to an external constant pressure bath. Code for anisotropic
+/// pressure coupling was provided by Guido Raos, Dipartimento di Chimica,
+/// Politecnico di Milano, Italy.
 ///
 /// Literature reference:
 ///    - <a href="https://doi.org/10.1063/1.448118">
@@ -55,7 +57,8 @@ void mdIntegrateData(RcOp);
 /// \ingroup md
 void mdrest(int istep);
 /// \ingroup md
-void mdrestPrintP1(bool prints, double e1, double e2, double e3, double totmass);
+void mdrestPrintP1(bool prints, double e1, double e2, double e3,
+   double totmass);
 /// \ingroup mdintg
 void mdPropagate(int nsteps, time_prec dt_ps);
 

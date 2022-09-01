@@ -19,7 +19,7 @@ namespace tinker {
 /// which is different from the C API.
 ///
 /// The difference is described on the [FFTW
-/// website](http://fftw.org/doc/Reversing-array-dimensions.html#Reversing-array-dimensions):
+/// website](http://fftw.org/doc/Reversing-array-dimensions.html):
 ///
 /// > A minor annoyance in calling FFTW from Fortran is that FFTW’s array
 /// > dimensions are defined in the C convention (row-major order), while
