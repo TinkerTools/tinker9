@@ -39,16 +39,16 @@ inline T fsinhcPade44(T x2)
    // Pade coefficients
    // clang-format off
    constexpr T c[][2][3] = {
-      {{1. / 1     ,  53. / 396       ,  551. / 166320      }, {1., -13. / 396 ,  5. / 11088 }},
-      {{1. / 3     , 211. / 8580      , 2647. / 6486480     }, {1., -15. / 572 , 17. / 61776 }},
-      {{1. / 15    , 271. / 81900     ,    7. / 171600      }, {1., -17. / 780 , 19. / 102960}},
-      {{1. / 105   , 113. / 321300    , 1889. / 551350800   }, {1., -19. / 1020,  7. / 53040 }},
-      {{1. / 945   ,  83. / 2686068   , 7789. / 31426995600 }, {1., -21. / 1292, 23. / 232560}},
-      {{1. / 10395 , 499. / 215675460 , 3461. / 219988969200}, {1., -23. / 1596, 25. / 325584}},
-      {{1. / 135135, 197. / 1305404100,  409. / 459976935600}, {1., -25. / 1932,  3. / 48944 }}};
+   {{1./1     , 53./396       , 551./166320      },{1.,-13./396 , 5./11088 }},
+   {{1./3     ,211./8580      ,2647./6486480     },{1.,-15./572 ,17./61776 }},
+   {{1./15    ,271./81900     ,   7./171600      },{1.,-17./780 ,19./102960}},
+   {{1./105   ,113./321300    ,1889./551350800   },{1.,-19./1020, 7./53040 }},
+   {{1./945   , 83./2686068   ,7789./31426995600 },{1.,-21./1292,23./232560}},
+   {{1./10395 ,499./215675460 ,3461./219988969200},{1.,-23./1596,25./325584}},
+   {{1./135135,197./1305404100, 409./459976935600},{1.,-25./1932, 3./48944 }}};
    // clang-format on
-   return (c[M][0][0] + x2 * (c[M][0][1] + x2 * c[M][0][2])) /
-      (c[M][1][0] + x2 * (c[M][1][1] + x2 * c[M][1][2]));
+   return (c[M][0][0] + x2 * (c[M][0][1] + x2 * c[M][0][2]))
+      / (c[M][1][0] + x2 * (c[M][1][1] + x2 * c[M][1][2]));
 }
 
 #pragma acc routine seq
@@ -86,9 +86,11 @@ SEQ_CUDA
 inline T fsinhcAnalyt7(T d, T d13, T y /* exp(-d) */, T z /* exp(+d) */)
 {
    T cy, cz;
-   cy = d * (d * (d * (d * (d * (d + 21) + 210) + 1260) + 4725) + 10395) + 10395;
+   cy = d * (d * (d * (d * (d * (d + 21) + 210) + 1260) + 4725) + 10395)
+      + 10395;
    cy = -cy;
-   cz = d * (d * (d * (d * (d * (d - 21) + 210) - 1260) + 4725) - 10395) + 10395;
+   cz = d * (d * (d * (d * (d * (d - 21) + 210) - 1260) + 4725) - 10395)
+      + 10395;
    return (cy * y + cz * z) / (2 * d13);
 }
 
@@ -163,8 +165,8 @@ inline T fsinhcAnalyt1(T d, T y /* exp(-d) */, T z /* exp(+d) */)
 #pragma acc routine seq
 template <int N, class T>
 SEQ_CUDA
-inline void fsinhcImpl(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d, T& restrict f4d,
-   T& restrict f5d, T& restrict f6d, T& restrict f7d)
+inline void fsinhcImpl(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d,
+   T& restrict f4d, T& restrict f5d, T& restrict f6d, T& restrict f7d)
 {
    fsinhcCheck<N>();
    constexpr int M = N - 1;
@@ -298,7 +300,8 @@ inline void fsinhc3(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d)
 #pragma acc routine seq
 template <class T>
 SEQ_CUDA
-inline void fsinhc4(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d, T& restrict f4d)
+inline void fsinhc4(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d,
+   T& restrict f4d)
 {
    T f5d, f6d, f7d;
    fsinhcImpl<4, T>(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
@@ -307,8 +310,8 @@ inline void fsinhc4(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d, T& r
 #pragma acc routine seq
 template <class T>
 SEQ_CUDA
-inline void fsinhc5(
-   T d, T& restrict f1d, T& restrict f2d, T& restrict f3d, T& restrict f4d, T& restrict f5d)
+inline void fsinhc5(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d,
+   T& restrict f4d, T& restrict f5d)
 {
    T f6d, f7d;
    fsinhcImpl<5, T>(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
@@ -317,8 +320,8 @@ inline void fsinhc5(
 #pragma acc routine seq
 template <class T>
 SEQ_CUDA
-inline void fsinhc6(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d, T& restrict f4d,
-   T& restrict f5d, T& restrict f6d)
+inline void fsinhc6(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d,
+   T& restrict f4d, T& restrict f5d, T& restrict f6d)
 {
    T f7d;
    fsinhcImpl<6, T>(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
@@ -327,8 +330,8 @@ inline void fsinhc6(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d, T& r
 #pragma acc routine seq
 template <class T>
 SEQ_CUDA
-inline void fsinhc7(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d, T& restrict f4d,
-   T& restrict f5d, T& restrict f6d, T& restrict f7d)
+inline void fsinhc7(T d, T& restrict f1d, T& restrict f2d, T& restrict f3d,
+   T& restrict f4d, T& restrict f5d, T& restrict f6d, T& restrict f7d)
 {
    fsinhcImpl<7, T>(d, f1d, f2d, f3d, f4d, f5d, f6d, f7d);
 }

@@ -14,13 +14,17 @@ extern "C"
    inline float tinkerErfcfHastings2Args(float x, float ex2)
    {
       float t = 1.0f / (1.0f + 0.3275911f * x);
-      return (0.254829592f +
-                (-0.284496736f + (1.421413741f + (-1.453152027f + 1.061405429f * t) * t) * t) * t) *
-         t * ex2;
+      return (0.254829592f
+                + (-0.284496736f
+                     + (1.421413741f + (-1.453152027f + 1.061405429f * t) * t)
+                        * t)
+                   * t)
+         * t * ex2;
    }
 
    // The complementary error function.
-   // C. Hastings. Approximations for Digital Computers. Princeton Univ. Press. (1955) p. 167.
+   // C. Hastings. Approximations for Digital Computers.
+   // Princeton Univ. Press. (1955) p. 167.
    SEQ_ROUTINE
    inline float tinkerErfcfHastings(float x)
    {

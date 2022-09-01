@@ -106,9 +106,11 @@ inline real dot3(real ax, real ay, real az, real bx, real by, real bz)
 
 // symmetric matrix(3,3) dot vector(3)
 SEQ_ROUTINE
-inline real3 matvec(real xx, real xy, real xz, real yy, real yz, real zz, real3 v)
+inline real3 matvec(real xx, real xy, real xz, real yy, real yz, real zz,
+   real3 v)
 {
-   return make_real3(dot3(xx, xy, xz, v), dot3(xy, yy, yz, v), dot3(xz, yz, zz, v));
+   return make_real3(dot3(xx, xy, xz, v), dot3(xy, yy, yz, v),
+      dot3(xz, yz, zz, v));
 }
 
 // cross product

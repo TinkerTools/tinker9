@@ -62,14 +62,14 @@ void reduceSumOnDevice(T* dp_ans, const T* a, size_t nelem, int queue)
 /// \tparam HT    Type of the array element.
 /// \tparam HN    Length of the result array.
 /// \tparam DPTR  Type of the 2D array.
-/// \param dref   Reference to the device array that stores the reduction result.
+/// \param dref   Reference to the device array that stores the reduced result.
 /// \param v      Device pointer to the 2D array.
 /// \param nelem  Number of elements.
 /// \param queue  OpenACC queue.
 template <class HT, size_t HN, class DPTR>
 void reduceSum2OnDevice(HT (&dref)[HN], DPTR v, size_t nelem, int queue)
 {
-   // TINKER_FVOID2(cu, 1, acc, 1 reduceSum2OnDevice, HT(&)[HN], DPTR, size_t, int);
+   // TINKER_FVOID2(cu, 1, acc, 1 reduceSum2OnDevice, ...);
    TINKER_FCALL2(acc1, cu1, reduceSum2OnDevice, dref, v, nelem, queue);
 }
 

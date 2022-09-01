@@ -13,6 +13,7 @@ AllowAllArgumentsOnNextLine:           false
 AllowShortBlocksOnASingleLine:         Always
 AllowShortFunctionsOnASingleLine:      Empty
 AllowShortIfStatementsOnASingleLine:   WithoutElse
+BreakBeforeBinaryOperators:            NonAssignment
 PenaltyBreakAssignment:                1000
 PenaltyBreakBeforeFirstCallParameter:  1000
 PenaltyBreakOpenParenthesis:           1000

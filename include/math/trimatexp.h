@@ -24,7 +24,8 @@ void matmul3(T R[3][3], T A[3][3]);
 /// \param[out] ans  3 by 3 matrix for the result.
 /// \param[in]  m    3 by 3 upper triangular matrix.
 /// \param[in]  t    Scalar to scale the matrix m.
-/// \note If the input matrix is not an upper triangular matrix, the result is undefined.
+/// \note If the input matrix is not an upper triangular matrix,
+/// the result is undefined.
 template <class T>
 void trimatExp(T ans[3][3], T m[3][3], T t);
 
@@ -34,7 +35,8 @@ void trimatExp(T ans[3][3], T m[3][3], T t);
 /// \param[out] ans  3 by 3 matrix for the result.
 /// \param[in]  m    3 by 3 upper triangular matrix.
 /// \param[in]  t    Scalar to scale the matrix m.
-/// \note If the input matrix is not an upper triangular matrix, the result is undefined.
+/// \note If the input matrix is not an upper triangular matrix,
+/// the result is undefined.
 template <class T>
 void trimatExpm1c(T ans[3][3], T m[3][3], T t);
 
@@ -44,7 +46,8 @@ void trimatExpm1c(T ans[3][3], T m[3][3], T t);
 /// \param[out] ans  3 by 3 matrix for the result.
 /// \param[in]  m    3 by 3 upper triangular matrix.
 /// \param[in]  t    Scalar to scale the matrix m.
-/// \note If the input matrix is not an upper triangular matrix, the result is undefined.
+/// \note If the input matrix is not an upper triangular matrix,
+/// the result is undefined.
 template <class T>
 void trimatTExpm1c(T ans[3][3], T m[3][3], T t)
 {
