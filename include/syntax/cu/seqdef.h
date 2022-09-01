@@ -7,5 +7,6 @@
 
 /// \def SEQ_CUDA
 /// \ingroup cuda_syntax
-/// Expands to \c __device__ in CUDA source files. Used in CUDA kernel templates.
+/// Expands to \c __device__ in CUDA source files.
+/// Used in CUDA kernel templates.
 #define SEQ_CUDA __device__
