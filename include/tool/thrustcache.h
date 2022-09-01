@@ -6,8 +6,9 @@ namespace tinker {
 /// Device memory cache (allocator) for the Thrust Library.
 ///
 /// The strategy of this allocator is as follows:
-/// it only expands the size of the allocated memory, and does not free the memory
-/// on calling \c deallocate(value_type*, size_t), until \c clear() is called.
+/// it only expands the size of the allocated memory, and does not free the
+/// memory on calling \c deallocate(value_type*, size_t), until \c clear() is
+/// called.
 class ThrustCache
 {
 public:
@@ -17,9 +18,12 @@ public:
    void deallocate(value_type*, size_t);
    void clear();
 
-   static ThrustCache& instance(); ///< Reference to the singleton object.
-   static void allocate();         ///< Allocates the memory managed by the singleton object.
-   static void deallocate();       ///< Deallocates the memory managed by the singleton object.
+   /// Reference to the singleton object.
+   static ThrustCache& instance();
+   /// Allocates the memory managed by the singleton object.
+   static void allocate();
+   /// Deallocates the memory managed by the singleton object.
+   static void deallocate();
 
 private:
    value_type* ptr;

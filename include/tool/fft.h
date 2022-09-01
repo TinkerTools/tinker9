@@ -34,7 +34,8 @@ namespace tinker {
 /// is similar to FFTW C API:
 ///
 /// \code{.cpp}
-/// cufftResult cufftPlan3d(cufftHandle *plan, int nx, int ny, int nz, cufftType type);
+/// cufftResult cufftPlan3d(cufftHandle *plan,
+///    int nx, int ny, int nz, cufftType type);
 /// \endcode
 ///
 /// > nx: The transform size in the x dimension. This is slowest changing

@@ -20,21 +20,29 @@ struct DeviceAttribute
    int cc;                  ///< Compute capability multiplied by 10.
    int single_double_ratio; ///< Single to double precision performance ratio.
 
-   std::string
-      compute_mode_string; ///< `exclusive thread`, `prohibited`, `exclusive process`, or `default`.
-   std::string ecc_string; ///< `on`, or `off`.
+   /// `exclusive thread`, `prohibited`, `exclusive process`, or `default`.
+   std::string compute_mode_string;
+   /// `on`, or `off`.
+   std::string ecc_string;
 
    size_t free_mem_bytes;  ///< Free device memory in bytes.
    size_t total_mem_bytes; ///< Total device memory in bytes.
 
-   int max_threads_per_block;      ///< Maximum threads per block.
-   int max_shared_bytes_per_block; ///< Maximum shared memory per block in bytes.
+   /// Maximum threads per block.
+   int max_threads_per_block;
+   /// Maximum shared memory per block in bytes.
+   int max_shared_bytes_per_block;
 
-   int multiprocessor_count;                ///< Multiprocessor count.
-   int max_threads_per_multiprocessor;      ///< Maximum threads per multiprocessor.
-   int max_shared_bytes_per_multiprocessor; ///< Maximum shared memory per mutiprocessor in bytes.
-   int max_blocks_per_multiprocessor;       ///< Maximum thread blocks per multiporcessor.
-   int cores_per_multiprocessor;            ///< Number of cores per multiprocessor.
+   /// Multiprocessor count.
+   int multiprocessor_count;
+   /// Maximum threads per multiprocessor.
+   int max_threads_per_multiprocessor;
+   /// Maximum shared memory per mutiprocessor in bytes.
+   int max_shared_bytes_per_multiprocessor;
+   /// Maximum thread blocks per multiporcessor.
+   int max_blocks_per_multiprocessor;
+   /// Number of cores per multiprocessor.
+   int cores_per_multiprocessor;
 
    int clock_rate_kHz; ///< Clock frequency in kHz, not memory clock rate.
 };
@@ -79,10 +87,14 @@ int gpuMaxNParallel(int idev);
 namespace tinker {
 /// \addtogroup nvidia
 /// \{
-constexpr unsigned WARP_SIZE = 32;         ///< Number of threads in a warp.
-constexpr unsigned ALL_LANES = 0xFFFFFFFF; ///< Mask for all of the lanes in a warp.
-constexpr unsigned BLOCK_DIM = 128;        ///< Default dimension of thread blocks.
-constexpr int PME_BLOCKDIM = 64;           ///< Dimension of the thread blocks for some PME kernels.
+/// Number of threads in a warp.
+constexpr unsigned WARP_SIZE = 32;
+/// Mask for all of the lanes in a warp.
+constexpr unsigned ALL_LANES = 0xFFFFFFFF;
+/// Default dimension of thread blocks.
+constexpr unsigned BLOCK_DIM = 128;
+/// Dimension of the thread blocks for some PME kernels.
+constexpr int PME_BLOCKDIM = 64;
 /// \}
 
 /// \addtogroup platform

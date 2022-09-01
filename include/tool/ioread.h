@@ -46,13 +46,14 @@ int ioReadString(Arg& arg, const char (&src)[Len])
 /// `arg` will not change until the reading successfully exits.
 ///
 /// \param[out] arg        Variable to store the value read from input.
-/// \param[in]  prompt     Message to be sent to `stdout` should input be invalid.
+/// \param[in]  prompt     Help message to be sent to `stdout`.
 /// \param[in]  auto_fill  Default value to be assigned to `arg`.
-/// \param[in]  invalid    Function that returns `true` if `arg` is invalid or `false` if valid.
+/// \param[in]  invalid    Function that returns `true` if `arg` is invalid or
+///                        `false` if valid.
 /// \param[in]  istream    An `std::istream` object; use `std::cin` by default.
 template <class Arg, class Invalid>
-void ioReadStream(
-   Arg& arg, std::string prompt, Arg auto_fill, Invalid&& invalid, std::istream& istream = std::cin)
+void ioReadStream(Arg& arg, std::string prompt, Arg auto_fill,
+   Invalid&& invalid, std::istream& istream = std::cin)
 {
    bool is_cin = (&istream == &std::cin);
    int input_fail = invalid(arg); // True if arg is out of range.
@@ -78,8 +79,7 @@ void ioReadStream(
          // True if failed to parse input.
          input_fail = ioReadString(arg, line.data(), line.size());
       }
-      if (!input_fail)
-         input_fail = invalid(arg);
+      if (!input_fail) input_fail = invalid(arg);
    }
 }
 

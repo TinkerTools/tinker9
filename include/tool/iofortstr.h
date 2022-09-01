@@ -5,7 +5,7 @@
 namespace tinker {
 /// \ingroup io_fstrview
 /// \brief Reference to the non-NULL-terminated Fortran strings.
-/// Provides a few `std::string`-style methods to handle the fortran strings in C++ programs.
+/// Provides a few `std::string`-style methods to handle the fortran strings.
 class FortranStringView
 {
 private:
@@ -17,18 +17,21 @@ private:
    // If `dst != src`, copy the `first_n` characters from `src` to `dst`;
    // fill `dst` with blanks if `first_n` is less than `dstlen`;
    // `dst` is NOT NULL-terminated.
-   static void copyWithBlank(char* dst, size_t dstlen, const char* src, size_t first_n);
+   static void copyWithBlank(char* dst, size_t dstlen, const char* src,
+      size_t first_n);
 
    // Compare to a string `src` of `len`.
    // The shorter string is filled by blanks prior to comparison.
    bool ifEq(const char* src, size_t len) const;
 
-   // Returns the max number of characters in the string including the trailing whitespaces.
+   // Returns the max number of characters in the string
+   // including the trailing whitespaces.
    size_t size() const;
 
 public:
    /// \{
-   /// \brief Constructs with a `char` pointer and the reserved length of the Fortran string.
+   /// \brief Constructs with a \c char pointer and
+   /// the reserved length of the Fortran string.
    template <size_t Len>
    FortranStringView(char (&src)[Len])
       : m_b(src)

@@ -4,8 +4,9 @@
 
 namespace tinker {
 /// \ingroup platform
-/// Sets up the CUDA variables including but not limited to CUDA streams, CUDA library handles,
-/// and CUDA memory buffers, and integer units for the queues.
+/// Sets up the CUDA variables including but not limited to CUDA streams,
+/// CUDA library handles, and CUDA memory buffers,
+/// and integer units for the queues.
 void cudalibData(RcOp);
 }
 

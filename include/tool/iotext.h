@@ -24,8 +24,10 @@ public:
    /// \brief In string `src`, replaces all characters in `old` to `r`.
    static void replace(std::string& src, std::string old, char r);
 
-   /// \brief Splits a string `str` by `delimiters` and returns a vector of strings.
-   static std::vector<std::string> split(std::string str, std::string delimiters = whitespaces);
+   /// \brief Splits a string `str` by `delimiters` and
+   /// returns a vector of strings.
+   static std::vector<std::string> split(std::string str,
+      std::string delimiters = whitespaces);
 
    /// \brief Transforms a string to upper case.
    static void upcase(std::string& s);

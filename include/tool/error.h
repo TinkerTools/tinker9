@@ -5,7 +5,8 @@
 
 namespace tinker {
 /// \ingroup error
-/// \brief Writes the current coordinates to a disk file prior to aborting on a serious error.
+/// \brief Writes the current coordinates to a disk file
+/// prior to aborting on a serious error.
 void printError();
 
 /// \ingroup error
@@ -43,33 +44,36 @@ public:
 /// \def TINKER_THROW
 /// \ingroup error
 /// \brief Throws a fatal error message as a `FatalError` exception.
-#define TINKER_THROW(msg)                                                                          \
-   do {                                                                                            \
-      printBacktrace();                                                                            \
-      std::string ms_ = msg;                                                                       \
-      std::string m_ = format("%s at %s:%d", ms_, __FILE__, __LINE__);                             \
-      throw FatalError(m_);                                                                        \
+#define TINKER_THROW(msg)                                              \
+   do {                                                                \
+      printBacktrace();                                                \
+      std::string ms_ = msg;                                           \
+      std::string m_ = format("%s at %s:%d", ms_, __FILE__, __LINE__); \
+      throw FatalError(m_);                                            \
    } while (0)
 
-#define TINKER_ALWAYS_CHECK_RT_1_(call)                                                            \
-   do {                                                                                            \
-      auto res_ = call;                                                                            \
-      if (res_ != 0) {                                                                             \
-         printBacktrace();                                                                         \
-         std::string m_;                                                                           \
-         std::string msg_ = translateErrorCode(res_);                                              \
-         if (msg_ != "")                                                                           \
-            m_ = format("Errno %d (%s) at %s:%d", res_, msg_, __FILE__, __LINE__);                 \
-         else                                                                                      \
-            m_ = format("Errno %d at %s:%d", res_, __FILE__, __LINE__);                            \
-         throw FatalError(m_);                                                                     \
-      }                                                                                            \
+#define TINKER_ALWAYS_CHECK_RT_1_(call)                                 \
+   do {                                                                 \
+      auto res_ = call;                                                 \
+      if (res_ != 0) {                                                  \
+         printBacktrace();                                              \
+         std::string m_;                                                \
+         std::string msg_ = translateErrorCode(res_);                   \
+         if (msg_ != "")                                                \
+            m_ = format("Errno %d (%s) at %s:%d", res_, msg_, __FILE__, \
+               __LINE__);                                               \
+         else                                                           \
+            m_ = format("Errno %d at %s:%d", res_, __FILE__, __LINE__); \
+         throw FatalError(m_);                                          \
+      }                                                                 \
    } while (0)
-#define TINKER_ALWAYS_CHECK_RT_(...) TINKER_GET_2ND_ARG(__VA_ARGS__, TINKER_ALWAYS_CHECK_RT_1_)
+#define TINKER_ALWAYS_CHECK_RT_(...) \
+   TINKER_GET_2ND_ARG(__VA_ARGS__, TINKER_ALWAYS_CHECK_RT_1_)
 
 /// \def TINKER_ALWAYS_CHECK_RT
 /// \ingroup error
-/// \brief Defined to `true` in the source code to enable `check_rt` for the release build.
+/// \brief Defined to \c true in the source code to enable \c check_rt
+/// for the release build.
 /// \see check_rt
 #ifndef TINKER_ALWAYS_CHECK_RT
 #   define TINKER_ALWAYS_CHECK_RT 0
@@ -77,9 +81,10 @@ public:
 
 /// \def check_rt
 /// \ingroup error
-/// \brief It normally does not do extra work other than the function call it captures,
-/// unless if either `TINKER_DEBUG` or `TINKER_ALWAYS_CHECK_RT` is `true` and this macro
-/// will then check the error code returned by the function call.
+/// \brief It normally does not do extra work other than the function call
+/// it captures, unless if either \c TINKER_DEBUG or \c TINKER_ALWAYS_CHECK_RT
+/// is `true`. This macro will then check the error code returned by the
+/// function call.
 /// \see TINKER_DEBUG
 /// \see TINKER_ALWAYS_CHECK_RT
 #if TINKER_DEBUG || TINKER_ALWAYS_CHECK_RT

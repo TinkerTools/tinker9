@@ -18,7 +18,8 @@ void waitFor(int queue);
 /// \param src     Host pointer.
 /// \param nbytes  Number of bytes.
 /// \param queue   OpenACC queue.
-void deviceMemoryCopyinBytesAsync(void* dst, const void* src, size_t nbytes, int queue);
+void deviceMemoryCopyinBytesAsync(void* dst, const void* src, size_t nbytes,
+   int queue);
 
 /// \ingroup rc
 /// \brief Similar to OpenACC async copyout, copies data from device to host.
@@ -26,7 +27,8 @@ void deviceMemoryCopyinBytesAsync(void* dst, const void* src, size_t nbytes, int
 /// \param src     Device pointer.
 /// \param nbytes  Number of bytes.
 /// \param queue   OpenACC queue.
-void deviceMemoryCopyoutBytesAsync(void* dst, const void* src, size_t nbytes, int queue);
+void deviceMemoryCopyoutBytesAsync(void* dst, const void* src, size_t nbytes,
+   int queue);
 
 /// \ingroup rc
 /// \brief Copies data between two pointers on device.
@@ -35,7 +37,8 @@ void deviceMemoryCopyoutBytesAsync(void* dst, const void* src, size_t nbytes, in
 /// \param src     Source device pointer.
 /// \param nbytes  Number of bytes.
 /// \param queue   OpenACC queue.
-void deviceMemoryCopyBytesAsync(void* dst, const void* src, size_t nbytes, int queue);
+void deviceMemoryCopyBytesAsync(void* dst, const void* src, size_t nbytes,
+   int queue);
 
 /// \ingroup rc
 /// \brief Writes zero bytes on device.
@@ -141,7 +144,8 @@ public:
    {
       typedef typename PtrTrait<PTR>::type T;
       constexpr size_t N = PtrTrait<PTR>::n;
-      deviceMemoryAllocateBytes(reinterpret_cast<void**>(pp), sizeof(T) * nelem * N);
+      deviceMemoryAllocateBytes(reinterpret_cast<void**>(pp),
+         sizeof(T) * nelem * N);
    }
 
    template <class PTR, class... PTRS>
@@ -205,10 +209,10 @@ public:
       deviceMemoryCopyBytesAsync(flatten(dst), flatten(src), size, q);
    }
 
-   /// \brief Calculates the dot product and returns the answer to the host thread.
+   /// \brief Calculates the dot product and returns the answer to the host.
    template <class PTR, class PTR2>
-   static typename PtrTrait<PTR>::type dotThenReturn(
-      int q, size_t nelem, const PTR ptr, const PTR2 b)
+   static typename PtrTrait<PTR>::type dotThenReturn(int q, size_t nelem,
+      const PTR ptr, const PTR2 b)
    {
       typedef typename PtrTrait<PTR>::type T;
       constexpr size_t N = PtrTrait<PTR>::n;

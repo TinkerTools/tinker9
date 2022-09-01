@@ -5,7 +5,7 @@
 namespace tinker {
 inline namespace v1 {
 /// \ingroup rc
-/// \brief Direct mathematical calculation of enum class is prohibited in C++ syntax.
+/// \brief Direct mathematical calculation of enum class is prohibited in C++.
 template <class E>
 struct EnableEnumBitMask
 {
@@ -15,17 +15,19 @@ struct EnableEnumBitMask
 
 /// \def TINKER_ENABLE_ENUM_BITMASK
 /// \ingroup rc
-/// \brief Explicitly enables mathematical calculation by casting enum class to integer.
-#define TINKER_ENABLE_ENUM_BITMASK(x)                                                              \
-   template <>                                                                                     \
-   struct EnableEnumBitMask<x>                                                                     \
-   {                                                                                               \
-      static constexpr bool value = true;                                                          \
+/// \brief Explicitly enables mathematical calculation by
+/// casting enum class to integer.
+#define TINKER_ENABLE_ENUM_BITMASK(x)     \
+   template <>                            \
+   struct EnableEnumBitMask<x>            \
+   {                                      \
+      static constexpr bool value = true; \
    }
 
 /// \ingroup rc
 template <class E>
-constexpr typename std::enable_if<EnableEnumBitMask<E>::value, E>::type operator|(E lhs, E rhs)
+constexpr typename std::enable_if<EnableEnumBitMask<E>::value, E>::type
+operator|(E lhs, E rhs)
 {
    using ut = typename std::underlying_type<E>::type;
    return static_cast<E>(static_cast<ut>(lhs) | static_cast<ut>(rhs));
@@ -52,8 +54,8 @@ TINKER_ENABLE_ENUM_BITMASK(ResourceOperation);
 using RcOp = ResourceOperation;
 
 /// \ingroup rc
-/// \brief Resource management. Allocates resources in the object constructor and
-/// deallocates resources in the object destructor.
+/// \brief Resource management. Allocates resources in the object constructor
+/// and deallocates resources in the object destructor.
 ///
 /// To deallocate resource in reverse order of allocation, use named objects.
 /// \code
@@ -118,9 +120,11 @@ struct calc
    static constexpr int vmask = energy + grad + virial + analyz;
    /// Similar to Tinker energy routines. Energy only.
    static constexpr int v0 = energy;
-   /// Similar to version 1 Tinker energy routines. Energy, gradient, and virial.
+   /// Similar to version 1 Tinker energy routines.
+   /// Energy, gradient, and virial.
    static constexpr int v1 = energy + grad + virial;
-   /// Similar to version 3 Tinker energy routines. Energy and number of interactions.
+   /// Similar to version 3 Tinker energy routines.
+   /// Energy and number of interactions.
    static constexpr int v3 = energy + analyz;
    /// Energy and gradient.
    static constexpr int v4 = energy + grad;
