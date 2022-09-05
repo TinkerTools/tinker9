@@ -6,8 +6,8 @@
 namespace tinker {
 // ufield, PCG
 SEQ_ROUTINE
-inline void damp_thole2(
-   real r, real pdi, real pti, real pdk, real ptk, real& restrict scale3, real& restrict scale5)
+inline void damp_thole2(real r, real pdi, real pti, real pdk, real ptk,
+   real& restrict scale3, real& restrict scale5)
 {
    real pgamma = REAL_MIN(pti, ptk);
    real damp = pdi * pdk;
@@ -20,8 +20,8 @@ inline void damp_thole2(
 
 // dfield
 SEQ_ROUTINE
-inline void damp_thole3(real r, real pdi, real pti, real pdk, real ptk, real& restrict scale3,
-   real& restrict scale5, real& restrict scale7)
+inline void damp_thole3(real r, real pdi, real pti, real pdk, real ptk,
+   real& restrict scale3, real& restrict scale5, real& restrict scale7)
 {
    real pgamma = REAL_MIN(pti, ptk);
    real damp = pdi * pdk;
@@ -34,10 +34,11 @@ inline void damp_thole3(real r, real pdi, real pti, real pdk, real ptk, real& re
 }
 
 SEQ_ROUTINE
-inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi, real pti, real pdk,
-   real ptk, real& restrict scale31, real& restrict scale51, real& restrict scale71,
-   real& restrict rc31, real& restrict rc32, real& restrict rc33, real& restrict rc51,
-   real& restrict rc52, real& restrict rc53, real& restrict rc71, real& restrict rc72,
+inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi,
+   real pti, real pdk, real ptk, real& restrict scale31, real& restrict scale51,
+   real& restrict scale71, real& restrict rc31, real& restrict rc32,
+   real& restrict rc33, real& restrict rc51, real& restrict rc52,
+   real& restrict rc53, real& restrict rc71, real& restrict rc72,
    real& restrict rc73)
 {
    real pgamma = REAL_MIN(pti, ptk);
@@ -62,8 +63,9 @@ inline void damp_thole3g(real r, real rr2, real xr, real yr, real zr, real pdi, 
 }
 
 SEQ_ROUTINE
-inline void damp_thole4(real r, real pdi, real pti, real pdk, real ptk, real& restrict ex3,
-   real& restrict ex5, real& restrict ex7, real& restrict ex9)
+inline void damp_thole4(real r, real pdi, real pti, real pdk, real ptk,
+   real& restrict ex3, real& restrict ex5, real& restrict ex7,
+   real& restrict ex9)
 {
    real pgamma = REAL_MIN(pti, ptk);
    real damp = pdi * pdk;
@@ -80,7 +82,8 @@ inline void damp_thole4(real r, real pdi, real pti, real pdk, real ptk, real& re
 #pragma acc routine seq
 template <int order>
 SEQ_CUDA
-inline void damp_ewald(real* restrict bn, real r, real rinv, real rr2, real aewald)
+inline void damp_ewald(real* restrict bn, real r, real rinv, real rr2,
+   real aewald)
 {
    real ralpha = aewald * r;
    bn[0] = REAL_ERFC(ralpha) * rinv;

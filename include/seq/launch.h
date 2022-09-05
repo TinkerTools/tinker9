@@ -12,7 +12,8 @@ namespace tinker {
 /// \param st  CUDA stream.
 /// \param sh  Dynamic shared memory (bytes per block).
 /// \param bs  Thread block size.
-/// \param np  Hint to determine the grid dimension. This is often the loop limit.
+/// \param np  Hint to determine the grid dimension.
+///            This is often the loop limit.
 /// \param k   CUDA \c __global__ kernel.
 /// \param a   Arguments of the kernel.
 ///
@@ -30,7 +31,8 @@ void launch_k3s(cudaStream_t st, size_t sh, int bs, int np, K k, Ts&&... a)
 /// \param st  CUDA stream.
 /// \param sh  Dynamic shared memory (bytes per block).
 /// \param bs  Thread block size.
-/// \param np  Hint to determine the grid dimension. This is often the loop limit.
+/// \param np  Hint to determine the grid dimension.
+///            This is often the loop limit.
 /// \param k   CUDA \c __global__ kernel.
 /// \param a   Arguments of the kernel.
 ///

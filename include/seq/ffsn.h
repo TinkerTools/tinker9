@@ -2,7 +2,8 @@
 
 namespace tinker {
 /// \ingroup math
-/// \brief Find the position of the n-th least significant bit set in a 32-bit integer.
+/// \brief
+/// Find the position of the n-th least significant bit set in a 32-bit integer.
 /// Returns a value from 0 to 32.
 ///    - If `c1` equals 0, always returns 0.
 ///    - If `n` equals 0, always returns 0.

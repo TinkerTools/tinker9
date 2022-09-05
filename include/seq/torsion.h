@@ -7,8 +7,9 @@ namespace tinker {
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_tors(real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
-   real& restrict vyy, real& restrict vzy, real& restrict vzz,
+void dk_tors(real& restrict e, real& restrict vxx, real& restrict vyx,
+   real& restrict vzx, real& restrict vyy, real& restrict vzy,
+   real& restrict vzz,
 
    grad_prec* restrict detx, grad_prec* restrict dety, grad_prec* restrict detz,
 
@@ -23,10 +24,8 @@ void dk_tors(real& restrict e, real& restrict vxx, real& restrict vyx, real& res
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
-   if CONSTEXPR (do_e)
-      e = 0;
-   if CONSTEXPR (do_v)
-      vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
+   if CONSTEXPR (do_e) e = 0;
+   if CONSTEXPR (do_v) vxx = 0, vyx = 0, vzx = 0, vyy = 0, vzy = 0, vzz = 0;
 
    const int ia = itors[i][0];
    const int ib = itors[i][1];
@@ -120,13 +119,15 @@ void dk_tors(real& restrict e, real& restrict vxx, real& restrict vyx, real& res
       real dphi5 = 5 * (cosine5 * s5 - sine5 * c5);
       real dphi6 = 6 * (cosine6 * s6 - sine6 * c6);
 
-      if CONSTEXPR (do_e) {
-         e = torsunit * (v1 * phi1 + v2 * phi2 + v3 * phi3 + v4 * phi4 + v5 * phi5 + v6 * phi6);
-      }
+      if CONSTEXPR (do_e)
+         e = torsunit
+            * (v1 * phi1 + v2 * phi2 + v3 * phi3 + v4 * phi4 + v5 * phi5
+               + v6 * phi6);
 
       if CONSTEXPR (do_g) {
-         real dedphi = torsunit *
-            (v1 * dphi1 + v2 * dphi2 + v3 * dphi3 + v4 * dphi4 + v5 * dphi5 + v6 * dphi6);
+         real dedphi = torsunit
+            * (v1 * dphi1 + v2 * dphi2 + v3 * dphi3 + v4 * dphi4 + v5 * dphi5
+               + v6 * dphi6);
 
          // chain rule terms for first derivative components
 

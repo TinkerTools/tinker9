@@ -5,11 +5,13 @@
 
 namespace tinker {
 SEQ_ROUTINE
-inline void chkpoleAtomI(int i, real (*restrict pole)[MPL_TOTAL], LocalFrame* zaxis,
-   const real* restrict x, const real* restrict y, const real* restrict z)
+inline void chkpoleAtomI(int i, real (*restrict pole)[MPL_TOTAL],
+   LocalFrame* zaxis, const real* restrict x, const real* restrict y,
+   const real* restrict z)
 {
    int polaxe = zaxis[i].polaxe;
-   bool check = ((polaxe != LFRM_Z_THEN_X) or (zaxis[i].yaxis) == 0) ? false : true;
+   bool check = ((polaxe != LFRM_Z_THEN_X) or (zaxis[i].yaxis) == 0) ? false
+                                                                     : true;
    if (check) {
       int k = zaxis[i].yaxis;
       int ia = i;
@@ -67,7 +69,8 @@ inline void rotpoleAddBy(real* restrict a, const real* restrict b)
 }
 
 SEQ_ROUTINE
-inline void rotpoleAddBy2(real* restrict a, const real* restrict b, const real* restrict c)
+inline void rotpoleAddBy2(real* restrict a, const real* restrict b,
+   const real* restrict c)
 {
    a[0] += (b[0] + c[0]);
    a[1] += (b[1] + c[1]);
@@ -75,8 +78,8 @@ inline void rotpoleAddBy2(real* restrict a, const real* restrict b, const real* 
 }
 
 SEQ_ROUTINE
-inline void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpole)[10],
-   const real (*restrict pole)[10])
+inline void rotsite(int isite, const real (*restrict a)[3],
+   real (*restrict rpole)[10], const real (*restrict pole)[10])
 {
    static_assert(MPL_TOTAL == 10, "");
 
@@ -137,8 +140,8 @@ inline void rotsite(int isite, const real (*restrict a)[3], real (*restrict rpol
 namespace tinker {
 SEQ_ROUTINE
 inline void rotpoleAtomI(int i, real (*restrict rpole)[MPL_TOTAL],
-   const real (*restrict pole)[MPL_TOTAL], const LocalFrame* restrict zaxis, const real* restrict x,
-   const real* restrict y, const real* restrict z)
+   const real (*restrict pole)[MPL_TOTAL], const LocalFrame* restrict zaxis,
+   const real* restrict x, const real* restrict y, const real* restrict z)
 {
    // rotmat routine
    real xi = x[i];

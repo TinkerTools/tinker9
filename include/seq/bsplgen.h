@@ -55,8 +55,9 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
       real denom = REAL_RECIP(k);
       bsbuild(i, i) = denom * w * bsbuild(k, k);
       for (int j = 1; j <= i - 2; j++) {
-         bsbuild(i, i - j) =
-            denom * ((w + j) * bsbuild(k, i - j - 1) + (i - j - w) * bsbuild(k, i - j));
+         bsbuild(i, i - j) = denom
+            * ((w + j) * bsbuild(k, i - j - 1)
+               + (i - j - w) * bsbuild(k, i - j));
       }
       bsbuild(i, 1) = denom * (1 - w) * bsbuild(k, 1);
    }
@@ -119,7 +120,8 @@ void bsplgen(real w, real* restrict thetai, int bsorder)
 #ifdef __CUDACC__
 template <int LEVEL, int bsorder>
 __device__
-void bsplgen2(real w, real* restrict thetai, int k, int padded_n, volatile real* restrict bsbuild_)
+void bsplgen2(real w, real* restrict thetai, int k, int padded_n,
+   volatile real* restrict bsbuild_)
 {
 // Fortran 2D array syntax
 #   define bsbuild(j, i) bsbuild_[((i)-1) * bsorder + (j)-1]
@@ -139,8 +141,9 @@ void bsplgen2(real w, real* restrict thetai, int k, int padded_n, volatile real*
       real denom = REAL_RECIP(k);
       bsbuild(i, i) = denom * w * bsbuild(k, k);
       for (int j = 1; j <= i - 2; j++) {
-         bsbuild(i, i - j) =
-            denom * ((w + j) * bsbuild(k, i - j - 1) + (i - j - w) * bsbuild(k, i - j));
+         bsbuild(i, i - j) = denom
+            * ((w + j) * bsbuild(k, i - j - 1)
+               + (i - j - w) * bsbuild(k, i - j));
       }
       bsbuild(i, 1) = denom * (1 - w) * bsbuild(k, 1);
    }

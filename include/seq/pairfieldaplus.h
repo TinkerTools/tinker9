@@ -9,11 +9,13 @@ namespace tinker {
 #pragma acc routine seq
 template <class ETYP>
 SEQ_CUDA
-void pair_dfield_aplus(real r2, real xr, real yr, real zr, real dscale, real ci, real dix, real diy,
-   real diz, real pdi, real ddi, real qixx, real qixy, real qixz, real qiyy, real qiyz, real qizz,
-   real ck, real dkx, real dky, real dkz, real pdk, real ddk, real qkxx, real qkxy, real qkxz,
-   real qkyy, real qkyz, real qkzz, real aewald, real& restrict fidx, real& restrict fidy,
-   real& restrict fidz, real& restrict fkdx, real& restrict fkdy, real& restrict fkdz)
+void pair_dfield_aplus(real r2, real xr, real yr, real zr, real dscale, real ci,
+   real dix, real diy, real diz, real pdi, real ddi, real qixx, real qixy,
+   real qixz, real qiyy, real qiyz, real qizz, real ck, real dkx, real dky,
+   real dkz, real pdk, real ddk, real qkxx, real qkxy, real qkxz, real qkyy,
+   real qkyz, real qkzz, real aewald, real& restrict fidx, real& restrict fidy,
+   real& restrict fidz, real& restrict fkdx, real& restrict fkdy,
+   real& restrict fkdz)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -23,8 +25,7 @@ void pair_dfield_aplus(real r2, real xr, real yr, real zr, real dscale, real ci,
    damp_aplus3(r, pdi, ddi, pdk, ddk, scale3, scale5, scale7);
 
    real bn[4];
-   if CONSTEXPR (eq<ETYP, EWALD>())
-      damp_ewald<4>(bn, r, invr1, rr2, aewald);
+   if CONSTEXPR (eq<ETYP, EWALD>()) damp_ewald<4>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
@@ -77,12 +78,13 @@ void pair_dfield_aplus(real r2, real xr, real yr, real zr, real dscale, real ci,
 #pragma acc routine seq
 template <class ETYP>
 SEQ_CUDA
-void pair_dfield_aplus_v2(real r2, real xr, real yr, real zr, real dscale, real ci, real dix,
-   real diy, real diz, real pdi, real ddi, real qixx, real qixy, real qixz, real qiyy, real qiyz,
-   real qizz, real ck, real dkx, real dky, real dkz, real pdk, real ddk, real qkxx, real qkxy,
-   real qkxz, real qkyy, real qkyz, real qkzz, real aewald, real& restrict fidx,
-   real& restrict fidy, real& restrict fidz, real& restrict fkdx, real& restrict fkdy,
-   real& restrict fkdz)
+void pair_dfield_aplus_v2(real r2, real xr, real yr, real zr, real dscale,
+   real ci, real dix, real diy, real diz, real pdi, real ddi, real qixx,
+   real qixy, real qixz, real qiyy, real qiyz, real qizz, real ck, real dkx,
+   real dky, real dkz, real pdk, real ddk, real qkxx, real qkxy, real qkxz,
+   real qkyy, real qkyz, real qkzz, real aewald, real& restrict fidx,
+   real& restrict fidy, real& restrict fidz, real& restrict fkdx,
+   real& restrict fkdy, real& restrict fkdz)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -92,8 +94,7 @@ void pair_dfield_aplus_v2(real r2, real xr, real yr, real zr, real dscale, real 
    damp_aplus3(r, pdi, ddi, pdk, ddk, scale3, scale5, scale7);
 
    real bn[4];
-   if CONSTEXPR (eq<ETYP, EWALD>())
-      damp_ewald<4>(bn, r, invr1, rr2, aewald);
+   if CONSTEXPR (eq<ETYP, EWALD>()) damp_ewald<4>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
@@ -150,8 +151,8 @@ void pair_ufield_aplus(real r2, real xr, real yr, real zr, real uscale, //
    real pdi, real pti,                                                  //
    real uindk0, real uindk1, real uindk2,                               //
    real pdk, real ptk,                                                  //
-   real aewald, real& restrict fidx, real& restrict fidy, real& restrict fidz, real& restrict fkdx,
-   real& restrict fkdy, real& restrict fkdz)
+   real aewald, real& restrict fidx, real& restrict fidy, real& restrict fidz,
+   real& restrict fkdx, real& restrict fkdy, real& restrict fkdz)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -161,8 +162,7 @@ void pair_ufield_aplus(real r2, real xr, real yr, real zr, real uscale, //
    damp_thole2(r, pdi, pti, pdk, ptk, scale3, scale5);
 
    real bn[3];
-   if CONSTEXPR (eq<ETYP, EWALD>())
-      damp_ewald<3>(bn, r, invr1, rr2, aewald);
+   if CONSTEXPR (eq<ETYP, EWALD>()) damp_ewald<3>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;
@@ -202,8 +202,8 @@ void pair_ufield_aplus_v2(real r2, real xr, real yr, real zr, real uscale, //
    real pdi, real pti,                                                     //
    real uindk0, real uindk1, real uindk2,                                  //
    real pdk, real ptk,                                                     //
-   real aewald, real& restrict fidx, real& restrict fidy, real& restrict fidz, real& restrict fkdx,
-   real& restrict fkdy, real& restrict fkdz)
+   real aewald, real& restrict fidx, real& restrict fidy, real& restrict fidz,
+   real& restrict fkdx, real& restrict fkdy, real& restrict fkdz)
 {
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
@@ -213,8 +213,7 @@ void pair_ufield_aplus_v2(real r2, real xr, real yr, real zr, real uscale, //
    damp_thole2(r, pdi, pti, pdk, ptk, scale3, scale5);
 
    real bn[3];
-   if CONSTEXPR (eq<ETYP, EWALD>())
-      damp_ewald<3>(bn, r, invr1, rr2, aewald);
+   if CONSTEXPR (eq<ETYP, EWALD>()) damp_ewald<3>(bn, r, invr1, rr2, aewald);
    real rr1 = invr1;
    real rr3 = rr1 * rr2;
    real rr5 = 3 * rr1 * rr2 * rr2;

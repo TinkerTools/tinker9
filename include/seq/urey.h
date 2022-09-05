@@ -7,10 +7,12 @@ namespace tinker {
 #pragma acc routine seq
 template <class Ver>
 SEQ_CUDA
-void dk_urey(real& restrict e, real& restrict vxx, real& restrict vyx, real& restrict vzx,
-   real& restrict vyy, real& restrict vzy, real& restrict vzz,
+void dk_urey(real& restrict e, real& restrict vxx, real& restrict vyx,
+   real& restrict vzx, real& restrict vyy, real& restrict vzy,
+   real& restrict vzz,
 
-   grad_prec* restrict deubx, grad_prec* restrict deuby, grad_prec* restrict deubz,
+   grad_prec* restrict deubx, grad_prec* restrict deuby,
+   grad_prec* restrict deubz,
 
    real ureyunit, int i, const int (*restrict iury)[3], const real* restrict uk,
    const real* restrict ul, real cury, real qury,
@@ -39,7 +41,8 @@ void dk_urey(real& restrict e, real& restrict vxx, real& restrict vyx, real& res
    }
 
    if CONSTEXPR (do_g) {
-      real deddt = 2 * ureyunit * force * dt * (1 + 1.5f * cury * dt + 2 * qury * dt2);
+      real deddt = 2 * ureyunit * force * dt
+         * (1 + 1.5f * cury * dt + 2 * qury * dt2);
       real de = deddt * REAL_RECIP(rac);
       real dedx = de * xac;
       real dedy = de * yac;

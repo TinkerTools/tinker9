@@ -11,14 +11,12 @@ namespace tinker {
 template <bool DO_G, class DTYP, int SCALE>
 SEQ_CUDA
 void pair_disp_obsolete(real r, real r2, real rr1, //
-   real dspscale, real aewald, real ci, real ai, real ck, real ak, real edcut, real edoff,
-   real& restrict e, real& restrict de)
+   real dspscale, real aewald, real ci, real ai, real ck, real ak, real edcut,
+   real edoff, real& restrict e, real& restrict de)
 {
    if (r > edoff) {
       e = 0;
-      if CONSTEXPR (DO_G) {
-         de = 0;
-      }
+      if CONSTEXPR (DO_G) de = 0;
       return;
    }
 
@@ -64,12 +62,10 @@ void pair_disp_obsolete(real r, real r2, real rr1, //
       expi = REAL_EXP(-di);
       real term = ((((di + 5) * di + 17) * di / 96 + 0.5f) * di + 1) * di + 1;
       damp = 1 - term * expi;
-      if CONSTEXPR (DO_G)
-         ddamp = ai * expi * di2 * ((di2 - 3) * di - 3) / 96;
+      if CONSTEXPR (DO_G) ddamp = ai * expi * di2 * ((di2 - 3) * di - 3) / 96;
    }
 
-   if CONSTEXPR (SCALE == 1)
-      dspscale = 1;
+   if CONSTEXPR (SCALE == 1) dspscale = 1;
 
    if CONSTEXPR (eq<DTYP, DEWALD>()) {
       real ralpha2 = r2 * aewald * aewald;
@@ -79,7 +75,8 @@ void pair_disp_obsolete(real r, real r2, real rr1, //
       e = -ci * ck * rr6 * (dspscale * damp * damp + expa - 1);
       if CONSTEXPR (DO_G) {
          real rterm = -ralpha2 * ralpha2 * ralpha2 * rr1 * expterm;
-         de = -6 * e * rr1 - ci * ck * rr6 * (rterm + 2 * dspscale * damp * ddamp);
+         de = -6 * e * rr1
+            - ci * ck * rr6 * (rterm + 2 * dspscale * damp * ddamp);
       }
    } else if CONSTEXPR (eq<DTYP, NON_EWALD_TAPER>()) {
       e = -ci * ck * rr6;
@@ -91,13 +88,11 @@ void pair_disp_obsolete(real r, real r2, real rr1, //
       if (r > edcut) {
          real taper, dtaper;
          switchTaper5<DO_G>(r, edcut, edoff, taper, dtaper);
-         if CONSTEXPR (DO_G)
-            de = e * dtaper + de * taper;
+         if CONSTEXPR (DO_G) de = e * dtaper + de * taper;
          e = e * taper;
       }
       e *= dspscale;
-      if CONSTEXPR (DO_G)
-         de *= dspscale;
+      if CONSTEXPR (DO_G) de *= dspscale;
    }
 }
 
@@ -105,14 +100,12 @@ void pair_disp_obsolete(real r, real r2, real rr1, //
 template <bool DO_G, class DTYP, int SCALE>
 SEQ_CUDA
 void pair_disp(real r, real r2, real rr1, //
-   real dspscale, real aewald, real ci, real ai, real ck, real ak, real edcut, real edoff,
-   real& restrict e, real& restrict de)
+   real dspscale, real aewald, real ci, real ai, real ck, real ak, real edcut,
+   real edoff, real& restrict e, real& restrict de)
 {
    if (r > edoff) {
       e = 0;
-      if CONSTEXPR (DO_G) {
-         de = 0;
-      }
+      if CONSTEXPR (DO_G) de = 0;
       return;
    }
 
@@ -121,11 +114,9 @@ void pair_disp(real r, real r2, real rr1, //
    real dmpik[2], damp, ddamp;
    damp_hippodisp<DO_G>(dmpik, r, rr1, ai, ak);
    damp = dmpik[0];
-   if CONSTEXPR (DO_G)
-      ddamp = dmpik[1];
+   if CONSTEXPR (DO_G) ddamp = dmpik[1];
 
-   if CONSTEXPR (SCALE == 1)
-      dspscale = 1;
+   if CONSTEXPR (SCALE == 1) dspscale = 1;
    if CONSTEXPR (eq<DTYP, DEWALD>()) {
       real ralpha2 = r2 * aewald * aewald;
       real term = 1 + ralpha2 + 0.5f * ralpha2 * ralpha2;
@@ -134,7 +125,8 @@ void pair_disp(real r, real r2, real rr1, //
       e = -ci * ck * rr6 * (dspscale * damp * damp + expa - 1);
       if CONSTEXPR (DO_G) {
          real rterm = -ralpha2 * ralpha2 * ralpha2 * rr1 * expterm;
-         de = -6 * e * rr1 - ci * ck * rr6 * (rterm + 2 * dspscale * damp * ddamp);
+         de = -6 * e * rr1
+            - ci * ck * rr6 * (rterm + 2 * dspscale * damp * ddamp);
       }
    } else if CONSTEXPR (eq<DTYP, NON_EWALD_TAPER>()) {
       e = -ci * ck * rr6;
@@ -146,13 +138,11 @@ void pair_disp(real r, real r2, real rr1, //
       if (r > edcut) {
          real taper, dtaper;
          switchTaper5<DO_G>(r, edcut, edoff, taper, dtaper);
-         if CONSTEXPR (DO_G)
-            de = e * dtaper + de * taper;
+         if CONSTEXPR (DO_G) de = e * dtaper + de * taper;
          e = e * taper;
       }
       e *= dspscale;
-      if CONSTEXPR (DO_G)
-         de *= dspscale;
+      if CONSTEXPR (DO_G) de *= dspscale;
    }
 }
 }

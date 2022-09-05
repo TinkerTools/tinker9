@@ -7,9 +7,10 @@ namespace tinker {
 #pragma acc routine seq
 template <class HTYPE>
 SEQ_CUDA
-void dk_settle1(time_prec dt, int iw, const pos_prec* restrict xold, const pos_prec* restrict yold,
-   const pos_prec* restrict zold, pos_prec* restrict xnew, pos_prec* restrict ynew,
-   pos_prec* restrict znew, vel_prec* restrict vx, vel_prec* restrict vy, vel_prec* restrict vz,
+void dk_settle1(time_prec dt, int iw, const pos_prec* restrict xold,
+   const pos_prec* restrict yold, const pos_prec* restrict zold,
+   pos_prec* restrict xnew, pos_prec* restrict ynew, pos_prec* restrict znew,
+   vel_prec* restrict vx, vel_prec* restrict vy, vel_prec* restrict vz,
    const double* restrict mass, const int (*restrict iratwt)[3],
    const pos_prec (*restrict kratwt)[3])
 {
@@ -260,11 +261,12 @@ void dk_settle1(time_prec dt, int iw, const pos_prec* restrict xold, const pos_p
 #pragma acc routine seq
 template <bool DO_V>
 SEQ_CUDA
-void dk_settle2(time_prec dt, int iw, vel_prec* restrict vx, vel_prec* restrict vy,
-   vel_prec* restrict vz, const pos_prec* restrict xpos, const pos_prec* restrict ypos,
-   const pos_prec* restrict zpos, const double* restrict mass, const int (*restrict iratwt)[3],
-   double& restrict vxx, double& restrict vyx, double& restrict vzx, double& restrict vyy,
-   double& restrict vzy, double& restrict vzz)
+void dk_settle2(time_prec dt, int iw, vel_prec* restrict vx,
+   vel_prec* restrict vy, vel_prec* restrict vz, const pos_prec* restrict xpos,
+   const pos_prec* restrict ypos, const pos_prec* restrict zpos,
+   const double* restrict mass, const int (*restrict iratwt)[3],
+   double& restrict vxx, double& restrict vyx, double& restrict vzx,
+   double& restrict vyy, double& restrict vzy, double& restrict vzz)
 {
    int ia, ib, ic;
    double m0, m1, m2;
@@ -349,7 +351,8 @@ void dk_settle2(time_prec dt, int iw, vel_prec* restrict vx, vel_prec* restrict 
    c2 = m0 * cosc;
    c3 = m2 + m0;
    // det(M)
-   denom = a1 * (b2 * c3 - b3 * c2) + a2 * (b3 * c1 - b1 * c3) + a3 * (b1 * c2 - b2 * c1);
+   denom = a1 * (b2 * c3 - b3 * c2) + a2 * (b3 * c1 - b1 * c3)
+      + a3 * (b1 * c2 - b2 * c1);
 
    // inverse(M)*det(M)
    double av1, av2, av3, bv1, bv2, bv3, cv1, cv2, cv3;
@@ -364,12 +367,10 @@ void dk_settle2(time_prec dt, int iw, vel_prec* restrict vx, vel_prec* restrict 
    cv3 = a1 * b2 - a2 * b1;
 
    // t = inverse(M)*m2v
-   // clang-format off
-      double tabd, tbcd, tcad;
-      tabd = av1*m0*m1*vabab + av2*m1*m2*vbcbc + av3*m2*m0*vcaca;
-      tbcd = bv1*m0*m1*vabab + bv2*m1*m2*vbcbc + bv3*m2*m0*vcaca;
-      tcad = cv1*m0*m1*vabab + cv2*m1*m2*vbcbc + cv3*m2*m0*vcaca;
-   // clang-format on
+   double tabd, tbcd, tcad;
+   tabd = av1 * m0 * m1 * vabab + av2 * m1 * m2 * vbcbc + av3 * m2 * m0 * vcaca;
+   tbcd = bv1 * m0 * m1 * vabab + bv2 * m1 * m2 * vbcbc + bv3 * m2 * m0 * vcaca;
+   tcad = cv1 * m0 * m1 * vabab + cv2 * m1 * m2 * vbcbc + cv3 * m2 * m0 * vcaca;
 
    denom = 1 / denom;
    vx[ia] += (xeab * tabd - xeca * tcad) / m0 * denom;
