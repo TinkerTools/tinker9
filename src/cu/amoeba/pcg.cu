@@ -187,11 +187,12 @@ void induceMutualPcg1_cu(real (*uind)[3], real (*uinp)[3])
    const real debye = units::debye;
    const real pcgpeek = polpcg::pcgpeek;
    const int maxiter = 100; // see also subroutine induce0a in induce.f
+   const int miniter = std::min(3, n);
 
    bool done = false;
    int iter = 0;
    real eps = 100;
-   real epsold;
+   // real epsold;
 
    while (not done) {
       ++iter;
@@ -239,7 +240,7 @@ void induceMutualPcg1_cu(real (*uind)[3], real (*uinp)[3])
       check_rt(
          cudaMemcpyAsync((real*)pinned_buf, epsd, 2 * sizeof(real), cudaMemcpyDeviceToHost, g::s0));
       check_rt(cudaStreamSynchronize(g::s0));
-      epsold = eps;
+      // epsold = eps;
       eps = REAL_MAX(((real*)pinned_buf)[0], ((real*)pinned_buf)[1]);
       eps = debye * REAL_SQRT(eps / n);
 
@@ -253,7 +254,8 @@ void induceMutualPcg1_cu(real (*uind)[3], real (*uinp)[3])
       }
 
       if (eps < poleps) done = true;
-      if (eps > epsold) done = true;
+      // if (eps > epsold) done = true;
+      if (iter < miniter) done = false;
       if (iter >= politer) done = true;
 
       // apply a "peek" iteration to the mutual induced dipoles
@@ -269,7 +271,7 @@ void induceMutualPcg1_cu(real (*uind)[3], real (*uinp)[3])
    }
 
    // terminate the calculation if dipoles failed to converge
-   if (iter >= maxiter || eps > epsold) {
+   if (iter >= maxiter) {
       printError();
       TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
    }
