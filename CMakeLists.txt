@@ -446,23 +446,26 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif ()
 
 
+add_library (__t9_intf INTERFACE)
+
+
 ## fftw
 if (PREC STREQUAL "d")
-   add_library (t9_lfftw STATIC IMPORTED)
-   set_target_properties (t9_lfftw PROPERTIES
+   add_library (__t9_lfftw STATIC IMPORTED)
+   set_target_properties (__t9_lfftw PROPERTIES
       IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3.a"
    )
-   add_library (t9_lfftw_threads STATIC IMPORTED)
-   set_target_properties (t9_lfftw_threads PROPERTIES
+   add_library (__t9_lfftw_threads STATIC IMPORTED)
+   set_target_properties (__t9_lfftw_threads PROPERTIES
       IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3_threads.a"
    )
 elseif (PREC STREQUAL "m" OR PREC STREQUAL "s")
-   add_library (t9_lfftw STATIC IMPORTED)
-   set_target_properties (t9_lfftw PROPERTIES
+   add_library (__t9_lfftw STATIC IMPORTED)
+   set_target_properties (__t9_lfftw PROPERTIES
       IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f.a"
    )
-   add_library (t9_lfftw_threads STATIC IMPORTED)
-   set_target_properties (t9_lfftw_threads PROPERTIES
+   add_library (__t9_lfftw_threads STATIC IMPORTED)
+   set_target_properties (__t9_lfftw_threads PROPERTIES
       IMPORTED_LOCATION "${FFTW_DIR}/lib/libfftw3f_threads.a"
    )
 endif ()
@@ -571,6 +574,8 @@ add_subdirectory (test)
 
 
 ## executables
+add_library (__t9_main_o OBJECT src/main.cc)
+target_link_libraries (__t9_main_o PRIVATE __t9_intf PRIVATE tinkerFToCpp)
 ## tinker9 and all.tests
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 if (HOST)

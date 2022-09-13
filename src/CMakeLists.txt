@@ -20,18 +20,18 @@ cudart/pmestream.cpp
 cudart/thrustcache.cpp
    )
 endif ()
-add_library (tinker9_cpp OBJECT "${__T9_CPP_SRC}")
-
+add_library (tinker9_cpp STATIC "${__T9_CPP_SRC}")
+target_link_libraries (tinker9_cpp PRIVATE __t9_intf PRIVATE tinkerFToCpp)
 
 add_library (tinker9_version OBJECT
    xinfo.cc
    promo.cc
 )
-target_link_libraries (tinker9_version PUBLIC tinker9_cpp)
+target_link_libraries (tinker9_version PRIVATE __t9_intf)
 
 
 # macro
-target_compile_definitions (tinker9_cpp PUBLIC ${T9_DEFS})
+target_compile_definitions (__t9_intf INTERFACE ${T9_DEFS})
 if (__T9_GIT_SHA1)
    target_compile_definitions (tinker9_version PRIVATE
       TINKER9_GIT_SHORT_HASH=${__T9_GIT_SHA1})
@@ -43,15 +43,13 @@ endif ()
 # include
 if (HOST)
 else ()
-   target_include_directories (tinker9_cpp PUBLIC "${CUDA_DIR}/include")
+   target_include_directories (__t9_intf INTERFACE "${CUDA_DIR}/include")
 endif ()
-target_include_directories (tinker9_cpp PUBLIC  "${PROJECT_SOURCE_DIR}/include")
-target_include_directories (tinker9_cpp PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/acc")
-# lib
-target_link_libraries (tinker9_cpp PUBLIC tinkerFToCpp)
+target_include_directories (__t9_intf INTERFACE "${PROJECT_SOURCE_DIR}/include")
+target_include_directories (__t9_intf INTERFACE "${PROJECT_SOURCE_DIR}/include/syntax/acc")
 # FFTW
 if (HOST)
-   target_include_directories (tinker9_cpp SYSTEM PUBLIC "${FFTW_DIR}/include")
-   target_link_libraries (tinker9_cpp PUBLIC t9_lfftw t9_lfftw_threads)
+   target_include_directories (__t9_intf SYSTEM INTERFACE "${FFTW_DIR}/include")
+   target_link_libraries (__t9_intf INTERFACE __t9_lfftw __t9_lfftw_threads)
 else ()
 endif ()

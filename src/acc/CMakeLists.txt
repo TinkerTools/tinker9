@@ -4,9 +4,8 @@ cmake_minimum_required (VERSION 3.15)
 
 ## libtinker9_acc.a
 include (cmakesrc.txt)
-add_library (tinker9_acc OBJECT "${__T9_ACC_SRC}")
-target_include_directories (tinker9_acc PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/acc")
-target_link_libraries (tinker9_acc PRIVATE tinker9_cpp)
+add_library (tinker9_acc STATIC "${__T9_ACC_SRC}")
+target_link_libraries (tinker9_acc PRIVATE __t9_intf PRIVATE tinkerFToCpp)
 
 
 ########################################################################

@@ -6,4 +6,4 @@ enable_language (C)
 
 
 include (cmakesrc.txt)
-add_library (tinker9_objc OBJECT "${__T9_OBJC_SRC}")
+add_library (tinker9_objc STATIC "${__T9_OBJC_SRC}")
