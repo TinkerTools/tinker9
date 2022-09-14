@@ -1,4 +1,5 @@
 set (__T9_CU_SRC
+amoeba/binding.cu
 amoeba/emplar.cu
 amoeba/empole.cu
 amoeba/epolar.cu
@@ -15,6 +16,7 @@ aplus/pcg.cu
 atom.cu
 compilers.cu
 cudalib.cu
+cumod.cu
 diagprecond.cu
 echarge.cu
 echglj.cu

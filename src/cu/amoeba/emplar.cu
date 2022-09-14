@@ -12,21 +12,28 @@
 #include "seq/launch.h"
 #include "seq/triangle.h"
 
+#define TINKER9_POLPAIR 1
+#include "ff/amoebacumod.h"
+
 namespace tinker {
 // Rt Q = G
 __device__
-void rotQI2GVector(const real (&restrict rot)[3][3], real3 qif, real3& restrict glf)
+void rotQI2GVector(const real (&restrict rot)[3][3], real3 qif,
+   real3& restrict glf)
 {
    glf = make_real3(dot3(rot[0][0], rot[1][0], rot[2][0], qif),
-      dot3(rot[0][1], rot[1][1], rot[2][1], qif), dot3(rot[0][2], rot[1][2], rot[2][2], qif));
+      dot3(rot[0][1], rot[1][1], rot[2][1], qif),
+      dot3(rot[0][2], rot[1][2], rot[2][2], qif));
 }
 
 // R G = Q
 __device__
-void rotG2QIVector(const real (&restrict rot)[3][3], real3 glf, real3& restrict qif)
+void rotG2QIVector(const real (&restrict rot)[3][3], real3 glf,
+   real3& restrict qif)
 {
    qif = make_real3(dot3(rot[0][0], rot[0][1], rot[0][2], glf),
-      dot3(rot[1][0], rot[1][1], rot[1][2], glf), dot3(rot[2][0], rot[2][1], rot[2][2], glf));
+      dot3(rot[1][0], rot[1][1], rot[1][2], glf),
+      dot3(rot[2][0], rot[2][1], rot[2][2], glf));
 }
 
 // R G Rt = Q
@@ -34,8 +41,8 @@ __device__
 void rotG2QIMat_v1(const real (&restrict rot)[3][3], //
    real glxx, real glxy, real glxz,                  //
    real glyy, real glyz, real glzz,                  //
-   real& restrict qixx, real& restrict qixy, real& restrict qixz, real& restrict qiyy,
-   real& restrict qiyz, real& restrict qizz)
+   real& restrict qixx, real& restrict qixy, real& restrict qixz,
+   real& restrict qiyy, real& restrict qiyz, real& restrict qizz)
 {
    real gl[3][3] = {{glxx, glxy, glxz}, {glxy, glyy, glyz}, {glxz, glyz, glzz}};
    real out[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
@@ -60,8 +67,8 @@ __device__
 void rotG2QIMat_v2(const real (&restrict r)[3][3], //
    real glxx, real glxy, real glxz,                //
    real glyy, real glyz, real glzz,                //
-   real& restrict qixx, real& restrict qixy, real& restrict qixz, real& restrict qiyy,
-   real& restrict qiyz, real& restrict qizz)
+   real& restrict qixx, real& restrict qixy, real& restrict qixz,
+   real& restrict qiyy, real& restrict qiyz, real& restrict qizz)
 {
    // clang-format off
    qixx=r[0][0]*(r[0][0]*glxx+2*r[0][1]*glxy) + r[0][1]*(r[0][1]*glyy+2*r[0][2]*glyz) + r[0][2]*(r[0][2]*glzz+2*r[0][0]*glxz);
@@ -79,16 +86,18 @@ template <class Ver, class ETYP>
 __device__
 void pairMplar(                                                           //
    real r2, real3 dR, real mscale, real dscale, real pscale, real uscale, //
-   real ci, real3 Id, real Iqxx, real Iqxy, real Iqxz, real Iqyy, real Iqyz, real Iqzz, real3 Iud,
-   real3 Iup, real pdi, real pti, //
-   real ck, real3 Kd, real Kqxx, real Kqxy, real Kqxz, real Kqyy, real Kqyz, real Kqzz, real3 Kud,
-   real3 Kup, real pdk, real ptk, //
-   real f, real aewald,           //
-   real& restrict frcxi, real& restrict frcyi, real& restrict frczi, real& restrict frcxk,
-   real& restrict frcyk, real& restrict frczk, real& restrict trqxi, real& restrict trqyi,
-   real& restrict trqzi, real& restrict trqxk, real& restrict trqyk, real& restrict trqzk,
-   real& restrict eo, real& restrict voxx, real& restrict voxy, real& restrict voxz,
-   real& restrict voyy, real& restrict voyz, real& restrict vozz)
+   real ci, real3 Id, real Iqxx, real Iqxy, real Iqxz, real Iqyy, real Iqyz,
+   real Iqzz, real3 Iud, real3 Iup, real pdi, real pti, //
+   real ck, real3 Kd, real Kqxx, real Kqxy, real Kqxz, real Kqyy, real Kqyz,
+   real Kqzz, real3 Kud, real3 Kup, real pdk, real ptk, //
+   real f, real aewald,                                 //
+   real& restrict frcxi, real& restrict frcyi, real& restrict frczi,
+   real& restrict frcxk, real& restrict frcyk, real& restrict frczk,
+   real& restrict trqxi, real& restrict trqyi, real& restrict trqzi,
+   real& restrict trqxk, real& restrict trqyk, real& restrict trqzk,
+   real& restrict eo, real& restrict voxx, real& restrict voxy,
+   real& restrict voxz, real& restrict voyy, real& restrict voyz,
+   real& restrict vozz)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -108,9 +117,7 @@ void pairMplar(                                                           //
       real rr7 = 5 * rr5 * rr2;
       real rr9 = 7 * rr7 * rr2;
       real rr11;
-      if CONSTEXPR (do_g) {
-         rr11 = 9 * rr9 * rr2;
-      }
+      if CONSTEXPR (do_g) { rr11 = 9 * rr9 * rr2; }
 
       if CONSTEXPR (eq<ETYP, EWALD>()) {
          if CONSTEXPR (!do_g) {
@@ -124,9 +131,7 @@ void pairMplar(                                                           //
          bn[2] = rr5;
          bn[3] = rr7;
          bn[4] = rr9;
-         if CONSTEXPR (do_g) {
-            bn[5] = rr11;
-         }
+         if CONSTEXPR (do_g) { bn[5] = rr11; }
       }
 
       // if use_thole
@@ -167,8 +172,10 @@ void pairMplar(                                                           //
    rotG2QIVector(rot, Kd, dk);
    real qixx, qixy, qixz, qiyy, qiyz, qizz;
    real qkxx, qkxy, qkxz, qkyy, qkyz, qkzz;
-   rotG2QIMatrix(rot, Iqxx, Iqxy, Iqxz, Iqyy, Iqyz, Iqzz, qixx, qixy, qixz, qiyy, qiyz, qizz);
-   rotG2QIMatrix(rot, Kqxx, Kqxy, Kqxz, Kqyy, Kqyz, Kqzz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz);
+   rotG2QIMatrix(rot, Iqxx, Iqxy, Iqxz, Iqyy, Iqyz, Iqzz, qixx, qixy, qixz,
+      qiyy, qiyz, qizz);
+   rotG2QIMatrix(rot, Kqxx, Kqxy, Kqxz, Kqyy, Kqyz, Kqzz, qkxx, qkxy, qkxz,
+      qkyy, qkyz, qkzz);
    real3 uid, uip;
    rotG2QIVector(rot, Iud, uid);
    rotG2QIVector(rot, Iup, uip);
@@ -342,8 +349,9 @@ void pairMplar(                                                           //
    }
 
    if CONSTEXPR (do_e) {
-      real e = phi1[0] * ci + phi1[1] * di.x + phi1[2] * di.y + phi1[3] * di.z + phi1[4] * qixx +
-         phi1[5] * qiyy + phi1[6] * qizz + phi1[7] * qixy + phi1[8] * qixz + phi1[9] * qiyz;
+      real e = phi1[0] * ci + phi1[1] * di.x + phi1[2] * di.y + phi1[3] * di.z
+         + phi1[4] * qixx + phi1[5] * qiyy + phi1[6] * qizz + phi1[7] * qixy
+         + phi1[8] * qixz + phi1[9] * qiyz;
       eo = f * e;
    }
 
@@ -436,7 +444,8 @@ void pairMplar(                                                           //
       //
       phi1z[4] += -(coedz7 * ukp.z + coepz7 * ukd.z);
       phi1z[5] += -(coedz7 * ukp.z + coepz7 * ukd.z);
-      phi1z[6] += -(3 * coedz7 - coedz9) * ukp.z - (3 * coepz7 - coepz9) * ukd.z;
+      phi1z[6] += -(3 * coedz7 - coedz9) * ukp.z
+         - (3 * coepz7 - coepz9) * ukd.z;
       // phi1z[7];
       phi1z[8] += -2 * (coedz7 * ukp.x + coepz7 * ukd.x);
       phi1z[9] += -2 * (coedz7 * ukp.y + coepz7 * ukd.y);
@@ -456,30 +465,33 @@ void pairMplar(                                                           //
    if CONSTEXPR (do_g) {
       // torque
       real3 trqa = cross(phi1[1], phi1[2], phi1[3], di);
-      trqa.x +=
-         phi1[9] * (qizz - qiyy) + 2 * (phi1[5] - phi1[6]) * qiyz + phi1[7] * qixz - phi1[8] * qixy;
-      trqa.y +=
-         phi1[8] * (qixx - qizz) + 2 * (phi1[6] - phi1[4]) * qixz + phi1[9] * qixy - phi1[7] * qiyz;
-      trqa.z +=
-         phi1[7] * (qiyy - qixx) + 2 * (phi1[4] - phi1[5]) * qixy + phi1[8] * qiyz - phi1[9] * qixz;
+      trqa.x += phi1[9] * (qizz - qiyy) + 2 * (phi1[5] - phi1[6]) * qiyz
+         + phi1[7] * qixz - phi1[8] * qixy;
+      trqa.y += phi1[8] * (qixx - qizz) + 2 * (phi1[6] - phi1[4]) * qixz
+         + phi1[9] * qixy - phi1[7] * qiyz;
+      trqa.z += phi1[7] * (qiyy - qixx) + 2 * (phi1[4] - phi1[5]) * qixy
+         + phi1[8] * qiyz - phi1[9] * qixz;
       real3 trqb = cross(phi2[1], phi2[2], phi2[3], dk);
-      trqb.x +=
-         phi2[9] * (qkzz - qkyy) + 2 * (phi2[5] - phi2[6]) * qkyz + phi2[7] * qkxz - phi2[8] * qkxy;
-      trqb.y +=
-         phi2[8] * (qkxx - qkzz) + 2 * (phi2[6] - phi2[4]) * qkxz + phi2[9] * qkxy - phi2[7] * qkyz;
-      trqb.z +=
-         phi2[7] * (qkyy - qkxx) + 2 * (phi2[4] - phi2[5]) * qkxy + phi2[8] * qkyz - phi2[9] * qkxz;
+      trqb.x += phi2[9] * (qkzz - qkyy) + 2 * (phi2[5] - phi2[6]) * qkyz
+         + phi2[7] * qkxz - phi2[8] * qkxy;
+      trqb.y += phi2[8] * (qkxx - qkzz) + 2 * (phi2[6] - phi2[4]) * qkxz
+         + phi2[9] * qkxy - phi2[7] * qkyz;
+      trqb.z += phi2[7] * (qkyy - qkxx) + 2 * (phi2[4] - phi2[5]) * qkxy
+         + phi2[8] * qkyz - phi2[9] * qkxz;
       trq1 = trqa;
       trq2 = trqb;
 
-      real3 trqau = cross(phi1d[0], phi1d[1], phi1d[2], (dscale * uip + pscale * uid));
-      real3 trqbu = cross(phi2d[0], phi2d[1], phi2d[2], (dscale * ukp + pscale * ukd));
+      real3 trqau = cross(phi1d[0], phi1d[1], phi1d[2],
+         (dscale * uip + pscale * uid));
+      real3 trqbu = cross(phi2d[0], phi2d[1], phi2d[2],
+         (dscale * ukp + pscale * ukd));
 
       // gradient
-      real frc1z = phi1z[0] * ci + phi1z[1] * di.x + phi1z[2] * di.y + phi1z[3] * di.z +
-         phi1z[4] * qixx + phi1z[5] * qiyy + phi1z[6] * qizz + phi1z[7] * qixy + phi1z[8] * qixz +
-         phi1z[9] * qiyz;
-      frc1z += dot3(phi1dz[0], phi1dz[1], phi1dz[2], (dscale * uip + pscale * uid));
+      real frc1z = phi1z[0] * ci + phi1z[1] * di.x + phi1z[2] * di.y
+         + phi1z[3] * di.z + phi1z[4] * qixx + phi1z[5] * qiyy + phi1z[6] * qizz
+         + phi1z[7] * qixy + phi1z[8] * qixz + phi1z[9] * qiyz;
+      frc1z += dot3(phi1dz[0], phi1dz[1], phi1dz[2],
+         (dscale * uip + pscale * uid));
       frc.x = -invr1 * (trqa.y + trqb.y + trqau.y + trqbu.y);
       frc.y = invr1 * (trqa.x + trqb.x + trqau.x + trqbu.x);
       frc.z = frc1z;
@@ -489,10 +501,13 @@ void pairMplar(                                                           //
    {
       real coeu5 = uscale * sr5 * r;
       real coeu7 = uscale * sr7 * r2 * r;
-      frc.x += coeu5 * (uid.x * ukp.z + uid.z * ukp.x + uip.x * ukd.z + uip.z * ukd.x);
-      frc.y += coeu5 * (uid.y * ukp.z + uid.z * ukp.y + uip.y * ukd.z + uip.z * ukd.y);
-      frc.z += coeu5 * (uid.x * ukp.x + uid.y * ukp.y + uip.x * ukd.x + uip.y * ukd.y) +
-         (3 * coeu5 - coeu7) * (uid.z * ukp.z + uip.z * ukd.z);
+      frc.x += coeu5
+         * (uid.x * ukp.z + uid.z * ukp.x + uip.x * ukd.z + uip.z * ukd.x);
+      frc.y += coeu5
+         * (uid.y * ukp.z + uid.z * ukp.y + uip.y * ukd.z + uip.z * ukd.y);
+      frc.z += coeu5
+            * (uid.x * ukp.x + uid.y * ukp.y + uip.x * ukd.x + uip.y * ukd.y)
+         + (3 * coeu5 - coeu7) * (uid.z * ukp.z + uip.z * ukd.z);
    }
 
    if CONSTEXPR (do_g) {
@@ -530,14 +545,25 @@ void pairMplar(                                                           //
 
 template <class Ver, class ETYP>
 __global__
-void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf,
-   grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
-   real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
-   const real (*restrict uind)[3], const real (*restrict uinp)[3], const real* restrict thole,
-   const real* restrict pdamp, real f, real aewald, int nexclude, const int (*restrict exclude)[2],
-   const real (*restrict exclude_scale)[4], const real* restrict x, const real* restrict y,
-   const real* restrict z)
+void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf,
+   VirialBuffer restrict vbuf, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
+   real* restrict trqz, const real (*restrict rpole)[10],
+   const real (*restrict uind)[3], const real (*restrict uinp)[3],
+#if TINKER9_POLPAIR
+#else
+   const real* restrict thole, const real* restrict pdamp,
+#endif
+   real f, real aewald, int nexclude, const int (*restrict exclude)[2],
+   const real (*restrict exclude_scale)[4], const real* restrict x,
+   const real* restrict y, const real* restrict z)
 {
+#if TINKER9_POLPAIR
+   using d::pdamp;
+   using d::thole;
+#else
+#endif
+
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
@@ -546,9 +572,7 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
 
    using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ebuftl;
-   if CONSTEXPR (do_e) {
-      ebuftl = 0;
-   }
+   if CONSTEXPR (do_e) { ebuftl = 0; }
    using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz;
    if CONSTEXPR (do_v) {
@@ -688,19 +712,19 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
-         pairMplar<Ver, NON_EWALD>(r2, make_real3(xr, yr, zr), scalea - 1, scaleb - 1, scalec - 1,
-            scaled - 1, ci[klane], make_real3(dix[klane], diy[klane], diz[klane]), qixx[klane],
+         pairMplar<Ver, NON_EWALD>(r2, make_real3(xr, yr, zr), scalea - 1,
+            scaleb - 1, scalec - 1, scaled - 1, ci[klane],
+            make_real3(dix[klane], diy[klane], diz[klane]), qixx[klane],
             qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
             make_real3(uidx[klane], uidy[klane], uidz[klane]),
-            make_real3(uipx[klane], uipy[klane], uipz[klane]), pdi[klane], pti[klane], ck,
-            make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
-            make_real3(ukdx, ukdy, ukdz), make_real3(ukpx, ukpy, ukpz), pdk, ptk, f, aewald,
-            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
-            trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e1, vxx1, vyx1, vzx1, vyy1, vzy1,
-            vzz1);
-         if CONSTEXPR (do_e) {
-            ebuftl += floatTo<ebuf_prec>(e1);
-         }
+            make_real3(uipx[klane], uipy[klane], uipz[klane]), pdi[klane],
+            pti[klane], ck, make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy,
+            qkyz, qkzz, make_real3(ukdx, ukdy, ukdz),
+            make_real3(ukpx, ukpy, ukpz), pdk, ptk, f, aewald, frcxi[klane],
+            frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
+            trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e1, vxx1, vyx1,
+            vzx1, vyy1, vzy1, vzz1);
+         if CONSTEXPR (do_e) { ebuftl += floatTo<ebuf_prec>(e1); }
          if CONSTEXPR (do_v) {
             vbuftlxx += floatTo<vbuf_prec>(vxx1);
             vbuftlyx += floatTo<vbuf_prec>(vyx1);
@@ -727,23 +751,33 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       }
    }
 
-   if CONSTEXPR (do_e) {
-      atomic_add(ebuftl, ebuf, ithread);
-   }
+   if CONSTEXPR (do_e) { atomic_add(ebuftl, ebuf, ithread); }
    if CONSTEXPR (do_v) {
-      atomic_add(vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz, vbuf, ithread);
+      atomic_add(vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz,
+         vbuf, ithread);
    }
 }
 
 template <class Ver, class ETYP>
 __global__
-void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf,
-   grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
-   real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
-   const real (*restrict uind)[3], const real (*restrict uinp)[3], const real* restrict thole,
-   const real* restrict pdamp, real f, real aewald, const Spatial::SortedAtom* restrict sorted,
-   int n, int nakpl, const int* restrict iakpl)
+void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf,
+   VirialBuffer restrict vbuf, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
+   real* restrict trqz, const real (*restrict rpole)[10],
+   const real (*restrict uind)[3], const real (*restrict uinp)[3],
+#if TINKER9_POLPAIR
+#else
+   const real* restrict thole, const real* restrict pdamp,
+#endif
+   real f, real aewald, const Spatial::SortedAtom* restrict sorted, int n,
+   int nakpl, const int* restrict iakpl)
 {
+#if TINKER9_POLPAIR
+   using d::pdamp;
+   using d::thole;
+#else
+#endif
+
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
@@ -755,9 +789,7 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
 
    using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ebuftl;
-   if CONSTEXPR (do_e) {
-      ebuftl = 0;
-   }
+   if CONSTEXPR (do_e) { ebuftl = 0; }
    using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz;
    if CONSTEXPR (do_v) {
@@ -903,18 +935,18 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
-            pairMplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci[klane],
-               make_real3(dix[klane], diy[klane], diz[klane]), qixx[klane], qixy[klane],
-               qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
-               make_real3(uidx[klane], uidy[klane], uidz[klane]),
-               make_real3(uipx[klane], uipy[klane], uipz[klane]), pdi[klane], pti[klane], ck,
-               make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
-               make_real3(ukdx, ukdy, ukdz), make_real3(ukpx, ukpy, ukpz), pdk, ptk, f, aewald,
-               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
-               trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
-            if CONSTEXPR (do_e) {
-               ebuftl += floatTo<ebuf_prec>(e);
-            }
+            pairMplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1,
+               ci[klane], make_real3(dix[klane], diy[klane], diz[klane]),
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
+               qizz[klane], make_real3(uidx[klane], uidy[klane], uidz[klane]),
+               make_real3(uipx[klane], uipy[klane], uipz[klane]), pdi[klane],
+               pti[klane], ck, make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz,
+               qkyy, qkyz, qkzz, make_real3(ukdx, ukdy, ukdz),
+               make_real3(ukpx, ukpy, ukpz), pdk, ptk, f, aewald, frcxi[klane],
+               frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
+               trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e, vxx, vyx,
+               vzx, vyy, vzy, vzz);
+            if CONSTEXPR (do_e) { ebuftl += floatTo<ebuf_prec>(e); }
             if CONSTEXPR (do_v) {
                vbuftlxx += floatTo<vbuf_prec>(vxx);
                vbuftlyx += floatTo<vbuf_prec>(vyx);
@@ -944,23 +976,33 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       }
    }
 
-   if CONSTEXPR (do_e) {
-      atomic_add(ebuftl, ebuf, ithread);
-   }
+   if CONSTEXPR (do_e) { atomic_add(ebuftl, ebuf, ithread); }
    if CONSTEXPR (do_v) {
-      atomic_add(vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz, vbuf, ithread);
+      atomic_add(vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz,
+         vbuf, ithread);
    }
 }
 
 template <class Ver, class ETYP>
 __global__
-void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf,
-   grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
-   real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
-   const real (*restrict uind)[3], const real (*restrict uinp)[3], const real* restrict thole,
-   const real* restrict pdamp, real f, real aewald, const Spatial::SortedAtom* restrict sorted,
-   int niak, const int* restrict iak, const int* restrict lst)
+void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf,
+   VirialBuffer restrict vbuf, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
+   real* restrict trqz, const real (*restrict rpole)[10],
+   const real (*restrict uind)[3], const real (*restrict uinp)[3],
+#if TINKER9_POLPAIR
+#else
+   const real* restrict thole, const real* restrict pdamp,
+#endif
+   real f, real aewald, const Spatial::SortedAtom* restrict sorted, int niak,
+   const int* restrict iak, const int* restrict lst)
 {
+#if TINKER9_POLPAIR
+   using d::pdamp;
+   using d::thole;
+#else
+#endif
+
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
@@ -972,9 +1014,7 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
 
    using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ebuftl;
-   if CONSTEXPR (do_e) {
-      ebuftl = 0;
-   }
+   if CONSTEXPR (do_e) { ebuftl = 0; }
    using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz;
    if CONSTEXPR (do_v) {
@@ -1115,18 +1155,18 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
-            pairMplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci[klane],
-               make_real3(dix[klane], diy[klane], diz[klane]), qixx[klane], qixy[klane],
-               qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
-               make_real3(uidx[klane], uidy[klane], uidz[klane]),
-               make_real3(uipx[klane], uipy[klane], uipz[klane]), pdi[klane], pti[klane], ck,
-               make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
-               make_real3(ukdx, ukdy, ukdz), make_real3(ukpx, ukpy, ukpz), pdk, ptk, f, aewald,
-               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
-               trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
-            if CONSTEXPR (do_e) {
-               ebuftl += floatTo<ebuf_prec>(e);
-            }
+            pairMplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1,
+               ci[klane], make_real3(dix[klane], diy[klane], diz[klane]),
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
+               qizz[klane], make_real3(uidx[klane], uidy[klane], uidz[klane]),
+               make_real3(uipx[klane], uipy[klane], uipz[klane]), pdi[klane],
+               pti[klane], ck, make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz,
+               qkyy, qkyz, qkzz, make_real3(ukdx, ukdy, ukdz),
+               make_real3(ukpx, ukpy, ukpz), pdk, ptk, f, aewald, frcxi[klane],
+               frcyi[klane], frczi[klane], frcxk, frcyk, frczk, trqxi[klane],
+               trqyi[klane], trqzi[klane], trqxk, trqyk, trqzk, e, vxx, vyx,
+               vzx, vyy, vzy, vzz);
+            if CONSTEXPR (do_e) { ebuftl += floatTo<ebuf_prec>(e); }
             if CONSTEXPR (do_v) {
                vbuftlxx += floatTo<vbuf_prec>(vxx);
                vbuftlyx += floatTo<vbuf_prec>(vyx);
@@ -1154,11 +1194,10 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       }
    }
 
-   if CONSTEXPR (do_e) {
-      atomic_add(ebuftl, ebuf, ithread);
-   }
+   if CONSTEXPR (do_e) { atomic_add(ebuftl, ebuf, ithread); }
    if CONSTEXPR (do_v) {
-      atomic_add(vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz, vbuf, ithread);
+      atomic_add(vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz,
+         vbuf, ithread);
    }
 }
 
@@ -1187,16 +1226,34 @@ static void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
    }
    int ngrid = gpuGridSize(BLOCK_DIM);
    auto kera = emplar_cu1a<Ver, ETYP>;
-   kera<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx,
-      trqy, trqz, rpole, uind, uinp, thole, pdamp, f, aewald, //
+   kera<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx,
+      demy, demz, off, trqx, trqy, trqz, rpole, uind, uinp,
+#if TINKER9_POLPAIR
+#else
+      thole, pdamp,
+#endif
+      f,
+      aewald, //
       st.sorted, st.niak, st.iak, st.lst);
    auto kerb = emplar_cu1b<Ver, ETYP>;
-   kerb<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx,
-      trqy, trqz, rpole, uind, uinp, thole, pdamp, f, aewald, //
+   kerb<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx,
+      demy, demz, off, trqx, trqy, trqz, rpole, uind, uinp,
+#if TINKER9_POLPAIR
+#else
+      thole, pdamp,
+#endif
+      f,
+      aewald, //
       st.sorted, st.n, st.nakpl, st.iakpl);
    auto kerc = emplar_cu1c<Ver, ETYP>;
-   kerc<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx,
-      trqy, trqz, rpole, uind, uinp, thole, pdamp, f, aewald, //
+   kerc<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx,
+      demy, demz, off, trqx, trqy, trqz, rpole, uind, uinp,
+#if TINKER9_POLPAIR
+#else
+      thole, pdamp,
+#endif
+      f,
+      aewald, //
       nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z);
 }
 
@@ -1214,8 +1271,7 @@ static void emplarEwald_cu()
    epolarEwaldRecipSelf(Ver::value & ~calc::energy);
 
    // epolar energy
-   if CONSTEXPR (Ver::e)
-      epolar0DotProd(uind, udirp);
+   if CONSTEXPR (Ver::e) epolar0DotProd(uind, udirp);
 }
 
 template <class Ver>
@@ -1226,8 +1282,7 @@ static void emplarNonEwald_cu()
 
    // empole and epolar
    emplar_cu<Ver, NON_EWALD>(uind, uinp);
-   if CONSTEXPR (Ver::e)
-      epolar0DotProd(uind, udirp);
+   if CONSTEXPR (Ver::e) epolar0DotProd(uind, udirp);
 }
 
 void emplar_cu(int vers)

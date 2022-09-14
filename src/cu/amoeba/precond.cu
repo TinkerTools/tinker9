@@ -7,13 +7,17 @@
 #include "seq/launch.h"
 #include "seq/triangle.h"
 
+#define TINKER9_POLPAIR 1
+#include "ff/amoebacumod.h"
+
 namespace tinker {
 __global__
-void sparsePrecond_cu0(const real (*restrict rsd)[3], const real (*restrict rsdp)[3],
-   real (*restrict zrsd)[3], real (*restrict zrsdp)[3], const real* restrict polarity, int n,
-   real udiag)
+void sparsePrecond_cu0(const real (*restrict rsd)[3],
+   const real (*restrict rsdp)[3], real (*restrict zrsd)[3],
+   real (*restrict zrsdp)[3], const real* restrict polarity, int n, real udiag)
 {
-   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n;
+        i += blockDim.x * gridDim.x) {
       real poli = udiag * polarity[i];
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
@@ -25,14 +29,27 @@ void sparsePrecond_cu0(const real (*restrict rsd)[3], const real (*restrict rsdp
 
 // ck.py Version 2.0.2
 __global__
-void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo,
-   int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
+void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off,
+   const unsigned* restrict uinfo, int nexclude,
+   const int (*restrict exclude)[2], const real* restrict exclude_scale,
    const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, const real (*restrict rsd)[3],
-   const real (*restrict rsdp)[3], real (*restrict zrsd)[3], real (*restrict zrsdp)[3],
-   const real* restrict pdamp, const real* restrict thole, const real* restrict polarity)
+   const Spatial::SortedAtom* restrict sorted, int nakpl,
+   const int* restrict iakpl, int niak, const int* restrict iak,
+   const int* restrict lst, const real (*restrict rsd)[3],
+   const real (*restrict rsdp)[3], real (*restrict zrsd)[3],
+   real (*restrict zrsdp)[3],
+#if TINKER9_POLPAIR
+#else
+   const real* restrict pdamp, const real* restrict thole,
+#endif
+   const real* restrict polarity)
 {
+#if TINKER9_POLPAIR
+   using d::pdamp;
+   using d::thole;
+#else
+#endif
+
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
@@ -404,8 +421,8 @@ void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
    }
 }
 
-void sparsePrecondApply_cu(
-   const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
+void sparsePrecondApply_cu(const real (*rsd)[3], const real (*rsdp)[3],
+   real (*zrsd)[3], real (*zrsdp)[3])
 {
    const auto& st = *uspatial_v2_unit;
    real off = switchOff(Switch::USOLVE);
@@ -418,8 +435,13 @@ void sparsePrecondApply_cu(
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
    launch_k1s(g::s0, nparallel, sparsePrecond_cu1, //
-      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nuexclude, uexclude, uexclude_scale, st.x, st.y,
-      st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, rsd, rsdp, zrsd, zrsdp, pdamp,
-      thole, polarity);
+      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nuexclude, uexclude,
+      uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
+      st.iak, st.lst, rsd, rsdp, zrsd, zrsdp,
+#if TINKER9_POLPAIR
+#else
+      pdamp, thole,
+#endif
+      polarity);
 }
 }

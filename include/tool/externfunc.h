@@ -27,6 +27,9 @@ void throwExceptionMissingFunction(const char* functionName, const char* file,
          ? TINKER_FCALL0_NORMAL_(F, cu, __VA_ARGS__) \
          : TINKER_FCALL0_NORMAL_(F, acc, __VA_ARGS__)
 
+#   define TINKER_FCALL2_cpp0_cu1__(F, ...) \
+      TINKER_FCALL0_NORMAL_(F, cu, __VA_ARGS__)
+
 #elif TINKER_GPULANG_CUDA // pure cuda
 
 #   define TINKER_FEXTN1_acc1__(R, F, ...) TINKER_FEXTN1_EMPTY__
@@ -41,6 +44,9 @@ void throwExceptionMissingFunction(const char* functionName, const char* file,
       TINKER_FCALL0_NORMAL_(F, cu, __VA_ARGS__)
 #   define TINKER_FCALL2_acc1_cu0__(F, ...) TINKER_FCALL0_ERROR__(F, cu)
 #   define TINKER_FCALL2_acc1_cu1__(F, ...) \
+      TINKER_FCALL0_NORMAL_(F, cu, __VA_ARGS__)
+
+#   define TINKER_FCALL2_cpp0_cu1__(F, ...) \
       TINKER_FCALL0_NORMAL_(F, cu, __VA_ARGS__)
 
 #else // host
@@ -59,7 +65,11 @@ void throwExceptionMissingFunction(const char* functionName, const char* file,
 #   define TINKER_FCALL2_acc1_cu1__(F, ...) \
       TINKER_FCALL0_NORMAL_(F, acc, __VA_ARGS__)
 
+#   define TINKER_FCALL2_cpp0_cu1__(F, ...)
+
 #endif // end
+
+#define TINKER_FEXTN1_cpp0__(R, F, ...)
 
 #define TINKER_FVOID2(SUFFIX_HAS_IMPL1, SUFFIX_HAS_IMPL2, FUNC, ...) \
    TINKER_FEXTN2__(SUFFIX_HAS_IMPL1, SUFFIX_HAS_IMPL2, void, FUNC, __VA_ARGS__)

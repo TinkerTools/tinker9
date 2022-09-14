@@ -37,6 +37,11 @@ TINKER_EXTERN real* mexclude_scale;
 
 // polar
 namespace tinker {
+// polpair
+TINKER_EXTERN int njpolar;
+TINKER_EXTERN int* jpolar;
+TINKER_EXTERN real* thlval;
+
 TINKER_EXTERN real* polarity;
 TINKER_EXTERN real* thole;
 TINKER_EXTERN real* pdamp;

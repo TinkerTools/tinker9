@@ -8,16 +8,20 @@
 #include "seq/pair_polar.h"
 #include "seq/triangle.h"
 
+#define TINKER9_POLPAIR 1
+#include "ff/amoebacumod.h"
+
 namespace tinker {
 __global__
-void epolar0DotProd_cu1(int n, real f, EnergyBuffer restrict ep, const real (*restrict gpu_uind)[3],
-   const real (*restrict gpu_udirp)[3], const real* restrict polarity_inv)
+void epolar0DotProd_cu1(int n, real f, EnergyBuffer restrict ep,
+   const real (*restrict gpu_uind)[3], const real (*restrict gpu_udirp)[3],
+   const real* restrict polarity_inv)
 {
    int ithread = ITHREAD;
    for (int i = ithread; i < n; i += STRIDE) {
-      real e = polarity_inv[i] *
-         (gpu_uind[i][0] * gpu_udirp[i][0] + gpu_uind[i][1] * gpu_udirp[i][1] +
-            gpu_uind[i][2] * gpu_udirp[i][2]);
+      real e = polarity_inv[i]
+         * (gpu_uind[i][0] * gpu_udirp[i][0] + gpu_uind[i][1] * gpu_udirp[i][1]
+            + gpu_uind[i][2] * gpu_udirp[i][2]);
       atomic_add(f * e, ep, ithread);
    }
 }
@@ -25,7 +29,8 @@ void epolar0DotProd_cu1(int n, real f, EnergyBuffer restrict ep, const real (*re
 void epolar0DotProd_cu(const real (*gpu_uind)[3], const real (*gpu_udirp)[3])
 {
    const real f = -0.5 * electric / dielec;
-   launch_k1b(g::s0, n, epolar0DotProd_cu1, n, f, ep, gpu_uind, gpu_udirp, polarity_inv);
+   launch_k1b(g::s0, n, epolar0DotProd_cu1, n, f, ep, gpu_uind, gpu_udirp,
+      polarity_inv);
 }
 }
 
@@ -33,17 +38,29 @@ namespace tinker {
 // ck.py Version 2.0.2
 template <class Ver, class ETYP>
 __global__
-void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuffer restrict ep,
-   VirialBuffer restrict vep, grad_prec* restrict gx, grad_prec* restrict gy,
-   grad_prec* restrict gz, real off, const unsigned* restrict mdpuinfo, int nexclude,
+void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep,
+   EnergyBuffer restrict ep, VirialBuffer restrict vep, grad_prec* restrict gx,
+   grad_prec* restrict gy, grad_prec* restrict gz, real off,
+   const unsigned* restrict mdpuinfo, int nexclude,
    const int (*restrict exclude)[2], const real (*restrict exclude_scale)[4],
    const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, real (*restrict ufld)[3],
-   real (*restrict dufld)[6], const real (*restrict rpole)[10], const real (*restrict uind)[3],
-   const real (*restrict uinp)[3], const real* restrict thole, const real* restrict pdamp, real f,
-   real aewald)
+   const Spatial::SortedAtom* restrict sorted, int nakpl,
+   const int* restrict iakpl, int niak, const int* restrict iak,
+   const int* restrict lst, real (*restrict ufld)[3], real (*restrict dufld)[6],
+   const real (*restrict rpole)[10], const real (*restrict uind)[3],
+   const real (*restrict uinp)[3],
+#if TINKER9_POLPAIR
+#else
+   const real* restrict pdamp, const real* restrict thole,
+#endif
+   real f, real aewald)
 {
+#if TINKER9_POLPAIR
+   using d::pdamp;
+   using d::thole;
+#else
+#endif
+
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
    constexpr bool do_g = Ver::g;
@@ -54,14 +71,10 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuff
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
    int neptl;
-   if CONSTEXPR (do_a) {
-      neptl = 0;
-   }
+   if CONSTEXPR (do_a) { neptl = 0; }
    using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec eptl;
-   if CONSTEXPR (do_e) {
-      eptl = 0;
-   }
+   if CONSTEXPR (do_e) { eptl = 0; }
    using vbuf_prec = VirialBufferTraits::type;
    vbuf_prec veptlxx, veptlyx, veptlzx, veptlyy, veptlzy, veptlzz;
    if CONSTEXPR (do_v) {
@@ -227,30 +240,35 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuff
          real e, vxx, vyx, vzx, vyy, vzy, vzz;
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
          pair_polar_v2<Ver, ETYP>(r2, xr, yr, zr, 1, 1, 1, //
-            ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
-            qiyy[klane], qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane],
-            uipx[klane], uipy[klane], uipz[klane], pdi[klane], pti[klane], //
-            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx, ukdy, ukdz, ukpx, ukpy,
-            ukpz, pdk, ptk, //
-            f, aewald,      //
-            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane],
-            ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
+            ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane],
+            qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
+            uidx[klane], uidy[klane], uidz[klane], uipx[klane], uipy[klane],
+            uipz[klane], pdi[klane], pti[klane], //
+            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx, ukdy,
+            ukdz, ukpx, ukpy, ukpz, pdk, ptk, //
+            f, aewald,                        //
+            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk,
+            ufld0i[klane], ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
             ufld2k, //
-            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane],
-            dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane],
+            dufld4i[klane], dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k,
+            dufld4k, dufld5k, //
             e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1);
-         pair_polar_v2<Ver, NON_EWALD>(r2, xr, yr, zr, scaleb - 1, scalec - 1, scaled - 1, //
-            ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
-            qiyy[klane], qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane],
-            uipx[klane], uipy[klane], uipz[klane], pdi[klane], pti[klane], //
-            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx, ukdy, ukdz, ukpx, ukpy,
-            ukpz, pdk, ptk, //
-            f, aewald,      //
-            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane],
-            ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
+         pair_polar_v2<Ver, NON_EWALD>(r2, xr, yr, zr, scaleb - 1, scalec - 1,
+            scaled - 1, //
+            ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane],
+            qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
+            uidx[klane], uidy[klane], uidz[klane], uipx[klane], uipy[klane],
+            uipz[klane], pdi[klane], pti[klane], //
+            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx, ukdy,
+            ukdz, ukpx, ukpy, ukpz, pdk, ptk, //
+            f, aewald,                        //
+            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk,
+            ufld0i[klane], ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
             ufld2k, //
-            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane],
-            dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane],
+            dufld4i[klane], dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k,
+            dufld4k, dufld5k, //
             e, vxx, vyx, vzx, vyy, vzy, vzz);
          if CONSTEXPR (do_e) {
             e = e + e1;
@@ -395,23 +413,24 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuff
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             pair_polar_v2<Ver, ETYP>(r2, xr, yr, zr, 1, 1, 1, //
-               ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
-               qiyy[klane], qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane],
-               uipx[klane], uipy[klane], uipz[klane], pdi[klane], pti[klane], //
-               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx, ukdy, ukdz, ukpx, ukpy,
-               ukpz, pdk, ptk, //
-               f, aewald,      //
-               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane],
-               ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
+               ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane],
+               qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
+               uidx[klane], uidy[klane], uidz[klane], uipx[klane], uipy[klane],
+               uipz[klane], pdi[klane], pti[klane], //
+               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx,
+               ukdy, ukdz, ukpx, ukpy, ukpz, pdk, ptk, //
+               f, aewald,                              //
+               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk,
+               ufld0i[klane], ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
                ufld2k, //
-               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane],
-               dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane],
+               dufld4i[klane], dufld5i[klane], dufld0k, dufld1k, dufld2k,
+               dufld3k, dufld4k, dufld5k, //
                e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
                eptl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
-                  if (e != 0)
-                     neptl += 1;
+                  if (e != 0) neptl += 1;
                }
             }
             if CONSTEXPR (do_v) {
@@ -543,23 +562,24 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuff
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             pair_polar_v2<Ver, ETYP>(r2, xr, yr, zr, 1, 1, 1, //
-               ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
-               qiyy[klane], qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane],
-               uipx[klane], uipy[klane], uipz[klane], pdi[klane], pti[klane], //
-               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx, ukdy, ukdz, ukpx, ukpy,
-               ukpz, pdk, ptk, //
-               f, aewald,      //
-               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane],
-               ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
+               ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane],
+               qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
+               uidx[klane], uidy[klane], uidz[klane], uipx[klane], uipy[klane],
+               uipz[klane], pdi[klane], pti[klane], //
+               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx,
+               ukdy, ukdz, ukpx, ukpy, ukpz, pdk, ptk, //
+               f, aewald,                              //
+               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk,
+               ufld0i[klane], ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
                ufld2k, //
-               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane],
-               dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane],
+               dufld4i[klane], dufld5i[klane], dufld0k, dufld1k, dufld2k,
+               dufld3k, dufld4k, dufld5k, //
                e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
                eptl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
-                  if (e != 0)
-                     neptl += 1;
+                  if (e != 0) neptl += 1;
                }
             }
             if CONSTEXPR (do_v) {
@@ -601,14 +621,11 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuff
       }
    }
 
-   if CONSTEXPR (do_a) {
-      atomic_add(neptl, nep, ithread);
-   }
-   if CONSTEXPR (do_e) {
-      atomic_add(eptl, ep, ithread);
-   }
+   if CONSTEXPR (do_a) { atomic_add(neptl, nep, ithread); }
+   if CONSTEXPR (do_e) { atomic_add(eptl, ep, ithread); }
    if CONSTEXPR (do_v) {
-      atomic_add(veptlxx, veptlyx, veptlzx, veptlyy, veptlzy, veptlzz, vep, ithread);
+      atomic_add(veptlxx, veptlyx, veptlzx, veptlyy, veptlzy, veptlzz, vep,
+         ithread);
    }
 }
 
@@ -631,14 +648,18 @@ static void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
       aewald = pu->aewald;
    }
 
-   if CONSTEXPR (do_g) {
-      darray::zero(g::q0, n, ufld, dufld);
-   }
+   if CONSTEXPR (do_g) { darray::zero(g::q0, n, ufld, dufld); }
    int ngrid = gpuGridSize(BLOCK_DIM);
-   epolar_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep, ep, vir_ep,
-      depx, depy, depz, off, st.si1.bit0, nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y,
-      st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, rpole, uind, uinp,
-      thole, pdamp, f, aewald);
+   epolar_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n,
+      TINKER_IMAGE_ARGS, nep, ep, vir_ep, depx, depy, depz, off, st.si1.bit0,
+      nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z, st.sorted,
+      st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, rpole, uind,
+      uinp,
+#if TINKER9_POLPAIR
+#else
+      pdamp, thole,
+#endif
+      f, aewald);
 
    // torque
    if CONSTEXPR (do_g) {
