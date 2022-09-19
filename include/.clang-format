@@ -1,0 +1,7 @@
+BasedOnStyle:                          InheritParentConfig
+
+ColumnLimit:                           160
+
+AlignAfterOpenBracket:                 Align
+AllowAllArgumentsOnNextLine:           false
+BinPackParameters:                     false

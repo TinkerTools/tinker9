@@ -20,7 +20,7 @@
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/uprior.hh>
 
-#define TINKER9_POLPAIR 1
+#define TINKER9_POLPAIR 2
 
 namespace tinker {
 TINKER_FVOID2(cpp0, cu1, epolarDataBinding, RcOp);

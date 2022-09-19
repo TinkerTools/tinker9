@@ -12,7 +12,7 @@
 #include "seq/launch.h"
 #include "seq/triangle.h"
 
-#define TINKER9_POLPAIR 1
+#define TINKER9_POLPAIR 2
 #include "ff/amoebacumod.h"
 
 namespace tinker {
@@ -541,6 +541,7 @@ void pairMplar(                                                           //
    }
 }
 
+#if TINKER9_POLPAIR == 0
 // ck.py Version 2.0.1
 
 template <class Ver, class ETYP>
@@ -550,19 +551,19 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf,
    grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
    real* restrict trqz, const real (*restrict rpole)[10],
    const real (*restrict uind)[3], const real (*restrict uinp)[3],
-#if TINKER9_POLPAIR
-#else
+#   if TINKER9_POLPAIR
+#   else
    const real* restrict thole, const real* restrict pdamp,
-#endif
+#   endif
    real f, real aewald, int nexclude, const int (*restrict exclude)[2],
    const real (*restrict exclude_scale)[4], const real* restrict x,
    const real* restrict y, const real* restrict z)
 {
-#if TINKER9_POLPAIR
+#   if TINKER9_POLPAIR
    using d::pdamp;
    using d::thole;
-#else
-#endif
+#   else
+#   endif
 
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -765,18 +766,18 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf,
    grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
    real* restrict trqz, const real (*restrict rpole)[10],
    const real (*restrict uind)[3], const real (*restrict uinp)[3],
-#if TINKER9_POLPAIR
-#else
+#   if TINKER9_POLPAIR
+#   else
    const real* restrict thole, const real* restrict pdamp,
-#endif
+#   endif
    real f, real aewald, const Spatial::SortedAtom* restrict sorted, int n,
    int nakpl, const int* restrict iakpl)
 {
-#if TINKER9_POLPAIR
+#   if TINKER9_POLPAIR
    using d::pdamp;
    using d::thole;
-#else
-#endif
+#   else
+#   endif
 
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -990,18 +991,18 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf,
    grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
    real* restrict trqz, const real (*restrict rpole)[10],
    const real (*restrict uind)[3], const real (*restrict uinp)[3],
-#if TINKER9_POLPAIR
-#else
+#   if TINKER9_POLPAIR
+#   else
    const real* restrict thole, const real* restrict pdamp,
-#endif
+#   endif
    real f, real aewald, const Spatial::SortedAtom* restrict sorted, int niak,
    const int* restrict iak, const int* restrict lst)
 {
-#if TINKER9_POLPAIR
+#   if TINKER9_POLPAIR
    using d::pdamp;
    using d::thole;
-#else
-#endif
+#   else
+#   endif
 
    constexpr bool do_e = Ver::e;
    constexpr bool do_g = Ver::g;
@@ -1228,34 +1229,719 @@ static void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
    auto kera = emplar_cu1a<Ver, ETYP>;
    kera<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx,
       demy, demz, off, trqx, trqy, trqz, rpole, uind, uinp,
-#if TINKER9_POLPAIR
-#else
+#   if TINKER9_POLPAIR
+#   else
       thole, pdamp,
-#endif
+#   endif
       f,
       aewald, //
       st.sorted, st.niak, st.iak, st.lst);
    auto kerb = emplar_cu1b<Ver, ETYP>;
    kerb<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx,
       demy, demz, off, trqx, trqy, trqz, rpole, uind, uinp,
-#if TINKER9_POLPAIR
-#else
+#   if TINKER9_POLPAIR
+#   else
       thole, pdamp,
-#endif
+#   endif
       f,
       aewald, //
       st.sorted, st.n, st.nakpl, st.iakpl);
    auto kerc = emplar_cu1c<Ver, ETYP>;
    kerc<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx,
       demy, demz, off, trqx, trqy, trqz, rpole, uind, uinp,
-#if TINKER9_POLPAIR
-#else
+#   if TINKER9_POLPAIR
+#   else
       thole, pdamp,
-#endif
+#   endif
       f,
       aewald, //
       nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z);
 }
+#elif TINKER9_POLPAIR == 2
+template <class Ver, class ETYP>
+__global__
+void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf,
+   VirialBuffer restrict vbuf, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
+   real* restrict trqz, const real (*restrict rpole)[10],
+   const real (*restrict uind)[3], const real (*restrict uinp)[3], real f,
+   real aewald, int nexclude, const int (*restrict exclude)[2],
+   const real (*restrict exclude_scale)[4], const real* restrict x,
+   const real* restrict y, const real* restrict z)
+{
+   using d::jpolar;
+   using d::njpolar;
+   using d::pdamp;
+   using d::thlval;
+
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
+   static_assert(!Ver::a, "");
+   const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
+
+   using ebuf_prec = EnergyBufferTraits::type;
+   ebuf_prec ebuftl;
+   if CONSTEXPR (do_e) { ebuftl = 0; }
+   using vbuf_prec = VirialBufferTraits::type;
+   vbuf_prec vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz;
+   if CONSTEXPR (do_v) {
+      vbuftlxx = 0;
+      vbuftlyx = 0;
+      vbuftlzx = 0;
+      vbuftlyy = 0;
+      vbuftlzy = 0;
+      vbuftlzz = 0;
+   }
+   __shared__ real xi[BLOCK_DIM];
+   __shared__ real yi[BLOCK_DIM];
+   __shared__ real zi[BLOCK_DIM];
+   real xk;
+   real yk;
+   real zk;
+   __shared__ real frcxi[BLOCK_DIM];
+   __shared__ real frcyi[BLOCK_DIM];
+   __shared__ real frczi[BLOCK_DIM];
+   __shared__ real trqxi[BLOCK_DIM];
+   __shared__ real trqyi[BLOCK_DIM];
+   __shared__ real trqzi[BLOCK_DIM];
+   real frcxk;
+   real frcyk;
+   real frczk;
+   real trqxk;
+   real trqyk;
+   real trqzk;
+   __shared__ real ci[BLOCK_DIM];
+   __shared__ real dix[BLOCK_DIM];
+   __shared__ real diy[BLOCK_DIM];
+   __shared__ real diz[BLOCK_DIM];
+   __shared__ real qixx[BLOCK_DIM];
+   __shared__ real qixy[BLOCK_DIM];
+   __shared__ real qixz[BLOCK_DIM];
+   __shared__ real qiyy[BLOCK_DIM];
+   __shared__ real qiyz[BLOCK_DIM];
+   __shared__ real qizz[BLOCK_DIM];
+   __shared__ real uidx[BLOCK_DIM];
+   __shared__ real uidy[BLOCK_DIM];
+   __shared__ real uidz[BLOCK_DIM];
+   __shared__ real uipx[BLOCK_DIM];
+   __shared__ real uipy[BLOCK_DIM];
+   __shared__ real uipz[BLOCK_DIM];
+   __shared__ real pdi[BLOCK_DIM];
+   __shared__ int jpi[BLOCK_DIM];
+   real ck;
+   real dkx;
+   real dky;
+   real dkz;
+   real qkxx;
+   real qkxy;
+   real qkxz;
+   real qkyy;
+   real qkyz;
+   real qkzz;
+   real ukdx;
+   real ukdy;
+   real ukdz;
+   real ukpx;
+   real ukpy;
+   real ukpz;
+   real pdk;
+   int jpk;
+
+   for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
+      const int klane = threadIdx.x;
+      if CONSTEXPR (do_g) {
+         frcxi[threadIdx.x] = 0;
+         frcyi[threadIdx.x] = 0;
+         frczi[threadIdx.x] = 0;
+         trqxi[threadIdx.x] = 0;
+         trqyi[threadIdx.x] = 0;
+         trqzi[threadIdx.x] = 0;
+         frcxk = 0;
+         frcyk = 0;
+         frczk = 0;
+         trqxk = 0;
+         trqyk = 0;
+         trqzk = 0;
+      }
+
+      int i = exclude[ii][0];
+      int k = exclude[ii][1];
+      real scalea = exclude_scale[ii][0];
+      real scaleb = exclude_scale[ii][1];
+      real scalec = exclude_scale[ii][2];
+      real scaled = exclude_scale[ii][3];
+
+      xi[klane] = x[i];
+      yi[klane] = y[i];
+      zi[klane] = z[i];
+      xk = x[k];
+      yk = y[k];
+      zk = z[k];
+      ci[klane] = rpole[i][MPL_PME_0];
+      dix[klane] = rpole[i][MPL_PME_X];
+      diy[klane] = rpole[i][MPL_PME_Y];
+      diz[klane] = rpole[i][MPL_PME_Z];
+      qixx[klane] = rpole[i][MPL_PME_XX];
+      qixy[klane] = rpole[i][MPL_PME_XY];
+      qixz[klane] = rpole[i][MPL_PME_XZ];
+      qiyy[klane] = rpole[i][MPL_PME_YY];
+      qiyz[klane] = rpole[i][MPL_PME_YZ];
+      qizz[klane] = rpole[i][MPL_PME_ZZ];
+      uidx[klane] = uind[i][0];
+      uidy[klane] = uind[i][1];
+      uidz[klane] = uind[i][2];
+      uipx[klane] = uinp[i][0];
+      uipy[klane] = uinp[i][1];
+      uipz[klane] = uinp[i][2];
+      pdi[klane] = pdamp[i];
+      jpi[klane] = jpolar[i];
+      ck = rpole[k][MPL_PME_0];
+      dkx = rpole[k][MPL_PME_X];
+      dky = rpole[k][MPL_PME_Y];
+      dkz = rpole[k][MPL_PME_Z];
+      qkxx = rpole[k][MPL_PME_XX];
+      qkxy = rpole[k][MPL_PME_XY];
+      qkxz = rpole[k][MPL_PME_XZ];
+      qkyy = rpole[k][MPL_PME_YY];
+      qkyz = rpole[k][MPL_PME_YZ];
+      qkzz = rpole[k][MPL_PME_ZZ];
+      ukdx = uind[k][0];
+      ukdy = uind[k][1];
+      ukdz = uind[k][2];
+      ukpx = uinp[k][0];
+      ukpy = uinp[k][1];
+      ukpz = uinp[k][2];
+      pdk = pdamp[k];
+      jpk = jpolar[k];
+
+      constexpr bool incl = true;
+      real xr = xk - xi[klane];
+      real yr = yk - yi[klane];
+      real zr = zk - zi[klane];
+      real r2 = image2(xr, yr, zr);
+      if (r2 <= off * off and incl) {
+         real pga = thlval[njpolar * jpi[klane] + jpk];
+         real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
+         pairMplar<Ver, NON_EWALD>(r2, make_real3(xr, yr, zr), scalea - 1,
+            scaleb - 1, scalec - 1, scaled - 1, ci[klane],
+            make_real3(dix[klane], diy[klane], diz[klane]), qixx[klane],
+            qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
+            make_real3(uidx[klane], uidy[klane], uidz[klane]),
+            make_real3(uipx[klane], uipy[klane], uipz[klane]), pdi[klane], pga,
+            ck, make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+            make_real3(ukdx, ukdy, ukdz), make_real3(ukpx, ukpy, ukpz), pdk,
+            pga, f, aewald, frcxi[klane], frcyi[klane], frczi[klane], frcxk,
+            frcyk, frczk, trqxi[klane], trqyi[klane], trqzi[klane], trqxk,
+            trqyk, trqzk, e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1);
+         if CONSTEXPR (do_e) { ebuftl += floatTo<ebuf_prec>(e1); }
+         if CONSTEXPR (do_v) {
+            vbuftlxx += floatTo<vbuf_prec>(vxx1);
+            vbuftlyx += floatTo<vbuf_prec>(vyx1);
+            vbuftlzx += floatTo<vbuf_prec>(vzx1);
+            vbuftlyy += floatTo<vbuf_prec>(vyy1);
+            vbuftlzy += floatTo<vbuf_prec>(vzy1);
+            vbuftlzz += floatTo<vbuf_prec>(vzz1);
+         }
+      } // end if (include)
+
+      if CONSTEXPR (do_g) {
+         atomic_add(frcxi[threadIdx.x], gx, i);
+         atomic_add(frcyi[threadIdx.x], gy, i);
+         atomic_add(frczi[threadIdx.x], gz, i);
+         atomic_add(trqxi[threadIdx.x], trqx, i);
+         atomic_add(trqyi[threadIdx.x], trqy, i);
+         atomic_add(trqzi[threadIdx.x], trqz, i);
+         atomic_add(frcxk, gx, k);
+         atomic_add(frcyk, gy, k);
+         atomic_add(frczk, gz, k);
+         atomic_add(trqxk, trqx, k);
+         atomic_add(trqyk, trqy, k);
+         atomic_add(trqzk, trqz, k);
+      }
+   }
+
+   if CONSTEXPR (do_e) { atomic_add(ebuftl, ebuf, ithread); }
+   if CONSTEXPR (do_v) {
+      atomic_add(vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz,
+         vbuf, ithread);
+   }
+}
+
+template <class Ver, class ETYP>
+__global__
+void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf,
+   VirialBuffer restrict vbuf, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
+   real* restrict trqz, const real (*restrict rpole)[10],
+   const real (*restrict uind)[3], const real (*restrict uinp)[3], real f,
+   real aewald, const Spatial::SortedAtom* restrict sorted, int n, int nakpl,
+   const int* restrict iakpl)
+{
+   using d::jpolar;
+   using d::njpolar;
+   using d::pdamp;
+   using d::thlval;
+
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
+   static_assert(!Ver::a, "");
+   const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
+   const int iwarp = ithread / WARP_SIZE;
+   const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
+   const int ilane = threadIdx.x & (WARP_SIZE - 1);
+
+   using ebuf_prec = EnergyBufferTraits::type;
+   ebuf_prec ebuftl;
+   if CONSTEXPR (do_e) { ebuftl = 0; }
+   using vbuf_prec = VirialBufferTraits::type;
+   vbuf_prec vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz;
+   if CONSTEXPR (do_v) {
+      vbuftlxx = 0;
+      vbuftlyx = 0;
+      vbuftlzx = 0;
+      vbuftlyy = 0;
+      vbuftlzy = 0;
+      vbuftlzz = 0;
+   }
+   __shared__ real xi[BLOCK_DIM];
+   __shared__ real yi[BLOCK_DIM];
+   __shared__ real zi[BLOCK_DIM];
+   real xk;
+   real yk;
+   real zk;
+   __shared__ real frcxi[BLOCK_DIM];
+   __shared__ real frcyi[BLOCK_DIM];
+   __shared__ real frczi[BLOCK_DIM];
+   __shared__ real trqxi[BLOCK_DIM];
+   __shared__ real trqyi[BLOCK_DIM];
+   __shared__ real trqzi[BLOCK_DIM];
+   real frcxk;
+   real frcyk;
+   real frczk;
+   real trqxk;
+   real trqyk;
+   real trqzk;
+   __shared__ real ci[BLOCK_DIM];
+   __shared__ real dix[BLOCK_DIM];
+   __shared__ real diy[BLOCK_DIM];
+   __shared__ real diz[BLOCK_DIM];
+   __shared__ real qixx[BLOCK_DIM];
+   __shared__ real qixy[BLOCK_DIM];
+   __shared__ real qixz[BLOCK_DIM];
+   __shared__ real qiyy[BLOCK_DIM];
+   __shared__ real qiyz[BLOCK_DIM];
+   __shared__ real qizz[BLOCK_DIM];
+   __shared__ real uidx[BLOCK_DIM];
+   __shared__ real uidy[BLOCK_DIM];
+   __shared__ real uidz[BLOCK_DIM];
+   __shared__ real uipx[BLOCK_DIM];
+   __shared__ real uipy[BLOCK_DIM];
+   __shared__ real uipz[BLOCK_DIM];
+   __shared__ real pdi[BLOCK_DIM];
+   __shared__ int jpi[BLOCK_DIM];
+   real ck;
+   real dkx;
+   real dky;
+   real dkz;
+   real qkxx;
+   real qkxy;
+   real qkxz;
+   real qkyy;
+   real qkyz;
+   real qkzz;
+   real ukdx;
+   real ukdy;
+   real ukdz;
+   real ukpx;
+   real ukpy;
+   real ukpz;
+   real pdk;
+   int jpk;
+
+   for (int iw = iwarp; iw < nakpl; iw += nwarp) {
+      if CONSTEXPR (do_g) {
+         frcxi[threadIdx.x] = 0;
+         frcyi[threadIdx.x] = 0;
+         frczi[threadIdx.x] = 0;
+         trqxi[threadIdx.x] = 0;
+         trqyi[threadIdx.x] = 0;
+         trqzi[threadIdx.x] = 0;
+         frcxk = 0;
+         frcyk = 0;
+         frczk = 0;
+         trqxk = 0;
+         trqyk = 0;
+         trqzk = 0;
+      }
+
+      int tri, tx, ty;
+      tri = iakpl[iw];
+      tri_to_xy(tri, tx, ty);
+
+      int iid = ty * WARP_SIZE + ilane;
+      int atomi = min(iid, n - 1);
+      int i = sorted[atomi].unsorted;
+      int kid = tx * WARP_SIZE + ilane;
+      int atomk = min(kid, n - 1);
+      int k = sorted[atomk].unsorted;
+      xi[threadIdx.x] = sorted[atomi].x;
+      yi[threadIdx.x] = sorted[atomi].y;
+      zi[threadIdx.x] = sorted[atomi].z;
+      xk = sorted[atomk].x;
+      yk = sorted[atomk].y;
+      zk = sorted[atomk].z;
+
+      ci[threadIdx.x] = rpole[i][MPL_PME_0];
+      dix[threadIdx.x] = rpole[i][MPL_PME_X];
+      diy[threadIdx.x] = rpole[i][MPL_PME_Y];
+      diz[threadIdx.x] = rpole[i][MPL_PME_Z];
+      qixx[threadIdx.x] = rpole[i][MPL_PME_XX];
+      qixy[threadIdx.x] = rpole[i][MPL_PME_XY];
+      qixz[threadIdx.x] = rpole[i][MPL_PME_XZ];
+      qiyy[threadIdx.x] = rpole[i][MPL_PME_YY];
+      qiyz[threadIdx.x] = rpole[i][MPL_PME_YZ];
+      qizz[threadIdx.x] = rpole[i][MPL_PME_ZZ];
+      uidx[threadIdx.x] = uind[i][0];
+      uidy[threadIdx.x] = uind[i][1];
+      uidz[threadIdx.x] = uind[i][2];
+      uipx[threadIdx.x] = uinp[i][0];
+      uipy[threadIdx.x] = uinp[i][1];
+      uipz[threadIdx.x] = uinp[i][2];
+      pdi[threadIdx.x] = pdamp[i];
+      jpi[threadIdx.x] = jpolar[i];
+      ck = rpole[k][MPL_PME_0];
+      dkx = rpole[k][MPL_PME_X];
+      dky = rpole[k][MPL_PME_Y];
+      dkz = rpole[k][MPL_PME_Z];
+      qkxx = rpole[k][MPL_PME_XX];
+      qkxy = rpole[k][MPL_PME_XY];
+      qkxz = rpole[k][MPL_PME_XZ];
+      qkyy = rpole[k][MPL_PME_YY];
+      qkyz = rpole[k][MPL_PME_YZ];
+      qkzz = rpole[k][MPL_PME_ZZ];
+      ukdx = uind[k][0];
+      ukdy = uind[k][1];
+      ukdz = uind[k][2];
+      ukpx = uinp[k][0];
+      ukpy = uinp[k][1];
+      ukpz = uinp[k][2];
+      pdk = pdamp[k];
+      jpk = jpolar[k];
+
+      for (int j = 0; j < WARP_SIZE; ++j) {
+         int srclane = (ilane + j) & (WARP_SIZE - 1);
+         int klane = srclane + threadIdx.x - ilane;
+         bool incl = iid < kid and kid < n;
+         real xr = xk - xi[klane];
+         real yr = yk - yi[klane];
+         real zr = zk - zi[klane];
+         real r2 = image2(xr, yr, zr);
+         if (r2 <= off * off and incl) {
+            real pga = thlval[njpolar * jpi[klane] + jpk];
+            real e, vxx, vyx, vzx, vyy, vzy, vzz;
+            pairMplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1,
+               ci[klane], make_real3(dix[klane], diy[klane], diz[klane]),
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
+               qizz[klane], make_real3(uidx[klane], uidy[klane], uidz[klane]),
+               make_real3(uipx[klane], uipy[klane], uipz[klane]), pdi[klane],
+               pga, ck, make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy, qkyz,
+               qkzz, make_real3(ukdx, ukdy, ukdz), make_real3(ukpx, ukpy, ukpz),
+               pdk, pga, f, aewald, frcxi[klane], frcyi[klane], frczi[klane],
+               frcxk, frcyk, frczk, trqxi[klane], trqyi[klane], trqzi[klane],
+               trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
+            if CONSTEXPR (do_e) { ebuftl += floatTo<ebuf_prec>(e); }
+            if CONSTEXPR (do_v) {
+               vbuftlxx += floatTo<vbuf_prec>(vxx);
+               vbuftlyx += floatTo<vbuf_prec>(vyx);
+               vbuftlzx += floatTo<vbuf_prec>(vzx);
+               vbuftlyy += floatTo<vbuf_prec>(vyy);
+               vbuftlzy += floatTo<vbuf_prec>(vzy);
+               vbuftlzz += floatTo<vbuf_prec>(vzz);
+            }
+         } // end if (include)
+
+         iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
+      }
+
+      if CONSTEXPR (do_g) {
+         atomic_add(frcxi[threadIdx.x], gx, i);
+         atomic_add(frcyi[threadIdx.x], gy, i);
+         atomic_add(frczi[threadIdx.x], gz, i);
+         atomic_add(trqxi[threadIdx.x], trqx, i);
+         atomic_add(trqyi[threadIdx.x], trqy, i);
+         atomic_add(trqzi[threadIdx.x], trqz, i);
+         atomic_add(frcxk, gx, k);
+         atomic_add(frcyk, gy, k);
+         atomic_add(frczk, gz, k);
+         atomic_add(trqxk, trqx, k);
+         atomic_add(trqyk, trqy, k);
+         atomic_add(trqzk, trqz, k);
+      }
+   }
+
+   if CONSTEXPR (do_e) { atomic_add(ebuftl, ebuf, ithread); }
+   if CONSTEXPR (do_v) {
+      atomic_add(vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz,
+         vbuf, ithread);
+   }
+}
+
+template <class Ver, class ETYP>
+__global__
+void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf,
+   VirialBuffer restrict vbuf, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
+   real* restrict trqz, const real (*restrict rpole)[10],
+   const real (*restrict uind)[3], const real (*restrict uinp)[3], real f,
+   real aewald, const Spatial::SortedAtom* restrict sorted, int niak,
+   const int* restrict iak, const int* restrict lst)
+{
+   using d::jpolar;
+   using d::njpolar;
+   using d::pdamp;
+   using d::thlval;
+
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_g = Ver::g;
+   constexpr bool do_v = Ver::v;
+   static_assert(!Ver::a, "");
+   const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
+   const int iwarp = ithread / WARP_SIZE;
+   const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
+   const int ilane = threadIdx.x & (WARP_SIZE - 1);
+
+   using ebuf_prec = EnergyBufferTraits::type;
+   ebuf_prec ebuftl;
+   if CONSTEXPR (do_e) { ebuftl = 0; }
+   using vbuf_prec = VirialBufferTraits::type;
+   vbuf_prec vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz;
+   if CONSTEXPR (do_v) {
+      vbuftlxx = 0;
+      vbuftlyx = 0;
+      vbuftlzx = 0;
+      vbuftlyy = 0;
+      vbuftlzy = 0;
+      vbuftlzz = 0;
+   }
+   __shared__ real xi[BLOCK_DIM];
+   __shared__ real yi[BLOCK_DIM];
+   __shared__ real zi[BLOCK_DIM];
+   real xk;
+   real yk;
+   real zk;
+   __shared__ real frcxi[BLOCK_DIM];
+   __shared__ real frcyi[BLOCK_DIM];
+   __shared__ real frczi[BLOCK_DIM];
+   __shared__ real trqxi[BLOCK_DIM];
+   __shared__ real trqyi[BLOCK_DIM];
+   __shared__ real trqzi[BLOCK_DIM];
+   real frcxk;
+   real frcyk;
+   real frczk;
+   real trqxk;
+   real trqyk;
+   real trqzk;
+   __shared__ real ci[BLOCK_DIM];
+   __shared__ real dix[BLOCK_DIM];
+   __shared__ real diy[BLOCK_DIM];
+   __shared__ real diz[BLOCK_DIM];
+   __shared__ real qixx[BLOCK_DIM];
+   __shared__ real qixy[BLOCK_DIM];
+   __shared__ real qixz[BLOCK_DIM];
+   __shared__ real qiyy[BLOCK_DIM];
+   __shared__ real qiyz[BLOCK_DIM];
+   __shared__ real qizz[BLOCK_DIM];
+   __shared__ real uidx[BLOCK_DIM];
+   __shared__ real uidy[BLOCK_DIM];
+   __shared__ real uidz[BLOCK_DIM];
+   __shared__ real uipx[BLOCK_DIM];
+   __shared__ real uipy[BLOCK_DIM];
+   __shared__ real uipz[BLOCK_DIM];
+   __shared__ real pdi[BLOCK_DIM];
+   __shared__ int jpi[BLOCK_DIM];
+   real ck;
+   real dkx;
+   real dky;
+   real dkz;
+   real qkxx;
+   real qkxy;
+   real qkxz;
+   real qkyy;
+   real qkyz;
+   real qkzz;
+   real ukdx;
+   real ukdy;
+   real ukdz;
+   real ukpx;
+   real ukpy;
+   real ukpz;
+   real pdk;
+   int jpk;
+
+   for (int iw = iwarp; iw < niak; iw += nwarp) {
+      if CONSTEXPR (do_g) {
+         frcxi[threadIdx.x] = 0;
+         frcyi[threadIdx.x] = 0;
+         frczi[threadIdx.x] = 0;
+         trqxi[threadIdx.x] = 0;
+         trqyi[threadIdx.x] = 0;
+         trqzi[threadIdx.x] = 0;
+         frcxk = 0;
+         frcyk = 0;
+         frczk = 0;
+         trqxk = 0;
+         trqyk = 0;
+         trqzk = 0;
+      }
+
+      int ty = iak[iw];
+      int atomi = ty * WARP_SIZE + ilane;
+      int i = sorted[atomi].unsorted;
+      int atomk = lst[iw * WARP_SIZE + ilane];
+      int k = sorted[atomk].unsorted;
+      xi[threadIdx.x] = sorted[atomi].x;
+      yi[threadIdx.x] = sorted[atomi].y;
+      zi[threadIdx.x] = sorted[atomi].z;
+      xk = sorted[atomk].x;
+      yk = sorted[atomk].y;
+      zk = sorted[atomk].z;
+
+      ci[threadIdx.x] = rpole[i][MPL_PME_0];
+      dix[threadIdx.x] = rpole[i][MPL_PME_X];
+      diy[threadIdx.x] = rpole[i][MPL_PME_Y];
+      diz[threadIdx.x] = rpole[i][MPL_PME_Z];
+      qixx[threadIdx.x] = rpole[i][MPL_PME_XX];
+      qixy[threadIdx.x] = rpole[i][MPL_PME_XY];
+      qixz[threadIdx.x] = rpole[i][MPL_PME_XZ];
+      qiyy[threadIdx.x] = rpole[i][MPL_PME_YY];
+      qiyz[threadIdx.x] = rpole[i][MPL_PME_YZ];
+      qizz[threadIdx.x] = rpole[i][MPL_PME_ZZ];
+      uidx[threadIdx.x] = uind[i][0];
+      uidy[threadIdx.x] = uind[i][1];
+      uidz[threadIdx.x] = uind[i][2];
+      uipx[threadIdx.x] = uinp[i][0];
+      uipy[threadIdx.x] = uinp[i][1];
+      uipz[threadIdx.x] = uinp[i][2];
+      pdi[threadIdx.x] = pdamp[i];
+      jpi[threadIdx.x] = jpolar[i];
+      ck = rpole[k][MPL_PME_0];
+      dkx = rpole[k][MPL_PME_X];
+      dky = rpole[k][MPL_PME_Y];
+      dkz = rpole[k][MPL_PME_Z];
+      qkxx = rpole[k][MPL_PME_XX];
+      qkxy = rpole[k][MPL_PME_XY];
+      qkxz = rpole[k][MPL_PME_XZ];
+      qkyy = rpole[k][MPL_PME_YY];
+      qkyz = rpole[k][MPL_PME_YZ];
+      qkzz = rpole[k][MPL_PME_ZZ];
+      ukdx = uind[k][0];
+      ukdy = uind[k][1];
+      ukdz = uind[k][2];
+      ukpx = uinp[k][0];
+      ukpy = uinp[k][1];
+      ukpz = uinp[k][2];
+      pdk = pdamp[k];
+      jpk = jpolar[k];
+
+      for (int j = 0; j < WARP_SIZE; ++j) {
+         int srclane = (ilane + j) & (WARP_SIZE - 1);
+         int klane = srclane + threadIdx.x - ilane;
+         bool incl = atomk > 0;
+         real xr = xk - xi[klane];
+         real yr = yk - yi[klane];
+         real zr = zk - zi[klane];
+         real r2 = image2(xr, yr, zr);
+         if (r2 <= off * off and incl) {
+            real pga = thlval[njpolar * jpi[klane] + jpk];
+            real e, vxx, vyx, vzx, vyy, vzy, vzz;
+            pairMplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1,
+               ci[klane], make_real3(dix[klane], diy[klane], diz[klane]),
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
+               qizz[klane], make_real3(uidx[klane], uidy[klane], uidz[klane]),
+               make_real3(uipx[klane], uipy[klane], uipz[klane]), pdi[klane],
+               pga, ck, make_real3(dkx, dky, dkz), qkxx, qkxy, qkxz, qkyy, qkyz,
+               qkzz, make_real3(ukdx, ukdy, ukdz), make_real3(ukpx, ukpy, ukpz),
+               pdk, pga, f, aewald, frcxi[klane], frcyi[klane], frczi[klane],
+               frcxk, frcyk, frczk, trqxi[klane], trqyi[klane], trqzi[klane],
+               trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
+            if CONSTEXPR (do_e) { ebuftl += floatTo<ebuf_prec>(e); }
+            if CONSTEXPR (do_v) {
+               vbuftlxx += floatTo<vbuf_prec>(vxx);
+               vbuftlyx += floatTo<vbuf_prec>(vyx);
+               vbuftlzx += floatTo<vbuf_prec>(vzx);
+               vbuftlyy += floatTo<vbuf_prec>(vyy);
+               vbuftlzy += floatTo<vbuf_prec>(vzy);
+               vbuftlzz += floatTo<vbuf_prec>(vzz);
+            }
+         } // end if (include)
+      }
+
+      if CONSTEXPR (do_g) {
+         atomic_add(frcxi[threadIdx.x], gx, i);
+         atomic_add(frcyi[threadIdx.x], gy, i);
+         atomic_add(frczi[threadIdx.x], gz, i);
+         atomic_add(trqxi[threadIdx.x], trqx, i);
+         atomic_add(trqyi[threadIdx.x], trqy, i);
+         atomic_add(trqzi[threadIdx.x], trqz, i);
+         atomic_add(frcxk, gx, k);
+         atomic_add(frcyk, gy, k);
+         atomic_add(frczk, gz, k);
+         atomic_add(trqxk, trqx, k);
+         atomic_add(trqyk, trqy, k);
+         atomic_add(trqzk, trqz, k);
+      }
+   }
+
+   if CONSTEXPR (do_e) { atomic_add(ebuftl, ebuf, ithread); }
+   if CONSTEXPR (do_v) {
+      atomic_add(vbuftlxx, vbuftlyx, vbuftlzx, vbuftlyy, vbuftlzy, vbuftlzz,
+         vbuf, ithread);
+   }
+}
+
+template <class Ver, class ETYP>
+static void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
+{
+   const auto& st = *mspatial_v2_unit;
+   real off;
+   if CONSTEXPR (eq<ETYP, EWALD>())
+      off = switchOff(Switch::EWALD);
+   else
+      off = switchOff(Switch::MPOLE);
+
+   const real f = electric / dielec;
+   real aewald = 0;
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
+      assert(epme_unit == ppme_unit);
+      PMEUnit pu = epme_unit;
+      aewald = pu->aewald;
+
+      if CONSTEXPR (Ver::e) {
+         auto ker0 = empoleSelf_cu<Ver::a>;
+         launch_k1b(g::s0, n, ker0, //
+            nullptr, em, rpole, n, f, aewald);
+      }
+   }
+   int ngrid = gpuGridSize(BLOCK_DIM);
+   auto kera = emplar_cu1a<Ver, ETYP>;
+   kera<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx,
+      demy, demz, off, trqx, trqy, trqz, rpole, uind, uinp, f,
+      aewald, //
+      st.sorted, st.niak, st.iak, st.lst);
+   auto kerb = emplar_cu1b<Ver, ETYP>;
+   kerb<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx,
+      demy, demz, off, trqx, trqy, trqz, rpole, uind, uinp, f,
+      aewald, //
+      st.sorted, st.n, st.nakpl, st.iakpl);
+   auto kerc = emplar_cu1c<Ver, ETYP>;
+   kerc<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx,
+      demy, demz, off, trqx, trqy, trqz, rpole, uind, uinp, f,
+      aewald, //
+      nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z);
+}
+#endif
 
 template <class Ver>
 static void emplarEwald_cu()
