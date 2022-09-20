@@ -1,5 +1,7 @@
 #pragma once
 
+#if __cplusplus < 201402L
+
 // Catch2 version 2.3.0
 // https://github.com/catchorg/Catch2/blob/v2.3.0/single_include/catch2/catch.hpp
 // #include <catch_2_3_0>
@@ -18,4 +20,12 @@
 
 // Catch2 version 2.13.9
 // https://github.com/catchorg/Catch2/blob/v2.13.9/single_include/catch2/catch.hpp
-#include <catch_2_13_9>
+#   include <catch_2_13_9>
+
+#else
+
+#   include <catch2/catch_all.hpp>
+
+using namespace Catch;
+
+#endif

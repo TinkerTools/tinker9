@@ -436,7 +436,7 @@ endif ()
 enable_language (CXX)
 enable_language (Fortran)
 set (CMAKE_CXX_EXTENSIONS OFF)
-
+set (CMAKE_CXX_STANDARD ${T9_CPPSTD})
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
