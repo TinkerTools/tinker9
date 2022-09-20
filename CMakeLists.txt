@@ -435,8 +435,6 @@ if (GPU_LANG STREQUAL "CUDA")
 endif ()
 enable_language (CXX)
 enable_language (Fortran)
-set (CMAKE_CXX_STANDARD ${T9_CPPSTD})
-set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_EXTENSIONS OFF)
 
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -576,6 +574,7 @@ add_subdirectory (test)
 ## executables
 add_library (__t9_main_o OBJECT src/main.cc)
 target_link_libraries (__t9_main_o PRIVATE __t9_intf PRIVATE tinkerFToCpp)
+set_target_properties (__t9_main_o PROPERTIES CXX_STANDARD ${T9_CPPSTD})
 ## tinker9 and all.tests
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 if (HOST)

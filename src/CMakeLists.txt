@@ -22,12 +22,14 @@ cudart/thrustcache.cpp
 endif ()
 add_library (tinker9_cpp STATIC "${__T9_CPP_SRC}")
 target_link_libraries (tinker9_cpp PRIVATE __t9_intf PRIVATE tinkerFToCpp)
+set_target_properties (tinker9_cpp PROPERTIES CXX_STANDARD ${T9_CPPSTD})
 
 add_library (tinker9_version OBJECT
    xinfo.cc
    promo.cc
 )
 target_link_libraries (tinker9_version PRIVATE __t9_intf)
+set_target_properties (tinker9_version PROPERTIES CXX_STANDARD ${T9_CPPSTD})
 
 
 # macro

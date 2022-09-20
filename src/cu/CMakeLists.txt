@@ -4,7 +4,6 @@ cmake_minimum_required (VERSION 3.15)
 
 enable_language (CUDA)
 set (CMAKE_CUDA_STANDARD ${T9_CPPSTD})
-set (CMAKE_CUDA_STANDARD_REQUIRED ON)
 set (CMAKE_CUDA_EXTENSIONS OFF)
 
 

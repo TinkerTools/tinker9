@@ -6,6 +6,7 @@ cmake_minimum_required (VERSION 3.15)
 include (cmakesrc.txt)
 add_library (tinker9_acc STATIC "${__T9_ACC_SRC}")
 target_link_libraries (tinker9_acc PRIVATE __t9_intf PRIVATE tinkerFToCpp)
+set_target_properties (tinker9_acc PROPERTIES CXX_STANDARD ${T9_CPPSTD})
 
 
 ########################################################################
