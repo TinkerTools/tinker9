@@ -10,7 +10,8 @@ namespace tinker {
 static const char* getSHA1()
 {
    return         //
-      "6af17caa"; // Sun Aug 14 18:00:16 2022 -0500
+      "cc8ef621"; // Mon Sep 19 16:51:16 2022 -0500
+   // "6af17caa"; // Sun Aug 14 18:00:16 2022 -0500
    // "b897fa01"; // Tue Jul 12 23:05:15 2022 -0500
    // "3dc966e2"; // Tue May 24 01:30:50 2022 -0500
    // "023b6174"; // Wed Apr 20 08:10:27 2022 -0500
@@ -37,8 +38,8 @@ static const char* getSHA1()
 
 static std::string getVersionString()
 {
-   std::string r =
-      format("%d.%d.%d", TINKER9_VERSION_MAJOR, TINKER9_VERSION_MINOR, TINKER9_VERSION_PATCH);
+   std::string r = format("%d.%d.%d", TINKER9_VERSION_MAJOR,
+      TINKER9_VERSION_MINOR, TINKER9_VERSION_PATCH);
 #ifdef TINKER9_GIT_SHORT_HASH
    r += format(" GIT %s", TINKER_STR(TINKER9_GIT_SHORT_HASH));
 #endif
@@ -60,7 +61,8 @@ void xInfo(int, char**)
    print(out, fmt, "C++ compiler:", cxxCompilerName());
    print(out, fmz, "Size of real (bytes):", sizeof(real));
    print(out, fmz, "Size of mixed (bytes):", sizeof(mixed));
-   print(out, fmt, "Using deterministic force:", TINKER_DETERMINISTIC_FORCE ? "true" : "false");
+   print(out, fmt, "Using deterministic force:",
+      TINKER_DETERMINISTIC_FORCE ? "true" : "false");
 #if TINKER_DEBUG
    const char* dbg = "on";
 #else
@@ -105,17 +107,19 @@ void xInfo(int, char**)
          print(out, fm1, format("GPU %d:", a.device));
          print(out, fm2, "PCI:", a.pci_string);
          print(out, fm2, "Name:", a.name);
-         print(out, fm2, "Maximum compute capability:", format("%d.%d", a.cc_major, a.cc_minor));
+         print(out, fm2, "Maximum compute capability:",
+            format("%d.%d", a.cc_major, a.cc_minor));
          print(out, f2d, "Single double perf. ratio:", a.single_double_ratio);
          print(out, fm2, "Compute mode:", a.compute_mode_string);
          print(out, fm2, "Error-correcting code (ECC):", a.ecc_string);
          print(out, f2d, "Clock rate (kHz):", a.clock_rate_kHz);
          print(out, f2d, "Number of Multiprocessors:", a.multiprocessor_count);
-         print(
-            out, f2d, "Number of CUDA cores:", a.cores_per_multiprocessor * a.multiprocessor_count);
+         print(out, f2d, "Number of CUDA cores:",
+            a.cores_per_multiprocessor * a.multiprocessor_count);
          const double B_to_GB = 1024. * 1024. * 1024.;
          print(out, fm2, "Used/Total GPU memory:",
-            format("%.2f %% / %.2f GB", 100.0 - 100.0 * a.free_mem_bytes / a.total_mem_bytes,
+            format("%.2f %% / %.2f GB",
+               100.0 - 100.0 * a.free_mem_bytes / a.total_mem_bytes,
                a.total_mem_bytes / B_to_GB));
       }
    }
