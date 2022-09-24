@@ -5,7 +5,7 @@
 
 namespace tinker {
 /// \addtogroup cuda_syntax
-///\{
+/// \{
 
 /// Launch a non-blocking CUDA kernel.
 ///

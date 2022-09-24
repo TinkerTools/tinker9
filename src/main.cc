@@ -1,10 +1,11 @@
 #include "tool/ioprint.h"
-#include <algorithm>
-#include <functional>
-#include <map>
 #include <tinker/routines.h>
 
 #include "tinker9.h"
+
+#include <algorithm>
+#include <functional>
+#include <map>
 
 namespace tinker {
 static const char* main_name = "tinker9";
@@ -15,6 +16,7 @@ static const std::string helper_name = "help";
 static const std::string info_name = "info";
 static const std::string minimize_name = "minimize";
 static const std::string testgrad_name = "testgrad";
+
 static const std::map<std::string, std::function<void(int, char**)>>& launcher()
 {
    static std::map<std::string, std::function<void(int, char**)>> x = {
@@ -39,8 +41,7 @@ static std::string getArg0(const char* a0)
    for (const auto& x : l) {
       k = x.first;
       if (k != helper_name)
-         if (k + "9" == s0)
-            return k;
+         if (k + "9" == s0) return k;
    }
    return main_name;
 }
@@ -53,8 +54,7 @@ int main(int argc, char** argv)
    std::string arg0;
    arg0 = getArg0(argv[0]);
    if (arg0 == main_name) {
-      if (argc < 2)
-         goto help_message;
+      if (argc < 2) goto help_message;
 
       argc--;
       argv++;
@@ -68,7 +68,8 @@ int main(int argc, char** argv)
       try {
          launcher().at(arg0)(argc, argv);
       } catch (const std::exception& err) {
-         print(stdout, " Terminating with uncaught exception :  %s\n", err.what());
+         print(stdout, " Terminating with uncaught exception :  %s\n",
+            err.what());
       }
       tinkerFortranRuntimeEnd();
       return 0;
@@ -84,9 +85,7 @@ void xHelp(int, char**)
 {
    std::vector<std::string> keys;
    for (const auto& x : launcher()) {
-      if (x.first != helper_name) {
-         keys.push_back(x.first);
-      }
+      if (x.first != helper_name) keys.push_back(x.first);
    }
    std::sort(keys.begin(), keys.end());
    keys.push_back(helper_name);
@@ -98,8 +97,7 @@ void xHelp(int, char**)
    print(stdout, "       %s PROGRAM [ args... ]\n\n", main_name);
 
    print(stdout, " PROGRAMS AVAILABLE\n");
-   for (const auto& k : keys) {
+   for (const auto& k : keys)
       print(stdout, "       %s\n", k.c_str());
-   }
 }
 }
