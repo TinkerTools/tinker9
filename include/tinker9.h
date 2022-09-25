@@ -11,14 +11,14 @@
 
 // clang-format off
 #ifdef TINKER9_GIT_SHORT_HASH
-#   define TINKER9_PROMO1__ "\n" " Commit:       " TINKER_STR(TINKER9_GIT_SHORT_HASH)
+   #define TINKER9_PROMO1__ "\n" " Commit:       " TINKER_STR(TINKER9_GIT_SHORT_HASH)
 #else
-#   define TINKER9_PROMO1__ ""
+   #define TINKER9_PROMO1__ ""
 #endif
 #ifdef TINKER9_GIT_DATE
-#   define TINKER9_PROMO2__ "\n" " Commit Date:  " TINKER9_GIT_DATE
+   #define TINKER9_PROMO2__ "\n" " Commit Date:  " TINKER9_GIT_DATE
 #else
-#   define TINKER9_PROMO2__ "\n" " No GIT History"
+   #define TINKER9_PROMO2__ "\n" " No GIT History"
 #endif
 #define TINKER9_PROMO3__ " Compiled at:  " __TIME__ "  " __DATE__
 #define TINKER9_PROMO_STRING                                                          \

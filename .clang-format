@@ -5,7 +5,7 @@ AlignConsecutiveMacros:                true
 AlignEscapedNewlines:                  Left
 AlwaysBreakTemplateDeclarations:       true
 ColumnLimit:                           80
-IndentPPDirectives:                    AfterHash
+IndentPPDirectives:                    None
 FixNamespaceComments:                  false
 BreakConstructorInitializers:          BeforeComma
 PointerAlignment:                      Left
