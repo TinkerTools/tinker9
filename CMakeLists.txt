@@ -145,7 +145,7 @@ endif ()
 
 
 #[[
-!!/ **-DSTD (std) = 11**
+!!/ **-DSTD (std) = AUTO**
 !!/
 !!/ C++ syntax standard. The source code is c++11-compliant, and should have no
 !!/ problems compiled with c++14. If set to *14* here, users should make sure
@@ -155,11 +155,10 @@ endif ()
 if (DEFINED ENV{std})
    set (stdValue $ENV{std})
 else ()
-   set (stdValue 11)
+   set (stdValue AUTO)
 endif ()
-set (STD ${stdValue} CACHE STRING "C++ standard: 11 and 14.")
-set_property (CACHE STD PROPERTY STRINGS 11 14)
-set (T9_CPPSTD ${STD})
+set (STD ${stdValue} CACHE STRING "C++ standard: AUTO, 11, and 14.")
+set_property (CACHE STD PROPERTY STRINGS AUTO 11 14)
 
 
 #[[
@@ -436,6 +435,19 @@ if (GPU_LANG STREQUAL "CUDA")
 endif ()
 enable_language (CXX)
 enable_language (Fortran)
+
+
+if (STD STREQUAL "AUTO")
+   if ("${CMAKE_CXX_COMPILE_FEATURES}" MATCHES cxx_std_14)
+      set (T9_CPPSTD 14)
+   else ()
+      set (T9_CPPSTD 11)
+   endif ()
+else ()
+   set (T9_CPPSTD ${STD})
+endif ()
+
+
 set (CMAKE_CXX_EXTENSIONS OFF)
 set (CMAKE_CXX_STANDARD ${T9_CPPSTD})
 set (CMAKE_EXPORT_COMPILE_COMMANDS ON)

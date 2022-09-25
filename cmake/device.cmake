@@ -17,30 +17,34 @@ endif ()
 add_executable (tinker9)
 target_link_libraries (tinker9
    __t9_main_o
-   -Wl,--start-group
    ${__T9_ACC_LIB_STR}
    tinker9_cu
    tinker9_cpp
-   -Wl,--end-group
    tinker9_version
    tinker9_f
    tinkerFToCpp
    ${__T9_EXTRA_LINK_FLAGS}
+)
+set_target_properties (tinker9
+   PROPERTIES
+      CUDA_RESOLVE_DEVICE_SYMBOLS ON
 )
 
 
 add_executable (all.tests)
 target_link_libraries (all.tests
    __t9_all_tests_o
-   -Wl,--start-group
    ${__T9_ACC_LIB_STR}
    tinker9_cu
    tinker9_cpp
-   -Wl,--end-group
    tinker9_version
    tinker9_f
    tinkerFToCpp
    ${__T9_EXTRA_LINK_FLAGS}
+)
+set_target_properties (all.tests
+   PROPERTIES
+      CUDA_RESOLVE_DEVICE_SYMBOLS ON
 )
 
 
