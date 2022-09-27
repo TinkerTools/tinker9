@@ -2,41 +2,41 @@
 
 // C++11
 #ifdef __cplusplus
-#   if __cplusplus < 201103L
-#      error Must enable C++11.
-#   endif
+#if __cplusplus < 201103L
+#error Must enable C++11.
+#endif
 #endif
 
 #if defined(__INTEL_COMPILER)
-#   define TINKER_ICPC
+#define TINKER_ICPC
 
 #elif defined(__PGIC__)
-#   define TINKER_PGI
+#define TINKER_PGI
 
 #elif defined(__clang__)
-#   define TINKER_CLANG
+#define TINKER_CLANG
 // xcode clang is different from llvm clang
-#   ifdef __apple_build_version__
-#      define TINKER_APPLE_CLANG
-#   else
-#      define TINKER_LLVM_CLANG
-#   endif
+#ifdef __apple_build_version__
+#define TINKER_APPLE_CLANG
+#else
+#define TINKER_LLVM_CLANG
+#endif
 
 #elif defined(__GNUC__)
-#   define TINKER_GCC
-#   if __GNUC__ <= 4 && __GNUC_MINOR__ <= 8
-#      warning Your default GNU version is 4.8 where C++11 is incomplete.
-#   endif
+#define TINKER_GCC
+#if __GNUC__ <= 4 && __GNUC_MINOR__ <= 8
+#warning Your default GNU version is 4.8 where C++11 is incomplete.
+#endif
 
 #endif
 
 // Suppress Warnings
 #ifdef TINKER_ICPC
 // #161: unrecognized #pragma
-#   pragma warning disable 161
+#pragma warning disable 161
 #endif
 #ifdef TINKER_CLANG
-#   pragma clang diagnostic ignored "-Wextern-c-compat"
+#pragma clang diagnostic ignored "-Wextern-c-compat"
 #endif
 #ifdef __NVCC_DIAG_PRAGMA_SUPPORT__
 // // #20199-D: unrecognized #pragma in device code
@@ -48,7 +48,7 @@
 /// \ingroup cpp_syntax
 /// Expands to \c __restrict__, which is a common C++ extension.
 #ifdef __cplusplus
-#   define restrict __restrict__
+#define restrict __restrict__
 #endif
 
 /// \ingroup cpp_syntax
@@ -56,23 +56,23 @@
 /// `if CONSTEXPR` expands to `if constexpr` if this feature is supported.
 /// Otherwise it expands to `if`.
 #if __cplusplus >= 201703L && defined(__cpp_if_constexpr)
-#   define CONSTEXPR constexpr
+#define CONSTEXPR constexpr
 #else
-#   define CONSTEXPR
+#define CONSTEXPR
 #endif
 
 /// \ingroup cpp_syntax
 /// Reduces the "unused variable" warnings from the compiler.
 #ifdef __has_cpp_attribute
-#   if __has_cpp_attribute(maybe_unused)
-#      define MAYBE_UNUSED [[maybe_unused]]
-#   else
-#      define MAYBE_UNUSED
-#   endif
-#elif defined(TINKER_ICPC) || defined(TINKER_CLANG) || defined(TINKER_GCC)
-#   define MAYBE_UNUSED __attribute__((unused))
+#if __has_cpp_attribute(maybe_unused)
+#define MAYBE_UNUSED [[maybe_unused]]
 #else
-#   define MAYBE_UNUSED
+#define MAYBE_UNUSED
+#endif
+#elif defined(TINKER_ICPC) || defined(TINKER_CLANG) || defined(TINKER_GCC)
+#define MAYBE_UNUSED __attribute__((unused))
+#else
+#define MAYBE_UNUSED
 #endif
 
 /// \ingroup cpp_syntax
@@ -100,30 +100,30 @@
 /// predefined to 1. This is useful to declare and define the global variables.
 /// \see TINKER_EXTERN_DEFINITION_FILE
 #ifndef TINKER_EXTERN_DEFINITION_FILE
-#   define TINKER_EXTERN_DEFINITION_FILE 0
+#define TINKER_EXTERN_DEFINITION_FILE 0
 #endif
 #if TINKER_EXTERN_DEFINITION_FILE
-#   define TINKER_EXTERN
+#define TINKER_EXTERN
 #else
-#   define TINKER_EXTERN extern
+#define TINKER_EXTERN extern
 #endif
 
 /// \ingroup cpp_syntax
 /// Expands to 0 if the macro `NDEBUG` was predefined.
 /// Expands to 1 otherwise.
 #ifdef NDEBUG
-#   define TINKER_DEBUG 0
+#define TINKER_DEBUG 0
 #else
-#   define TINKER_DEBUG 1
+#define TINKER_DEBUG 1
 #endif
 
 /// \def TINKER9_DIR
 /// \ingroup cpp_syntax
 /// Path to this source code directory.
 #ifndef TINKER9_DIR
-#   error TINKER9_DIR is not set.
+#error TINKER9_DIR is not set.
 #else
-#   define TINKER9_DIRSTR TINKER_STR(TINKER9_DIR)
+#define TINKER9_DIRSTR TINKER_STR(TINKER9_DIR)
 #endif
 
 //====================================================================//
@@ -133,10 +133,10 @@
 /// Macro for the CUDA runtime-enabled GPU code.
 /// Defined to 0 when the code is compiled on the CPU platform.
 #ifdef TINKER_CUDART
-#   undef TINKER_CUDART
-#   define TINKER_CUDART 1
+#undef TINKER_CUDART
+#define TINKER_CUDART 1
 #else
-#   define TINKER_CUDART 0
+#define TINKER_CUDART 0
 #endif
 
 /// \def TINKER_GPULANG_OPENACC
@@ -146,10 +146,10 @@
 ///    - the code is compiled on the CPU platform;
 ///    - only the CUDA code is in use on the GPU platform.
 #ifdef TINKER_GPULANG_OPENACC
-#   undef TINKER_GPULANG_OPENACC
-#   define TINKER_GPULANG_OPENACC 1
+#undef TINKER_GPULANG_OPENACC
+#define TINKER_GPULANG_OPENACC 1
 #else
-#   define TINKER_GPULANG_OPENACC 0
+#define TINKER_GPULANG_OPENACC 0
 #endif
 
 /// \def TINKER_GPULANG_CUDA
@@ -159,10 +159,10 @@
 ///    - the code is compiled on the CPU platform;
 ///    - OpenACC code is in use on the GPU platform.
 #ifdef TINKER_GPULANG_CUDA
-#   undef TINKER_GPULANG_CUDA
-#   define TINKER_GPULANG_CUDA 1
+#undef TINKER_GPULANG_CUDA
+#define TINKER_GPULANG_CUDA 1
 #else
-#   define TINKER_GPULANG_CUDA 0
+#define TINKER_GPULANG_CUDA 0
 #endif
 
 /// \def TINKER_DOUBLE_PRECISION
@@ -187,24 +187,23 @@
 /// \ingroup prec
 /// \copydoc TINKER_DOUBLE_PRECISION
 #ifdef TINKER_DOUBLE_PRECISION
-#   undef TINKER_DOUBLE_PRECISION
-#   define TINKER_DOUBLE_PRECISION 1
+#undef TINKER_DOUBLE_PRECISION
+#define TINKER_DOUBLE_PRECISION 1
 #else
-#   define TINKER_DOUBLE_PRECISION 0
+#define TINKER_DOUBLE_PRECISION 0
 #endif
 #ifdef TINKER_MIXED_PRECISION
-#   undef TINKER_MIXED_PRECISION
-#   define TINKER_MIXED_PRECISION 1
+#undef TINKER_MIXED_PRECISION
+#define TINKER_MIXED_PRECISION 1
 #else
-#   define TINKER_MIXED_PRECISION 0
+#define TINKER_MIXED_PRECISION 0
 #endif
 #ifdef TINKER_SINGLE_PRECISION
-#   undef TINKER_SINGLE_PRECISION
-#   define TINKER_SINGLE_PRECISION 1
+#undef TINKER_SINGLE_PRECISION
+#define TINKER_SINGLE_PRECISION 1
 #else
-#   define TINKER_SINGLE_PRECISION 0
+#define TINKER_SINGLE_PRECISION 0
 #endif
-#if (TINKER_DOUBLE_PRECISION + TINKER_MIXED_PRECISION + \
-   TINKER_SINGLE_PRECISION) != 1
-#   error Detected errors in TINKER_?_PRECISION macros.
+#if (TINKER_DOUBLE_PRECISION + TINKER_MIXED_PRECISION + TINKER_SINGLE_PRECISION) != 1
+#error Detected errors in TINKER_?_PRECISION macros.
 #endif
