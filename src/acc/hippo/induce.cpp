@@ -96,7 +96,7 @@ void induceMutualPcg2_acc(real (*uind)[3])
             rsd[i][j] = (udir[i][j] - uind[i][j]) * pol + field[i][j];
       }
    } else if (dirguess) {
-      ufieldChgpen(udir, rsd);
+      ufieldChgpen(uind, rsd);
    } else {
       darray::copy(g::q0, n, rsd, field);
    }

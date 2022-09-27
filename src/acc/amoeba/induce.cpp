@@ -103,7 +103,7 @@ void induceMutualPcg1_acc(real (*uind)[3], real (*uinp)[3])
          }
       }
    } else if (dirguess) {
-      ufield(udir, udirp, rsd, rsdp);
+      ufield(uind, uinp, rsd, rsdp);
    } else {
       darray::copy(g::q0, n, rsd, field);
       darray::copy(g::q0, n, rsdp, fieldp);
