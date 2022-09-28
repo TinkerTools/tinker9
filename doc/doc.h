@@ -68,6 +68,8 @@
  *
  * \defgroup fft                        FFT
  * \brief Fast Fourier Transform
+ *
+ * \defgroup pcg                        PCG
  */
 
 ///    \defgroup charge  Partial Charge Electrostatics
