@@ -1,7 +1,7 @@
 #pragma once
 #include "tool/macro.h"
 
-/// \page async
+/// \page async Asynchronous Queues and Streams
 /// \ingroup async
 ///
 /// This is a snippet of the OpenACC code.

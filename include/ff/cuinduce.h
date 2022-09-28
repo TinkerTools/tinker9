@@ -5,9 +5,7 @@ namespace tinker {
 /// \addtogroup pcg
 /// \{
 
-/// \page pcg Preconditioned Conjugate Gradient (PCG)
-///
-/// The PCG method in Tinker9 is implemented as follows.
+/// \page pcg The PCG method in Tinker9 is implemented as follows
 ///
 /// 1. Goal: To solve Au = E, where A = 1/a + T.
 ///    - (a) E:   external field;
@@ -28,7 +26,7 @@ namespace tinker {
 ///    - M is the preconditioner which approximates A.
 ///
 /// 5. while not converged:
-///    - (a) g = s0 / pAp, where Ap = a/p - \c ufield(p)
+///    - (a) g = s0 / pAp, where Ap = p/a - \c ufield(p)
 ///    - (b) u = u + gp
 ///    - (c) r = r - gAp
 ///    - (d) s = rMr

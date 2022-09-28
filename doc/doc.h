@@ -70,6 +70,7 @@
  * \brief Fast Fourier Transform
  *
  * \defgroup pcg                        PCG
+ * \brief Preconditioned Conjugate Gradient
  */
 
 ///    \defgroup charge  Partial Charge Electrostatics

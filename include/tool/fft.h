@@ -4,6 +4,7 @@
 
 namespace tinker {
 /// \ingroup fft
+/// \brief FFT plan.
 ///
 /// \warning
 /// %PME grid sizes `nfft1`, `nfft2`, and `nfft3` in Tinker are associated with
@@ -18,8 +19,7 @@ namespace tinker {
 /// \endcode
 /// which is different from the C API.
 ///
-/// The difference is described on the [FFTW
-/// website](http://fftw.org/doc/Reversing-array-dimensions.html):
+/// The difference is described on the [FFTW website](http://fftw.org/doc/Reversing-array-dimensions.html):
 ///
 /// > A minor annoyance in calling FFTW from Fortran is that FFTW’s array
 /// > dimensions are defined in the C convention (row-major order), while
@@ -29,8 +29,7 @@ namespace tinker {
 /// > that, whenever you create an FFTW plan for a multi-dimensional transform,
 /// > you must always reverse the ordering of the dimensions.
 ///
-/// [cuFFT C
-/// API](https://docs.nvidia.com/cuda/cufft/index.html#function-cufftplan3d)
+/// [cuFFT C API](https://docs.nvidia.com/cuda/cufft/index.html#function-cufftplan3d)
 /// is similar to FFTW C API:
 ///
 /// \code{.cpp}
@@ -45,8 +44,9 @@ namespace tinker {
 /// > dimension of a transform (contiguous in memory).
 struct FFTPlan
 {
+   /// \brief Statically cast the FFTPlan to one of its derived type.
    template <class T>
-   T& self()
+   T& castTo()
    {
       static_assert(std::is_base_of<FFTPlan, T>::value, "");
       return *reinterpret_cast<T*>(this);
