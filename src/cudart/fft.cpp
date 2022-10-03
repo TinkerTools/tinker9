@@ -22,7 +22,7 @@ void fftData(RcOp op)
       int idx = 0;
       while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit u = idx;
-         cufftDestroy(u->self<FFTPlanCUFFT>().h);
+         cufftDestroy(u->castTo<FFTPlanCUFFT>().h);
          ++idx;
       }
       FFTPlanUnit::clear();
@@ -48,7 +48,7 @@ void fftData(RcOp op)
       while (idx < FFTPlanUnit::size()) {
          FFTPlanUnit plan_u = idx;
          PMEUnit pme_u = idx;
-         auto& iplan = plan_u->self<FFTPlanCUFFT>().h;
+         auto& iplan = plan_u->castTo<FFTPlanCUFFT>().h;
          auto& st = *pme_u;
 
          int nfast = st.nfft1;
@@ -67,7 +67,7 @@ void fftData(RcOp op)
 void fftfront(PMEUnit pme_u)
 {
    FFTPlanUnit iplan_u = static_cast<int>(pme_u);
-   auto& iplan = iplan_u->self<FFTPlanCUFFT>().h;
+   auto& iplan = iplan_u->castTo<FFTPlanCUFFT>().h;
    auto& st = *pme_u;
 
 #if TINKER_REAL_SIZE == 4
@@ -84,7 +84,7 @@ void fftfront(PMEUnit pme_u)
 void fftback(PMEUnit pme_u)
 {
    FFTPlanUnit iplan_u = static_cast<int>(pme_u);
-   auto& iplan = iplan_u->self<FFTPlanCUFFT>().h;
+   auto& iplan = iplan_u->castTo<FFTPlanCUFFT>().h;
    auto& st = *pme_u;
 
 #if TINKER_REAL_SIZE == 4

@@ -1,62 +1,60 @@
 #pragma once
-#include "accasync.h"
 #include "math/const.h"
 #include "math/libfunc.h"
 #include "math/parallel.h"
+#include "tool/accasync.h"
 #include "tool/ptrtrait.h"
+
 #include <vector>
 
 namespace tinker {
 /// \ingroup rc
 /// \brief Similar to OpenACC wait and CUDA stream synchronize.
-/// \param queue  OpenACC queue.
-void waitFor(int queue);
+void waitFor(int queue ///< OpenACC queue.
+);
 
 /// \ingroup rc
 /// \brief Similar to OpenACC async copyin, copies data from host to device.
-/// \param dst     Device pointer.
-/// \param src     Host pointer.
-/// \param nbytes  Number of bytes.
-/// \param queue   OpenACC queue.
-void deviceMemoryCopyinBytesAsync(void* dst, const void* src, size_t nbytes,
-   int queue);
+void deviceMemoryCopyinBytesAsync(void* dst,       ///< Device pointer.
+                                  const void* src, ///< Host pointer.
+                                  size_t nbytes,   ///< Number of bytes.
+                                  int queue        ///< OpenACC queue.
+);
 
 /// \ingroup rc
 /// \brief Similar to OpenACC async copyout, copies data from device to host.
-/// \param dst     Host pointer.
-/// \param src     Device pointer.
-/// \param nbytes  Number of bytes.
-/// \param queue   OpenACC queue.
-void deviceMemoryCopyoutBytesAsync(void* dst, const void* src, size_t nbytes,
-   int queue);
+void deviceMemoryCopyoutBytesAsync(void* dst,       ///< Host pointer.
+                                   const void* src, ///< Device pointer.
+                                   size_t nbytes,   ///< Number of bytes.
+                                   int queue        ///< OpenACC queue.
+);
 
 /// \ingroup rc
 /// \brief Copies data between two pointers on device.
 /// \note Different from OpenACC copy.
-/// \param dst     Destination device pointer.
-/// \param src     Source device pointer.
-/// \param nbytes  Number of bytes.
-/// \param queue   OpenACC queue.
-void deviceMemoryCopyBytesAsync(void* dst, const void* src, size_t nbytes,
-   int queue);
+void deviceMemoryCopyBytesAsync(void* dst,       ///< Destination device pointer.
+                                const void* src, ///< Source device pointer.
+                                size_t nbytes,   ///< Number of bytes.
+                                int queue        ///< OpenACC queue.
+);
 
 /// \ingroup rc
 /// \brief Writes zero bytes on device.
-/// \param dst     Device pointer.
-/// \param nbytes  Number of bytes.
-/// \param queue   OpenACC queue.
-void deviceMemoryZeroBytesAsync(void* dst, size_t nbytes, int queue);
+void deviceMemoryZeroBytesAsync(void* dst,     ///< Device pointer.
+                                size_t nbytes, ///< Number of bytes.
+                                int queue      ///< OpenACC queue.
+);
 
 /// \ingroup rc
 /// \brief Deallocates device pointer.
-/// \param ptr  Device pointer.
-void deviceMemoryDeallocate(void* ptr);
+void deviceMemoryDeallocate(void* ptr ///< Device pointer.
+);
 
 /// \ingroup rc
 /// \brief Allocates device pointer.
-/// \param pptr    Pointer to the device pointer.
-/// \param nbytes  Number of bytes.
-void deviceMemoryAllocateBytes(void** pptr, size_t nbytes);
+void deviceMemoryAllocateBytes(void** pptr,  ///< Pointer to the device pointer.
+                               size_t nbytes ///< Number of bytes.
+);
 }
 
 namespace tinker {
@@ -66,19 +64,17 @@ inline namespace v1 {
 template <class T>
 void deviceMemoryCheckType()
 {
-   static_assert(std::is_enum<T>::value || std::is_integral<T>::value ||
-         std::is_floating_point<T>::value || std::is_trivial<T>::value,
-      "");
+   static_assert(std::is_enum<T>::value || std::is_integral<T>::value || std::is_floating_point<T>::value || std::is_trivial<T>::value, "");
 }
 
 /// \ingroup rc
 /// \brief Copies data to 1D array, host to device.
-/// \param dst    Destination address.
-/// \param src    Source address.
-/// \param nelem  Number of elements to copy to the 1D device array.
-/// \param q      OpenACC queue.
 template <class DT, class ST>
-void deviceMemoryCopyin1dArray(DT* dst, const ST* src, size_t nelem, int q)
+void deviceMemoryCopyin1dArray(DT* dst,       ///< Destination address.
+                               const ST* src, ///< Source address.
+                               size_t nelem,  ///< Number of elements to copy to the 1D device array.
+                               int q          ///< OpenACC queue.
+)
 {
    deviceMemoryCheckType<DT>();
    deviceMemoryCheckType<ST>();
@@ -99,12 +95,12 @@ void deviceMemoryCopyin1dArray(DT* dst, const ST* src, size_t nelem, int q)
 
 /// \ingroup rc
 /// \brief Copies data to 1D array, device to host.
-/// \param dst    Destination address.
-/// \param src    Source address.
-/// \param nelem  Number of elements to copy to the 1D host array.
-/// \param q      OpenACC queue.
 template <class DT, class ST>
-void deviceMemoryCopyout1dArray(DT* dst, const ST* src, size_t nelem, int q)
+void deviceMemoryCopyout1dArray(DT* dst,       ///< Destination address.
+                                const ST* src, ///< Source address.
+                                size_t nelem,  ///< Number of elements to copy to the 1D host array.
+                                int q          ///< OpenACC queue.
+)
 {
    deviceMemoryCheckType<DT>();
    deviceMemoryCheckType<ST>();
@@ -144,8 +140,7 @@ public:
    {
       typedef typename PtrTrait<PTR>::type T;
       constexpr size_t N = PtrTrait<PTR>::n;
-      deviceMemoryAllocateBytes(reinterpret_cast<void**>(pp),
-         sizeof(T) * nelem * N);
+      deviceMemoryAllocateBytes(reinterpret_cast<void**>(pp), sizeof(T) * nelem * N);
    }
 
    template <class PTR, class... PTRS>
@@ -211,8 +206,7 @@ public:
 
    /// \brief Calculates the dot product and returns the answer to the host.
    template <class PTR, class PTR2>
-   static typename PtrTrait<PTR>::type dotThenReturn(int q, size_t nelem,
-      const PTR ptr, const PTR2 b)
+   static typename PtrTrait<PTR>::type dotThenReturn(int q, size_t nelem, const PTR ptr, const PTR2 b)
    {
       typedef typename PtrTrait<PTR>::type T;
       constexpr size_t N = PtrTrait<PTR>::n;

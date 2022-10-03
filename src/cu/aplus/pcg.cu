@@ -130,7 +130,7 @@ void induceMutualPcg3_cu(real (*uind)[3])
       ufieldAplus(uind, field);
       launch_k1s(g::s0, n, pcgRsd0V1, n, polarity_inv, rsd, udir, uind, field);
    } else if (dirguess) {
-      ufieldAplus(udir, rsd);
+      ufieldAplus(uind, rsd);
    } else {
       darray::copy(g::q0, n, rsd, field);
    }

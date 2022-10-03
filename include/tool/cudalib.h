@@ -4,9 +4,8 @@
 
 namespace tinker {
 /// \ingroup platform
-/// Sets up the CUDA variables including but not limited to CUDA streams,
-/// CUDA library handles, and CUDA memory buffers,
-/// and integer units for the queues.
+/// \brief Sets up the CUDA variables including but not limited to CUDA streams,
+/// CUDA library handles, CUDA memory buffers, and integer units for the OpenACC queues.
 void cudalibData(RcOp);
 }
 
@@ -17,37 +16,22 @@ void cudalibData(RcOp);
 //====================================================================//
 
 #if TINKER_CUDART
-#   include <cublas_v2.h>
-#   include <cuda_runtime.h>
+#include <cublas_v2.h>
+#include <cuda_runtime.h>
 
 namespace tinker {
 namespace g {
-/// \ingroup async
-/// \brief CUDA stream for the default OpenACC async queue.
-TINKER_EXTERN cudaStream_t s0;
-/// \ingroup async
-/// \brief CUDA stream for the default OpenACC sync queue.
-TINKER_EXTERN cudaStream_t s1;
-/// \ingroup pme
-/// \brief CUDA stream for the OpenACC async %PME queue.
-TINKER_EXTERN cudaStream_t spme;
-/// \ingroup async
-/// \brief CUDA BLAS handle using #s0.
-TINKER_EXTERN cublasHandle_t h0;
-/// \ingroup async
-/// \brief CUDA BLAS handle using #s1.
-TINKER_EXTERN cublasHandle_t h1;
+TINKER_EXTERN cudaStream_t s0;   ///< CUDA stream for the default OpenACC async queue. \ingroup async
+TINKER_EXTERN cudaStream_t s1;   ///< CUDA stream for the default OpenACC sync queue. \ingroup async
+TINKER_EXTERN cudaStream_t spme; ///< CUDA stream for the OpenACC async %PME queue. \ingroup pme
+TINKER_EXTERN cublasHandle_t h0; ///< CUDA BLAS handle using #s0. \ingroup async
+TINKER_EXTERN cublasHandle_t h1; ///< CUDA BLAS handle using #s1. \ingroup async
 }
 
-/// \addtogroup platform
-/// \{
-TINKER_EXTERN void* pinned_buf; ///< Preallocated pinned host memory.
-TINKER_EXTERN void* dptr_buf;   ///< Preallocated device memory.
-/// \}
+TINKER_EXTERN void* pinned_buf; ///< Preallocated pinned host memory. \ingroup platform
+TINKER_EXTERN void* dptr_buf;   ///< Preallocated device memory. \ingroup platform
 
-/// \ingroup pme
-TINKER_EXTERN cudaEvent_t pme_event_start;
-/// \ingroup pme
-TINKER_EXTERN cudaEvent_t pme_event_finish;
+TINKER_EXTERN cudaEvent_t pme_event_start;  ///< \ingroup pme
+TINKER_EXTERN cudaEvent_t pme_event_finish; ///< \ingroup pme
 }
 #endif

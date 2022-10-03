@@ -55,8 +55,9 @@
  *
  *    \defgroup tors                    Torsion
  *    \ingroup bonded
- *    \brief Torsion, improper torsion, improper dihedral, Pi-orbital torsion coupling,
- *           stretch-torsion coupling, angle-torsion coupling, and torsion-torsion coupling
+ *    \brief Torsion, improper torsion, improper dihedral,
+ *           Pi-orbital torsion coupling, stretch-torsion coupling,
+ *           angle-torsion coupling, and torsion-torsion coupling
  *
  *    \defgroup geom                    Restraint
  *    \ingroup bonded
@@ -67,6 +68,9 @@
  *
  * \defgroup fft                        FFT
  * \brief Fast Fourier Transform
+ *
+ * \defgroup pcg                        PCG
+ * \brief Preconditioned Conjugate Gradient
  */
 
 ///    \defgroup charge  Partial Charge Electrostatics
@@ -108,7 +112,7 @@
 ///    \defgroup math_parallel  Parallel Algorithms
 ///    \ingroup tool
 
-/// \defgroup async  Asynchronous Flow Control
+/// \defgroup async  Asynchronous Queues and Streams
 /// \defgroup rc  Resource: Pointer, Allocation, Deallocation, Queue
 /// \defgroup test  Unit Tests
 
