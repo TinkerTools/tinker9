@@ -51,8 +51,8 @@ inline int minByAbs(int a, int b)
 // innear-most vertex is outside of the space defined by surfaces
 // `|x| + |y| + |z| = 3/4`, it is considered to be outside and needs updating.
 __device__
-inline void ixyzOctahedron(
-   int& restrict ix, int& restrict iy, int& restrict iz, int px, int py, int pz)
+inline void ixyzOctahedron(int& restrict ix, int& restrict iy, int& restrict iz, int px, int py,
+   int pz)
 {
    int qx = (1 << px);
    int qy = (1 << py);
@@ -423,13 +423,10 @@ void spatialStep5Bits(int x0, int y0, unsigned int* bit0, const int* iakpl_rev)
 
 template <class IMG>
 __global__
-void spatialStep5(const int* restrict bnum, const int* iakpl_rev, int nstype,
-   Spatial::ScaleInfo si1, Spatial::ScaleInfo si2, Spatial::ScaleInfo si3,
-   Spatial::ScaleInfo si4, //
-   int* restrict dev_niak, int* restrict iak,
-   int* restrict lst,                                //
-   int n, int nak, real cutbuf, TINKER_IMAGE_PARAMS, //
-   const int* restrict akpf, const Spatial::SortedAtom* restrict sorted,
+void spatialStep5(const int* restrict bnum, const int* restrict iakpl_rev, int nstype,
+   Spatial::ScaleInfo si1, Spatial::ScaleInfo si2, Spatial::ScaleInfo si3, Spatial::ScaleInfo si4,
+   int* restrict dev_niak, int* restrict iak, int* restrict lst, int n, int nak, real cutbuf,
+   TINKER_IMAGE_PARAMS, const int* restrict akpf, const Spatial::SortedAtom* restrict sorted,
    const Spatial::Center* restrict akc, const Spatial::Center* restrict half)
 {
    int maxns = -1;
@@ -481,6 +478,8 @@ void spatialStep5(const int* restrict bnum, const int* iakpl_rev, int nstype,
    real cutbuf2 = cutbuf * cutbuf;
 
    // Every warp loads a block of atoms as "i-block", denoted by "wy".
+   // All threads in this warp cache the same "center" info.
+   // Each thread holds the position of a unique atom.
    for (int wy = iwarp; wy < nak - 1; wy += nwarp) {
       int atomi = wy * WARP_SIZE + ilane;
       real xi = sorted[atomi].x;
@@ -506,13 +505,22 @@ void spatialStep5(const int* restrict bnum, const int* iakpl_rev, int nstype,
       // Number of k-neighbors found.
       int nknb = 0;
 
-      // Every thread in the warp loads the center and size a bounding box,
-      // denoted by "wx".
+      // 32 (WARP_SIZE) atom blocks will be processed in one run,
+      // one thread per atom block (denoted by "wx").
+      // This loop lasts until all of the remaining blocks are processed.
+      //
+      //    If wx is too big and illegal, wx is marked by a 0-bit.
+      //    If wx is recoreded in the (wx,wy) pair, wx is marked by a 0-bit.
+      //    If the centers of wx and wy are very far, wx is marked by a 0-bit.
+      //    If the bounding boxes of wx and wy do not overlap, wx is marked by a 0-bit.
+      //
+      //    Collecting the bits of wx from every thread in this warp, a 32-bit integer is obtained.
+      //    All threads in this warp will then work on these atom blocks together, one at a time.
       for (int wx0 = wy + 1; wx0 < nak; wx0 += WARP_SIZE) {
          int wx = wx0 + ilane;
          bool calcwx = wx < nak; // wx cannot exceed nak-1.
 
-         // If this block pair was recorded, we will skip it.
+         // Check if this block pair has been recorded
          if (calcwx) {
             int iw, iwa, iwb;
             iw = xy_to_tri(wx, wy);
@@ -522,8 +530,7 @@ void spatialStep5(const int* restrict bnum, const int* iakpl_rev, int nstype,
                calcwx = false;
          }
 
-         // If this block pair was not recorded, but the blocks are far apart,
-         // we will skip it.
+         // Check if two blocks are far apart.
          if (calcwx) {
             real cxk = akc[wx].x;
             real cyk = akc[wx].y;
@@ -556,12 +563,10 @@ void spatialStep5(const int* restrict bnum, const int* iakpl_rev, int nstype,
          // Only loop over the k-blocks that are in-use.
          int wxflag = __ballot_sync(ALL_LANES, calcwx);
          while (wxflag) {
-            // Get the rightmost 1 digit.
-            int jlane = __ffs(wxflag) - 1;
-            // Clear the rightmost 1 digit.
-            wxflag &= (wxflag - 1);
+            int jbit = __ffs(wxflag) - 1; // Get the rightmost 1 digit.
+            wxflag &= (wxflag - 1);       // Clear the rightmost 1 digit.
 
-            wx = wx0 + jlane;
+            wx = wx0 + jbit;
             real cxk = akc[wx].x;
             real cyk = akc[wx].y;
             real czk = akc[wx].z;
@@ -588,9 +593,12 @@ void spatialStep5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             yr = cyk - yi;
             zr = czk - zi;
             r2 = IMG::img2(xr, yr, zr, TINKER_IMAGE_LVEC_ARGS, TINKER_IMAGE_RECIP_ARGS);
-            // Only inlcude the "i-atoms" that are close to k-center.
+            // Only consider those "i-atoms" that are close to k-center.
             int iflag = __ballot_sync(ALL_LANES, r2 <= rlimit2);
 
+            // Iterate over all "i-atoms" by shuffle.
+            // Atom-k is considered a neighbor of i-block as long as
+            // atom-k is close to any atom in the i-block.
             int includek = 0;
             if (iflag != 0) {
                if (ilocal) {
@@ -619,11 +627,9 @@ void spatialStep5(const int* restrict bnum, const int* iakpl_rev, int nstype,
             }
             includek = includek and (k < n);
             int kflag = __ballot_sync(ALL_LANES, includek);
-
-            if (includek) {
-               int pos = nknb + __popc(kflag & lanemask);
-               buffer[pos] = k;
-            }
+            if (includek)
+               buffer[nknb + __popc(kflag & lanemask)] = k;
+            __syncwarp();
             nknb += __popc(kflag);
             if (nknb > LEN_LSTBUF - WARP_SIZE) {
                // Buffer is almost full, and there may not be enough space for
@@ -639,11 +645,17 @@ void spatialStep5(const int* restrict bnum, const int* iakpl_rev, int nstype,
                         iak[pos + ilane] = wy;
                      for (int i = 0; i < incr; ++i) {
                         int bufp = i * WARP_SIZE + ilane;
-                        lst[(pos + i) * WARP_SIZE + ilane] = buffer[bufp];
+                        int val = buffer[bufp];
+                        __syncwarp();
+                        lst[(pos + i) * WARP_SIZE + ilane] = val;
                      }
                   }
-                  if (incr < LEN_LSTBUF / WARP_SIZE)
-                     buffer[ilane] = buffer[incr * WARP_SIZE + ilane];
+                  if (incr < LEN_LSTBUF / WARP_SIZE) {
+                     int val = buffer[incr * WARP_SIZE + ilane];
+                     __syncwarp();
+                     buffer[ilane] = val;
+                     __syncwarp();
+                  }
                   nknb -= incr * WARP_SIZE;
                }
             }
