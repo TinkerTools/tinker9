@@ -1,0 +1,5 @@
+if (${CMAKE_SYSTEM_NAME} STREQUAL Linux)
+   set (__T9_LD_START_GROUP "-Wl,--start-group")
+   set (__T9_LD_END_GROUP "-Wl,--end-group")
+# elseif (${CMAKE_SYSTEM_NAME} STREQUAL Darwin)
+endif ()

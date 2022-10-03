@@ -8,16 +8,7 @@ if (GPU_LANG STREQUAL "OPENACC")
       "$<$<CONFIG:MINSIZEREL>:-ta=tesla:fastmath${__T9_ACC_CCLST4}>"
    )
    set (__T9_ACC_LIB_STR tinker9_acc)
-elseif (GPU_LANG STREQUAL "CUDA")
-   set (__T9_EXTRA_LINK_FLAGS "")
-   # set (__T9_ACC_LIB_STR tinker9_acc)
-endif ()
-
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL Linux)
-   set (__T9_LD_START_GROUP "-Wl,--start-group")
-   set (__T9_LD_END_GROUP "-Wl,--end-group")
-# elseif (${CMAKE_SYSTEM_NAME} STREQUAL Darwin)
+# elseif (GPU_LANG STREQUAL "CUDA")
 endif ()
 
 

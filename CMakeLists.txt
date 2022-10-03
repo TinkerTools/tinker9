@@ -590,6 +590,7 @@ target_link_libraries (__t9_main_o PRIVATE __t9_intf PRIVATE tinkerFToCpp)
 set_target_properties (__t9_main_o PROPERTIES CXX_STANDARD ${T9_CPPSTD})
 ## tinker9 and all.tests
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+include (os) # os.cmake
 if (HOST)
    include (host) # host.cmake
 else ()
