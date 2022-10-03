@@ -14,42 +14,45 @@ elseif (GPU_LANG STREQUAL "CUDA")
 endif ()
 
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL Linux)
+   set (__T9_LD_START_GROUP "-Wl,--start-group")
+   set (__T9_LD_END_GROUP "-Wl,--end-group")
+# elseif (${CMAKE_SYSTEM_NAME} STREQUAL Darwin)
+endif ()
+
+
 add_executable (tinker9)
 target_link_libraries (tinker9
    __t9_main_o
+   ${__T9_LD_START_GROUP}
    ${__T9_ACC_LIB_STR}
    tinker9_cu
    tinker9_cpp
+   ${__T9_LD_END_GROUP}
    tinker9_version
    tinker9_f
    tinkerFToCpp
    ${__T9_EXTRA_LINK_FLAGS}
-)
-set_target_properties (tinker9
-   PROPERTIES
-      CUDA_RESOLVE_DEVICE_SYMBOLS ON
 )
 
 
 add_executable (all.tests)
 target_link_libraries (all.tests
    __t9_all_tests_o
+   ${__T9_LD_START_GROUP}
    ${__T9_ACC_LIB_STR}
    tinker9_cu
    tinker9_cpp
+   ${__T9_LD_END_GROUP}
    tinker9_version
    tinker9_f
    tinkerFToCpp
    ${__T9_EXTRA_LINK_FLAGS}
 )
-set_target_properties (all.tests
-   PROPERTIES
-      CUDA_RESOLVE_DEVICE_SYMBOLS ON
-)
 
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-   add_subdirectory ("src/objc")
+if (${CMAKE_SYSTEM_NAME} STREQUAL Darwin)
+   add_subdirectory (src/objc)
    target_link_libraries (tinker9 tinker9_objc "-framework CoreFoundation -framework IOKit")
    target_link_libraries (all.tests tinker9_objc "-framework CoreFoundation -framework IOKit")
    foreach (var tinker9 all.tests)

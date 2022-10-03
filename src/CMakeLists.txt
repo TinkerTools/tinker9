@@ -20,7 +20,7 @@ cudart/pmestream.cpp
 cudart/thrustcache.cpp
    )
 endif ()
-add_library (tinker9_cpp OBJECT "${__T9_CPP_SRC}")
+add_library (tinker9_cpp STATIC "${__T9_CPP_SRC}")
 target_link_libraries (tinker9_cpp PRIVATE __t9_intf PRIVATE tinkerFToCpp)
 set_target_properties (tinker9_cpp PROPERTIES CXX_STANDARD ${T9_CPPSTD})
 

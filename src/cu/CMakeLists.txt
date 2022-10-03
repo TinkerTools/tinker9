@@ -8,9 +8,10 @@ set (CMAKE_CUDA_EXTENSIONS OFF)
 
 
 include (cmakesrc.txt)
-add_library (tinker9_cu OBJECT "${__T9_CU_SRC}")
+add_library (tinker9_cu STATIC "${__T9_CU_SRC}")
 set_target_properties (tinker9_cu
    PROPERTIES
+      CUDA_RESOLVE_DEVICE_SYMBOLS ON
       CUDA_SEPARABLE_COMPILATION ON
 )
 target_include_directories (tinker9_cu PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/cu")
