@@ -673,7 +673,9 @@ void spatialStep5(const int* restrict bnum, const int* restrict iakpl_rev, int n
                iak[pos + ilane] = wy;
             for (int i = 0; i < incr; ++i) {
                int bufp = i * WARP_SIZE + ilane;
-               int num = bufp < nknb ? buffer[bufp] : 0;
+               int val = buffer[bufp];
+               __syncwarp();
+               int num = bufp < nknb ? val : 0;
                lst[(pos + i) * WARP_SIZE + ilane] = num;
             }
          }

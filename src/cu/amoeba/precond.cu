@@ -652,6 +652,7 @@ void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       pdk = pdamp[k];
       jpk = jpolar[k];
       polk = polarity[k];
+      __syncwarp();
 
       unsigned int uinfo0 = uinfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -723,6 +724,7 @@ void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       atomic_add(fkpy, &zrsdp[k][1]);
       atomic_add(fkpz, &zrsdp[k][2]);
    }
+   __syncwarp();
 
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       fidx = 0;
@@ -768,6 +770,7 @@ void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       pdk = pdamp[k];
       jpk = jpolar[k];
       polk = polarity[k];
+      __syncwarp();
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
@@ -835,6 +838,7 @@ void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       atomic_add(fkpy, &zrsdp[k][1]);
       atomic_add(fkpz, &zrsdp[k][2]);
    }
+   __syncwarp();
 }
 
 void sparsePrecondApply_cu(const real (*rsd)[3], const real (*rsdp)[3],

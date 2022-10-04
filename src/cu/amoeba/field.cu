@@ -650,6 +650,7 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       qkzz = rpole[k][MPL_PME_ZZ];
       pdk = pdamp[k];
       jpk = jpolar[k];
+      __syncwarp();
 
       unsigned int dpinfo0 = dpinfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -699,6 +700,7 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       atomic_add(fkpy, &fieldp[k][1]);
       atomic_add(fkpz, &fieldp[k][2]);
    }
+   __syncwarp();
 
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       fidx = 0;
@@ -750,6 +752,7 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       qkzz = rpole[k][MPL_PME_ZZ];
       pdk = pdamp[k];
       jpk = jpolar[k];
+      __syncwarp();
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
@@ -795,6 +798,7 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       atomic_add(fkpy, &fieldp[k][1]);
       atomic_add(fkpz, &fieldp[k][2]);
    }
+   __syncwarp();
 }
 
 void dfieldEwaldReal_cu(real (*field)[3], real (*fieldp)[3])
@@ -1427,6 +1431,7 @@ void ufield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       ukpz = uinp[k][2];
       pdk = pdamp[k];
       jpk = jpolar[k];
+      __syncwarp();
 
       unsigned int uinfo0 = uinfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -1474,6 +1479,7 @@ void ufield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       atomic_add(fkpy, &fieldp[k][1]);
       atomic_add(fkpz, &fieldp[k][2]);
    }
+   __syncwarp();
 
    for (int iw = iwarp; iw < niak; iw += nwarp) {
       fidx = 0;
@@ -1517,6 +1523,7 @@ void ufield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       ukpz = uinp[k][2];
       pdk = pdamp[k];
       jpk = jpolar[k];
+      __syncwarp();
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
@@ -1560,6 +1567,7 @@ void ufield_cu1(int n, TINKER_IMAGE_PARAMS, real off,
       atomic_add(fkpy, &fieldp[k][1]);
       atomic_add(fkpz, &fieldp[k][2]);
    }
+   __syncwarp();
 }
 
 void ufieldEwaldReal_cu(const real (*uind)[3], const real (*uinp)[3],

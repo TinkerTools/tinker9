@@ -138,7 +138,7 @@ inline void pair_dexpol(ExpolScr scrtyp, real r, real pscale, real cut,
    yr = 0.;
    zr = 0.;
    real dot = ai[0][2];
-   real eps = 1. / REAL_SQRT(2);
+   real eps = 0.70710678; // 1/sqrt(2)
    if (fabs(dot) > eps) {
       xr = 0.;
       yr = 1.;
