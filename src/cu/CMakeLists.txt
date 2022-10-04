@@ -1,5 +1,5 @@
 # printf "set (__T9_CU_SRC\n%s\n)\n" "$(LC_COLLATE=C ls -1a *.cu {amoeba,aplus,hippo}/*.cu)" > cmakesrc.txt
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required (VERSION 3.18)
 
 
 enable_language (CUDA)
@@ -12,19 +12,19 @@ add_library (tinker9_cu STATIC "${__T9_CU_SRC}")
 set_target_properties (tinker9_cu
    PROPERTIES
       CUDA_RESOLVE_DEVICE_SYMBOLS ON
-      CUDA_SEPARABLE_COMPILATION ON
+      CUDA_SEPARABLE_COMPILATION  ON
+      CUDA_ARCHITECTURES          "${T9_CUCCLIST}"
 )
 target_include_directories (tinker9_cu PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/cu")
 target_link_libraries (tinker9_cu PRIVATE __t9_intf PRIVATE tinkerFToCpp)
 target_link_libraries (tinker9_cu PUBLIC cufft cublas)
 
-
-## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
-foreach (var ${T9_CUCCLIST})
-   target_compile_options (tinker9_cu PRIVATE
-      "SHELL:-gencode arch=compute_${var},code=sm_${var}"
-   )
-endforeach ()
+# ## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70
+# foreach (var ${T9_CUCCLIST})
+#    target_compile_options (tinker9_cu PRIVATE
+#       "SHELL:-gencode arch=compute_${var},code=sm_${var}"
+#    )
+# endforeach ()
 ## Debug add flag: -lineinfo
 ## Release add flag: --use_fast_math
 target_compile_options (tinker9_cu PRIVATE

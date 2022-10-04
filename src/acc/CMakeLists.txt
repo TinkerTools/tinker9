@@ -1,5 +1,5 @@
 # printf "set (__T9_ACC_SRC\n%s\n)\n" "$(LC_COLLATE=C ls -1a *.cpp {amoeba,aplus,hippo}/*.cpp)" > cmakesrc.txt
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required (VERSION 3.18)
 
 
 ## libtinker9_acc.a
