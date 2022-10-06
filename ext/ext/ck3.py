@@ -24,8 +24,8 @@ alphabets = {
 
 
 rc_kernel1 = '''
-TEMPLATE_PARAMS
-__global__
+TEMPLATE_PARAMS                 \
+__global__                      \
 void KERNEL_NAME(int n,         \
     TINKER_IMAGE_PARAMS         \
     COUNT_KERNEL_PARAMS         \
