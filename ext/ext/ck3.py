@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+import os
 import re
 import sys
 import yaml
@@ -39,7 +40,7 @@ void KERNEL_NAME(int n,         \
     , int niak, const int* restrict iak, const int* restrict lst
     EXTRA_KERNEL_PARAMS)
 {
-    KERNEL_CONSTEXPR_FLAGS    USING_DEVICE_VARIABLES \
+    USING_DEVICE_VARIABLES    KERNEL_CONSTEXPR_FLAGS \
     const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
     const int iwarp = ithread / WARP_SIZE;
     const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
@@ -207,7 +208,10 @@ class Variable:
     def init_exclude(self) -> str:
         rhs = self._get_src(self.readfrom, self.iork)
         if self.location == 'shared':
-            return '{}[klane] = {};'.format(self.name, rhs)
+            if self.iork == 'i':
+                return '{}[klane] = {};'.format(self.name, rhs)
+            elif self.iork == 'k':
+                return '{}[threadIdx.x] = {};'.format(self.name, rhs)
         else:
             return '{} = {};'.format(self.name, rhs)
 
@@ -400,6 +404,7 @@ class KernelWriter:
     def __init__(self, config) -> None:
         self.config = config
 
+        self.yk_output_dir = 'OUTPUT_DIR'
         self.yk_template_params = 'TEMPLATE_PARAMS'
         self.yk_kernel_name = 'KERNEL_NAME'
         self.yk_cut_distance = 'CUT_DISTANCE'
@@ -637,7 +642,7 @@ class KernelWriter:
 
     @staticmethod
     def version() -> str:
-        return '3.0.0-alpha'
+        return '3.0.0-rc1'
 
 
     @staticmethod
@@ -669,10 +674,28 @@ def exec_mainfunc(argv):
     yaml_file = argv[1]
     with open(yaml_file) as input_file:
         config = yaml.full_load(input_file)
-        output = sys.stdout
         kw = KernelWriter(config)
-        kw.write(output)
+        kw.write(output=sys.stdout)
+
+
+def show_command(argv):
+    p = os.path.abspath(__file__)
+    d = os.path.dirname(p)
+    d2 = os.path.join(d, '../..')
+    d = os.path.abspath(d2)
+
+
+    yaml_file = argv[1]
+    with open(yaml_file) as input_file:
+        config = yaml.full_load(input_file)
+        kw = KernelWriter(config)
+        outd = config[kw.yk_output_dir]
+        outf = config[kw.yk_kernel_name]
+        print('python3 {} {} | clang-format | tee {}/{}/{}.cc'.format(__file__, argv[1], d, outd, outf))
 
 
 if __name__ == '__main__':
-    exec_mainfunc(sys.argv)
+    if sys.argv[1] == '-c':
+        show_command(sys.argv[1:])
+    else:
+        exec_mainfunc(sys.argv)
