@@ -9,6 +9,11 @@ build
 build/*
 build*/*
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
 # Docker
 docker/Dockerfile*
 docker/*.dockerfile
