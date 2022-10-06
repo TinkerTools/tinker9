@@ -1,0 +1,90 @@
+OUTPUT_DIR: src/cu/amoeba
+KERNEL_NAME: dfield_cu1
+TEMPLATE_PARAMS: template<class ETYP>
+# CONSTEXPR_FLAGS:
+
+# COUNT:
+# ENERGY:
+# VIRIAL:
+# GRADIENT:
+
+# CUT_DISTANCE:
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - dpinfo
+SCALE_1X_TYPE: real2_const_array,0,1
+
+EXTRA_PARAMS: |
+  , real (*restrict field)[3], real (*restrict fieldp)[3] , real aewald
+IMPLICIT_PARAMS:
+  - d::jpolar
+  - d::njpolar
+  - d::pdamp
+  - d::thlval
+  - d::rpole
+
+I_VARIABLES:
+  - register real xi   from:x
+  - register real yi   from:y
+  - register real zi   from:z
+  - shared   real ci   from:rpole,MPL_PME_0
+  - shared   real dix  from:rpole,MPL_PME_X
+  - shared   real diy  from:rpole,MPL_PME_Y
+  - shared   real diz  from:rpole,MPL_PME_Z
+  - shared   real qixx from:rpole,MPL_PME_XX
+  - shared   real qixy from:rpole,MPL_PME_XY
+  - shared   real qixz from:rpole,MPL_PME_XZ
+  - shared   real qiyy from:rpole,MPL_PME_YY
+  - shared   real qiyz from:rpole,MPL_PME_YZ
+  - shared   real qizz from:rpole,MPL_PME_ZZ
+  - shared   real pdi  from:pdamp
+  - shared   int  jpi  from:jpolar
+K_VARIABLES:
+  - register real xk   from:x
+  - register real yk   from:y
+  - register real zk   from:z
+  - register real ck   from:rpole,MPL_PME_0
+  - register real dkx  from:rpole,MPL_PME_X
+  - register real dky  from:rpole,MPL_PME_Y
+  - register real dkz  from:rpole,MPL_PME_Z
+  - register real qkxx from:rpole,MPL_PME_XX
+  - register real qkxy from:rpole,MPL_PME_XY
+  - register real qkxz from:rpole,MPL_PME_XZ
+  - register real qkyy from:rpole,MPL_PME_YY
+  - register real qkyz from:rpole,MPL_PME_YZ
+  - register real qkzz from:rpole,MPL_PME_ZZ
+  - register real pdk  from:pdamp
+  - register int  jpk  from:jpolar
+I_FORCE:
+  - register real fidx addto:field,0
+  - register real fidy addto:field,1
+  - register real fidz addto:field,2
+  - register real fipx addto:fieldp,0
+  - register real fipy addto:fieldp,1
+  - register real fipz addto:fieldp,2
+K_FORCE:
+  - register real fkdx addto:field,0
+  - register real fkdy addto:field,1
+  - register real fkdz addto:field,2
+  - register real fkpx addto:fieldp,0
+  - register real fkpy addto:fieldp,1
+  - register real fkpz addto:fieldp,2
+
+# SCALED_PAIRWISE_INTERACTION:
+FULL_PAIRWISE_INTERACTION: |
+  real xr = @xk@ - @xi@;
+  real yr = @yk@ - @yi@;
+  real zr = @zk@ - @zi@;
+  real r2 = image2(xr,yr,zr);
+  if (r2 <= off * off and incl) {
+    real pga = thlval[njpolar * jpi[klane] + jpk];
+    pair_dfield_v2<ETYP>(r2, xr, yr, zr, scalea, scaleb, aewald,
+      @ci@, @dix@, @diy@, @diz@,
+      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, @pdi@, pga,
+      @ck@, @dkx@, @dky@, @dkz@,
+      @qkxx@, @qkxy@, @qkxz@, @qkyy@, @qkyz@, @qkzz@, @pdk@, pga,
+      @fidx@, @fidy@, @fidz@, @fipx@, @fipy@, @fipz@,
+      @fkdx@, @fkdy@, @fkdz@, @fkpx@, @fkpy@, @fkpz@);
+  } // end if (include)

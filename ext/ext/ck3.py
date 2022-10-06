@@ -377,7 +377,7 @@ class KernelWriter:
             v = ''
             if input is None:
                 if not separate_scaled_pairwise:
-                    v = 'read {}a = 1;'.format(stem)
+                    v = 'real {}a = 1;'.format(stem)
             else:
                 v = 'real {}a = {}[ii];'.format(stem, input)
             return v
@@ -405,15 +405,16 @@ class KernelWriter:
         self.config = config
 
         self.yk_output_dir = 'OUTPUT_DIR'
-        self.yk_template_params = 'TEMPLATE_PARAMS'
         self.yk_kernel_name = 'KERNEL_NAME'
+        self.yk_template_params = 'TEMPLATE_PARAMS'
+        self.yk_constexpr_flags = 'CONSTEXPR_FLAGS'
+
         self.yk_cut_distance = 'CUT_DISTANCE'
         self.yk_off_distance = 'OFF_DISTANCE'
         self.yk_exclude_info = 'EXCLUDE_INFO'
         self.yk_scale_1x_type = 'SCALE_1X_TYPE'
         self.yk_extra_params = 'EXTRA_PARAMS'
         self.yk_implicit_params = 'IMPLICIT_PARAMS'
-        self.yk_constexpr_flags = 'CONSTEXPR_FLAGS'
 
         self.yk_count, self.yk_energy = 'COUNT', 'ENERGY'
         self.yk_virial, self.yk_gradient = 'VIRIAL', 'GRADIENT'
@@ -624,6 +625,7 @@ class KernelWriter:
             v1 = kvars.ikreplace(v1)
             v1 = ifrcs.ikreplace(v1)
             v1 = kfrcs.ikreplace(v1)
+            v2 = v1 # in case no scaled pairwise interaction is given
         kcfg = self.yk_scaled_pairwise
         if kcfg in keys:
             v2 = config[kcfg]
@@ -642,7 +644,7 @@ class KernelWriter:
 
     @staticmethod
     def version() -> str:
-        return '3.0.0-rc1'
+        return '3.0.0-rc2'
 
 
     @staticmethod
