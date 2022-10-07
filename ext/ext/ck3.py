@@ -623,15 +623,13 @@ class KernelWriter:
         k1, v1 = 'CUT_KERNEL_PARAMS', ''
         kcfg = self.yk_cut_distance
         if kcfg in keys:
-            vcfg = config[kcfg]
-            for t in vcfg:
-                v1 = v1 + ', real {}'.format(t)
+            t = config[kcfg]
+            v1 = v1 + ', real {}'.format(t)
         k2, v2 = 'OFF_KERNEL_PARAMS', ''
         kcfg = self.yk_off_distance
         if kcfg in keys:
-            vcfg = config[kcfg]
-            for t in vcfg:
-                v2 = v2 + ', real {}'.format(t)
+            t = config[kcfg]
+            v2 = v2 + ', real {}'.format(t)
         d[k1], d[k2] = v1, v2
 
         # extra kernel parameters
@@ -766,11 +764,10 @@ class KernelWriter:
         k3, v3 = 'KERNEL_EXCLUDE_BIT', ''
         kcfg = self.yk_exclude_info
         if kcfg in keys:
-            vcfg = config[kcfg]
-            for t in vcfg:
-                v1 = v1 + ', const unsigned* restrict {}'.format(t)
-                v2 = v2 + 'unsigned int {0:}0 = {0:}[iw * WARP_SIZE + ilane];'.format(t)
-                v3 = v3 + ' and ({}0 & srcmask) == 0'.format(t)
+            t = config[kcfg]
+            v1 = v1 + ', const unsigned* restrict {}'.format(t)
+            v2 = v2 + 'unsigned int {0:}0 = {0:}[iw * WARP_SIZE + ilane];'.format(t)
+            v3 = v3 + ' and ({}0 & srcmask) == 0'.format(t)
         if v3 != '':
             v3 = 'int srcmask = 1 << srclane;' + 'incl = incl {};'.format(v3)
         d[k1], d[k2], d[k3] = v1, v2, v3
@@ -820,7 +817,7 @@ class KernelWriter:
 
     @staticmethod
     def version() -> str:
-        return '3.0.0-rc3'
+        return '3.0.0'
 
 
     @staticmethod

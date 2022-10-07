@@ -1,4 +1,4 @@
-// ck.py Version 3.0.0-rc1
+// ck.py Version 3.0.0
 template <class Ver, class ETYP>
 __global__
 void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuffer restrict ep,

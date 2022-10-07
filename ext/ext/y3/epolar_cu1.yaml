@@ -19,11 +19,9 @@ GRADIENT:
   - gz
 
 # CUT_DISTANCE:
-OFF_DISTANCE:
-  - 'off'
+OFF_DISTANCE: 'off'
 
-EXCLUDE_INFO:
-  - mdpuinfo
+EXCLUDE_INFO: mdpuinfo
 SCALE_1X_TYPE: real4_const_array,1,2,3
 
 EXTRA_PARAMS: |

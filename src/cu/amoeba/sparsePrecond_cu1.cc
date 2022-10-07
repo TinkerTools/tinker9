@@ -1,4 +1,4 @@
-// ck.py Version 3.0.0-rc2
+// ck.py Version 3.0.0
 __global__
 void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo, int nexclude,
    const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x, const real* restrict y,
