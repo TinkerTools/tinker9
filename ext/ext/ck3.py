@@ -810,6 +810,8 @@ class KernelWriter:
 
         # sync warp
         k1, v1 = 'KERNEL_SYNCWARP', '__syncwarp();'
+        if len(ivars.shared) == 0 and len(kvars.shared) == 0 and len(ifrcs.shared) == 0 and len(kfrcs.shared) == 0:
+            v1 = ''
         d[k1] = v1
 
         return d
@@ -817,7 +819,7 @@ class KernelWriter:
 
     @staticmethod
     def version() -> str:
-        return '3.0.0'
+        return '3.0.1'
 
 
     @staticmethod
