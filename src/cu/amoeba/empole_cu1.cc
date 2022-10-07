@@ -2,13 +2,12 @@
 template <class Ver, class ETYP>
 __global__
 void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuffer restrict em,
-   VirialBuffer restrict vem, grad_prec* restrict gx, grad_prec* restrict gy,
-   grad_prec* restrict gz, real off, const unsigned* restrict mdpuinfo, int nexclude,
-   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[4],
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, real* restrict trqx, real* restrict trqy,
-   real* restrict trqz, const real (*restrict rpole)[10], real f, real aewald)
+   VirialBuffer restrict vem, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
+   const unsigned* restrict mdpuinfo, int nexclude, const int (*restrict exclude)[2],
+   const real (*restrict exclude_scale)[4], const real* restrict x, const real* restrict y, const real* restrict z,
+   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak, const int* restrict iak,
+   const int* restrict lst, real* restrict trqx, real* restrict trqy, real* restrict trqz,
+   const real (*restrict rpole)[10], real f, real aewald)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -38,11 +37,11 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuff
       vemtlzy = 0;
       vemtlzz = 0;
    }
-   __shared__ real xi[BLOCK_DIM], yi[BLOCK_DIM], zi[BLOCK_DIM], ci[BLOCK_DIM], dix[BLOCK_DIM],
-      diy[BLOCK_DIM], diz[BLOCK_DIM], qixx[BLOCK_DIM], qixy[BLOCK_DIM], qixz[BLOCK_DIM],
-      qiyy[BLOCK_DIM], qiyz[BLOCK_DIM], qizz[BLOCK_DIM];
-   __shared__ real xk[BLOCK_DIM], yk[BLOCK_DIM], zk[BLOCK_DIM], ck[BLOCK_DIM], dkx[BLOCK_DIM],
-      dky[BLOCK_DIM], dkz[BLOCK_DIM];
+   __shared__ real xi[BLOCK_DIM], yi[BLOCK_DIM], zi[BLOCK_DIM], ci[BLOCK_DIM], dix[BLOCK_DIM], diy[BLOCK_DIM],
+      diz[BLOCK_DIM], qixx[BLOCK_DIM], qixy[BLOCK_DIM], qixz[BLOCK_DIM], qiyy[BLOCK_DIM], qiyz[BLOCK_DIM],
+      qizz[BLOCK_DIM];
+   __shared__ real xk[BLOCK_DIM], yk[BLOCK_DIM], zk[BLOCK_DIM], ck[BLOCK_DIM], dkx[BLOCK_DIM], dky[BLOCK_DIM],
+      dkz[BLOCK_DIM];
    real qkxx, qkxy, qkxz, qkyy, qkyz, qkzz;
    real frcxi, frcyi, frczi, trqxi, trqyi, trqzi;
    real frcxk, frcyk, frczk, trqxk, trqyk, trqzk;
@@ -104,16 +103,15 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuff
       if (r2 <= off * off and incl) {
          real e, vxx, vyx, vzx, vyy, vzy, vzz;
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
-         pair_mpole_v2<Ver, ETYP>(r2, xr, yr, zr, 1, ci[klane], dix[klane], diy[klane], diz[klane],
-            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
-            ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz,
-            qkyy, qkyz, qkzz, f, aewald, frcxi, frcyi, frczi, frcxk, frcyk, frczk, trqxi, trqyi,
-            trqzi, trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
-         pair_mpole_v2<Ver, NON_EWALD>(r2, xr, yr, zr, scalea - 1, ci[klane], dix[klane],
-            diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-            qizz[klane], ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x],
-            qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, f, aewald, frcxi, frcyi, frczi, frcxk, frcyk, frczk,
-            trqxi, trqyi, trqzi, trqxk, trqyk, trqzk, e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1);
+         pair_mpole_v2<Ver, ETYP>(r2, xr, yr, zr, 1, ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane],
+            qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck[threadIdx.x], dkx[threadIdx.x],
+            dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, f, aewald, frcxi, frcyi, frczi,
+            frcxk, frcyk, frczk, trqxi, trqyi, trqzi, trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
+         pair_mpole_v2<Ver, NON_EWALD>(r2, xr, yr, zr, scalea - 1, ci[klane], dix[klane], diy[klane], diz[klane],
+            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck[threadIdx.x],
+            dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, f, aewald, frcxi,
+            frcyi, frczi, frcxk, frcyk, frczk, trqxi, trqyi, trqzi, trqxk, trqyk, trqzk, e1, vxx1, vyx1, vzx1, vyy1,
+            vzy1, vzz1);
          if CONSTEXPR (do_e) {
             e = e + e1;
             emtl += floatTo<ebuf_prec>(e);
@@ -216,11 +214,10 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuff
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
-            pair_mpole_v2<Ver, ETYP>(r2, xr, yr, zr, 1, ci[klane], dix[klane], diy[klane],
-               diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-               qizz[klane], ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x],
-               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, f, aewald, frcxi, frcyi, frczi, frcxk, frcyk,
-               frczk, trqxi, trqyi, trqzi, trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
+            pair_mpole_v2<Ver, ETYP>(r2, xr, yr, zr, 1, ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane],
+               qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck[threadIdx.x], dkx[threadIdx.x],
+               dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, f, aewald, frcxi, frcyi, frczi,
+               frcxk, frcyk, frczk, trqxi, trqyi, trqzi, trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
                emtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -325,11 +322,10 @@ void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuff
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
-            pair_mpole_v2<Ver, ETYP>(r2, xr, yr, zr, 1, ci[klane], dix[klane], diy[klane],
-               diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-               qizz[klane], ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x],
-               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, f, aewald, frcxi, frcyi, frczi, frcxk, frcyk,
-               frczk, trqxi, trqyi, trqzi, trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
+            pair_mpole_v2<Ver, ETYP>(r2, xr, yr, zr, 1, ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane],
+               qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck[threadIdx.x], dkx[threadIdx.x],
+               dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, f, aewald, frcxi, frcyi, frczi,
+               frcxk, frcyk, frczk, trqxi, trqyi, trqzi, trqxk, trqyk, trqzk, e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
                emtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {

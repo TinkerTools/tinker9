@@ -2,10 +2,9 @@
 template <class ETYP>
 __global__
 void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict dpinfo, int nexclude,
-   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[2],
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, real (*restrict field)[3],
+   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[2], const real* restrict x,
+   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl,
+   const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst, real (*restrict field)[3],
    real (*restrict fieldp)[3], real aewald)
 {
    using d::jpolar;
@@ -18,9 +17,8 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict d
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
-   __shared__ real ci[BLOCK_DIM], dix[BLOCK_DIM], diy[BLOCK_DIM], diz[BLOCK_DIM], qixx[BLOCK_DIM],
-      qixy[BLOCK_DIM], qixz[BLOCK_DIM], qiyy[BLOCK_DIM], qiyz[BLOCK_DIM], qizz[BLOCK_DIM],
-      pdi[BLOCK_DIM];
+   __shared__ real ci[BLOCK_DIM], dix[BLOCK_DIM], diy[BLOCK_DIM], diz[BLOCK_DIM], qixx[BLOCK_DIM], qixy[BLOCK_DIM],
+      qixz[BLOCK_DIM], qiyy[BLOCK_DIM], qiyz[BLOCK_DIM], qizz[BLOCK_DIM], pdi[BLOCK_DIM];
    __shared__ int jpi[BLOCK_DIM];
    real xi, yi, zi;
    real xk, yk, zk, ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, pdk;
@@ -87,10 +85,10 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict d
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
          real pga = thlval[njpolar * jpi[klane] + jpk];
-         pair_dfield_v2<ETYP>(r2, xr, yr, zr, scalea, scaleb, aewald, ci[klane], dix[klane],
-            diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-            qizz[klane], pdi[klane], pga, ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
-            pdk, pga, fidx, fidy, fidz, fipx, fipy, fipz, fkdx, fkdy, fkdz, fkpx, fkpy, fkpz);
+         pair_dfield_v2<ETYP>(r2, xr, yr, zr, scalea, scaleb, aewald, ci[klane], dix[klane], diy[klane], diz[klane],
+            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], pdi[klane], pga, ck, dkx, dky,
+            dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, pdk, pga, fidx, fidy, fidz, fipx, fipy, fipz, fkdx, fkdy, fkdz,
+            fkpx, fkpy, fkpz);
       } // end if (include)
 
       atomic_add(fidx, &field[i][0]);
@@ -179,11 +177,10 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict d
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real pga = thlval[njpolar * jpi[klane] + jpk];
-            pair_dfield_v2<ETYP>(r2, xr, yr, zr, scalea, scaleb, aewald, ci[klane], dix[klane],
-               diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
-               qiyz[klane], qizz[klane], pdi[klane], pga, ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy,
-               qkyz, qkzz, pdk, pga, fidx, fidy, fidz, fipx, fipy, fipz, fkdx, fkdy, fkdz, fkpx,
-               fkpy, fkpz);
+            pair_dfield_v2<ETYP>(r2, xr, yr, zr, scalea, scaleb, aewald, ci[klane], dix[klane], diy[klane], diz[klane],
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], pdi[klane], pga, ck, dkx,
+               dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, pdk, pga, fidx, fidy, fidz, fipx, fipy, fipz, fkdx, fkdy,
+               fkdz, fkpx, fkpy, fkpz);
          } // end if (include)
 
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
@@ -276,11 +273,10 @@ void dfield_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict d
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real pga = thlval[njpolar * jpi[klane] + jpk];
-            pair_dfield_v2<ETYP>(r2, xr, yr, zr, scalea, scaleb, aewald, ci[klane], dix[klane],
-               diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
-               qiyz[klane], qizz[klane], pdi[klane], pga, ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy,
-               qkyz, qkzz, pdk, pga, fidx, fidy, fidz, fipx, fipy, fipz, fkdx, fkdy, fkdz, fkpx,
-               fkpy, fkpz);
+            pair_dfield_v2<ETYP>(r2, xr, yr, zr, scalea, scaleb, aewald, ci[klane], dix[klane], diy[klane], diz[klane],
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], pdi[klane], pga, ck, dkx,
+               dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, pdk, pga, fidx, fidy, fidz, fipx, fipy, fipz, fkdx, fkdy,
+               fkdz, fkpx, fkpy, fkpz);
          } // end if (include)
 
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);

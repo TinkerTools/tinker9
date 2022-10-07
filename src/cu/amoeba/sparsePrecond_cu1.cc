@@ -1,12 +1,10 @@
 // ck.py Version 3.0.0-rc2
 __global__
-void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo,
-   int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, const real (*restrict rsd)[3],
-   const real (*restrict rsdp)[3], real (*restrict zrsd)[3], real (*restrict zrsdp)[3],
-   const real* restrict polarity)
+void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo, int nexclude,
+   const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x, const real* restrict y,
+   const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
+   const int* restrict iak, const int* restrict lst, const real (*restrict rsd)[3], const real (*restrict rsdp)[3],
+   real (*restrict zrsd)[3], real (*restrict zrsdp)[3], const real* restrict polarity)
 {
    using d::jpolar;
    using d::njpolar;
@@ -17,8 +15,8 @@ void sparsePrecond_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* res
    const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
    const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
-   __shared__ real uidx[BLOCK_DIM], uidy[BLOCK_DIM], uidz[BLOCK_DIM], uipx[BLOCK_DIM],
-      uipy[BLOCK_DIM], uipz[BLOCK_DIM], pdi[BLOCK_DIM], poli[BLOCK_DIM];
+   __shared__ real uidx[BLOCK_DIM], uidy[BLOCK_DIM], uidz[BLOCK_DIM], uipx[BLOCK_DIM], uipy[BLOCK_DIM], uipz[BLOCK_DIM],
+      pdi[BLOCK_DIM], poli[BLOCK_DIM];
    __shared__ int jpi[BLOCK_DIM];
    real xi, yi, zi;
    real xk, yk, zk, ukdx, ukdy, ukdz, ukpx, ukpy, ukpz, pdk, polk;

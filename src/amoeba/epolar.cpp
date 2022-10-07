@@ -20,8 +20,6 @@
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/uprior.hh>
 
-#define TINKER9_POLPAIR 2
-
 namespace tinker {
 TINKER_FVOID2(cpp0, cu1, epolarDataBinding, RcOp);
 void epolarData(RcOp op)
@@ -33,10 +31,8 @@ void epolarData(RcOp op)
    auto rc_a = rc_flag & calc::analyz;
 
    if (op & RcOp::DEALLOC) {
-#if TINKER9_POLPAIR == 2
       njpolar = 0;
       darray::deallocate(jpolar, thlval);
-#endif
 
       nuexclude = 0;
       darray::deallocate(uexclude, uexclude_scale);
@@ -396,14 +392,12 @@ void epolarData(RcOp op)
       darray::copyin(g::q0, ndpexclude, dpexclude_scale, excls.data());
       waitFor(g::q0);
 
-#if TINKER9_POLPAIR == 2
       std::map<int, int> jpolarmap;
       for (int i = 0; i < n; ++i)
          jpolarmap[polar::jpolar[i]] = 1;
       njpolar = jpolarmap.size();
       darray::allocate(n, &jpolar);
       darray::allocate(njpolar * njpolar, &thlval);
-#endif
 
       darray::allocate(n, &polarity, &thole, &pdamp, &polarity_inv);
       if (polpot::use_tholed) darray::allocate(n, &dirdamp);
@@ -504,13 +498,12 @@ void epolarData(RcOp op)
    }
 
    if (op & RcOp::INIT) {
-#if TINKER9_POLPAIR == 2
       std::vector<int> jpolarvec(n);
       for (int i = 0; i < n; ++i)
          jpolarvec[i] = polar::jpolar[i] - 1;
       darray::copyin(g::q0, n, jpolar, jpolarvec.data());
       darray::copyin(g::q0, njpolar * njpolar, thlval, polar::thlval);
-#endif
+
       // TODO: rename udiag to uaccel
       udiag = polpot::uaccel;
 

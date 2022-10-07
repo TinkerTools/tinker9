@@ -2,14 +2,12 @@
 template <class Ver, class ETYP>
 __global__
 void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuffer restrict ep,
-   VirialBuffer restrict vep, grad_prec* restrict gx, grad_prec* restrict gy,
-   grad_prec* restrict gz, real off, const unsigned* restrict mdpuinfo, int nexclude,
-   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[4],
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, real (*restrict ufld)[3],
-   real (*restrict dufld)[6], const real (*restrict rpole)[10], const real (*restrict uind)[3],
-   const real (*restrict uinp)[3], real f, real aewald)
+   VirialBuffer restrict vep, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
+   const unsigned* restrict mdpuinfo, int nexclude, const int (*restrict exclude)[2],
+   const real (*restrict exclude_scale)[4], const real* restrict x, const real* restrict y, const real* restrict z,
+   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak, const int* restrict iak,
+   const int* restrict lst, real (*restrict ufld)[3], real (*restrict dufld)[6], const real (*restrict rpole)[10],
+   const real (*restrict uind)[3], const real (*restrict uinp)[3], real f, real aewald)
 {
    using d::jpolar;
    using d::njpolar;
@@ -43,20 +41,17 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuff
       veptlzy = 0;
       veptlzz = 0;
    }
-   __shared__ real xi[BLOCK_DIM], yi[BLOCK_DIM], zi[BLOCK_DIM], ci[BLOCK_DIM], dix[BLOCK_DIM],
-      diy[BLOCK_DIM], diz[BLOCK_DIM], qixx[BLOCK_DIM], qixy[BLOCK_DIM], qixz[BLOCK_DIM],
-      qiyy[BLOCK_DIM], qiyz[BLOCK_DIM], qizz[BLOCK_DIM], uidx[BLOCK_DIM], uidy[BLOCK_DIM],
-      uidz[BLOCK_DIM], uipx[BLOCK_DIM], uipy[BLOCK_DIM], uipz[BLOCK_DIM], pdi[BLOCK_DIM];
+   __shared__ real xi[BLOCK_DIM], yi[BLOCK_DIM], zi[BLOCK_DIM], ci[BLOCK_DIM], dix[BLOCK_DIM], diy[BLOCK_DIM],
+      diz[BLOCK_DIM], qixx[BLOCK_DIM], qixy[BLOCK_DIM], qixz[BLOCK_DIM], qiyy[BLOCK_DIM], qiyz[BLOCK_DIM],
+      qizz[BLOCK_DIM], uidx[BLOCK_DIM], uidy[BLOCK_DIM], uidz[BLOCK_DIM], uipx[BLOCK_DIM], uipy[BLOCK_DIM],
+      uipz[BLOCK_DIM], pdi[BLOCK_DIM];
    __shared__ int jpi[BLOCK_DIM];
-   __shared__ real xk[BLOCK_DIM], yk[BLOCK_DIM], zk[BLOCK_DIM], dkx[BLOCK_DIM], dky[BLOCK_DIM],
-      dkz[BLOCK_DIM], ukdx[BLOCK_DIM], ukdy[BLOCK_DIM], ukdz[BLOCK_DIM], ukpx[BLOCK_DIM],
-      ukpy[BLOCK_DIM], ukpz[BLOCK_DIM];
+   __shared__ real xk[BLOCK_DIM], yk[BLOCK_DIM], zk[BLOCK_DIM], dkx[BLOCK_DIM], dky[BLOCK_DIM], dkz[BLOCK_DIM],
+      ukdx[BLOCK_DIM], ukdy[BLOCK_DIM], ukdz[BLOCK_DIM], ukpx[BLOCK_DIM], ukpy[BLOCK_DIM], ukpz[BLOCK_DIM];
    real ck, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, pdk;
    int jpk;
-   real frcxi, frcyi, frczi, ufld0i, ufld1i, ufld2i, dufld0i, dufld1i, dufld2i, dufld3i, dufld4i,
-      dufld5i;
-   real frcxk, frcyk, frczk, ufld0k, ufld1k, ufld2k, dufld0k, dufld1k, dufld2k, dufld3k, dufld4k,
-      dufld5k;
+   real frcxi, frcyi, frczi, ufld0i, ufld1i, ufld2i, dufld0i, dufld1i, dufld2i, dufld3i, dufld4i, dufld5i;
+   real frcxk, frcyk, frczk, ufld0k, ufld1k, ufld2k, dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k;
 
    //* /
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
@@ -147,28 +142,26 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuff
          real e, vxx, vyx, vzx, vyy, vzy, vzz;
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
          pair_polar_v2<Ver, ETYP>(r2, xr, yr, zr, 1, 1, 1, //
-            ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
-            qiyy[klane], qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane],
-            uipx[klane], uipy[klane], uipz[klane], pdi[klane], pga, //
-            ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz,
-            qkzz, ukdx[threadIdx.x], ukdy[threadIdx.x], ukdz[threadIdx.x], ukpx[threadIdx.x],
-            ukpy[threadIdx.x], ukpz[threadIdx.x], pdk, pga, //
-            f, aewald,                                      //
-            frcxi, frcyi, frczi, frcxk, frcyk, frczk, ufld0i, ufld1i, ufld2i, ufld0k, ufld1k,
-            ufld2k, dufld0i, dufld1i, dufld2i, dufld3i, dufld4i, dufld5i, dufld0k, dufld1k, dufld2k,
-            dufld3k, dufld4k, dufld5k, //
+            ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
+            qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane], uipx[klane], uipy[klane], uipz[klane],
+            pdi[klane], pga, //
+            ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+            ukdx[threadIdx.x], ukdy[threadIdx.x], ukdz[threadIdx.x], ukpx[threadIdx.x], ukpy[threadIdx.x],
+            ukpz[threadIdx.x], pdk, pga, //
+            f, aewald,                   //
+            frcxi, frcyi, frczi, frcxk, frcyk, frczk, ufld0i, ufld1i, ufld2i, ufld0k, ufld1k, ufld2k, dufld0i, dufld1i,
+            dufld2i, dufld3i, dufld4i, dufld5i, dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
             e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1);
          pair_polar_v2<Ver, NON_EWALD>(r2, xr, yr, zr, scaleb - 1, scalec - 1, scaled - 1, //
-            ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
-            qiyy[klane], qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane],
-            uipx[klane], uipy[klane], uipz[klane], pdi[klane], pga, //
-            ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz,
-            qkzz, ukdx[threadIdx.x], ukdy[threadIdx.x], ukdz[threadIdx.x], ukpx[threadIdx.x],
-            ukpy[threadIdx.x], ukpz[threadIdx.x], pdk, pga, //
-            f, aewald,                                      //
-            frcxi, frcyi, frczi, frcxk, frcyk, frczk, ufld0i, ufld1i, ufld2i, ufld0k, ufld1k,
-            ufld2k, dufld0i, dufld1i, dufld2i, dufld3i, dufld4i, dufld5i, dufld0k, dufld1k, dufld2k,
-            dufld3k, dufld4k, dufld5k, //
+            ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
+            qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane], uipx[klane], uipy[klane], uipz[klane],
+            pdi[klane], pga, //
+            ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+            ukdx[threadIdx.x], ukdy[threadIdx.x], ukdz[threadIdx.x], ukpx[threadIdx.x], ukpy[threadIdx.x],
+            ukpz[threadIdx.x], pdk, pga, //
+            f, aewald,                   //
+            frcxi, frcyi, frczi, frcxk, frcyk, frczk, ufld0i, ufld1i, ufld2i, ufld0k, ufld1k, ufld2k, dufld0i, dufld1i,
+            dufld2i, dufld3i, dufld4i, dufld5i, dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
             e, vxx, vyx, vzx, vyy, vzy, vzz);
          if CONSTEXPR (do_e) {
             e = e + e1;
@@ -314,16 +307,15 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuff
             real pga = thlval[njpolar * jpi[klane] + jpk];
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             pair_polar_v2<Ver, ETYP>(r2, xr, yr, zr, 1, 1, 1, //
-               ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
-               qiyy[klane], qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane],
-               uipx[klane], uipy[klane], uipz[klane], pdi[klane], pga, //
-               ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy,
-               qkyz, qkzz, ukdx[threadIdx.x], ukdy[threadIdx.x], ukdz[threadIdx.x],
-               ukpx[threadIdx.x], ukpy[threadIdx.x], ukpz[threadIdx.x], pdk, pga, //
-               f, aewald,                                                         //
-               frcxi, frcyi, frczi, frcxk, frcyk, frczk, ufld0i, ufld1i, ufld2i, ufld0k, ufld1k,
-               ufld2k, dufld0i, dufld1i, dufld2i, dufld3i, dufld4i, dufld5i, dufld0k, dufld1k,
-               dufld2k, dufld3k, dufld4k, dufld5k, //
+               ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
+               qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane], uipx[klane], uipy[klane], uipz[klane],
+               pdi[klane], pga, //
+               ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+               ukdx[threadIdx.x], ukdy[threadIdx.x], ukdz[threadIdx.x], ukpx[threadIdx.x], ukpy[threadIdx.x],
+               ukpz[threadIdx.x], pdk, pga, //
+               f, aewald,                   //
+               frcxi, frcyi, frczi, frcxk, frcyk, frczk, ufld0i, ufld1i, ufld2i, ufld0k, ufld1k, ufld2k, dufld0i,
+               dufld1i, dufld2i, dufld3i, dufld4i, dufld5i, dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
                e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
                eptl += floatTo<ebuf_prec>(e);
@@ -477,16 +469,15 @@ void epolar_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuff
             real pga = thlval[njpolar * jpi[klane] + jpk];
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             pair_polar_v2<Ver, ETYP>(r2, xr, yr, zr, 1, 1, 1, //
-               ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
-               qiyy[klane], qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane],
-               uipx[klane], uipy[klane], uipz[klane], pdi[klane], pga, //
-               ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy,
-               qkyz, qkzz, ukdx[threadIdx.x], ukdy[threadIdx.x], ukdz[threadIdx.x],
-               ukpx[threadIdx.x], ukpy[threadIdx.x], ukpz[threadIdx.x], pdk, pga, //
-               f, aewald,                                                         //
-               frcxi, frcyi, frczi, frcxk, frcyk, frczk, ufld0i, ufld1i, ufld2i, ufld0k, ufld1k,
-               ufld2k, dufld0i, dufld1i, dufld2i, dufld3i, dufld4i, dufld5i, dufld0k, dufld1k,
-               dufld2k, dufld3k, dufld4k, dufld5k, //
+               ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
+               qiyz[klane], qizz[klane], uidx[klane], uidy[klane], uidz[klane], uipx[klane], uipy[klane], uipz[klane],
+               pdi[klane], pga, //
+               ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+               ukdx[threadIdx.x], ukdy[threadIdx.x], ukdz[threadIdx.x], ukpx[threadIdx.x], ukpy[threadIdx.x],
+               ukpz[threadIdx.x], pdk, pga, //
+               f, aewald,                   //
+               frcxi, frcyi, frczi, frcxk, frcyk, frczk, ufld0i, ufld1i, ufld2i, ufld0k, ufld1k, ufld2k, dufld0i,
+               dufld1i, dufld2i, dufld3i, dufld4i, dufld5i, dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
                e, vxx, vyx, vzx, vyy, vzy, vzz);
             if CONSTEXPR (do_e) {
                eptl += floatTo<ebuf_prec>(e);
