@@ -11,10 +11,9 @@
 namespace tinker {
 template <bool DO_E, bool DO_V>
 __global__
-static void pmeConvDisp_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2],
-   const real* restrict bsmod1, const real* restrict bsmod2, const real* restrict bsmod3,
-   real aewald, TINKER_IMAGE_PARAMS, real vbox, EnergyBuffer restrict gpu_e,
-   VirialBuffer restrict gpu_vir)
+static void pmeConvDisp_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2], const real* restrict bsmod1,
+   const real* restrict bsmod2, const real* restrict bsmod3, real aewald, TINKER_IMAGE_PARAMS, real vbox,
+   EnergyBuffer restrict gpu_e, VirialBuffer restrict gpu_vir)
 {
    using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ectl;
@@ -130,9 +129,8 @@ static void pmeConvDisp_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_
    auto ker = pmeConvDisp_cu1<DO_E, DO_V>;
    auto stream = g::s0;
    int ngrid = gpuGridSize(BLOCK_DIM);
-   ker<<<ngrid, BLOCK_DIM, 0, stream>>>(pme_u->nfft1, pme_u->nfft2, pme_u->nfft3, qgrid,
-      pme_u->bsmod1, pme_u->bsmod2, pme_u->bsmod3, pme_u->aewald, TINKER_IMAGE_ARGS, vbox, gpu_e,
-      gpu_v);
+   ker<<<ngrid, BLOCK_DIM, 0, stream>>>(pme_u->nfft1, pme_u->nfft2, pme_u->nfft3, qgrid, pme_u->bsmod1, pme_u->bsmod2,
+      pme_u->bsmod3, pme_u->aewald, TINKER_IMAGE_ARGS, vbox, gpu_e, gpu_v);
 }
 
 void pmeConvDisp_cu(int vers)
@@ -156,11 +154,10 @@ namespace tinker {
 // ck.py Version 2.0.2
 template <class Ver, class DTYP>
 __global__
-void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer restrict ed,
-   VirialBuffer restrict vd, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
-   real cut, real off, const unsigned* restrict dinfo, int nexclude,
-   const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
-   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
+void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer restrict ed, VirialBuffer restrict vd,
+   grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real cut, real off,
+   const unsigned* restrict dinfo, int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
+   const real* restrict x, const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
    int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
    const real* restrict csix, const real* restrict adisp, real aewald)
 {
@@ -507,10 +504,9 @@ static void edisp_cu()
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   edisp_cu1<Ver, DTYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, ndisp, edsp,
-      vir_edsp, dedspx, dedspy, dedspz, cut, off, st.si1.bit0, ndspexclude, dspexclude,
-      dspexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst,
-      csix, adisp, aewald);
+   edisp_cu1<Ver, DTYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, ndisp, edsp, vir_edsp, dedspx, dedspy,
+      dedspz, cut, off, st.si1.bit0, ndspexclude, dspexclude, dspexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl,
+      st.iakpl, st.niak, st.iak, st.lst, csix, adisp, aewald);
 }
 
 void edispEwaldReal_cu(int vers)
@@ -531,10 +527,10 @@ void edispEwaldReal_cu(int vers)
 
 template <class Ver, int bsorder>
 __global__
-void edisp_cu3(CountBuffer restrict ndisp, EnergyBuffer restrict edsp, const real* restrict csix,
-   real aewald, int n, int nfft1, int nfft2, int nfft3, const real* restrict x,
-   const real* restrict y, const real* restrict z, const real* restrict qgrid, real3 reca,
-   real3 recb, real3 recc, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz)
+void edisp_cu3(CountBuffer restrict ndisp, EnergyBuffer restrict edsp, const real* restrict csix, real aewald, int n,
+   int nfft1, int nfft2, int nfft3, const real* restrict x, const real* restrict y, const real* restrict z,
+   const real* restrict qgrid, real3 reca, real3 recb, real3 recc, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -649,8 +645,8 @@ static void edisp_cu4()
    assert(st.bsorder == 4);
    auto ker = edisp_cu3<Ver, 4>;
    launch_k2b(g::s0, PME_BLOCKDIM, n, ker, //
-      ndisp, edsp, csix, aewald, n, nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc,
-      dedspx, dedspy, dedspz);
+      ndisp, edsp, csix, aewald, n, nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc, dedspx, dedspy,
+      dedspz);
 }
 
 void edispEwaldRecipSelf_cu(int vers)

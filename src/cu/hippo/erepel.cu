@@ -12,11 +12,10 @@ namespace tinker {
 // ck.py Version 2.0.3
 template <class Ver>
 __global__
-void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffer restrict er,
-   VirialBuffer restrict vr, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
-   real cut, real off, const unsigned* restrict rinfo, int nexclude,
-   const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x,
-   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
+void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffer restrict er, VirialBuffer restrict vr,
+   grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real cut, real off,
+   const unsigned* restrict rinfo, int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
+   const real* restrict x, const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
    int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
    real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
    const real* restrict sizpr, const real* restrict elepr, const real* restrict dmppr)
@@ -161,10 +160,9 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
          pair_repel<do_g>( //
-            r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane],
-            dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
-            qiyz[klane], qizz[klane], sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy,
-            qkyz, qkzz, e, pgrad);
+            r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane], diy[klane],
+            diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], sizk, dmpk, valk,
+            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
 
          if CONSTEXPR (do_a)
             if (e != 0)
@@ -292,10 +290,9 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             pair_repel<do_g>( //
-               r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane],
-               dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
-               qiyy[klane], qiyz[klane], qizz[klane], sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx,
-               qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
+               r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane],
+               diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
+               sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -417,10 +414,9 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             pair_repel<do_g>( //
-               r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane],
-               dix[klane], diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane],
-               qiyy[klane], qiyz[klane], qizz[klane], sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx,
-               qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
+               r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane],
+               diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
+               sizk, dmpk, valk, ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -488,10 +484,9 @@ static void erepel_cu2()
    real off = switchOff(Switch::REPULS);
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   erepel_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nrep, er, vir_er, derx,
-      dery, derz, cut, off, st.si2.bit0, nrepexclude, repexclude, repexclude_scale, st.x, st.y,
-      st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, trqx, trqy, trqz, rpole, sizpr,
-      elepr, dmppr);
+   erepel_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nrep, er, vir_er, derx, dery, derz, cut,
+      off, st.si2.bit0, nrepexclude, repexclude, repexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+      st.niak, st.iak, st.lst, trqx, trqy, trqz, rpole, sizpr, elepr, dmppr);
 }
 
 void erepel_cu(int vers)

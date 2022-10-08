@@ -12,13 +12,12 @@ namespace tinker {
 // ck.py Version 2.0.3
 template <class ETYP>
 __global__
-void dfieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict dinfo,
-   int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, real (*restrict field)[3],
-   const real (*restrict rpole)[10], const real* restrict pcore, const real* restrict pval,
-   const real* restrict palpha, real aewald)
+void dfieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict dinfo, int nexclude,
+   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3], const real* restrict x,
+   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl,
+   const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst, real (*restrict field)[3],
+   const real (*restrict rpole)[10], const real* restrict pcore, const real* restrict pval, const real* restrict palpha,
+   real aewald)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -117,10 +116,10 @@ void dfieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* rest
       real zr = zk - zi;
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_dfield_chgpen<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane],
-            diz[klane], corei[klane], vali[klane], alphai[klane], qixx[klane], qixy[klane],
-            qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck, dkx, dky, dkz, corek, valk,
-            alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
+         pair_dfield_chgpen<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane], diz[klane], corei[klane],
+            vali[klane], alphai[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
+            ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx,
+            fkdy, fkdz);
       } // end if (include)
 
       atomic_add(fidx, &field[i][0]);
@@ -197,11 +196,10 @@ void dfieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* rest
          real zr = zk - zi;
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_dfield_chgpen<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane],
-               diz[klane], corei[klane], vali[klane], alphai[klane], qixx[klane], qixy[klane],
-               qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck, dkx, dky, dkz, corek, valk,
-               alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy,
-               fkdz);
+            pair_dfield_chgpen<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane], diz[klane],
+               corei[klane], vali[klane], alphai[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
+               qiyz[klane], qizz[klane], ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+               aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
          } // end if (include)
 
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
@@ -278,11 +276,10 @@ void dfieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* rest
          real zr = zk - zi;
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_dfield_chgpen<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane],
-               diz[klane], corei[klane], vali[klane], alphai[klane], qixx[klane], qixy[klane],
-               qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck, dkx, dky, dkz, corek, valk,
-               alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy,
-               fkdz);
+            pair_dfield_chgpen<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane], diz[klane],
+               corei[klane], vali[klane], alphai[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
+               qiyz[klane], qizz[klane], ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,
+               aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
          } // end if (include)
 
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
@@ -320,9 +317,9 @@ static void dfieldChgpen_cu(real (*field)[3])
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   dfieldChgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
-      nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
-      st.niak, st.iak, st.lst, field, rpole, pcore, pval, palpha, aewald);
+   dfieldChgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nmdwexclude,
+      mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, field,
+      rpole, pcore, pval, palpha, aewald);
 }
 
 void dfieldChgpenEwaldReal_cu(real (*field)[3])
@@ -339,12 +336,11 @@ void dfieldChgpenNonEwald_cu(real (*field)[3])
 // ck.py Version 2.0.3
 template <class ETYP>
 __global__
-void ufieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict winfo,
-   int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, const real (*restrict uind)[3],
-   real (*restrict field)[3], const real* restrict pcore, const real* restrict pval,
+void ufieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict winfo, int nexclude,
+   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3], const real* restrict x,
+   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl,
+   const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
+   const real (*restrict uind)[3], real (*restrict field)[3], const real* restrict pcore, const real* restrict pval,
    const real* restrict palpha, real aewald)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
@@ -416,9 +412,9 @@ void ufieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* rest
       real zr = zk - zi;
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_ufield_chgpen<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane],
-            corei[klane], vali[klane], alphai[klane], ukdx, ukdy, ukdz, corek, valk, alphak, aewald,
-            fidx, fidy, fidz, fkdx, fkdy, fkdz);
+         pair_ufield_chgpen<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane], corei[klane],
+            vali[klane], alphai[klane], ukdx, ukdy, ukdz, corek, valk, alphak, aewald, fidx, fidy, fidz, fkdx, fkdy,
+            fkdz);
       } // end if (include)
 
       atomic_add(fidx, &field[i][0]);
@@ -481,9 +477,9 @@ void ufieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* rest
          real zr = zk - zi;
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_ufield_chgpen<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane],
-               corei[klane], vali[klane], alphai[klane], ukdx, ukdy, ukdz, corek, valk, alphak,
-               aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
+            pair_ufield_chgpen<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane], corei[klane],
+               vali[klane], alphai[klane], ukdx, ukdy, ukdz, corek, valk, alphak, aewald, fidx, fidy, fidz, fkdx, fkdy,
+               fkdz);
          } // end if (include)
 
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
@@ -546,9 +542,9 @@ void ufieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* rest
          real zr = zk - zi;
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_ufield_chgpen<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane],
-               corei[klane], vali[klane], alphai[klane], ukdx, ukdy, ukdz, corek, valk, alphak,
-               aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
+            pair_ufield_chgpen<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane], corei[klane],
+               vali[klane], alphai[klane], ukdx, ukdy, ukdz, corek, valk, alphak, aewald, fidx, fidy, fidz, fkdx, fkdy,
+               fkdz);
          } // end if (include)
 
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
@@ -587,9 +583,9 @@ static void ufieldChgpen_cu(const real (*uind)[3], real (*field)[3])
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   ufieldChgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
-      nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
-      st.niak, st.iak, st.lst, uind, field, pcore, pval, palpha, aewald);
+   ufieldChgpen_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nmdwexclude,
+      mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, uind,
+      field, pcore, pval, palpha, aewald);
 }
 
 void ufieldChgpenEwaldReal_cu(const real (*uind)[3], real (*field)[3])

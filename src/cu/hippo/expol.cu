@@ -13,13 +13,12 @@ namespace tinker {
 // ck.py Version 2.0.3
 
 __global__
-static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off,
-   const unsigned* restrict dinfo, int nexclude, const int (*restrict exclude)[2],
-   const real (*restrict exclude_scale)[3], const real* restrict x, const real* restrict y,
-   const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl,
-   const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
-   real (*restrict polscale)[9], const real* restrict kpep, const real* restrict prepep,
-   const real* restrict dmppep, const int* restrict lpep, ExpolScr scrtyp)
+static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off, const unsigned* restrict dinfo, int nexclude,
+   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3], const real* restrict x,
+   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl,
+   const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst, real (*restrict polscale)[9],
+   const real* restrict kpep, const real* restrict prepep, const real* restrict dmppep, const int* restrict lpep,
+   ExpolScr scrtyp)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -108,8 +107,8 @@ static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off,
       if ((eplk or epli[klane]) and r2 <= off * off and incl) {
          real r = REAL_SQRT(r2);
          real ks2i[3][3], ks2k[3][3];
-         pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
-            alphai[klane], springk, sizk, alphak, ks2i, ks2k);
+         pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane], alphai[klane], springk,
+            sizk, alphak, ks2i, ks2k);
          psci00[klane] += ks2i[0][0];
          psci01[klane] += ks2i[0][1];
          psci02[klane] += ks2i[0][2];
@@ -212,8 +211,8 @@ static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off,
          if ((eplk or epli[klane]) and r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             real ks2i[3][3], ks2k[3][3];
-            pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
-               alphai[klane], springk, sizk, alphak, ks2i, ks2k);
+            pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane], alphai[klane], springk,
+               sizk, alphak, ks2i, ks2k);
             psci00[klane] += ks2i[0][0];
             psci01[klane] += ks2i[0][1];
             psci02[klane] += ks2i[0][2];
@@ -310,8 +309,8 @@ static void alterpol_cu1(int n, TINKER_IMAGE_PARAMS, real cut, real off,
          if ((eplk or epli[klane]) and r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             real ks2i[3][3], ks2k[3][3];
-            pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane],
-               alphai[klane], springk, sizk, alphak, ks2i, ks2k);
+            pair_alterpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, springi[klane], sizi[klane], alphai[klane], springk,
+               sizk, alphak, ks2i, ks2k);
             psci00[klane] += ks2i[0][0];
             psci01[klane] += ks2i[0][1];
             psci02[klane] += ks2i[0][2];
@@ -371,15 +370,14 @@ static void alterpolInit_cu1(int n, real (*restrict polscale)[3][3])
 }
 
 __global__
-static void alterpolInvert_cu1(
-   int n, real (*restrict polscale)[3][3], real (*restrict polinv)[3][3])
+static void alterpolInvert_cu1(int n, real (*restrict polscale)[3][3], real (*restrict polinv)[3][3])
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real det;
       real(&ps)[3][3] = polscale[i];
-      det = ps[0][0] * (ps[1][1] * ps[2][2] - ps[1][2] * ps[2][1]) -
-         ps[1][0] * (ps[0][1] * ps[2][2] - ps[2][1] * ps[0][2]) +
-         ps[2][0] * (ps[0][1] * ps[1][2] - ps[1][1] * ps[0][2]);
+      det = ps[0][0] * (ps[1][1] * ps[2][2] - ps[1][2] * ps[2][1])
+         - ps[1][0] * (ps[0][1] * ps[2][2] - ps[2][1] * ps[0][2])
+         + ps[2][0] * (ps[0][1] * ps[1][2] - ps[1][1] * ps[0][2]);
       polinv[i][0][0] = (ps[1][1] * ps[2][2] - ps[1][2] * ps[2][1]) / det;
       polinv[i][1][0] = (ps[2][0] * ps[1][2] - ps[1][0] * ps[2][2]) / det;
       polinv[i][2][0] = (ps[1][0] * ps[2][1] - ps[2][0] * ps[1][1]) / det;
@@ -402,10 +400,9 @@ void alterpol_cu(real (*polscale)[3][3], real (*polinv)[3][3])
       n, polscale);
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   alterpol_cu1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(n, TINKER_IMAGE_ARGS, cut, off, st.si2.bit0,
-      nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
-      st.niak, st.iak, st.lst, reinterpret_cast<real(*)[9]>(polscale), kpep, prepep, dmppep, lpep,
-      scrtyp);
+   alterpol_cu1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(n, TINKER_IMAGE_ARGS, cut, off, st.si2.bit0, nmdwexclude, mdwexclude,
+      mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst,
+      reinterpret_cast<real(*)[9]>(polscale), kpep, prepep, dmppep, lpep, scrtyp);
 
    launch_k1s(g::s0, n, alterpolInvert_cu1, //
       n, polscale, polinv);
@@ -415,15 +412,13 @@ void alterpol_cu(real (*polscale)[3][3], real (*polinv)[3][3])
 
 template <class Ver>
 __global__
-void dexpol_cu1(int n, TINKER_IMAGE_PARAMS, VirialBuffer restrict vep, grad_prec* restrict gx,
-   grad_prec* restrict gy, grad_prec* restrict gz, real cut, real off,
-   const unsigned* restrict dinfo, int nexclude, const int (*restrict exclude)[2],
-   const real (*restrict exclude_scale)[3], const real* restrict x, const real* restrict y,
-   const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl,
-   const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
-   const real* restrict polarity, const real (*restrict uind)[3], const real* restrict kpep,
-   const real* restrict prepep, const real* restrict dmppep, const int* restrict lpep,
-   ExpolScr scrtyp, real f)
+void dexpol_cu1(int n, TINKER_IMAGE_PARAMS, VirialBuffer restrict vep, grad_prec* restrict gx, grad_prec* restrict gy,
+   grad_prec* restrict gz, real cut, real off, const unsigned* restrict dinfo, int nexclude,
+   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3], const real* restrict x,
+   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl,
+   const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst, const real* restrict polarity,
+   const real (*restrict uind)[3], const real* restrict kpep, const real* restrict prepep, const real* restrict dmppep,
+   const int* restrict lpep, ExpolScr scrtyp, real f)
 {
    constexpr bool do_v = Ver::v;
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
@@ -515,9 +510,8 @@ void dexpol_cu1(int n, TINKER_IMAGE_PARAMS, VirialBuffer restrict vep, grad_prec
       if ((eplk or epli[klane]) and r2 <= off * off and incl) {
          real r = REAL_SQRT(r2);
          real frc[3];
-         pair_dexpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane], uiz[klane],
-            ukx, uky, ukz, springi[klane] / poli[klane], sizi[klane], alphai[klane], springk / polk,
-            sizk, alphak, f, frc);
+         pair_dexpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane], uiz[klane], ukx, uky, ukz,
+            springi[klane] / poli[klane], sizi[klane], alphai[klane], springk / polk, sizk, alphak, f, frc);
          frcxi[klane] += frc[0];
          frcyi[klane] += frc[1];
          frczi[klane] += frc[2];
@@ -607,9 +601,8 @@ void dexpol_cu1(int n, TINKER_IMAGE_PARAMS, VirialBuffer restrict vep, grad_prec
          if ((eplk or epli[klane]) and r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             real frc[3];
-            pair_dexpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane], uiz[klane],
-               ukx, uky, ukz, springi[klane] / poli[klane], sizi[klane], alphai[klane],
-               springk / polk, sizk, alphak, f, frc);
+            pair_dexpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane], uiz[klane], ukx, uky, ukz,
+               springi[klane] / poli[klane], sizi[klane], alphai[klane], springk / polk, sizk, alphak, f, frc);
             frcxi[klane] += frc[0];
             frcyi[klane] += frc[1];
             frczi[klane] += frc[2];
@@ -693,9 +686,8 @@ void dexpol_cu1(int n, TINKER_IMAGE_PARAMS, VirialBuffer restrict vep, grad_prec
          if ((eplk or epli[klane]) and r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             real frc[3];
-            pair_dexpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane], uiz[klane],
-               ukx, uky, ukz, springi[klane] / poli[klane], sizi[klane], alphai[klane],
-               springk / polk, sizk, alphak, f, frc);
+            pair_dexpol(scrtyp, r, scaleb, cut, off, xr, yr, zr, uix[klane], uiy[klane], uiz[klane], ukx, uky, ukz,
+               springi[klane] / poli[klane], sizi[klane], alphai[klane], springk / polk, sizk, alphak, f, frc);
             frcxi[klane] += frc[0];
             frcyi[klane] += frc[1];
             frczi[klane] += frc[2];
@@ -733,8 +725,7 @@ void dexpol_cu1(int n, TINKER_IMAGE_PARAMS, VirialBuffer restrict vep, grad_prec
    }
 }
 
-void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz,
-   VirialBuffer vir_ep)
+void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz, VirialBuffer vir_ep)
 {
    const auto& st = *mspatial_v2_unit;
    real cut = switchCut(Switch::REPULS);
@@ -744,18 +735,17 @@ void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy
 
    int ngrid = gpuGridSize(BLOCK_DIM);
 
-#define DEXPOL_CU1_ARGS                                                                            \
-   n, TINKER_IMAGE_ARGS, vir_ep, depx, depy, depz, cut, off, st.si2.bit0, nmdwexclude, mdwexclude, \
-      mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst,  \
-      polarity, uind, kpep, prepep, dmppep, lpep, scrtyp, f
+#define DEXPOL_CU1_ARGS                                                                                               \
+   n, TINKER_IMAGE_ARGS, vir_ep, depx, depy, depz, cut, off, st.si2.bit0, nmdwexclude, mdwexclude, mdwexclude_scale,  \
+      st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, polarity, uind, kpep, prepep, dmppep, \
+      lpep, scrtyp, f
 
    if (vers & calc::virial) {
       dexpol_cu1<calc::V6><<<ngrid, BLOCK_DIM, 0, g::s0>>>(DEXPOL_CU1_ARGS);
    } else if (vers & calc::grad) {
       dexpol_cu1<calc::V5><<<ngrid, BLOCK_DIM, 0, g::s0>>>(DEXPOL_CU1_ARGS);
    } else {
-      assert(false &&
-         "This function should not have been called if neither gradient nor virial is calculated.");
+      assert(false && "This function should not have been called if neither gradient nor virial is calculated.");
    }
 
 #undef DEXPOL_CU1_ARGS
@@ -783,9 +773,8 @@ static void eppcgUdirGuess(int n, const real* restrict polarity, real (*restrict
       real poli = polarity[i];
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
-         uind[i][j] = poli *
-            (polinv[i][0][j] * field[i][0] + polinv[i][1][j] * field[i][1] +
-               polinv[i][2][j] * field[i][2]);
+         uind[i][j] = poli
+            * (polinv[i][0][j] * field[i][0] + polinv[i][1][j] * field[i][1] + polinv[i][2][j] * field[i][2]);
       }
    }
 }
@@ -803,30 +792,29 @@ void eppcgRsd1(int n, const real* restrict polarity, real (*restrict rsd)[3])
 }
 
 __global__
-void eppcgP4(int n, const real* restrict polarity_inv, real (*restrict vec)[3],
-   const real (*restrict conj)[3], const real (*restrict field)[3],
-   const real (*restrict polscale)[3][3])
+void eppcgP4(int n, const real* restrict polarity_inv, real (*restrict vec)[3], const real (*restrict conj)[3],
+   const real (*restrict field)[3], const real (*restrict polscale)[3][3])
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       real poli_inv = polarity_inv[i];
       #pragma unroll
       for (int j = 0; j < 3; ++j)
-         vec[i][j] = poli_inv *
-               (conj[i][0] * polscale[i][0][j] + conj[i][1] * polscale[i][1][j] +
-                  conj[i][2] * polscale[i][2][j]) -
-            field[i][j];
+         vec[i][j] = poli_inv
+               * (conj[i][0] * polscale[i][0][j] + conj[i][1] * polscale[i][1][j] + conj[i][2] * polscale[i][2][j])
+            - field[i][j];
    }
 }
 
 __global__
 void eppcgP5(int n, const real* restrict polarity, //
    const real* restrict ka,                        //
-   const real* restrict ksum, real (*restrict uind)[3], const real (*restrict conj)[3],
-   real (*restrict rsd)[3], const real (*restrict vec)[3])
+   const real* restrict ksum, real (*restrict uind)[3], const real (*restrict conj)[3], real (*restrict rsd)[3],
+   const real (*restrict vec)[3])
 {
    real kaval = *ka;
    real a = *ksum / kaval;
-   if (kaval == 0) a = 0;
+   if (kaval == 0)
+      a = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j) {
@@ -847,7 +835,8 @@ void eppcgP6(int n, const real* restrict ksum, const real* restrict ksum1, real 
 {
    real ksumval = *ksum;
    real b = *ksum1 / ksumval;
-   if (ksumval == 0) b = 0;
+   if (ksumval == 0)
+      b = 0;
    for (int i = ITHREAD; i < n; i += STRIDE) {
       #pragma unroll
       for (int j = 0; j < 3; ++j)
@@ -974,8 +963,7 @@ void induceMutualPcg4_cu(real (*uind)[3])
 
       real* epsd = &((real*)dptr_buf)[3];
       darray::dot(g::q0, n, epsd, rsd, rsd);
-      check_rt(
-         cudaMemcpyAsync((real*)pinned_buf, epsd, sizeof(real), cudaMemcpyDeviceToHost, g::s0));
+      check_rt(cudaMemcpyAsync((real*)pinned_buf, epsd, sizeof(real), cudaMemcpyDeviceToHost, g::s0));
       check_rt(cudaStreamSynchronize(g::s0));
       // epsold = eps;
       eps = ((real*)pinned_buf)[0];
@@ -990,13 +978,17 @@ void induceMutualPcg4_cu(real (*uind)[3])
          print(stdout, " %8d       %-16.10f\n", iter, eps);
       }
 
-      if (eps < poleps) done = true;
+      if (eps < poleps)
+         done = true;
       // if (eps > epsold) done = true;
-      if (iter < miniter) done = false;
-      if (iter >= politer) done = true;
+      if (iter < miniter)
+         done = false;
+      if (iter >= politer)
+         done = true;
 
       // apply a "peek" iteration to the mutual induced dipoles
-      if (done) launch_k1s(g::s0, n, eppcgPeek1, n, pcgpeek, polarity, uind, rsd);
+      if (done)
+         launch_k1s(g::s0, n, eppcgPeek1, n, pcgpeek, polarity, uind, rsd);
    }
 
    // print the results from the conjugate gradient iteration

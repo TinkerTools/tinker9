@@ -13,13 +13,11 @@ namespace tinker {
 // ck.py Version 2.0.3
 template <class ETYP>
 __global__
-void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict dpinfo,
-   int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, real (*restrict field)[3],
-   const real (*restrict rpole)[10], const real* restrict pdamp, const real* restrict dirdamp,
-   real aewald)
+void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict dpinfo, int nexclude,
+   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3], const real* restrict x,
+   const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl,
+   const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst, real (*restrict field)[3],
+   const real (*restrict rpole)[10], const real* restrict pdamp, const real* restrict dirdamp, real aewald)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -114,10 +112,9 @@ void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
       real zr = zk - zi;
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_dfield_aplus_v2<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane],
-            diz[klane], pdi[klane], ddi[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane],
-            qiyz[klane], qizz[klane], ck, dkx, dky, dkz, pdk, ddk, qkxx, qkxy, qkxz, qkyy, qkyz,
-            qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
+         pair_dfield_aplus_v2<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane], diz[klane], pdi[klane],
+            ddi[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck, dkx, dky, dkz,
+            pdk, ddk, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
       } // end if (include)
 
       atomic_add(fidx, &field[i][0]);
@@ -192,10 +189,9 @@ void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
          real zr = zk - zi;
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_dfield_aplus_v2<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane],
-               diz[klane], pdi[klane], ddi[klane], qixx[klane], qixy[klane], qixz[klane],
-               qiyy[klane], qiyz[klane], qizz[klane], ck, dkx, dky, dkz, pdk, ddk, qkxx, qkxy, qkxz,
-               qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
+            pair_dfield_aplus_v2<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane], diz[klane],
+               pdi[klane], ddi[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck,
+               dkx, dky, dkz, pdk, ddk, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
          } // end if (include)
 
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
@@ -270,10 +266,9 @@ void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
          real zr = zk - zi;
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_dfield_aplus_v2<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane],
-               diz[klane], pdi[klane], ddi[klane], qixx[klane], qixy[klane], qixz[klane],
-               qiyy[klane], qiyz[klane], qizz[klane], ck, dkx, dky, dkz, pdk, ddk, qkxx, qkxy, qkxz,
-               qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
+            pair_dfield_aplus_v2<ETYP>(r2, xr, yr, zr, scaleb, ci[klane], dix[klane], diy[klane], diz[klane],
+               pdi[klane], ddi[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], ck,
+               dkx, dky, dkz, pdk, ddk, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
          } // end if (include)
 
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
@@ -311,9 +306,9 @@ static void dfieldAplus_cu(real (*field)[3])
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   dfieldAplus_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
-      nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
-      st.niak, st.iak, st.lst, field, rpole, pdamp, dirdamp, aewald);
+   dfieldAplus_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nmdwexclude,
+      mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, field,
+      rpole, pdamp, dirdamp, aewald);
 }
 
 void dfieldAplusEwaldReal_cu(real (*field)[3])
@@ -330,12 +325,11 @@ void dfieldAplusNonEwald_cu(real (*field)[3])
 // ck.py Version 2.0.3
 template <class ETYP>
 __global__
-void ufieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo,
-   int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, const real (*restrict uind)[3],
-   real (*restrict field)[3], const real* restrict pdamp, const real* restrict thole, real aewald)
+void ufieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo, int nexclude,
+   const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x, const real* restrict y,
+   const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
+   const int* restrict iak, const int* restrict lst, const real (*restrict uind)[3], real (*restrict field)[3],
+   const real* restrict pdamp, const real* restrict thole, real aewald)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -402,9 +396,8 @@ void ufieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
       real zr = zk - zi;
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_ufield_aplus_v2<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane],
-            pdi[klane], pti[klane], ukdx, ukdy, ukdz, pdk, ptk, aewald, fidx, fidy, fidz, fkdx,
-            fkdy, fkdz);
+         pair_ufield_aplus_v2<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane], pdi[klane],
+            pti[klane], ukdx, ukdy, ukdz, pdk, ptk, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
       } // end if (include)
 
       atomic_add(fidx, &field[i][0]);
@@ -465,9 +458,8 @@ void ufieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
          real zr = zk - zi;
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_ufield_aplus_v2<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane],
-               uidz[klane], pdi[klane], pti[klane], ukdx, ukdy, ukdz, pdk, ptk, aewald, fidx, fidy,
-               fidz, fkdx, fkdy, fkdz);
+            pair_ufield_aplus_v2<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane], pdi[klane],
+               pti[klane], ukdx, ukdy, ukdz, pdk, ptk, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
          } // end if (include)
 
          iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
@@ -528,9 +520,8 @@ void ufieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
          real zr = zk - zi;
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_ufield_aplus_v2<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane],
-               uidz[klane], pdi[klane], pti[klane], ukdx, ukdy, ukdz, pdk, ptk, aewald, fidx, fidy,
-               fidz, fkdx, fkdy, fkdz);
+            pair_ufield_aplus_v2<ETYP>(r2, xr, yr, zr, scalec, uidx[klane], uidy[klane], uidz[klane], pdi[klane],
+               pti[klane], ukdx, ukdy, ukdz, pdk, ptk, aewald, fidx, fidy, fidz, fkdx, fkdy, fkdz);
          } // end if (include)
 
          xi = __shfl_sync(ALL_LANES, xi, ilane + 1);
@@ -568,9 +559,9 @@ static void ufieldAplus_cu(const real (*uind)[3], real (*field)[3])
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   ufieldAplus_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si3.bit0,
-      nuexclude, uexclude, uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
-      st.iak, st.lst, uind, field, pdamp, thole, aewald);
+   ufieldAplus_cu1<ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si3.bit0, nuexclude, uexclude,
+      uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, uind, field, pdamp,
+      thole, aewald);
 }
 
 void ufieldAplusEwaldReal_cu(const real (*uind)[3], real (*field)[3])

@@ -14,13 +14,11 @@ namespace tinker {
 template <class Ver>
 __global__
 void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuffer restrict ec,
-   VirialBuffer restrict vc, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
-   real cut, real off, const unsigned* restrict minfo, int nexclude,
-   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, real* restrict chgct, real* restrict dmpct,
-   real f)
+   VirialBuffer restrict vc, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real cut, real off,
+   const unsigned* restrict minfo, int nexclude, const int (*restrict exclude)[2],
+   const real (*restrict exclude_scale)[3], const real* restrict x, const real* restrict y, const real* restrict z,
+   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak, const int* restrict iak,
+   const int* restrict lst, real* restrict chgct, real* restrict dmpct, real f)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -349,9 +347,9 @@ void echgtrn_cu2()
 
    assert(ctrntyp == Chgtrn::SEPARATE);
    int ngrid = gpuGridSize(BLOCK_DIM);
-   echgtrn_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nct, ect, vir_ect,
-      dectx, decty, dectz, cut, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x,
-      st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, chgct, dmpct, f);
+   echgtrn_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nct, ect, vir_ect, dectx, decty, dectz,
+      cut, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+      st.niak, st.iak, st.lst, chgct, dmpct, f);
 }
 
 void echgtrn_cu(int vers)

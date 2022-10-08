@@ -11,8 +11,8 @@
 
 namespace tinker {
 __global__
-void sparsePrecond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
-   const real* restrict polarity, int n, real udiag)
+void sparsePrecond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3], const real* restrict polarity, int n,
+   real udiag)
 {
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
       real poli = udiag * polarity[i];
@@ -24,12 +24,11 @@ void sparsePrecond_cu3(const real (*restrict rsd)[3], real (*restrict zrsd)[3],
 
 // ck.py Version 2.0.3
 __global__
-void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict winfo,
-   int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, const real (*restrict rsd)[3],
-   real (*restrict zrsd)[3], const real* restrict palpha, const real* restrict polarity)
+void sparsePrecond_cu4(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict winfo, int nexclude,
+   const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x, const real* restrict y,
+   const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
+   const int* restrict iak, const int* restrict lst, const real (*restrict rsd)[3], real (*restrict zrsd)[3],
+   const real* restrict palpha, const real* restrict polarity)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -304,21 +303,19 @@ void sparsePrecondApply2_cu(const real (*rsd)[3], real (*zrsd)[3])
       rsd, zrsd, polarity, n, udiag);
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   sparsePrecond_cu4<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
-      nwexclude, wexclude, wexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
-      st.iak, st.lst, rsd, zrsd, palpha, polarity);
+   sparsePrecond_cu4<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nwexclude, wexclude,
+      wexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, rsd, zrsd, palpha,
+      polarity);
 }
 }
 
 namespace tinker {
 __global__
-void sparsePrecond_cu6(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo,
-   int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, const real (*restrict rsd)[3],
-   real (*restrict zrsd)[3], const real* restrict pdamp, const real* restrict thole,
-   const real* restrict polarity)
+void sparsePrecond_cu6(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo, int nexclude,
+   const int (*restrict exclude)[2], const real* restrict exclude_scale, const real* restrict x, const real* restrict y,
+   const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
+   const int* restrict iak, const int* restrict lst, const real (*restrict rsd)[3], real (*restrict zrsd)[3],
+   const real* restrict pdamp, const real* restrict thole, const real* restrict polarity)
 {
    const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
    const int iwarp = ithread / WARP_SIZE;
@@ -601,8 +598,8 @@ void sparsePrecondApply3_cu(const real (*rsd)[3], real (*zrsd)[3])
       rsd, zrsd, polarity, n, udiag);
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   sparsePrecond_cu6<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0,
-      nuexclude, uexclude, uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
-      st.iak, st.lst, rsd, zrsd, pdamp, thole, polarity);
+   sparsePrecond_cu6<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nuexclude, uexclude,
+      uexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, rsd, zrsd, pdamp, thole,
+      polarity);
 }
 }

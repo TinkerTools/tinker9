@@ -14,12 +14,11 @@ namespace tinker {
 template <class Ver, class ETYP, bool CFLX>
 __global__
 void epolarChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict np, EnergyBuffer restrict ep,
-   VirialBuffer restrict vp, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz,
-   real off, const unsigned* restrict dwinfo, int nexclude, const int (*restrict exclude)[2],
-   const real (*restrict exclude_scale)[3], const real* restrict x, const real* restrict y,
-   const real* restrict z, const Spatial::SortedAtom* restrict sorted, int nakpl,
-   const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
-   real (*restrict ufld)[3], real (*restrict dufld)[6], const real (*restrict uind)[3],
+   VirialBuffer restrict vp, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
+   const unsigned* restrict dwinfo, int nexclude, const int (*restrict exclude)[2],
+   const real (*restrict exclude_scale)[3], const real* restrict x, const real* restrict y, const real* restrict z,
+   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak, const int* restrict iak,
+   const int* restrict lst, real (*restrict ufld)[3], real (*restrict dufld)[6], const real (*restrict uind)[3],
    real* restrict pot, const real (*restrict rpole)[10], real* restrict pcore, real* restrict pval,
    const real* restrict palpha, real aewald, real f)
 {
@@ -208,12 +207,10 @@ void epolarChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict np, Energ
       if (r2 <= off * off and incl) {
          pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
             r2, xr, yr, zr, scaleb, scalec,         //
-            ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane],
-            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
-            uix[klane], uiy[klane],
-            uiz[klane], //
-            ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-            ukz, f, aewald, //
+            ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane], qixx[klane],
+            qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], uix[klane], uiy[klane],
+            uiz[klane],                                                                                           //
+            ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky, ukz, f, aewald, //
             e, pota, potb, pgrad);
 
          if CONSTEXPR (do_a)
@@ -398,11 +395,9 @@ void epolarChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict np, Energ
          if (r2 <= off * off and incl) {
             pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
                r2, xr, yr, zr, 1, 1,                   //
-               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane],
-               alphai[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-               qizz[klane], uix[klane], uiy[klane], uiz[klane], //
-               ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-               ukz, f, aewald, //
+               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane], qixx[klane],
+               qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], uix[klane], uiy[klane], uiz[klane],  //
+               ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky, ukz, f, aewald, //
                e, pota, potb, pgrad);
 
             if CONSTEXPR (do_a)
@@ -581,11 +576,9 @@ void epolarChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict np, Energ
          if (r2 <= off * off and incl) {
             pair_polar_chgpen<do_e, do_g, ETYP, CFLX>( //
                r2, xr, yr, zr, 1, 1,                   //
-               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane],
-               alphai[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-               qizz[klane], uix[klane], uiy[klane], uiz[klane], //
-               ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky,
-               ukz, f, aewald, //
+               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane], qixx[klane],
+               qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], uix[klane], uiy[klane], uiz[klane],  //
+               ck, dkx, dky, dkz, corek, valk, alphak, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx, uky, ukz, f, aewald, //
                e, pota, potb, pgrad);
 
             if CONSTEXPR (do_a)
@@ -702,10 +695,9 @@ static void epolarChgpen_cu(const real (*uind)[3])
       darray::zero(g::q0, n, ufld, dufld);
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   epolarChgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep,
-      ep, vir_ep, depx, depy, depz, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale,
-      st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind,
-      pot, rpole, pcore, pval, palpha, aewald, f);
+   epolarChgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep, ep, vir_ep, depx,
+      depy, depz, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl,
+      st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind, pot, rpole, pcore, pval, palpha, aewald, f);
 
    // torque
    if CONSTEXPR (do_g) {
