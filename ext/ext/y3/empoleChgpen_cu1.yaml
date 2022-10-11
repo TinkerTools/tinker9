@@ -1,0 +1,195 @@
+OUTPUT_DIR: src/cu/hippo
+KERNEL_NAME: empoleChgpen_cu1
+TEMPLATE_PARAMS: template <class Ver, class ETYP, bool CFLX>
+CONSTEXPR_FLAGS: |
+  constexpr bool do_a = Ver::a;
+  constexpr bool do_e = Ver::e;
+  constexpr bool do_v = Ver::v;
+  constexpr bool do_g = Ver::g;
+
+COUNT:
+  - nem
+ENERGY:
+  - em
+VIRIAL:
+  - vem
+GRADIENT:
+  - gx
+  - gy
+  - gz
+
+#CUT_DISTANCE:
+OFF_DISTANCE: 'off'
+
+EXCLUDE_INFO: minfo
+SCALE_1X_TYPE: real3_const_array,0
+
+EXTRA_PARAMS: |
+  , real *restrict trqx
+  , real *restrict trqy
+  , real *restrict trqz
+  , real *restrict pot
+  , const real(*restrict rpole)[10]
+  , real *restrict pcore
+  , real *restrict pval
+  , const real* restrict palpha
+  , real aewald, real f
+# IMPLICIT_PARAMS:
+
+I_VARIABLES:
+  - shared real xi     from:x
+  - shared real yi     from:y
+  - shared real zi     from:z
+  - shared real ci     from:rpole,MPL_PME_0
+  - shared real dix    from:rpole,MPL_PME_X
+  - shared real diy    from:rpole,MPL_PME_Y
+  - shared real diz    from:rpole,MPL_PME_Z
+  - shared real qixx   from:rpole,MPL_PME_XX
+  - shared real qixy   from:rpole,MPL_PME_XY
+  - shared real qixz   from:rpole,MPL_PME_XZ
+  - shared real qiyy   from:rpole,MPL_PME_YY
+  - shared real qiyz   from:rpole,MPL_PME_YZ
+  - shared real qizz   from:rpole,MPL_PME_ZZ
+  - shared real corei  from:pcore
+  - shared real alphai from:palpha
+  - shared real vali   from:pval
+K_VARIABLES:
+  - shared   real xk     from:x
+  - shared   real yk     from:y
+  - shared   real zk     from:z
+  - shared   real ck     from:rpole,MPL_PME_0
+  - shared   real dkx    from:rpole,MPL_PME_X
+  - shared   real dky    from:rpole,MPL_PME_Y
+  - shared   real dkz    from:rpole,MPL_PME_Z
+  - register real qkxx   from:rpole,MPL_PME_XX
+  - register real qkxy   from:rpole,MPL_PME_XY
+  - register real qkxz   from:rpole,MPL_PME_XZ
+  - register real qkyy   from:rpole,MPL_PME_YY
+  - register real qkyz   from:rpole,MPL_PME_YZ
+  - register real qkzz   from:rpole,MPL_PME_ZZ
+  - register real corek  from:pcore
+  - register real alphak from:palpha
+  - register real valk   from:pval
+I_FORCE:
+  - register real gxi  addto:gx
+  - register real gyi  addto:gy
+  - register real gzi  addto:gz
+  - register real txi  addto:trqx
+  - register real tyi  addto:trqy
+  - register real tzi  addto:trqz
+  - register real poti addto:pot onlyif:CFLX
+K_FORCE:
+  - register real gxk  addto:gx
+  - register real gyk  addto:gy
+  - register real gzk  addto:gz
+  - register real txk  addto:trqx
+  - register real tyk  addto:trqy
+  - register real tzk  addto:trqz
+  - register real potk addto:pot onlyif:CFLX
+
+SCALED_PAIRWISE_INTERACTION: |
+  real xr = @xk@ - @xi@;
+  real yr = @yk@ - @yi@;
+  real zr = @zk@ - @zi@;
+
+  real e;
+  real pota, potb;
+  PairMPoleGrad pgrad;
+  zero(pgrad);
+
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
+      r2, xr, yr, zr, scalea,                  //
+      @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@, //
+      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, //
+      @ck@, @dkx@, @dky@, @dkz@, @corek@, @valk@, @alphak@, //
+      @qkxx@, @qkxy@, @qkxz@, @qkyy@, @qkyz@, @qkzz@, //
+      f, aewald, e, pota, potb, pgrad);
+
+    if CONSTEXPR (do_a)
+      if (e != 0 and scalea != 0)
+          nemtl += 1;
+    if CONSTEXPR (do_e)
+        emtl += floatTo<ebuf_prec>(e);
+    if CONSTEXPR (do_g) {
+      @gxi@ += pgrad.frcx;
+      @gyi@ += pgrad.frcy;
+      @gzi@ += pgrad.frcz;
+      @gxk@ -= pgrad.frcx;
+      @gyk@ -= pgrad.frcy;
+      @gzk@ -= pgrad.frcz;
+
+      @txi@ += pgrad.ttmi[0];
+      @tyi@ += pgrad.ttmi[1];
+      @tzi@ += pgrad.ttmi[2];
+      @txk@ += pgrad.ttmk[0];
+      @tyk@ += pgrad.ttmk[1];
+      @tzk@ += pgrad.ttmk[2];
+    }
+    if CONSTEXPR (do_v) {
+      vemtlxx += floatTo<vbuf_prec>(-xr * pgrad.frcx);
+      vemtlyx += floatTo<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+      vemtlzx += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+      vemtlyy += floatTo<vbuf_prec>(-yr * pgrad.frcy);
+      vemtlzy += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+      vemtlzz += floatTo<vbuf_prec>(-zr * pgrad.frcz);
+    }
+    if CONSTEXPR (CFLX) {
+      @poti@ += pota;
+      @potk@ += potb;
+    }
+  } // end if (include)
+FULL_PAIRWISE_INTERACTION: |
+  real xr = @xk@ - @xi@;
+  real yr = @yk@ - @yi@;
+  real zr = @zk@ - @zi@;
+
+  real e;
+  real pota, potb;
+  PairMPoleGrad pgrad;
+  zero(pgrad);
+
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
+      r2, xr, yr, zr, 1,                  //
+      @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@, //
+      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, //
+      @ck@, @dkx@, @dky@, @dkz@, @corek@, @valk@, @alphak@, //
+      @qkxx@, @qkxy@, @qkxz@, @qkyy@, @qkyz@, @qkzz@, //
+      f, aewald, e, pota, potb, pgrad);
+
+    if CONSTEXPR (do_a)
+      if (e != 0)
+          nemtl += 1;
+    if CONSTEXPR (do_e)
+        emtl += floatTo<ebuf_prec>(e);
+    if CONSTEXPR (do_g) {
+      @gxi@ += pgrad.frcx;
+      @gyi@ += pgrad.frcy;
+      @gzi@ += pgrad.frcz;
+      @gxk@ -= pgrad.frcx;
+      @gyk@ -= pgrad.frcy;
+      @gzk@ -= pgrad.frcz;
+
+      @txi@ += pgrad.ttmi[0];
+      @tyi@ += pgrad.ttmi[1];
+      @tzi@ += pgrad.ttmi[2];
+      @txk@ += pgrad.ttmk[0];
+      @tyk@ += pgrad.ttmk[1];
+      @tzk@ += pgrad.ttmk[2];
+    }
+    if CONSTEXPR (do_v) {
+      vemtlxx += floatTo<vbuf_prec>(-xr * pgrad.frcx);
+      vemtlyx += floatTo<vbuf_prec>(-0.5f * (yr * pgrad.frcx + xr * pgrad.frcy));
+      vemtlzx += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcx + xr * pgrad.frcz));
+      vemtlyy += floatTo<vbuf_prec>(-yr * pgrad.frcy);
+      vemtlzy += floatTo<vbuf_prec>(-0.5f * (zr * pgrad.frcy + yr * pgrad.frcz));
+      vemtlzz += floatTo<vbuf_prec>(-zr * pgrad.frcz);
+    }
+    if CONSTEXPR (CFLX) {
+      @poti@ += pota;
+      @potk@ += potb;
+    }
+  } // end if (include)

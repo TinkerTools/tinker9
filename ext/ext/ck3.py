@@ -358,10 +358,14 @@ class Variable:
 
 
     def zero(self) -> str:
+        v1 = ''
         if self.location == 'shared':
-            return '{}[threadIdx.x] = 0;'.format(self.name)
+            v1 = '{}[threadIdx.x] = 0;'.format(self.name)
         else:
-            return '{} = 0;'.format(self.name)
+            v1 = '{} = 0;'.format(self.name)
+        if self.onlyif != None:
+            v1 =  'if CONSTEXPR ({}) {}'.format(self.onlyif, v1)
+        return v1
 
 
     def save(self) -> str:
@@ -819,7 +823,7 @@ class KernelWriter:
 
     @staticmethod
     def version() -> str:
-        return '3.0.1'
+        return '3.0.2'
 
 
     @staticmethod
