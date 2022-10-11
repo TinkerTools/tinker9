@@ -1,0 +1,69 @@
+OUTPUT_DIR: src/cu/hippo
+KERNEL_NAME: ufieldChgpen_cu1
+TEMPLATE_PARAMS: template <class ETYP>
+# CONSTEXPR_FLAGS:
+
+# COUNT:
+# ENERGY:
+# VIRIAL:
+# GRADIENT:
+
+# CUT_DISTANCE:
+OFF_DISTANCE: 'off'
+
+EXCLUDE_INFO: winfo
+SCALE_1X_TYPE: real3_const_array,2
+
+EXTRA_PARAMS: |
+  , const real(*restrict uind)[3]
+  , real(*restrict field)[3]
+  , const real *restrict pcore
+  , const real *restrict pval
+  , const real* restrict palpha
+  , real aewald
+# IMPLICIT_PARAM:
+
+I_VARIABLES:
+  - register real xi     from:x
+  - register real yi     from:y
+  - register real zi     from:z
+  - shared   real uidx   from:uind,0
+  - shared   real uidy   from:uind,1
+  - shared   real uidz   from:uind,2
+  - shared   real corei  from:pcore
+  - shared   real alphai from:palpha
+  - shared   real vali   from:pval
+K_VARIABLES:
+  - register real xk     from:x
+  - register real yk     from:y
+  - register real zk     from:z
+  - register real ukdx   from:uind,0
+  - register real ukdy   from:uind,1
+  - register real ukdz   from:uind,2
+  - register real corek  from:pcore
+  - register real alphak from:palpha
+  - register real valk   from:pval
+I_FORCE:
+  - register real fidx addto:field,0
+  - register real fidy addto:field,1
+  - register real fidz addto:field,2
+K_FORCE:
+  - register real fkdx addto:field,0
+  - register real fkdy addto:field,1
+  - register real fkdz addto:field,2
+
+# SCALED_PAIRWISE_INTERACTION:
+FULL_PAIRWISE_INTERACTION: |
+  real xr = @xk@ - @xi@;
+  real yr = @yk@ - @yi@;
+  real zr = @zk@ - @zi@;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    pair_ufield_chgpen<ETYP>(
+      r2, xr, yr, zr, scalec,
+      @uidx@, @uidy@, @uidz@, @corei@, @vali@, @alphai@,
+      @ukdx@, @ukdy@, @ukdz@, @corek@, @valk@, @alphak@,
+      aewald,
+      @fidx@, @fidy@, @fidz@,
+      @fkdx@, @fkdy@, @fkdz@);
+  } // end if (include)
