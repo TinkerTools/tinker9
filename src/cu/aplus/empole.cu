@@ -167,13 +167,11 @@ void empoleAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
 
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, scalea, //
-            ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane],
-            alphai[klane], //
-            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-            qizz[klane],                            //
-            ck, dkx, dky, dkz, corek, valk, alphak, //
-            qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,     //
+         pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, scalea,                     //
+            ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane], //
+            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],            //
+            ck, dkx, dky, dkz, corek, valk, alphak,                                                  //
+            qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                      //
             f, aewald, e, pota, potb, pgrad);
 
          if CONSTEXPR (do_a)
@@ -313,13 +311,11 @@ void empoleAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, 1, //
-               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane],
-               alphai[klane], //
-               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-               qizz[klane],                            //
-               ck, dkx, dky, dkz, corek, valk, alphak, //
-               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,     //
+            pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, 1,                          //
+               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane], //
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],            //
+               ck, dkx, dky, dkz, corek, valk, alphak,                                                  //
+               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                      //
                f, aewald, e, pota, potb, pgrad);
 
             if CONSTEXPR (do_a)
@@ -453,13 +449,11 @@ void empoleAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, 1, //
-               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane],
-               alphai[klane], //
-               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane],
-               qizz[klane],                            //
-               ck, dkx, dky, dkz, corek, valk, alphak, //
-               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,     //
+            pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, 1,                          //
+               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane], //
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],            //
+               ck, dkx, dky, dkz, corek, valk, alphak,                                                  //
+               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                      //
                f, aewald, e, pota, potb, pgrad);
 
             if CONSTEXPR (do_a)

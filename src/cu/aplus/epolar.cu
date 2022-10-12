@@ -151,8 +151,8 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
 
       int i = exclude[ii][0];
       int k = exclude[ii][1];
-      real scaleb = exclude_scale[ii][2]; // p
-      real scaled = exclude_scale[ii][3]; // u
+      real scalec = exclude_scale[ii][2];
+      real scaled = exclude_scale[ii][3];
 
       xi[klane] = x[i];
       yi[klane] = y[i];
@@ -203,41 +203,39 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
          real pota, potb;
          real pota1, potb1;
-         pair_polar_aplus_v2<Ver, ETYP, CFLX>(                               //
-            r2, xr, yr, zr, 1, 1,                                            //
-            ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane],      //
-            qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], //
-            uix[klane], uiy[klane], uiz[klane],                              //
-            pdi[klane], pti[klane], ddi[klane],                              //
-            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,      //
-            uky, ukz, pdk, ptk, ddk,                                         //
-            f, aewald,                                                       //
-            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane], ufld1i[klane], ufld2i[klane],
-            ufld0k, ufld1k,
-            ufld2k, //
-            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], dufld0k,
-            dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+         pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                                              //
+            r2, xr, yr, zr, 1, 1,                                                                           //
+            ci[klane], dix[klane], diy[klane], diz[klane],                                                  //
+            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],                   //
+            uix[klane], uiy[klane], uiz[klane], pdi[klane], pti[klane], ddi[klane],                         //
+            ck, dkx, dky, dkz,                                                                              //
+            qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                             //
+            ukx, uky, ukz, pdk, ptk, ddk,                                                                   //
+            f, aewald,                                                                                      //
+            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk,                                  //
+            ufld0i[klane], ufld1i[klane], ufld2i[klane], ufld0k, ufld1k, ufld2k,                            //
+            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], //
+            dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k,                                           //
             e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1, pota1, potb1);
-         pair_polar_aplus_v2<Ver, NON_EWALD, CFLX>(                          //
-            r2, xr, yr, zr, scaleb - 1, scaled - 1,                          //
-            ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane],      //
-            qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], //
-            uix[klane], uiy[klane], uiz[klane],                              //
-            pdi[klane], pti[klane], ddi[klane],                              //
-            ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,      //
-            uky, ukz, pdk, ptk, ddk,                                         //
-            f, aewald,                                                       //
-            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane], ufld1i[klane], ufld2i[klane],
-            ufld0k, ufld1k,
-            ufld2k, //
-            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], dufld0k,
-            dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+         pair_polar_aplus_v2<Ver, NON_EWALD, CFLX>(                                                         //
+            r2, xr, yr, zr, scalec - 1, scaled - 1,                                                         //
+            ci[klane], dix[klane], diy[klane], diz[klane],                                                  //
+            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],                   //
+            uix[klane], uiy[klane], uiz[klane], pdi[klane], pti[klane], ddi[klane],                         //
+            ck, dkx, dky, dkz,                                                                              //
+            qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                             //
+            ukx, uky, ukz, pdk, ptk, ddk,                                                                   //
+            f, aewald,                                                                                      //
+            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk,                                  //
+            ufld0i[klane], ufld1i[klane], ufld2i[klane], ufld0k, ufld1k, ufld2k,                            //
+            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], //
+            dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k,                                           //
             e, vxx, vyx, vzx, vyy, vzy, vzz, pota, potb);
          if CONSTEXPR (do_e) {
             e = e + e1;
             eptl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
-               if (e != 0 and scaleb != 0)
+               if (e != 0 and scalec != 0)
                   neptl += 1;
             }
          }
@@ -384,19 +382,19 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             real pota, potb;
-            pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                                //
-               r2, xr, yr, zr, 1, 1, ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], //
-               qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],                  //
-               uix[klane], uiy[klane], uiz[klane],                                               //
-               pdi[klane], pti[klane], ddi[klane],                                               //
-               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,                       //
-               uky, ukz, pdk, ptk, ddk,                                                          //
-               f, aewald,                                                                        //
-               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane], ufld1i[klane],
-               ufld2i[klane], ufld0k, ufld1k,
-               ufld2k, //
-               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], dufld0k,
-               dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+            pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                                              //
+               r2, xr, yr, zr, 1, 1,                                                                           //
+               ci[klane], dix[klane], diy[klane], diz[klane],                                                  //
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],                   //
+               uix[klane], uiy[klane], uiz[klane], pdi[klane], pti[klane], ddi[klane],                         //
+               ck, dkx, dky, dkz,                                                                              //
+               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                             //
+               ukx, uky, ukz, pdk, ptk, ddk,                                                                   //
+               f, aewald,                                                                                      //
+               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk,                                  //
+               ufld0i[klane], ufld1i[klane], ufld2i[klane], ufld0k, ufld1k, ufld2k,                            //
+               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], //
+               dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k,                                           //
                e, vxx, vyx, vzx, vyy, vzy, vzz, pota, potb);
             if CONSTEXPR (do_e) {
                eptl += floatTo<ebuf_prec>(e);
@@ -468,10 +466,6 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
          dufld3i[threadIdx.x] = 0;
          dufld4i[threadIdx.x] = 0;
          dufld5i[threadIdx.x] = 0;
-         frcxk = 0;
-         frcyk = 0;
-         frczk = 0;
-         ufld0k = 0;
          if CONSTEXPR (CFLX)
             poti[threadIdx.x] = 0;
          frcxk = 0;
@@ -546,19 +540,19 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
          if (r2 <= off * off and incl) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             real pota, potb;
-            pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                                //
-               r2, xr, yr, zr, 1, 1, ci[klane], dix[klane], diy[klane], diz[klane], qixx[klane], //
-               qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],                  //
-               uix[klane], uiy[klane], uiz[klane],                                               //
-               pdi[klane], pti[klane], ddi[klane],                                               //
-               ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,                       //
-               uky, ukz, pdk, ptk, ddk,                                                          //
-               f, aewald,                                                                        //
-               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane], ufld1i[klane],
-               ufld2i[klane], ufld0k, ufld1k,
-               ufld2k, //
-               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], dufld0k,
-               dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+            pair_polar_aplus_v2<Ver, ETYP, CFLX>(                                                              //
+               r2, xr, yr, zr, 1, 1,                                                                           //
+               ci[klane], dix[klane], diy[klane], diz[klane],                                                  //
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],                   //
+               uix[klane], uiy[klane], uiz[klane], pdi[klane], pti[klane], ddi[klane],                         //
+               ck, dkx, dky, dkz,                                                                              //
+               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                             //
+               ukx, uky, ukz, pdk, ptk, ddk,                                                                   //
+               f, aewald,                                                                                      //
+               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk,                                  //
+               ufld0i[klane], ufld1i[klane], ufld2i[klane], ufld0k, ufld1k, ufld2k,                            //
+               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], //
+               dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k,                                           //
                e, vxx, vyx, vzx, vyy, vzy, vzz, pota, potb);
             if CONSTEXPR (do_e) {
                eptl += floatTo<ebuf_prec>(e);
