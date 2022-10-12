@@ -1,6 +1,6 @@
 OUTPUT_DIR: src/cu/hippo
 KERNEL_NAME: echgtrn_cu1
-TEMPLATE_PARAMS: template <class Ver>
+TEMPLATE_PARAMS: template <class Ver, Chgtrn CT>
 CONSTEXPR_FLAGS: |
   constexpr bool do_a = Ver::a;
   constexpr bool do_e = Ver::e;
@@ -59,7 +59,10 @@ SCALED_PAIRWISE_INTERACTION: |
   if (r2 <= off * off and incl) {
     real r = REAL_SQRT(r2);
     e_prec e, de;
-    pair_chgtrn<do_g>(r, cut, off, scalea, f, @alphai@, @chgi@, @alphak@, @chgk@, e, de);
+    if CONSTEXPR (CT == Chgtrn::SEPARATE)
+      pair_chgtrn<do_g>      (r, cut, off, scalea, f, @alphai@, @chgi@, @alphak@, @chgk@, e, de);
+    else if CONSTEXPR (CT == Chgtrn::COMBINED)
+      pair_chgtrn_aplus<do_g>(r, cut, off, scalea, f, @alphai@, @chgi@, @alphak@, @chgk@, e, de);
     if CONSTEXPR (do_a)
         if (e != 0 and scalea != 0)
           nctl += 1;
@@ -96,7 +99,10 @@ FULL_PAIRWISE_INTERACTION: |
   if (r2 <= off * off and incl) {
     real r = REAL_SQRT(r2);
     e_prec e, de;
-    pair_chgtrn<do_g>(r, cut, off, 1, f, @alphai@, @chgi@, @alphak@, @chgk@, e, de);
+    if CONSTEXPR (CT == Chgtrn::SEPARATE)
+      pair_chgtrn<do_g>      (r, cut, off, 1, f, @alphai@, @chgi@, @alphak@, @chgk@, e, de);
+    else if CONSTEXPR (CT == Chgtrn::COMBINED)
+      pair_chgtrn_aplus<do_g>(r, cut, off, 1, f, @alphai@, @chgi@, @alphak@, @chgk@, e, de);
     if CONSTEXPR (do_a)
         if (e != 0)
           nctl += 1;

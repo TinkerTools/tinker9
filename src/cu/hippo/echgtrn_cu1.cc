@@ -1,5 +1,5 @@
 // ck.py Version 3.0.2
-template <class Ver>
+template <class Ver, Chgtrn CT>
 __global__
 void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuffer restrict ec,
    VirialBuffer restrict vc, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real cut, real off,
@@ -75,7 +75,10 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
       if (r2 <= off * off and incl) {
          real r = REAL_SQRT(r2);
          e_prec e, de;
-         pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk, e, de);
+         if CONSTEXPR (CT == Chgtrn::SEPARATE)
+            pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk, e, de);
+         else if CONSTEXPR (CT == Chgtrn::COMBINED)
+            pair_chgtrn_aplus<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk, e, de);
          if CONSTEXPR (do_a)
             if (e != 0 and scalea != 0)
                nctl += 1;
@@ -160,7 +163,10 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
          if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             e_prec e, de;
-            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
+            if CONSTEXPR (CT == Chgtrn::SEPARATE)
+               pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
+            else if CONSTEXPR (CT == Chgtrn::COMBINED)
+               pair_chgtrn_aplus<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
             if CONSTEXPR (do_a)
                if (e != 0)
                   nctl += 1;
@@ -248,7 +254,10 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
          if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
             e_prec e, de;
-            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
+            if CONSTEXPR (CT == Chgtrn::SEPARATE)
+               pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
+            else if CONSTEXPR (CT == Chgtrn::COMBINED)
+               pair_chgtrn_aplus<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
             if CONSTEXPR (do_a)
                if (e != 0)
                   nctl += 1;

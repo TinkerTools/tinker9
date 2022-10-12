@@ -15,7 +15,7 @@ TEST_CASE("EMPOLE-1-EWALD-HIPPO", "[ff][hippo][emhippo][ewald]")
    const char* argv[] = {"dummy", xn, "-k", kn};
    int argc = 4;
 
-   const double eps_e = testGetEps(0.0015, 0.0001);
+   const double eps_e = testGetEps(0.0016, 0.0001);
    const double eps_g = testGetEps(0.0003, 0.0001);
    const double eps_v = testGetEps(0.002, 0.001);
 

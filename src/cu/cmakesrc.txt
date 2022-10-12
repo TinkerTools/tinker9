@@ -8,7 +8,6 @@ amoeba/pcg.cu
 amoeba/precond.cu
 amoeba/rotpole.cu
 amoeba/torque.cu
-aplus/echgtrn.cu
 aplus/empole.cu
 aplus/epolar.cu
 aplus/field.cu
