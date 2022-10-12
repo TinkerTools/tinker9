@@ -1,5 +1,5 @@
 // ck.py Version 3.0.2
-template <class Ver, class ETYP, bool CFLX>
+template <class Ver, class ETYP, Chgpen CP, bool CFLX>
 __global__
 void empoleChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuffer restrict em,
    VirialBuffer restrict vem, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
@@ -118,12 +118,21 @@ void empoleChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Ener
 
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, scalea,                              //
-            ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane],    //
-            qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],               //
-            ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], corek, valk, alphak, //
-            qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                         //
-            f, aewald, e, pota, potb, pgrad);
+         if CONSTEXPR (CP == Chgpen::GORDON1) {
+            pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, scalea,                              //
+               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane],    //
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],               //
+               ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], corek, valk, alphak, //
+               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                         //
+               f, aewald, e, pota, potb, pgrad);
+         } else if CONSTEXPR (CP == Chgpen::GORDON2) {
+            pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, scalea,                        //
+               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane],    //
+               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],               //
+               ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], corek, valk, alphak, //
+               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                         //
+               f, aewald, e, pota, potb, pgrad);
+         }
 
          if CONSTEXPR (do_a)
             if (e != 0 and scalea != 0)
@@ -262,12 +271,21 @@ void empoleChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Ener
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, 1,                                   //
-               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane],    //
-               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],               //
-               ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], corek, valk, alphak, //
-               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                         //
-               f, aewald, e, pota, potb, pgrad);
+            if CONSTEXPR (CP == Chgpen::GORDON1) {
+               pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, 1,                                   //
+                  ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane],    //
+                  qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],               //
+                  ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], corek, valk, alphak, //
+                  qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                         //
+                  f, aewald, e, pota, potb, pgrad);
+            } else if CONSTEXPR (CP == Chgpen::GORDON2) {
+               pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, 1,                             //
+                  ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane],    //
+                  qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],               //
+                  ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], corek, valk, alphak, //
+                  qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                         //
+                  f, aewald, e, pota, potb, pgrad);
+            }
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -410,12 +428,21 @@ void empoleChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Ener
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, 1,                                   //
-               ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane],    //
-               qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],               //
-               ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], corek, valk, alphak, //
-               qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                         //
-               f, aewald, e, pota, potb, pgrad);
+            if CONSTEXPR (CP == Chgpen::GORDON1) {
+               pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, 1,                                   //
+                  ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane],    //
+                  qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],               //
+                  ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], corek, valk, alphak, //
+                  qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                         //
+                  f, aewald, e, pota, potb, pgrad);
+            } else if CONSTEXPR (CP == Chgpen::GORDON2) {
+               pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(r2, xr, yr, zr, 1,                             //
+                  ci[klane], dix[klane], diy[klane], diz[klane], corei[klane], vali[klane], alphai[klane],    //
+                  qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],               //
+                  ck[threadIdx.x], dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], corek, valk, alphak, //
+                  qkxx, qkxy, qkxz, qkyy, qkyz, qkzz,                                                         //
+                  f, aewald, e, pota, potb, pgrad);
+            }
 
             if CONSTEXPR (do_a)
                if (e != 0)

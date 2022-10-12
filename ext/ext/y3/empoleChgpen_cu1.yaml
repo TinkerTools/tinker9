@@ -1,6 +1,6 @@
 OUTPUT_DIR: src/cu/hippo
 KERNEL_NAME: empoleChgpen_cu1
-TEMPLATE_PARAMS: template <class Ver, class ETYP, bool CFLX>
+TEMPLATE_PARAMS: template <class Ver, class ETYP, Chgpen CP, bool CFLX>
 CONSTEXPR_FLAGS: |
   constexpr bool do_a = Ver::a;
   constexpr bool do_e = Ver::e;
@@ -99,6 +99,7 @@ SCALED_PAIRWISE_INTERACTION: |
 
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
+    if CONSTEXPR (CP == Chgpen::GORDON1) {
     pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
       r2, xr, yr, zr, scalea,                  //
       @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@, //
@@ -106,6 +107,15 @@ SCALED_PAIRWISE_INTERACTION: |
       @ck@, @dkx@, @dky@, @dkz@, @corek@, @valk@, @alphak@, //
       @qkxx@, @qkxy@, @qkxz@, @qkyy@, @qkyz@, @qkzz@, //
       f, aewald, e, pota, potb, pgrad);
+    } else if CONSTEXPR (CP == Chgpen::GORDON2) {
+    pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(
+      r2, xr, yr, zr, scalea,                  //
+      @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@, //
+      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, //
+      @ck@, @dkx@, @dky@, @dkz@, @corek@, @valk@, @alphak@, //
+      @qkxx@, @qkxy@, @qkxz@, @qkyy@, @qkyz@, @qkzz@, //
+      f, aewald, e, pota, potb, pgrad);
+    }
 
     if CONSTEXPR (do_a)
       if (e != 0 and scalea != 0)
@@ -152,6 +162,7 @@ FULL_PAIRWISE_INTERACTION: |
 
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
+    if CONSTEXPR (CP == Chgpen::GORDON1) {
     pair_mpole_chgpen<do_e, do_g, ETYP, CFLX>(
       r2, xr, yr, zr, 1,                  //
       @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@, //
@@ -159,6 +170,15 @@ FULL_PAIRWISE_INTERACTION: |
       @ck@, @dkx@, @dky@, @dkz@, @corek@, @valk@, @alphak@, //
       @qkxx@, @qkxy@, @qkxz@, @qkyy@, @qkyz@, @qkzz@, //
       f, aewald, e, pota, potb, pgrad);
+    } else if CONSTEXPR (CP == Chgpen::GORDON2) {
+    pair_mpole_chgpen_aplus<do_e, do_g, ETYP, CFLX>(
+      r2, xr, yr, zr, 1,                  //
+      @ci@, @dix@, @diy@, @diz@, @corei@, @vali@, @alphai@, //
+      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@, //
+      @ck@, @dkx@, @dky@, @dkz@, @corek@, @valk@, @alphak@, //
+      @qkxx@, @qkxy@, @qkxz@, @qkyy@, @qkyz@, @qkzz@, //
+      f, aewald, e, pota, potb, pgrad);
+    }
 
     if CONSTEXPR (do_a)
       if (e != 0)

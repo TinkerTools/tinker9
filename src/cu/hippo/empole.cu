@@ -7,13 +7,14 @@
 #include "seq/emselfhippo.h"
 #include "seq/launch.h"
 #include "seq/pair_mpole_chgpen.h"
+#include "seq/pairmpoleaplus.h"
 #include "seq/triangle.h"
 #include <cassert>
 
 namespace tinker {
 #include "empoleChgpen_cu1.cc"
 
-template <class Ver, class ETYP, int CFLX>
+template <class Ver, class ETYP, Chgpen CP, int CFLX>
 static void empoleChgpen_cu()
 {
    constexpr bool do_e = Ver::e;
@@ -36,77 +37,155 @@ static void empoleChgpen_cu()
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   empoleChgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nem, em, vir_em, demx,
+   empoleChgpen_cu1<Ver, ETYP, CP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nem, em, vir_em, demx,
       demy, demz, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl,
       st.iakpl, st.niak, st.iak, st.lst, trqx, trqy, trqz, pot, rpole, pcore, pval, palpha, aewald, f);
 }
 
 void empoleChgpenNonEwald_cu(int vers, int use_cf)
 {
+   assert(pentyp == Chgpen::GORDON1);
+   constexpr auto CP = Chgpen::GORDON1;
    if (use_cf) {
       if (vers == calc::v0) {
-         // empoleChgpen_cu<calc::V0, NON_EWALD, 1>();
+         // empoleChgpen_cu<calc::V0, NON_EWALD, CP, 1>();
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
-         empoleChgpen_cu<calc::V1, NON_EWALD, 1>();
+         empoleChgpen_cu<calc::V1, NON_EWALD, CP, 1>();
       } else if (vers == calc::v3) {
-         // empoleChgpen_cu<calc::V3, NON_EWALD, 1>();
+         // empoleChgpen_cu<calc::V3, NON_EWALD, CP, 1>();
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
-         empoleChgpen_cu<calc::V4, NON_EWALD, 1>();
+         empoleChgpen_cu<calc::V4, NON_EWALD, CP, 1>();
       } else if (vers == calc::v5) {
-         empoleChgpen_cu<calc::V5, NON_EWALD, 1>();
+         empoleChgpen_cu<calc::V5, NON_EWALD, CP, 1>();
       } else if (vers == calc::v6) {
-         empoleChgpen_cu<calc::V6, NON_EWALD, 1>();
+         empoleChgpen_cu<calc::V6, NON_EWALD, CP, 1>();
       }
    } else {
       if (vers == calc::v0) {
-         empoleChgpen_cu<calc::V0, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V0, NON_EWALD, CP, 0>();
       } else if (vers == calc::v1) {
-         empoleChgpen_cu<calc::V1, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V1, NON_EWALD, CP, 0>();
       } else if (vers == calc::v3) {
-         empoleChgpen_cu<calc::V3, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V3, NON_EWALD, CP, 0>();
       } else if (vers == calc::v4) {
-         empoleChgpen_cu<calc::V4, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V4, NON_EWALD, CP, 0>();
       } else if (vers == calc::v5) {
-         empoleChgpen_cu<calc::V5, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V5, NON_EWALD, CP, 0>();
       } else if (vers == calc::v6) {
-         empoleChgpen_cu<calc::V6, NON_EWALD, 0>();
+         empoleChgpen_cu<calc::V6, NON_EWALD, CP, 0>();
       }
    }
 }
 
 void empoleChgpenEwaldRealSelf_cu(int vers, int use_cf)
 {
+   assert(pentyp == Chgpen::GORDON1);
+   constexpr auto CP = Chgpen::GORDON1;
    if (use_cf) {
       if (vers == calc::v0) {
-         // empoleChgpen_cu<calc::V0, EWALD, 1>();
+         // empoleChgpen_cu<calc::V0, EWALD, CP, 1>();
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v1) {
-         empoleChgpen_cu<calc::V1, EWALD, 1>();
+         empoleChgpen_cu<calc::V1, EWALD, CP, 1>();
       } else if (vers == calc::v3) {
-         // empoleChgpen_cu<calc::V3, EWALD, 1>();
+         // empoleChgpen_cu<calc::V3, EWALD, CP, 1>();
          assert(false && "CFLX must compute gradient.");
       } else if (vers == calc::v4) {
-         empoleChgpen_cu<calc::V4, EWALD, 1>();
+         empoleChgpen_cu<calc::V4, EWALD, CP, 1>();
       } else if (vers == calc::v5) {
-         empoleChgpen_cu<calc::V5, EWALD, 1>();
+         empoleChgpen_cu<calc::V5, EWALD, CP, 1>();
       } else if (vers == calc::v6) {
-         empoleChgpen_cu<calc::V6, EWALD, 1>();
+         empoleChgpen_cu<calc::V6, EWALD, CP, 1>();
       }
    } else {
       if (vers == calc::v0) {
-         empoleChgpen_cu<calc::V0, EWALD, 0>();
+         empoleChgpen_cu<calc::V0, EWALD, CP, 0>();
       } else if (vers == calc::v1) {
-         empoleChgpen_cu<calc::V1, EWALD, 0>();
+         empoleChgpen_cu<calc::V1, EWALD, CP, 0>();
       } else if (vers == calc::v3) {
-         empoleChgpen_cu<calc::V3, EWALD, 0>();
+         empoleChgpen_cu<calc::V3, EWALD, CP, 0>();
       } else if (vers == calc::v4) {
-         empoleChgpen_cu<calc::V4, EWALD, 0>();
+         empoleChgpen_cu<calc::V4, EWALD, CP, 0>();
       } else if (vers == calc::v5) {
-         empoleChgpen_cu<calc::V5, EWALD, 0>();
+         empoleChgpen_cu<calc::V5, EWALD, CP, 0>();
       } else if (vers == calc::v6) {
-         empoleChgpen_cu<calc::V6, EWALD, 0>();
+         empoleChgpen_cu<calc::V6, EWALD, CP, 0>();
+      }
+   }
+}
+
+void empoleAplusNonEwald_cu(int vers, int use_cf)
+{
+   assert(pentyp == Chgpen::GORDON2);
+   constexpr auto CP = Chgpen::GORDON2;
+   if (use_cf) {
+      if (vers == calc::v0) {
+         // empoleChgpen_cu<calc::V0, NON_EWALD, CP, 1>();
+         assert(false && "CFLX must compute gradient.");
+      } else if (vers == calc::v1) {
+         empoleChgpen_cu<calc::V1, NON_EWALD, CP, 1>();
+      } else if (vers == calc::v3) {
+         // empoleChgpen_cu<calc::V3, NON_EWALD, CP, 1>();
+         assert(false && "CFLX must compute gradient.");
+      } else if (vers == calc::v4) {
+         empoleChgpen_cu<calc::V4, NON_EWALD, CP, 1>();
+      } else if (vers == calc::v5) {
+         empoleChgpen_cu<calc::V5, NON_EWALD, CP, 1>();
+      } else if (vers == calc::v6) {
+         empoleChgpen_cu<calc::V6, NON_EWALD, CP, 1>();
+      }
+   } else {
+      if (vers == calc::v0) {
+         empoleChgpen_cu<calc::V0, NON_EWALD, CP, 0>();
+      } else if (vers == calc::v1) {
+         empoleChgpen_cu<calc::V1, NON_EWALD, CP, 0>();
+      } else if (vers == calc::v3) {
+         empoleChgpen_cu<calc::V3, NON_EWALD, CP, 0>();
+      } else if (vers == calc::v4) {
+         empoleChgpen_cu<calc::V4, NON_EWALD, CP, 0>();
+      } else if (vers == calc::v5) {
+         empoleChgpen_cu<calc::V5, NON_EWALD, CP, 0>();
+      } else if (vers == calc::v6) {
+         empoleChgpen_cu<calc::V6, NON_EWALD, CP, 0>();
+      }
+   }
+}
+
+void empoleAplusEwaldRealSelf_cu(int vers, int use_cf)
+{
+   assert(pentyp == Chgpen::GORDON2);
+   constexpr auto CP = Chgpen::GORDON2;
+   if (use_cf) {
+      if (vers == calc::v0) {
+         // empoleChgpen_cu<calc::V0, EWALD, CP, 1>();
+         assert(false && "CFLX must compute gradient.");
+      } else if (vers == calc::v1) {
+         empoleChgpen_cu<calc::V1, EWALD, CP, 1>();
+      } else if (vers == calc::v3) {
+         // empoleChgpen_cu<calc::V3, EWALD, CP, 1>();
+         assert(false && "CFLX must compute gradient.");
+      } else if (vers == calc::v4) {
+         empoleChgpen_cu<calc::V4, EWALD, CP, 1>();
+      } else if (vers == calc::v5) {
+         empoleChgpen_cu<calc::V5, EWALD, CP, 1>();
+      } else if (vers == calc::v6) {
+         empoleChgpen_cu<calc::V6, EWALD, CP, 1>();
+      }
+   } else {
+      if (vers == calc::v0) {
+         empoleChgpen_cu<calc::V0, EWALD, CP, 0>();
+      } else if (vers == calc::v1) {
+         empoleChgpen_cu<calc::V1, EWALD, CP, 0>();
+      } else if (vers == calc::v3) {
+         empoleChgpen_cu<calc::V3, EWALD, CP, 0>();
+      } else if (vers == calc::v4) {
+         empoleChgpen_cu<calc::V4, EWALD, CP, 0>();
+      } else if (vers == calc::v5) {
+         empoleChgpen_cu<calc::V5, EWALD, CP, 0>();
+      } else if (vers == calc::v6) {
+         empoleChgpen_cu<calc::V6, EWALD, CP, 0>();
       }
    }
 }

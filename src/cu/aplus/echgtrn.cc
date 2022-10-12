@@ -1,1 +1,1 @@
-// the source code has been merged with cu/hippo/echgtrn.cu
+// the source code has been merged into cu/hippo/echgtrn.cu
