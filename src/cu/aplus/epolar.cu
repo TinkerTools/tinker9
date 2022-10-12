@@ -14,14 +14,12 @@ namespace tinker {
 template <class Ver, class ETYP, bool CFLX>
 __global__
 void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, EnergyBuffer restrict ep,
-   VirialBuffer restrict vep, grad_prec* restrict gx, grad_prec* restrict gy,
-   grad_prec* restrict gz, real off, const unsigned* restrict mdpuinfo, int nexclude,
-   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[4],
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, real (*restrict ufld)[3],
-   real (*restrict dufld)[6], const real (*restrict uind)[3], real* restrict pot,
-   const real (*restrict rpole)[10], const real* restrict pdamp, const real* restrict thole,
+   VirialBuffer restrict vep, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
+   const unsigned* restrict mdpuinfo, int nexclude, const int (*restrict exclude)[2],
+   const real (*restrict exclude_scale)[4], const real* restrict x, const real* restrict y, const real* restrict z,
+   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak, const int* restrict iak,
+   const int* restrict lst, real (*restrict ufld)[3], real (*restrict dufld)[6], const real (*restrict uind)[3],
+   real* restrict pot, const real (*restrict rpole)[10], const real* restrict pdamp, const real* restrict thole,
    const real* restrict dirdamp, real aewald, real f)
 {
    constexpr bool do_e = Ver::e;
@@ -214,11 +212,11 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
             ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,      //
             uky, ukz, pdk, ptk, ddk,                                         //
             f, aewald,                                                       //
-            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane],
-            ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
+            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane], ufld1i[klane], ufld2i[klane],
+            ufld0k, ufld1k,
             ufld2k, //
-            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane],
-            dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], dufld0k,
+            dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
             e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1, pota1, potb1);
          pair_polar_aplus_v2<Ver, NON_EWALD, CFLX>(                          //
             r2, xr, yr, zr, scaleb - 1, scaled - 1,                          //
@@ -229,11 +227,11 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
             ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,      //
             uky, ukz, pdk, ptk, ddk,                                         //
             f, aewald,                                                       //
-            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane],
-            ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
+            frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane], ufld1i[klane], ufld2i[klane],
+            ufld0k, ufld1k,
             ufld2k, //
-            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane],
-            dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+            dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], dufld0k,
+            dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
             e, vxx, vyx, vzx, vyy, vzy, vzz, pota, potb);
          if CONSTEXPR (do_e) {
             e = e + e1;
@@ -394,11 +392,11 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
                ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,                       //
                uky, ukz, pdk, ptk, ddk,                                                          //
                f, aewald,                                                                        //
-               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane],
-               ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
+               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane], ufld1i[klane],
+               ufld2i[klane], ufld0k, ufld1k,
                ufld2k, //
-               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane],
-               dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], dufld0k,
+               dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
                e, vxx, vyx, vzx, vyy, vzy, vzz, pota, potb);
             if CONSTEXPR (do_e) {
                eptl += floatTo<ebuf_prec>(e);
@@ -556,11 +554,11 @@ void epolarAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nep, Energ
                ck, dkx, dky, dkz, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukx,                       //
                uky, ukz, pdk, ptk, ddk,                                                          //
                f, aewald,                                                                        //
-               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane],
-               ufld1i[klane], ufld2i[klane], ufld0k, ufld1k,
+               frcxi[klane], frcyi[klane], frczi[klane], frcxk, frcyk, frczk, ufld0i[klane], ufld1i[klane],
+               ufld2i[klane], ufld0k, ufld1k,
                ufld2k, //
-               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane],
-               dufld5i[klane], dufld0k, dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
+               dufld0i[klane], dufld1i[klane], dufld2i[klane], dufld3i[klane], dufld4i[klane], dufld5i[klane], dufld0k,
+               dufld1k, dufld2k, dufld3k, dufld4k, dufld5k, //
                e, vxx, vyx, vzx, vyy, vzy, vzz, pota, potb);
             if CONSTEXPR (do_e) {
                eptl += floatTo<ebuf_prec>(e);
@@ -650,10 +648,9 @@ static void epolarAplus_cu(const real (*uind)[3])
       darray::zero(g::q0, n, ufld, dufld);
    }
    int ngrid = gpuGridSize(BLOCK_DIM);
-   epolarAplus_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep,
-      ep, vir_ep, depx, depy, depz, off, st.si2.bit0, nmdpuexclude, mdpuexclude, mdpuexclude_scale,
-      st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind,
-      pot, rpole, pdamp, thole, dirdamp, aewald, f);
+   epolarAplus_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep, ep, vir_ep, depx,
+      depy, depz, off, st.si2.bit0, nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl,
+      st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind, pot, rpole, pdamp, thole, dirdamp, aewald, f);
 
    // torque
    if CONSTEXPR (do_g) {

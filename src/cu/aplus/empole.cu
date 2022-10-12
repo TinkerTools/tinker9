@@ -13,14 +13,13 @@ namespace tinker {
 template <class Ver, class ETYP, bool CFLX>
 __global__
 void empoleAplus_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuffer restrict em,
-   VirialBuffer restrict vem, grad_prec* restrict gx, grad_prec* restrict gy,
-   grad_prec* restrict gz, real off, const unsigned* restrict minfo, int nexclude,
-   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[3],
-   const real* restrict x, const real* restrict y, const real* restrict z,
-   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak,
-   const int* restrict iak, const int* restrict lst, real* restrict trqx, real* restrict trqy,
-   real* restrict trqz, real* restrict pot, const real (*restrict rpole)[10], real* restrict pcore,
-   real* restrict pval, const real* restrict palpha, real aewald, real f)
+   VirialBuffer restrict vem, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
+   const unsigned* restrict minfo, int nexclude, const int (*restrict exclude)[2],
+   const real (*restrict exclude_scale)[3], const real* restrict x, const real* restrict y, const real* restrict z,
+   const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak, const int* restrict iak,
+   const int* restrict lst, real* restrict trqx, real* restrict trqy, real* restrict trqz, real* restrict pot,
+   const real (*restrict rpole)[10], real* restrict pcore, real* restrict pval, const real* restrict palpha,
+   real aewald, real f)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -552,10 +551,9 @@ static void empoleAplus_cu()
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   empoleAplus_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nem,
-      em, vir_em, demx, demy, demz, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale,
-      st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, trqx, trqy, trqz,
-      pot, rpole, pcore, pval, palpha, aewald, f);
+   empoleAplus_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nem, em, vir_em, demx,
+      demy, demz, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl,
+      st.iakpl, st.niak, st.iak, st.lst, trqx, trqy, trqz, pot, rpole, pcore, pval, palpha, aewald, f);
 }
 
 void empoleAplusNonEwald_cu(int vers, int use_cf)
