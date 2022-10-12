@@ -175,6 +175,7 @@ void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
       qkzz = rpole[k][MPL_PME_ZZ];
       pdk = pdamp[k];
       ddk = dirdamp[k];
+      __syncwarp();
 
       unsigned int dpinfo0 = dpinfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -209,6 +210,7 @@ void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
       atomic_add(fkdx, &field[k][0]);
       atomic_add(fkdy, &field[k][1]);
       atomic_add(fkdz, &field[k][2]);
+      __syncwarp();
    }
 
    for (int iw = iwarp; iw < niak; iw += nwarp) {
@@ -255,6 +257,7 @@ void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
       qkzz = rpole[k][MPL_PME_ZZ];
       pdk = pdamp[k];
       ddk = dirdamp[k];
+      __syncwarp();
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
@@ -285,6 +288,7 @@ void dfieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
       atomic_add(fkdx, &field[k][0]);
       atomic_add(fkdy, &field[k][1]);
       atomic_add(fkdz, &field[k][2]);
+      __syncwarp();
    }
 }
 
@@ -444,6 +448,7 @@ void ufieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
       ukdz = uind[k][2];
       pdk = pdamp[k];
       ptk = thole[k];
+      __syncwarp();
 
       unsigned int uinfo0 = uinfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -477,6 +482,7 @@ void ufieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
       atomic_add(fkdx, &field[k][0]);
       atomic_add(fkdy, &field[k][1]);
       atomic_add(fkdz, &field[k][2]);
+      __syncwarp();
    }
 
    for (int iw = iwarp; iw < niak; iw += nwarp) {
@@ -509,6 +515,7 @@ void ufieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
       ukdz = uind[k][2];
       pdk = pdamp[k];
       ptk = thole[k];
+      __syncwarp();
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          int srclane = (ilane + j) & (WARP_SIZE - 1);
@@ -538,6 +545,7 @@ void ufieldAplus_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restr
       atomic_add(fkdx, &field[k][0]);
       atomic_add(fkdy, &field[k][1]);
       atomic_add(fkdz, &field[k][2]);
+      __syncwarp();
    }
 }
 
