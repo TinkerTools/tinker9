@@ -12,81 +12,6 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-__global__
-void pcgRsd3(int n, const real* restrict polarity, real (*restrict rsd)[3])
-{
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      if (polarity[i] == 0) {
-         rsd[i][0] = 0;
-         rsd[i][1] = 0;
-         rsd[i][2] = 0;
-      }
-   }
-}
-
-__global__
-void pcgP7(int n, const real* restrict polarity_inv, real (*restrict vec)[3], const real (*restrict conj)[3],
-   const real (*restrict field)[3])
-{
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      real poli_inv = polarity_inv[i];
-      #pragma unroll
-      for (int j = 0; j < 3; ++j)
-         vec[i][j] = poli_inv * conj[i][j] - field[i][j];
-   }
-}
-
-__global__
-void pcgP8(int n, const real* restrict polarity, //
-   const real* restrict ka,                      //
-   const real* restrict ksum, real (*restrict uind)[3], const real (*restrict conj)[3], real (*restrict rsd)[3],
-   const real (*restrict vec)[3])
-{
-   real kaval = *ka;
-   real a = *ksum / kaval;
-   if (kaval == 0)
-      a = 0;
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      #pragma unroll
-      for (int j = 0; j < 3; ++j) {
-         uind[i][j] += a * conj[i][j];
-         rsd[i][j] -= a * vec[i][j];
-      }
-      if (polarity[i] == 0) {
-         rsd[i][0] = 0;
-         rsd[i][1] = 0;
-         rsd[i][2] = 0;
-      }
-   }
-}
-
-__global__
-void pcgP9(int n, const real* restrict ksum, const real* restrict ksum1, real (*restrict conj)[3],
-   real (*restrict zrsd)[3])
-{
-   real ksumval = *ksum;
-   real b = *ksum1 / ksumval;
-   if (ksumval == 0)
-      b = 0;
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      #pragma unroll
-      for (int j = 0; j < 3; ++j)
-         conj[i][j] = zrsd[i][j] + b * conj[i][j];
-   }
-}
-
-__global__
-void pcgPeek2(int n, float pcgpeek, const real* restrict polarity, real (*restrict uind)[3],
-   const real (*restrict rsd)[3])
-{
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      real term = pcgpeek * polarity[i];
-      #pragma unroll
-      for (int j = 0; j < 3; ++j)
-         uind[i][j] += term * rsd[i][j];
-   }
-}
-
 void induceMutualPcg3_cu(real (*uind)[3])
 {
    auto* field = work01_;
@@ -136,7 +61,7 @@ void induceMutualPcg3_cu(real (*uind)[3])
    } else {
       darray::copy(g::q0, n, rsd, field);
    }
-   launch_k1s(g::s0, n, pcgRsd3, n, polarity, rsd);
+   launch_k1s(g::s0, n, pcgRsd1, n, polarity, rsd);
 
    // initial M r(0) and p(0)
    if (sparse_prec) {
@@ -172,7 +97,7 @@ void induceMutualPcg3_cu(real (*uind)[3])
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
       ufieldAplus(conj, field);
-      launch_k1s(g::s0, n, pcgP7, n, polarity_inv, vec, conj, field);
+      launch_k1s(g::s0, n, pcgP4, n, polarity_inv, vec, conj, field);
 
       // a <- p T p
       real* a = &((real*)dptr_buf)[1];
@@ -181,7 +106,7 @@ void induceMutualPcg3_cu(real (*uind)[3])
 
       // u <- u + a p
       // r <- r - a T p
-      launch_k1s(g::s0, n, pcgP8, n, polarity, a, sum, uind, conj, rsd, vec);
+      launch_k1s(g::s0, n, pcgP5, n, polarity, a, sum, uind, conj, rsd, vec);
 
       // calculate/update M r
       if (sparse_prec)
@@ -194,7 +119,7 @@ void induceMutualPcg3_cu(real (*uind)[3])
       darray::dot(g::q0, n, sum1, rsd, zrsd);
 
       // calculate/update p
-      launch_k1s(g::s0, n, pcgP9, n, sum, sum1, conj, zrsd);
+      launch_k1s(g::s0, n, pcgP6, n, sum, sum1, conj, zrsd);
 
       // copy sum1/p to sum/p
       darray::copy(g::q0, 2, sum, sum1);
@@ -226,7 +151,7 @@ void induceMutualPcg3_cu(real (*uind)[3])
 
       // apply a "peek" iteration to the mutual induced dipoles
       if (done)
-         launch_k1s(g::s0, n, pcgPeek2, n, pcgpeek, polarity, uind, rsd);
+         launch_k1s(g::s0, n, pcgPeek1, n, pcgpeek, polarity, uind, rsd);
    }
 
    // print the results from the conjugate gradient iteration
