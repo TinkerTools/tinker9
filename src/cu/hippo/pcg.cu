@@ -1,5 +1,6 @@
 #include "ff/amoeba/induce.h"
 #include "ff/amoebamod.h"
+#include "ff/aplus/induce.h"
 #include "ff/cuinduce.h"
 #include "ff/hippo/induce.h"
 #include "ff/switch.h"
@@ -20,6 +21,10 @@ void induceMutualPcg2_cu(real (*uind)[3])
    auto* conj = work04_;
    auto* vec = work05_;
 
+   auto pcg_dfield = polpot::use_tholed ? dfieldAplus : dfieldChgpen;
+   auto pcg_ufield = polpot::use_tholed ? ufieldAplus : ufieldChgpen;
+   auto pcg_sparse_apply = polpot::use_tholed ? sparsePrecondApply3 : sparsePrecondApply2;
+
    const bool sparse_prec = polpcg::pcgprec and (switchOff(Switch::USOLVE) > 0);
    bool dirguess = polpcg::pcgguess;
    bool predict = polpred != UPred::NONE;
@@ -29,7 +34,7 @@ void induceMutualPcg2_cu(real (*uind)[3])
    }
 
    // get the electrostatic field due to permanent multipoles
-   dfieldChgpen(field);
+   pcg_dfield(field);
    // direct induced dipoles
    launch_k1s(g::s0, n, pcgUdirV1, n, polarity, udir, field);
 
@@ -54,10 +59,10 @@ void induceMutualPcg2_cu(real (*uind)[3])
    //
    // if do not use pcgguess, r(0) = E - T Zero = E
    if (predict) {
-      ufieldChgpen(uind, field);
+      pcg_ufield(uind, field);
       launch_k1s(g::s0, n, pcgRsd0V1, n, polarity_inv, rsd, udir, uind, field);
    } else if (dirguess) {
-      ufieldChgpen(uind, rsd);
+      pcg_ufield(uind, rsd);
    } else {
       darray::copy(g::q0, n, rsd, field);
    }
@@ -66,7 +71,7 @@ void induceMutualPcg2_cu(real (*uind)[3])
    // initial M r(0) and p(0)
    if (sparse_prec) {
       sparsePrecondBuild2();
-      sparsePrecondApply2(rsd, zrsd);
+      pcg_sparse_apply(rsd, zrsd);
    } else {
       diagPrecond2(rsd, zrsd);
    }
@@ -96,7 +101,7 @@ void induceMutualPcg2_cu(real (*uind)[3])
       // T p and p
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
-      ufieldChgpen(conj, field);
+      pcg_ufield(conj, field);
       launch_k1s(g::s0, n, pcgP4, n, polarity_inv, vec, conj, field);
 
       // a <- p T p
@@ -110,7 +115,7 @@ void induceMutualPcg2_cu(real (*uind)[3])
 
       // calculate/update M r
       if (sparse_prec)
-         sparsePrecondApply2(rsd, zrsd);
+         pcg_sparse_apply(rsd, zrsd);
       else
          diagPrecond2(rsd, zrsd);
 

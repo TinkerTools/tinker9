@@ -10,7 +10,6 @@ amoeba/rotpole.cu
 amoeba/torque.cu
 aplus/epolar.cu
 aplus/field.cu
-aplus/pcg.cu
 atom.cu
 compilers.cu
 cudalib.cu

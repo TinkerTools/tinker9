@@ -4,13 +4,6 @@
 #include "tool/externfunc.h"
 
 namespace tinker {
-void diagPrecond3(const real (*rsd)[3], real (*zrsd)[3])
-{
-   diagPrecond2(rsd, zrsd);
-}
-
-void sparsePrecondBuild3() {}
-
 TINKER_FVOID2(acc1, cu1, sparsePrecondApply3, const real (*)[3], real (*)[3]);
 void sparsePrecondApply3(const real (*rsd)[3], real (*zrsd)[3])
 {

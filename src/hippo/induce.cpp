@@ -33,12 +33,6 @@ static void induceMutualPcg2(real (*uind)[3])
    TINKER_FCALL2(acc1, cu1, induceMutualPcg2, uind);
 }
 
-TINKER_FVOID2(acc1, cu1, induceMutualPcg3, real (*)[3]);
-static void induceMutualPcg3(real (*uind)[3])
-{
-   TINKER_FCALL2(acc1, cu1, induceMutualPcg3, uind);
-}
-
 TINKER_FVOID2(acc1, cu1, induceMutualPcg4, real (*)[3]);
 static void induceMutualPcg4(real (*uind)[3])
 {
@@ -47,16 +41,12 @@ static void induceMutualPcg4(real (*uind)[3])
 
 void induce2(real (*ud)[3])
 {
-   if (polpot::use_tholed) {
-      induceMutualPcg3(ud);
-      ulspredSave(ud, nullptr);
-   } else {
-      if (polpot::use_expol)
-         induceMutualPcg4(ud);
-      else
-         induceMutualPcg2(ud);
-      ulspredSave(ud, nullptr);
-   }
+   if (polpot::use_expol and not polpot::use_tholed)
+      induceMutualPcg4(ud);
+   else
+      induceMutualPcg2(ud);
+
+   ulspredSave(ud, nullptr);
    inducePrint(ud);
 }
 }

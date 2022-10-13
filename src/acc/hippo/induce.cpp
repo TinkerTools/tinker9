@@ -1,5 +1,6 @@
 #include "ff/amoeba/induce.h"
 #include "ff/amoebamod.h"
+#include "ff/aplus/induce.h"
 #include "ff/atom.h"
 #include "ff/hippo/induce.h"
 #include "ff/hippomod.h"
@@ -17,26 +18,7 @@
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/units.hh>
 
-namespace tinker { // PCG
-//
-// M = preconditioner
-// T = inv_alpha + Tu, -Tu = ufield_chgpen
-//
-// r(0) = E - T u(0)
-// p(0) (or conj(0)) = M r(0)
-// ------------------------------
-// gamma (or a) = r(i) M r(i) / p(i) T p(i)
-// u(i+1) = u(i) + a p(i)
-// r(i+1) = r(i) - a T p(i)
-// beta (or b(i+1)) = r(i+1) M r(i+1) / r(i) M r(i)
-// p(i+1) = M r(r+1) + b(i+1) p(i)
-// ------------------------------
-//
-// subroutine induce0a in induce.f
-// rsd = r
-// zrsd = M r
-// conj = p
-// vec = T P
+namespace tinker {
 void induceMutualPcg2_acc(real (*uind)[3])
 {
    auto* field = work01_;
@@ -44,6 +26,10 @@ void induceMutualPcg2_acc(real (*uind)[3])
    auto* zrsd = work03_;
    auto* conj = work04_;
    auto* vec = work05_;
+
+   auto pcg_dfield = polpot::use_tholed ? dfieldAplus : dfieldChgpen;
+   auto pcg_ufield = polpot::use_tholed ? ufieldAplus : ufieldChgpen;
+   auto pcg_sparse_apply = polpot::use_tholed ? sparsePrecondApply3 : sparsePrecondApply2;
 
    bool dirguess = polpcg::pcgguess;
    // use sparse matrix preconditioner
@@ -58,7 +44,7 @@ void induceMutualPcg2_acc(real (*uind)[3])
       dirguess = true;
    }
    // get the electrostatic field due to permanent multipoles
-   dfieldChgpen(field);
+   pcg_dfield(field);
    // direct induced dipoles
 
    #pragma acc parallel loop independent async\
@@ -86,7 +72,7 @@ void induceMutualPcg2_acc(real (*uind)[3])
    //                       = -Tu udir
 
    if (predict) {
-      ufieldChgpen(uind, field);
+      pcg_ufield(uind, field);
       #pragma acc parallel loop independent async\
               deviceptr(polarity_inv,rsd,udir,uind,field)
       for (int i = 0; i < n; ++i) {
@@ -96,7 +82,7 @@ void induceMutualPcg2_acc(real (*uind)[3])
             rsd[i][j] = (udir[i][j] - uind[i][j]) * pol + field[i][j];
       }
    } else if (dirguess) {
-      ufieldChgpen(uind, rsd);
+      pcg_ufield(uind, rsd);
    } else {
       darray::copy(g::q0, n, rsd, field);
    }
@@ -113,7 +99,7 @@ void induceMutualPcg2_acc(real (*uind)[3])
 
    if (sparse_prec) {
       sparsePrecondBuild2();
-      sparsePrecondApply2(rsd, zrsd);
+      pcg_sparse_apply(rsd, zrsd);
    } else {
       diagPrecond2(rsd, zrsd);
    }
@@ -144,7 +130,7 @@ void induceMutualPcg2_acc(real (*uind)[3])
 
       // vec = (inv_alpha + Tu) conj, field = -Tu conj
       // vec = inv_alpha * conj - field
-      ufieldChgpen(conj, field);
+      pcg_ufield(conj, field);
       #pragma acc parallel loop independent async\
                   deviceptr(polarity_inv,vec,conj,field)
       for (int i = 0; i < n; ++i) {
@@ -180,7 +166,7 @@ void induceMutualPcg2_acc(real (*uind)[3])
 
       // calculate/update M r
       if (sparse_prec)
-         sparsePrecondApply2(rsd, zrsd);
+         pcg_sparse_apply(rsd, zrsd);
       else
          diagPrecond2(rsd, zrsd);
 
@@ -220,7 +206,8 @@ void induceMutualPcg2_acc(real (*uind)[3])
       if (eps < poleps)
          done = true;
       // if (eps > epsold) done = true;
-      if (iter < miniter) done = false;
+      if (iter < miniter)
+         done = false;
       if (iter >= politer)
          done = true;
 
