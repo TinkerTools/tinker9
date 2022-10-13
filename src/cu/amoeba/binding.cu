@@ -1,5 +1,5 @@
-#include "ff/amoebacumod.h"
 #include "ff/amoebamod.h"
+#include "ff/cuamoebamod.h"
 #include "ff/potent.h"
 #include "tool/cudalib.h"
 #include "tool/darray.h"

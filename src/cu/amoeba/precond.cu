@@ -1,5 +1,5 @@
-#include "ff/amoebacumod.h"
 #include "ff/amoebamod.h"
+#include "ff/cuamoebamod.h"
 #include "ff/image.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
@@ -10,9 +10,8 @@
 
 namespace tinker {
 __global__
-void sparsePrecond_cu0(const real (*restrict rsd)[3], const real (*restrict rsdp)[3],
-   real (*restrict zrsd)[3], real (*restrict zrsdp)[3], const real* restrict polarity, int n,
-   real udiag)
+void sparsePrecond_cu0(const real (*restrict rsd)[3], const real (*restrict rsdp)[3], real (*restrict zrsd)[3],
+   real (*restrict zrsdp)[3], const real* restrict polarity, int n, real udiag)
 {
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
       real poli = udiag * polarity[i];
@@ -26,8 +25,7 @@ void sparsePrecond_cu0(const real (*restrict rsd)[3], const real (*restrict rsdp
 
 #include "sparsePrecond_cu1.cc"
 
-void sparsePrecondApply_cu(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3],
-   real (*zrsdp)[3])
+void sparsePrecondApply_cu(const real (*rsd)[3], const real (*rsdp)[3], real (*zrsd)[3], real (*zrsdp)[3])
 {
    const auto& st = *uspatial_v2_unit;
    real off = switchOff(Switch::USOLVE);
@@ -40,8 +38,7 @@ void sparsePrecondApply_cu(const real (*rsd)[3], const real (*rsdp)[3], real (*z
    int nparallel = std::max(st.niak, st.nakpl) * WARP_SIZE;
    nparallel = std::max(nparallel, ngrid);
    launch_k1s(g::s0, nparallel, sparsePrecond_cu1, //
-      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nuexclude, uexclude, uexclude_scale, st.x, st.y,
-      st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, rsd, rsdp, zrsd, zrsdp,
-      polarity);
+      st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nuexclude, uexclude, uexclude_scale, st.x, st.y, st.z, st.sorted,
+      st.nakpl, st.iakpl, st.niak, st.iak, st.lst, rsd, rsdp, zrsd, zrsdp, polarity);
 }
 }

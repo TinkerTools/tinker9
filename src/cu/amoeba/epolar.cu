@@ -1,5 +1,5 @@
-#include "ff/amoebacumod.h"
 #include "ff/amoebamod.h"
+#include "ff/cuamoebamod.h"
 #include "ff/image.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
@@ -17,8 +17,7 @@ void epolar0DotProd_cu1(int n, real f, EnergyBuffer restrict ep, const real (*re
    int ithread = ITHREAD;
    for (int i = ithread; i < n; i += STRIDE) {
       real e = polarity_inv[i]
-         * (gpu_uind[i][0] * gpu_udirp[i][0] + gpu_uind[i][1] * gpu_udirp[i][1]
-            + gpu_uind[i][2] * gpu_udirp[i][2]);
+         * (gpu_uind[i][0] * gpu_udirp[i][0] + gpu_uind[i][1] * gpu_udirp[i][1] + gpu_uind[i][2] * gpu_udirp[i][2]);
       atomic_add(f * e, ep, ithread);
    }
 }
@@ -55,10 +54,9 @@ static void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
    if CONSTEXPR (do_g)
       darray::zero(g::q0, n, ufld, dufld);
    int ngrid = gpuGridSize(BLOCK_DIM);
-   epolar_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep, ep, vir_ep,
-      depx, depy, depz, off, st.si1.bit0, nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y,
-      st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, rpole, uind, uinp,
-      f, aewald);
+   epolar_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep, ep, vir_ep, depx, depy, depz,
+      off, st.si1.bit0, nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
+      st.niak, st.iak, st.lst, ufld, dufld, rpole, uind, uinp, f, aewald);
 
    // torque
    if CONSTEXPR (do_g) {
