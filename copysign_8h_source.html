@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -91,16 +91,15 @@ $(function() {
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="group__math.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">   18</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">intCopysignIf</a>(<span class="keywordtype">int</span> a, <span class="keywordtype">int</span> b)</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>   <span class="keywordtype">int</span> ans = abs(a);</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>   <span class="keywordflow">if</span> (b &lt; 0)</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>      ans = -ans;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>   <span class="keywordflow">return</span> ans;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>}</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="group__math.html#gace905349e3cca47762bee79ec7643ce9">   29</a></span><span class="preprocessor">#define INT_COPYSIGN intCopysignShift</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>}</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>   <span class="keywordflow">if</span> (b &lt; 0) ans = -ans;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>   <span class="keywordflow">return</span> ans;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>}</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="group__math.html#gace905349e3cca47762bee79ec7643ce9">   28</a></span><span class="preprocessor">#define INT_COPYSIGN intCopysignShift</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>}</div>
 <div class="ttc" id="agroup__math_html_ga4a82a27bb0a0ec92f3e348e5a6c3c2b1"><div class="ttname"><a href="group__math.html#ga4a82a27bb0a0ec92f3e348e5a6c3c2b1">tinker::intCopysignIf</a></div><div class="ttdeci">__device__ int intCopysignIf(int a, int b)</div><div class="ttdoc">If b &lt; 0, returns -abs(a), otherwise, returns abs(a).</div><div class="ttdef"><b>Definition:</b> copysign.h:18</div></div>
 <div class="ttc" id="agroup__math_html_gad370b71fad00d420ad405f9d748035ef"><div class="ttname"><a href="group__math.html#gad370b71fad00d420ad405f9d748035ef">tinker::intCopysignShift</a></div><div class="ttdeci">__device__ int intCopysignShift(int a, int b)</div><div class="ttdoc">If b &lt; 0, returns -abs(a), otherwise, returns abs(a). Similar to the 32-bit integer version of Fortra...</div><div class="ttdef"><b>Definition:</b> copysign.h:9</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:9</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

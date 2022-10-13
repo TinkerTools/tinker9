@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -81,21 +81,22 @@ $(function() {
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;cmath&gt;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetinker.html">tinker</a> {</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="group__math.html#gad848b1d5fd587b017d3a065555431a81">   19</a></span><span class="keyword">inline</span> <span class="keywordtype">double</span> <a class="code hl_function" href="group__math.html#gad848b1d5fd587b017d3a065555431a81">OUProcess</a>(<span class="keywordtype">double</span> t, <span class="keywordtype">double</span> x0, <span class="keywordtype">double</span> gamma, <span class="keywordtype">double</span> a, <span class="keywordtype">double</span> b, <span class="keywordtype">double</span> R)</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>   <span class="keywordflow">if</span> (gamma == 0) {</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>      <span class="keywordflow">return</span> x0 + a * t + b * R * std::sqrt(t);</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>   } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>      <span class="keyword">auto</span> gt = -gamma * t;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>      <span class="keyword">auto</span> egt = std::exp(gt);</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>      <span class="keyword">auto</span> c1 = (1 - egt) / gamma;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>      <span class="keyword">auto</span> c2 = (1 - egt * egt) / (2 * gamma);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>      <span class="keywordflow">return</span> x0 * egt + a * c1 + b * R * std::sqrt(c2);</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>   }</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>}</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="group__math.html#gad848b1d5fd587b017d3a065555431a81">   19</a></span><span class="keyword">inline</span> <span class="keywordtype">double</span> <a class="code hl_function" href="group__math.html#gad848b1d5fd587b017d3a065555431a81">OUProcess</a>(<span class="keywordtype">double</span> t, <span class="keywordtype">double</span> x0, <span class="keywordtype">double</span> gamma, <span class="keywordtype">double</span> a, <span class="keywordtype">double</span> b,</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>   <span class="keywordtype">double</span> R)</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>   <span class="keywordflow">if</span> (gamma == 0) {</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>      <span class="keywordflow">return</span> x0 + a * t + b * R * std::sqrt(t);</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>   } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>      <span class="keyword">auto</span> gt = -gamma * t;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>      <span class="keyword">auto</span> egt = std::exp(gt);</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>      <span class="keyword">auto</span> c1 = (1 - egt) / gamma;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>      <span class="keyword">auto</span> c2 = (1 - egt * egt) / (2 * gamma);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>      <span class="keywordflow">return</span> x0 * egt + a * c1 + b * R * std::sqrt(c2);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>   }</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>}</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>}</div>
 <div class="ttc" id="agroup__math_html_gad848b1d5fd587b017d3a065555431a81"><div class="ttname"><a href="group__math.html#gad848b1d5fd587b017d3a065555431a81">tinker::OUProcess</a></div><div class="ttdeci">double OUProcess(double t, double x0, double gamma, double a, double b, double R)</div><div class="ttdoc">Returns the value of an Ornstein-Uhlenbeck process after time t.</div><div class="ttdef"><b>Definition:</b> ou.h:19</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:9</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

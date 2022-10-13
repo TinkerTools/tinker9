@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -117,39 +117,37 @@ $(function() {
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetinker.html">tinker</a> {</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="group__math.html#ga2b91c034018978a77482edecc593988a">   56</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#ga2b91c034018978a77482edecc593988a">floorLog2</a>(<span class="keywordtype">int</span> val)</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>{</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>   <span class="keywordflow">if</span> (val == 0)</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>      <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>   <span class="keywordtype">int</span> c = __builtin_clz(val);</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>   <span class="keywordflow">return</span> 8 * <span class="keyword">sizeof</span>(int) - 1 - c;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="group__math.html#ga677931f02506c842f0cf81ad5131dd0d">   66</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#ga2b91c034018978a77482edecc593988a">floorLog2</a>(<span class="keywordtype">long</span> <span class="keywordtype">long</span> val)</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>{</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>   <span class="keywordflow">if</span> (val == 0)</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>      <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>   <span class="keywordtype">int</span> c = __builtin_clzll(val);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>   <span class="keywordflow">return</span> 8 * <span class="keyword">sizeof</span>(<span class="keywordtype">long</span> long) - 1 - c;</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>}</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="group__math.html#ga3189b25d1332d10fbc9d7e387941a3e4">   76</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#ga3189b25d1332d10fbc9d7e387941a3e4">ceilLog2</a>(<span class="keywordtype">int</span> val)</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>{</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>   <span class="keywordflow">return</span> <a class="code hl_function" href="group__math.html#ga2b91c034018978a77482edecc593988a">floorLog2</a>(val) + (val &amp; (val - 1) ? 1 : 0);</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>}</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="group__math.html#ga9044041672dbeab446b0bb9921b21cdd">   83</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#ga3189b25d1332d10fbc9d7e387941a3e4">ceilLog2</a>(<span class="keywordtype">long</span> <span class="keywordtype">long</span> val)</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>{</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>   <span class="keywordflow">return</span> <a class="code hl_function" href="group__math.html#ga2b91c034018978a77482edecc593988a">floorLog2</a>(val) + (val &amp; (val - 1) ? 1 : 0);</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>}</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>}</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>   <span class="keywordflow">if</span> (val == 0) <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>   <span class="keywordtype">int</span> c = __builtin_clz(val);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>   <span class="keywordflow">return</span> 8 * <span class="keyword">sizeof</span>(int) - 1 - c;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="group__math.html#ga677931f02506c842f0cf81ad5131dd0d">   65</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#ga2b91c034018978a77482edecc593988a">floorLog2</a>(<span class="keywordtype">long</span> <span class="keywordtype">long</span> val)</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>{</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>   <span class="keywordflow">if</span> (val == 0) <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>   <span class="keywordtype">int</span> c = __builtin_clzll(val);</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>   <span class="keywordflow">return</span> 8 * <span class="keyword">sizeof</span>(<span class="keywordtype">long</span> long) - 1 - c;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>}</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="group__math.html#ga3189b25d1332d10fbc9d7e387941a3e4">   74</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#ga3189b25d1332d10fbc9d7e387941a3e4">ceilLog2</a>(<span class="keywordtype">int</span> val)</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>{</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>   <span class="keywordflow">return</span> <a class="code hl_function" href="group__math.html#ga2b91c034018978a77482edecc593988a">floorLog2</a>(val) + (val &amp; (val - 1) ? 1 : 0);</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>}</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="group__math.html#ga9044041672dbeab446b0bb9921b21cdd">   81</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#ga3189b25d1332d10fbc9d7e387941a3e4">ceilLog2</a>(<span class="keywordtype">long</span> <span class="keywordtype">long</span> val)</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>{</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>   <span class="keywordflow">return</span> <a class="code hl_function" href="group__math.html#ga2b91c034018978a77482edecc593988a">floorLog2</a>(val) + (val &amp; (val - 1) ? 1 : 0);</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>}</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>}</div>
 <div class="ttc" id="agroup__math_html_ga03ac471f8be21599fd9f6253bb620916"><div class="ttname"><a href="group__math.html#ga03ac471f8be21599fd9f6253bb620916">tinker::pow2</a></div><div class="ttdeci">constexpr int pow2(int val)</div><div class="ttdoc">Integer base 2 power.</div><div class="ttdef"><b>Definition:</b> pow2.h:15</div></div>
 <div class="ttc" id="agroup__math_html_ga160cf5f90617e0da092c96ec2bcb52ef"><div class="ttname"><a href="group__math.html#ga160cf5f90617e0da092c96ec2bcb52ef">tinker::pow2ll</a></div><div class="ttdeci">constexpr long long pow2ll(int val)</div><div class="ttdoc">Long long integer base 2 power.</div><div class="ttdef"><b>Definition:</b> pow2.h:22</div></div>
 <div class="ttc" id="agroup__math_html_ga2b91c034018978a77482edecc593988a"><div class="ttname"><a href="group__math.html#ga2b91c034018978a77482edecc593988a">tinker::floorLog2</a></div><div class="ttdeci">int floorLog2(int val)</div><div class="ttdoc">Non-constexpr floorLog2(int).</div><div class="ttdef"><b>Definition:</b> pow2.h:56</div></div>
-<div class="ttc" id="agroup__math_html_ga3189b25d1332d10fbc9d7e387941a3e4"><div class="ttname"><a href="group__math.html#ga3189b25d1332d10fbc9d7e387941a3e4">tinker::ceilLog2</a></div><div class="ttdeci">int ceilLog2(int val)</div><div class="ttdoc">Non-constexpr log base 2 ceiling.</div><div class="ttdef"><b>Definition:</b> pow2.h:76</div></div>
+<div class="ttc" id="agroup__math_html_ga3189b25d1332d10fbc9d7e387941a3e4"><div class="ttname"><a href="group__math.html#ga3189b25d1332d10fbc9d7e387941a3e4">tinker::ceilLog2</a></div><div class="ttdeci">int ceilLog2(int val)</div><div class="ttdoc">Non-constexpr log base 2 ceiling.</div><div class="ttdef"><b>Definition:</b> pow2.h:74</div></div>
 <div class="ttc" id="agroup__math_html_ga6fe022bdc156e162e607251dfdf0294a"><div class="ttname"><a href="group__math.html#ga6fe022bdc156e162e607251dfdf0294a">tinker::pow2Le</a></div><div class="ttdeci">constexpr size_t pow2Le(size_t val)</div><div class="ttdoc">A power of 2 that is less than or equal to val.</div><div class="ttdef"><b>Definition:</b> pow2.h:39</div></div>
 <div class="ttc" id="agroup__math_html_ga751836f17711659c8228a63c46dbd7a1"><div class="ttname"><a href="group__math.html#ga751836f17711659c8228a63c46dbd7a1">tinker::pow2Ge</a></div><div class="ttdeci">constexpr size_t pow2Ge(size_t val)</div><div class="ttdoc">A power of 2 that is greater than or equal to val.</div><div class="ttdef"><b>Definition:</b> pow2.h:46</div></div>
 <div class="ttc" id="agroup__math_html_gac6c5890328f740f782426d7682f3acd3"><div class="ttname"><a href="group__math.html#gac6c5890328f740f782426d7682f3acd3">tinker::floorLog2_constexpr</a></div><div class="ttdeci">constexpr int floorLog2_constexpr(size_t val)</div><div class="ttdoc">The base-2 logarithm of val.</div><div class="ttdef"><b>Definition:</b> pow2.h:31</div></div>
 <div class="ttc" id="agroup__math_html_gad255347117881bfe041c4f6ddc4b049e"><div class="ttname"><a href="group__math.html#gad255347117881bfe041c4f6ddc4b049e">tinker::isPow2</a></div><div class="ttdeci">constexpr bool isPow2(size_t val)</div><div class="ttdoc">Return true if and only if val is a power of 2.</div><div class="ttdef"><b>Definition:</b> pow2.h:8</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:9</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

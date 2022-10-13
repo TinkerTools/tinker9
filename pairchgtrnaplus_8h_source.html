@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -86,23 +86,23 @@ $(function() {
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#pragma acc routine seq</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> DO_G&gt;</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><a class="code hl_define" href="group__acc__syntax.html#gafc832d528e178477cfa0577ff8782ac5">SEQ_CUDA</a></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="namespacetinker.html#a16c6d7aff62e48895bd7fa6543d9797b">   10</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetinker.html#a16c6d7aff62e48895bd7fa6543d9797b">pair_chgtrn_aplus</a>(<a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> cut, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> off, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> mscale, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> f, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphai, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgi,</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>   <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphak, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgk, <a class="code hl_typedef" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a>&amp; <a class="code hl_define" href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a> e, <a class="code hl_typedef" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a>&amp; <a class="code hl_define" href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a> de)</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>   f *= mscale;</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>   <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphaik = 0.5 * (alphai + alphak);</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>   <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgik = REAL_SQRT(chgi * chgk);</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>   e = -chgik * REAL_EXP(-alphaik * r);</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>   e *= f;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>   <span class="keywordflow">if</span> <a class="code hl_define" href="group__cpp__syntax.html#gacaa06fbc27c59926a41e7575667e5280">CONSTEXPR</a> (DO_G) {</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>      de = alphaik * chgik * REAL_EXP(-alphaik * r);</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>      de *= f;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>   }</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>   <span class="keywordflow">if</span> (r &gt; cut) {</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>      <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> taper, dtaper;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>      switchTaper5&lt;DO_G&gt;(r, cut, off, taper, dtaper);</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>      <span class="keywordflow">if</span> <a class="code hl_define" href="group__cpp__syntax.html#gacaa06fbc27c59926a41e7575667e5280">CONSTEXPR</a> (DO_G)</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>         de = e * dtaper + de * taper;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="namespacetinker.html#a16c6d7aff62e48895bd7fa6543d9797b">   10</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetinker.html#a16c6d7aff62e48895bd7fa6543d9797b">pair_chgtrn_aplus</a>(<a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> cut, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> off, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> mscale, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> f,</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>   <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphai, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgi, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphak, <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgk, <a class="code hl_typedef" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a>&amp; <a class="code hl_define" href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a> e,</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>   <a class="code hl_typedef" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a>&amp; <a class="code hl_define" href="group__cpp__syntax.html#ga080abdcb9c02438f1cd2bb707af25af8">restrict</a> de)</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>{</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>   f *= mscale;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>   <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphaik = 0.5 * (alphai + alphak);</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>   <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgik = REAL_SQRT(chgi * chgk);</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>   e = -chgik * REAL_EXP(-alphaik * r);</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>   e *= f;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>   <span class="keywordflow">if</span> <a class="code hl_define" href="group__cpp__syntax.html#gacaa06fbc27c59926a41e7575667e5280">CONSTEXPR</a> (DO_G) {</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>      de = alphaik * chgik * REAL_EXP(-alphaik * r);</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>      de *= f;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>   }</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>   <span class="keywordflow">if</span> (r &gt; cut) {</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>      <a class="code hl_typedef" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> taper, dtaper;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>      switchTaper5&lt;DO_G&gt;(r, cut, off, taper, dtaper);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>      <span class="keywordflow">if</span> <a class="code hl_define" href="group__cpp__syntax.html#gacaa06fbc27c59926a41e7575667e5280">CONSTEXPR</a> (DO_G) de = e * dtaper + de * taper;</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>      e *= taper;</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>   }</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>}</div>
@@ -112,7 +112,7 @@ $(function() {
 <div class="ttc" id="agroup__cpp__syntax_html_gacaa06fbc27c59926a41e7575667e5280"><div class="ttname"><a href="group__cpp__syntax.html#gacaa06fbc27c59926a41e7575667e5280">CONSTEXPR</a></div><div class="ttdeci">#define CONSTEXPR</div><div class="ttdef"><b>Definition:</b> macro.h:61</div></div>
 <div class="ttc" id="agroup__prec_html_ga705b733820a8480aac42d7dcb3bbd7e0"><div class="ttname"><a href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">tinker::real</a></div><div class="ttdeci">float real</div><div class="ttdef"><b>Definition:</b> precision.h:80</div></div>
 <div class="ttc" id="agroup__prec_html_gabc121daa698817106e68e6ea701ee8b2"><div class="ttname"><a href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">tinker::e_prec</a></div><div class="ttdeci">real e_prec</div><div class="ttdoc">Floating-point type for the pairwise energy components.</div><div class="ttdef"><b>Definition:</b> precision.h:94</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:9</div></div>
 <div class="ttc" id="anamespacetinker_html_a16c6d7aff62e48895bd7fa6543d9797b"><div class="ttname"><a href="namespacetinker.html#a16c6d7aff62e48895bd7fa6543d9797b">tinker::pair_chgtrn_aplus</a></div><div class="ttdeci">__device__ void pair_chgtrn_aplus(real r, real cut, real off, real mscale, real f, real alphai, real chgi, real alphak, real chgk, e_prec &amp;__restrict__ e, e_prec &amp;__restrict__ de)</div><div class="ttdef"><b>Definition:</b> pairchgtrnaplus.h:10</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

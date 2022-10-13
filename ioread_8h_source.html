@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -112,36 +112,35 @@ $(function() {
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>   <span class="keywordflow">return</span> <a class="code hl_function" href="group__io__read.html#gaa7c797f68ef199097a3290f94df8913f">ioReadString</a>(arg, src, Len);</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>}</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Arg, <span class="keyword">class</span> Inval<span class="keywordtype">id</span>&gt;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="group__io__read.html#gacb32de578c2063739b214682cb959b2f">   54</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__io__read.html#gacb32de578c2063739b214682cb959b2f">ioReadStream</a>(</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>   Arg&amp; arg, std::string prompt, Arg auto_fill, Invalid&amp;&amp; invalid, std::istream&amp; istream = std::cin)</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>{</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>   <span class="keywordtype">bool</span> is_cin = (&amp;istream == &amp;std::cin);</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>   <span class="keywordtype">int</span> input_fail = invalid(arg); <span class="comment">// True if arg is out of range.</span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>   std::string line;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>   <span class="keywordflow">while</span> (input_fail) {</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>      std::printf(<span class="stringliteral">&quot;%s&quot;</span>, prompt.c_str());</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>      std::fflush(stdout);</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>      <span class="keywordflow">if</span> (is_cin) {</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>         line = tinker_f_read_stdin_line();</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>         istream.clear(); <span class="comment">// Reset failbit.</span></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>         <span class="comment">// Expunge the remaining input and invisible &#39;\n&#39;,</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>         <span class="comment">// only if using operator&lt;&lt;;</span></div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>         <span class="comment">// unnecessary if std::getline(...) is used instead.</span></div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>         <span class="comment">// istream.ignore(std::numeric_limits&lt;std::streamsize&gt;::max(), &#39;\n&#39;);</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>         std::getline(istream, line);</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>      }</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>      <span class="keyword">auto</span> vs = <a class="code hl_function" href="group__io__text.html#aecea6100d340eb28fec30e2b60587996">Text::split</a>(line);</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>      <span class="keywordflow">if</span> (vs.size() == 0) {</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>         arg = auto_fill;</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>         input_fail = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>         <span class="comment">// True if failed to parse input.</span></div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>         input_fail = <a class="code hl_function" href="group__io__read.html#gaa7c797f68ef199097a3290f94df8913f">ioReadString</a>(arg, line.data(), line.size());</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>      }</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>      <span class="keywordflow">if</span> (!input_fail)</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>         input_fail = invalid(arg);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Arg, <span class="keyword">class</span> Inval<span class="keywordtype">id</span>&gt;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="group__io__read.html#gacb32de578c2063739b214682cb959b2f">   55</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__io__read.html#gacb32de578c2063739b214682cb959b2f">ioReadStream</a>(Arg&amp; arg, std::string prompt, Arg auto_fill,</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>   Invalid&amp;&amp; invalid, std::istream&amp; istream = std::cin)</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>{</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>   <span class="keywordtype">bool</span> is_cin = (&amp;istream == &amp;std::cin);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>   <span class="keywordtype">int</span> input_fail = invalid(arg); <span class="comment">// True if arg is out of range.</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>   std::string line;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>   <span class="keywordflow">while</span> (input_fail) {</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>      std::printf(<span class="stringliteral">&quot;%s&quot;</span>, prompt.c_str());</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>      std::fflush(stdout);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>      <span class="keywordflow">if</span> (is_cin) {</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>         line = tinker_f_read_stdin_line();</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>         istream.clear(); <span class="comment">// Reset failbit.</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>         <span class="comment">// Expunge the remaining input and invisible &#39;\n&#39;,</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>         <span class="comment">// only if using operator&lt;&lt;;</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>         <span class="comment">// unnecessary if std::getline(...) is used instead.</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>         <span class="comment">// istream.ignore(std::numeric_limits&lt;std::streamsize&gt;::max(), &#39;\n&#39;);</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>         std::getline(istream, line);</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>      }</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>      <span class="keyword">auto</span> vs = <a class="code hl_function" href="group__io__text.html#aecea6100d340eb28fec30e2b60587996">Text::split</a>(line);</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>      <span class="keywordflow">if</span> (vs.size() == 0) {</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>         arg = auto_fill;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>         input_fail = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>         <span class="comment">// True if failed to parse input.</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>         input_fail = <a class="code hl_function" href="group__io__read.html#gaa7c797f68ef199097a3290f94df8913f">ioReadString</a>(arg, line.data(), line.size());</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>      }</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>      <span class="keywordflow">if</span> (!input_fail) input_fail = invalid(arg);</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>   }</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>}</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
@@ -153,10 +152,10 @@ $(function() {
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>}</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>}</div>
 <div class="ttc" id="agroup__io__read_html_gaa7c797f68ef199097a3290f94df8913f"><div class="ttname"><a href="group__io__read.html#gaa7c797f68ef199097a3290f94df8913f">tinker::ioReadString</a></div><div class="ttdeci">int ioReadString(Arg &amp;arg, const char *str, size_t len)</div><div class="ttdoc">Reads ONE value from a string and save to arg. arg will not change until the reading successfully exi...</div><div class="ttdef"><b>Definition:</b> ioread.h:14</div></div>
-<div class="ttc" id="agroup__io__read_html_gacb32de578c2063739b214682cb959b2f"><div class="ttname"><a href="group__io__read.html#gacb32de578c2063739b214682cb959b2f">tinker::ioReadStream</a></div><div class="ttdeci">void ioReadStream(Arg &amp;arg, std::string prompt, Arg auto_fill, Invalid &amp;&amp;invalid, std::istream &amp;istream=std::cin)</div><div class="ttdoc">Tests the validity of arg. If invalid, read ONE value from an std::istream object....</div><div class="ttdef"><b>Definition:</b> ioread.h:54</div></div>
+<div class="ttc" id="agroup__io__read_html_gacb32de578c2063739b214682cb959b2f"><div class="ttname"><a href="group__io__read.html#gacb32de578c2063739b214682cb959b2f">tinker::ioReadStream</a></div><div class="ttdeci">void ioReadStream(Arg &amp;arg, std::string prompt, Arg auto_fill, Invalid &amp;&amp;invalid, std::istream &amp;istream=std::cin)</div><div class="ttdoc">Tests the validity of arg. If invalid, read ONE value from an std::istream object....</div><div class="ttdef"><b>Definition:</b> ioread.h:55</div></div>
 <div class="ttc" id="agroup__io__read_html_gaedafa57e49ea894ed29f9d385e703ccd"><div class="ttname"><a href="group__io__read.html#gaedafa57e49ea894ed29f9d385e703ccd">tinker::ioRewindStream</a></div><div class="ttdeci">void ioRewindStream(T &amp;stream)</div><div class="ttdoc">Rewind a stream object.</div><div class="ttdef"><b>Definition:</b> ioread.h:89</div></div>
 <div class="ttc" id="agroup__io__text_html_aecea6100d340eb28fec30e2b60587996"><div class="ttname"><a href="group__io__text.html#aecea6100d340eb28fec30e2b60587996">tinker::Text::split</a></div><div class="ttdeci">static std::vector&lt; std::string &gt; split(std::string str, std::string delimiters=whitespaces)</div><div class="ttdoc">Splits a string str by delimiters and returns a vector of strings.</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:9</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

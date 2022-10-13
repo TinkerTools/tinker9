@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -80,24 +80,31 @@ $(function() {
 Functions</h2></td></tr>
 <tr class="memitem:ga7357c38f749a48b7aa8eb1e598e928c3"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga7357c38f749a48b7aa8eb1e598e928c3"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math__parallel.html#ga7357c38f749a48b7aa8eb1e598e928c3">tinker::reduceSum</a> (const T *gpu_a, size_t nelem, int queue)</td></tr>
+<tr class="memdesc:ga7357c38f749a48b7aa8eb1e598e928c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum over all of the elements of an 1D array.  <a href="group__math__parallel.html#ga7357c38f749a48b7aa8eb1e598e928c3">More...</a><br /></td></tr>
 <tr class="separator:ga7357c38f749a48b7aa8eb1e598e928c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaafe5a51a1bea82bf6cbe5f9c65c8a93c"><td class="memTemplParams" colspan="2">template&lt;class HT , size_t HN, class DPTR &gt; </td></tr>
 <tr class="memitem:gaafe5a51a1bea82bf6cbe5f9c65c8a93c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math__parallel.html#gaafe5a51a1bea82bf6cbe5f9c65c8a93c">tinker::reduceSum2</a> (HT(&amp;h_ans)[HN], DPTR v, size_t nelem, int queue)</td></tr>
+<tr class="memdesc:gaafe5a51a1bea82bf6cbe5f9c65c8a93c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum over all of the elements of a 2D array.  <a href="group__math__parallel.html#gaafe5a51a1bea82bf6cbe5f9c65c8a93c">More...</a><br /></td></tr>
 <tr class="separator:gaafe5a51a1bea82bf6cbe5f9c65c8a93c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3f3d145d038e9aa2899417e4d3b8098e"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga3f3d145d038e9aa2899417e4d3b8098e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math__parallel.html#ga3f3d145d038e9aa2899417e4d3b8098e">tinker::reduceSumOnDevice</a> (T *dp_ans, const T *a, size_t nelem, int queue)</td></tr>
+<tr class="memdesc:ga3f3d145d038e9aa2899417e4d3b8098e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum over all of the elements of an 1D array. This routine will save the result on the device memory in an asynchronous/non-blocking manner. A valid device pointer is required for the result on the device.  <a href="group__math__parallel.html#ga3f3d145d038e9aa2899417e4d3b8098e">More...</a><br /></td></tr>
 <tr class="separator:ga3f3d145d038e9aa2899417e4d3b8098e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaeb4d5e2c07e7bebf5c395223ce14307f"><td class="memTemplParams" colspan="2">template&lt;class HT , size_t HN, class DPTR &gt; </td></tr>
 <tr class="memitem:gaeb4d5e2c07e7bebf5c395223ce14307f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math__parallel.html#gaeb4d5e2c07e7bebf5c395223ce14307f">tinker::reduceSum2OnDevice</a> (HT(&amp;dref)[HN], DPTR v, size_t nelem, int queue)</td></tr>
+<tr class="memdesc:gaeb4d5e2c07e7bebf5c395223ce14307f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum over all of the elements of a 2D array. This routine will save the result on the device memory in an asynchronous/non-blocking manner. A valid device array is required for the result on device.  <a href="group__math__parallel.html#gaeb4d5e2c07e7bebf5c395223ce14307f">More...</a><br /></td></tr>
 <tr class="separator:gaeb4d5e2c07e7bebf5c395223ce14307f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga54afd18b2fbb4e1d9bfda67d5ce2479e"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga54afd18b2fbb4e1d9bfda67d5ce2479e"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math__parallel.html#ga54afd18b2fbb4e1d9bfda67d5ce2479e">tinker::dotProd</a> (const T *a, const T *b, size_t nelem, int queue)</td></tr>
+<tr class="memdesc:ga54afd18b2fbb4e1d9bfda67d5ce2479e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dot product of two linear arrays.  <a href="group__math__parallel.html#ga54afd18b2fbb4e1d9bfda67d5ce2479e">More...</a><br /></td></tr>
 <tr class="separator:ga54afd18b2fbb4e1d9bfda67d5ce2479e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3ce9fbd65152751ee4d109e0f066c4ce"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga3ce9fbd65152751ee4d109e0f066c4ce"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math__parallel.html#ga3ce9fbd65152751ee4d109e0f066c4ce">tinker::dotProd</a> (T *ans, const T *a, const T *b, size_t nelem, int queue)</td></tr>
+<tr class="memdesc:ga3ce9fbd65152751ee4d109e0f066c4ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dot product of two linear arrays.  <a href="group__math__parallel.html#ga3ce9fbd65152751ee4d109e0f066c4ce">More...</a><br /></td></tr>
 <tr class="separator:ga3ce9fbd65152751ee4d109e0f066c4ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf18ef8677bf6fb3cdb5b0f4b108d1997"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:gaf18ef8677bf6fb3cdb5b0f4b108d1997"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__math__parallel.html#gaf18ef8677bf6fb3cdb5b0f4b108d1997">tinker::scaleArray</a> (T *dst, T scal, size_t nelem, int queue)</td></tr>
+<tr class="memdesc:gaf18ef8677bf6fb3cdb5b0f4b108d1997"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply all of the elements in an 1D array by a scalar.  <a href="group__math__parallel.html#gaf18ef8677bf6fb3cdb5b0f4b108d1997">More...</a><br /></td></tr>
 <tr class="separator:gaf18ef8677bf6fb3cdb5b0f4b108d1997"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -349,7 +356,7 @@ template&lt;class HT , size_t HN, class DPTR &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">dref</td><td>Reference to the device array that stores the reduction result. </td></tr>
+    <tr><td class="paramname">dref</td><td>Reference to the device array that stores the reduced result. </td></tr>
     <tr><td class="paramname">v</td><td>Device pointer to the 2D array. </td></tr>
     <tr><td class="paramname">nelem</td><td>Number of elements. </td></tr>
     <tr><td class="paramname">queue</td><td>OpenACC queue. </td></tr>

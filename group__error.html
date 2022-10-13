@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -81,28 +81,40 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:classtinker_1_1_fatal_error"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#classtinker_1_1_fatal_error">tinker::FatalError</a></td></tr>
+<tr class="memdesc:classtinker_1_1_fatal_error"><td class="mdescLeft">&#160;</td><td class="mdescRight">Errors and exceptions that we do not intend to fix or handle.  <a href="group__error.html#classtinker_1_1_fatal_error">More...</a><br /></td></tr>
 <tr class="separator:classtinker_1_1_fatal_error"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:ga2a9d1dd86bccacbead4b7dfd2817293b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#ga2a9d1dd86bccacbead4b7dfd2817293b">TINKER_THROW</a>(msg)</td></tr>
+<tr class="memdesc:ga2a9d1dd86bccacbead4b7dfd2817293b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Throws a fatal error message as a <a class="el" href="group__error.html#classtinker_1_1_fatal_error" title="Errors and exceptions that we do not intend to fix or handle.">tinker::FatalError</a> exception.  <a href="group__error.html#ga2a9d1dd86bccacbead4b7dfd2817293b">More...</a><br /></td></tr>
 <tr class="separator:ga2a9d1dd86bccacbead4b7dfd2817293b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga057ec7e176ab25913c41f666134d65a0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#ga057ec7e176ab25913c41f666134d65a0">TINKER_ALWAYS_CHECK_RT_1_</a>(call)</td></tr>
+<tr class="separator:ga057ec7e176ab25913c41f666134d65a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5a652a8cf23c4ff5f0d2da1e32367fa4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#ga5a652a8cf23c4ff5f0d2da1e32367fa4">TINKER_ALWAYS_CHECK_RT_</a>(...)&#160;&#160;&#160;TINKER_GET_2ND_ARG(__VA_ARGS__, <a class="el" href="group__error.html#ga057ec7e176ab25913c41f666134d65a0">TINKER_ALWAYS_CHECK_RT_1_</a>)</td></tr>
+<tr class="separator:ga5a652a8cf23c4ff5f0d2da1e32367fa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga98f5b3e7706bc219b7802e49f8788020"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#ga98f5b3e7706bc219b7802e49f8788020">TINKER_ALWAYS_CHECK_RT</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga98f5b3e7706bc219b7802e49f8788020"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defined to <code>true</code> in the source code to enable <code>check_rt</code> for the release build.  <a href="group__error.html#ga98f5b3e7706bc219b7802e49f8788020">More...</a><br /></td></tr>
 <tr class="separator:ga98f5b3e7706bc219b7802e49f8788020"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae9067b773483af15c64735444cee9731"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#gae9067b773483af15c64735444cee9731">check_rt</a>(call, ...)&#160;&#160;&#160;call</td></tr>
+<tr class="memdesc:gae9067b773483af15c64735444cee9731"><td class="mdescLeft">&#160;</td><td class="mdescRight">It normally does not do extra work other than the function call it captures, unless if either <code>TINKER_DEBUG</code> or <code>TINKER_ALWAYS_CHECK_RT</code> is <code>true</code>. This macro will then check the error code returned by the function call.  <a href="group__error.html#gae9067b773483af15c64735444cee9731">More...</a><br /></td></tr>
 <tr class="separator:gae9067b773483af15c64735444cee9731"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadf3c0728e3a03841112bf370542e5ff8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#gadf3c0728e3a03841112bf370542e5ff8">always_check_rt</a>(...)&#160;&#160;&#160;TINKER_ALWAYS_CHECK_RT_(__VA_ARGS__)(__VA_ARGS__)</td></tr>
+<tr class="memitem:gadf3c0728e3a03841112bf370542e5ff8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#gadf3c0728e3a03841112bf370542e5ff8">always_check_rt</a>(...)&#160;&#160;&#160;<a class="el" href="group__error.html#ga5a652a8cf23c4ff5f0d2da1e32367fa4">TINKER_ALWAYS_CHECK_RT_</a>(__VA_ARGS__)(__VA_ARGS__)</td></tr>
+<tr class="memdesc:gadf3c0728e3a03841112bf370542e5ff8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Always checks the returned error code.  <a href="group__error.html#gadf3c0728e3a03841112bf370542e5ff8">More...</a><br /></td></tr>
 <tr class="separator:gadf3c0728e3a03841112bf370542e5ff8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga23f0fd854e61f70f268f6f2c33df51b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#ga23f0fd854e61f70f268f6f2c33df51b3">tinker::printError</a> ()</td></tr>
-<tr class="separator:ga23f0fd854e61f70f268f6f2c33df51b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaec83ee21fbe2450fe6ae779dad5ee0aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#gaec83ee21fbe2450fe6ae779dad5ee0aa">tinker::printBacktrace</a> (std::FILE *out=stderr)</td></tr>
-<tr class="separator:gaec83ee21fbe2450fe6ae779dad5ee0aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga76b30c4845818015802d4dcbf6f938e4"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga76b30c4845818015802d4dcbf6f938e4"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__error.html#ga76b30c4845818015802d4dcbf6f938e4">tinker::translateErrorCode</a> (T errcode)</td></tr>
+<tr class="memdesc:ga76b30c4845818015802d4dcbf6f938e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Translates the error code to text.  <a href="group__error.html#ga76b30c4845818015802d4dcbf6f938e4">More...</a><br /></td></tr>
 <tr class="separator:ga76b30c4845818015802d4dcbf6f938e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga23f0fd854e61f70f268f6f2c33df51b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#ga23f0fd854e61f70f268f6f2c33df51b3">tinker::printError</a> ()</td></tr>
+<tr class="memdesc:ga23f0fd854e61f70f268f6f2c33df51b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the current coordinates to a disk file prior to aborting on a serious error.  <a href="group__error.html#ga23f0fd854e61f70f268f6f2c33df51b3">More...</a><br /></td></tr>
+<tr class="separator:ga23f0fd854e61f70f268f6f2c33df51b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaec83ee21fbe2450fe6ae779dad5ee0aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__error.html#gaec83ee21fbe2450fe6ae779dad5ee0aa">tinker::printBacktrace</a> (std::FILE *out=stderr)</td></tr>
+<tr class="memdesc:gaec83ee21fbe2450fe6ae779dad5ee0aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the call stack to a <code>FILE</code> pointer.  <a href="group__error.html#gaec83ee21fbe2450fe6ae779dad5ee0aa">More...</a><br /></td></tr>
+<tr class="separator:gaec83ee21fbe2450fe6ae779dad5ee0aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <hr/><h2 class="groupheader">Class Documentation</h2>
@@ -249,12 +261,12 @@ Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>...</em></td><td>)</td>
-          <td>&#160;&#160;&#160;TINKER_ALWAYS_CHECK_RT_(__VA_ARGS__)(__VA_ARGS__)</td>
+          <td>&#160;&#160;&#160;<a class="el" href="group__error.html#ga5a652a8cf23c4ff5f0d2da1e32367fa4">TINKER_ALWAYS_CHECK_RT_</a>(__VA_ARGS__)(__VA_ARGS__)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Always checks returned error code. </p>
+<p>Always checks the returned error code. </p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group__error.html#gae9067b773483af15c64735444cee9731" title="It normally does not do extra work other than the function call it captures, unless if either TINKER_...">check_rt</a> </dd></dl>
 
 </div>
@@ -285,7 +297,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>It normally does not do extra work other than the function call it captures, unless if either <code>TINKER_DEBUG</code> or <code>TINKER_ALWAYS_CHECK_RT</code> is <code>true</code> and this macro will then check the error code returned by the function call. </p>
+<p>It normally does not do extra work other than the function call it captures, unless if either <code>TINKER_DEBUG</code> or <code>TINKER_ALWAYS_CHECK_RT</code> is <code>true</code>. This macro will then check the error code returned by the function call. </p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group__cpp__syntax.html#gab277f66f5db1b884e4d8b3bf7a54ac69">TINKER_DEBUG</a> </dd>
 <dd>
 <a class="el" href="group__error.html#ga98f5b3e7706bc219b7802e49f8788020" title="Defined to true in the source code to enable check_rt for the release build.">TINKER_ALWAYS_CHECK_RT</a> </dd></dl>
@@ -309,6 +321,57 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ga5a652a8cf23c4ff5f0d2da1e32367fa4" name="ga5a652a8cf23c4ff5f0d2da1e32367fa4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5a652a8cf23c4ff5f0d2da1e32367fa4">&#9670;&nbsp;</a></span>TINKER_ALWAYS_CHECK_RT_</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TINKER_ALWAYS_CHECK_RT_</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em></td><td>)</td>
+          <td>&#160;&#160;&#160;TINKER_GET_2ND_ARG(__VA_ARGS__, <a class="el" href="group__error.html#ga057ec7e176ab25913c41f666134d65a0">TINKER_ALWAYS_CHECK_RT_1_</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ga057ec7e176ab25913c41f666134d65a0" name="ga057ec7e176ab25913c41f666134d65a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga057ec7e176ab25913c41f666134d65a0">&#9670;&nbsp;</a></span>TINKER_ALWAYS_CHECK_RT_1_</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TINKER_ALWAYS_CHECK_RT_1_</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">call</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">   <span class="keywordflow">do</span> {                                                                            \</div>
+<div class="line">      auto res_ = call;                                                            \</div>
+<div class="line">      if (res_ != 0) {                                                             \</div>
+<div class="line">         printBacktrace();                                                         \</div>
+<div class="line">         std::string m_;                                                           \</div>
+<div class="line">         std::string msg_ = <a class="code hl_function" href="group__error.html#ga76b30c4845818015802d4dcbf6f938e4">translateErrorCode</a>(res_);                              \</div>
+<div class="line">         if (msg_ != <span class="stringliteral">&quot;&quot;</span>)                                                           \</div>
+<div class="line">            m_ = <a class="code hl_function" href="group__io__print.html#ga64d3dfb94a7557600a5763cb832e5625">format</a>(<span class="stringliteral">&quot;Errno %d (%s) at %s:%d&quot;</span>, res_, msg_, __FILE__, __LINE__); \</div>
+<div class="line">         else                                                                      \</div>
+<div class="line">            m_ = <a class="code hl_function" href="group__io__print.html#ga64d3dfb94a7557600a5763cb832e5625">format</a>(<span class="stringliteral">&quot;Errno %d at %s:%d&quot;</span>, res_, __FILE__, __LINE__);            \</div>
+<div class="line">         throw FatalError(m_);                                                     \</div>
+<div class="line">      }                                                                            \</div>
+<div class="line">   } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="agroup__error_html_ga76b30c4845818015802d4dcbf6f938e4"><div class="ttname"><a href="group__error.html#ga76b30c4845818015802d4dcbf6f938e4">tinker::translateErrorCode</a></div><div class="ttdeci">std::string translateErrorCode(T errcode)</div><div class="ttdoc">Translates the error code to text.</div></div>
+<div class="ttc" id="agroup__io__print_html_ga64d3dfb94a7557600a5763cb832e5625"><div class="ttname"><a href="group__io__print.html#ga64d3dfb94a7557600a5763cb832e5625">tinker::format</a></div><div class="ttdeci">std::string format(const F &amp;f, Ts &amp;&amp;... args)</div><div class="ttdoc">Writes the formatted output to an std::string object.</div><div class="ttdef"><b>Definition:</b> ioprint.h:46</div></div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="ga2a9d1dd86bccacbead4b7dfd2817293b" name="ga2a9d1dd86bccacbead4b7dfd2817293b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga2a9d1dd86bccacbead4b7dfd2817293b">&#9670;&nbsp;</a></span>TINKER_THROW</h2>
 
@@ -324,15 +387,14 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">   <span class="keywordflow">do</span> {                                                                                            \</div>
-<div class="line">      printBacktrace();                                                                            \</div>
-<div class="line">      std::string ms_ = msg;                                                                       \</div>
-<div class="line">      std::string m_ = <a class="code hl_function" href="group__io__print.html#ga64d3dfb94a7557600a5763cb832e5625">format</a>(<span class="stringliteral">&quot;%s at %s:%d&quot;</span>, ms_, __FILE__, __LINE__);                             \</div>
-<div class="line">      throw FatalError(m_);                                                                        \</div>
+<b>Value:</b><div class="fragment"><div class="line">   <span class="keywordflow">do</span> {                                                                \</div>
+<div class="line">      printBacktrace();                                                \</div>
+<div class="line">      std::string ms_ = msg;                                           \</div>
+<div class="line">      std::string m_ = <a class="code hl_function" href="group__io__print.html#ga64d3dfb94a7557600a5763cb832e5625">format</a>(<span class="stringliteral">&quot;%s at %s:%d&quot;</span>, ms_, __FILE__, __LINE__); \</div>
+<div class="line">      throw FatalError(m_);                                            \</div>
 <div class="line">   } <span class="keywordflow">while</span> (0)</div>
-<div class="ttc" id="agroup__io__print_html_ga64d3dfb94a7557600a5763cb832e5625"><div class="ttname"><a href="group__io__print.html#ga64d3dfb94a7557600a5763cb832e5625">tinker::format</a></div><div class="ttdeci">std::string format(const F &amp;f, Ts &amp;&amp;... args)</div><div class="ttdoc">Writes the formatted output to an std::string object.</div><div class="ttdef"><b>Definition:</b> ioprint.h:46</div></div>
 </div><!-- fragment -->
-<p>Throws a fatal error message as a <code>FatalError</code> exception. </p>
+<p>Throws a fatal error message as a <a class="el" href="group__error.html#classtinker_1_1_fatal_error" title="Errors and exceptions that we do not intend to fix or handle.">tinker::FatalError</a> exception. </p>
 
 </div>
 </div>

@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -79,6 +79,9 @@ $(function() {
   <div class="headertitle"><div class="title">Force Fields</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Shared modules across force fields calculation.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -87,8 +90,10 @@ Classes</h2></td></tr>
 <tr class="memitem:structtinker_1_1v1_1_1_buffer_traits_3_01float_00_01_nincr_01_4"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#structtinker_1_1v1_1_1_buffer_traits_3_01float_00_01_nincr_01_4">tinker::v1::BufferTraits&lt; float, Nincr &gt;</a></td></tr>
 <tr class="separator:structtinker_1_1v1_1_1_buffer_traits_3_01float_00_01_nincr_01_4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:structtinker_1_1_molecule"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#structtinker_1_1_molecule">tinker::Molecule</a></td></tr>
+<tr class="memdesc:structtinker_1_1_molecule"><td class="mdescLeft">&#160;</td><td class="mdescRight">Individual molecules in current system.  <a href="group__ff.html#structtinker_1_1_molecule">More...</a><br /></td></tr>
 <tr class="separator:structtinker_1_1_molecule"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:structtinker_1_1_group"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#structtinker_1_1_group">tinker::Group</a></td></tr>
+<tr class="memdesc:structtinker_1_1_group"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partitioning of system into atom groups.  <a href="group__ff.html#structtinker_1_1_group">More...</a><br /></td></tr>
 <tr class="separator:structtinker_1_1_group"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -208,6 +213,7 @@ Functions</h2></td></tr>
 <tr class="memitem:gae2dfea03e83981c4d80a89969635a9ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#gae2dfea03e83981c4d80a89969635a9ed">tinker::virialReduce</a> (<a class="el" href="group__prec.html#ga2272914c98224d4730e398aacfa17190">virial_prec</a>(&amp;)[9], const <a class="el" href="group__ff.html#gaaabc63e12650d0a0832198a8766a8735">VirialBuffer</a> b)</td></tr>
 <tr class="separator:gae2dfea03e83981c4d80a89969635a9ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga25b9e472ad8d55e9c2fa3e0b92e17447"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga25b9e472ad8d55e9c2fa3e0b92e17447">tinker::virialReshape</a> (<a class="el" href="group__prec.html#ga2272914c98224d4730e398aacfa17190">virial_prec</a>(&amp;output)[9], const <a class="el" href="group__prec.html#ga2272914c98224d4730e398aacfa17190">virial_prec</a>(&amp;input)[VirialBufferTraits::N])</td></tr>
+<tr class="memdesc:ga25b9e472ad8d55e9c2fa3e0b92e17447"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transforms the shape of a virial variable.  <a href="group__ff.html#ga25b9e472ad8d55e9c2fa3e0b92e17447">More...</a><br /></td></tr>
 <tr class="separator:ga25b9e472ad8d55e9c2fa3e0b92e17447"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga56558b308325a593fc882966a48a76ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga56558b308325a593fc882966a48a76ef">tinker::coupleData</a> (<a class="el" href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">RcOp</a>)</td></tr>
 <tr class="separator:ga56558b308325a593fc882966a48a76ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -229,20 +235,28 @@ Variables</h2></td></tr>
 <tr class="memitem:ga7d7142b498beb7a0479f2e4be29ff3ec"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga7d7142b498beb7a0479f2e4be29ff3ec">tinker::padded_n</a></td></tr>
 <tr class="separator:ga7d7142b498beb7a0479f2e4be29ff3ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad2e089162a2f11d8850f715592d9acdb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">tinker::n</a></td></tr>
+<tr class="memdesc:gad2e089162a2f11d8850f715592d9acdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of atoms padded by <a class="el" href="group__nvidia.html#ga7ee59091eab316e45b0c9dc6d382f3d0">WARP_SIZE</a>.  <a href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">More...</a><br /></td></tr>
 <tr class="separator:gad2e089162a2f11d8850f715592d9acdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4f2cb3890b52facdaa42d8632e8e4418"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga4f2cb3890b52facdaa42d8632e8e4418">tinker::trajn</a></td></tr>
+<tr class="memdesc:ga4f2cb3890b52facdaa42d8632e8e4418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of atoms.  <a href="group__ff.html#ga4f2cb3890b52facdaa42d8632e8e4418">More...</a><br /></td></tr>
 <tr class="separator:ga4f2cb3890b52facdaa42d8632e8e4418"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7df8577dd8de8254608b1ceea1f1d448"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga7df8577dd8de8254608b1ceea1f1d448">tinker::x</a></td></tr>
+<tr class="memdesc:ga7df8577dd8de8254608b1ceea1f1d448"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of the trajectory frames.  <a href="group__ff.html#ga7df8577dd8de8254608b1ceea1f1d448">More...</a><br /></td></tr>
 <tr class="separator:ga7df8577dd8de8254608b1ceea1f1d448"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaddf083c6f8494a63f71d1acaeb098b53"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#gaddf083c6f8494a63f71d1acaeb098b53">tinker::y</a></td></tr>
+<tr class="memdesc:gaddf083c6f8494a63f71d1acaeb098b53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current coordinates used in energy evaluation and neighbor lists.  <a href="group__ff.html#gaddf083c6f8494a63f71d1acaeb098b53">More...</a><br /></td></tr>
 <tr class="separator:gaddf083c6f8494a63f71d1acaeb098b53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga768a4f359aca14e9caddd68f23a7a5e3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga768a4f359aca14e9caddd68f23a7a5e3">tinker::z</a></td></tr>
+<tr class="memdesc:ga768a4f359aca14e9caddd68f23a7a5e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current coordinates used in energy evaluation and neighbor lists.  <a href="group__ff.html#ga768a4f359aca14e9caddd68f23a7a5e3">More...</a><br /></td></tr>
 <tr class="separator:ga768a4f359aca14e9caddd68f23a7a5e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga847d10049c31925baf55f681ae8a7b0e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga847d10049c31925baf55f681ae8a7b0e">tinker::trajx</a></td></tr>
+<tr class="memdesc:ga847d10049c31925baf55f681ae8a7b0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coordinates of all the trajectory frames.  <a href="group__ff.html#ga847d10049c31925baf55f681ae8a7b0e">More...</a><br /></td></tr>
 <tr class="separator:ga847d10049c31925baf55f681ae8a7b0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae3933de813d5783700f7df0ca90c5128"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#gae3933de813d5783700f7df0ca90c5128">tinker::trajy</a></td></tr>
+<tr class="memdesc:gae3933de813d5783700f7df0ca90c5128"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coordinates of all the trajectory frames.  <a href="group__ff.html#gae3933de813d5783700f7df0ca90c5128">More...</a><br /></td></tr>
 <tr class="separator:gae3933de813d5783700f7df0ca90c5128"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0c19ba63e3d46d5002a103c9bcbdb434"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga0c19ba63e3d46d5002a103c9bcbdb434">tinker::trajz</a></td></tr>
+<tr class="memdesc:ga0c19ba63e3d46d5002a103c9bcbdb434"><td class="mdescLeft">&#160;</td><td class="mdescRight">Coordinates of all the trajectory frames.  <a href="group__ff.html#ga0c19ba63e3d46d5002a103c9bcbdb434">More...</a><br /></td></tr>
 <tr class="separator:ga0c19ba63e3d46d5002a103c9bcbdb434"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaee44ee8547dcf860293f9ce05b38cc1f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga4183083f26700ce2750055bb20a648a8">pos_prec</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#gaee44ee8547dcf860293f9ce05b38cc1f">tinker::xpos</a></td></tr>
 <tr class="separator:gaee44ee8547dcf860293f9ce05b38cc1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -251,8 +265,10 @@ Variables</h2></td></tr>
 <tr class="memitem:ga9c3d5f0a05d3c85be18d445a1d16a00f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga4183083f26700ce2750055bb20a648a8">pos_prec</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga9c3d5f0a05d3c85be18d445a1d16a00f">tinker::zpos</a></td></tr>
 <tr class="separator:ga9c3d5f0a05d3c85be18d445a1d16a00f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2c2267d75b6ab20285f202289860f6b4"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga2c2267d75b6ab20285f202289860f6b4">tinker::mass</a></td></tr>
+<tr class="memdesc:ga2c2267d75b6ab20285f202289860f6b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomic mass.  <a href="group__ff.html#ga2c2267d75b6ab20285f202289860f6b4">More...</a><br /></td></tr>
 <tr class="separator:ga2c2267d75b6ab20285f202289860f6b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae70f2895c8d41653e76abf299c5ebbae"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#gae70f2895c8d41653e76abf299c5ebbae">tinker::massinv</a></td></tr>
+<tr class="memdesc:gae70f2895c8d41653e76abf299c5ebbae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inversed atomic mass.  <a href="group__ff.html#gae70f2895c8d41653e76abf299c5ebbae">More...</a><br /></td></tr>
 <tr class="separator:gae70f2895c8d41653e76abf299c5ebbae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac41bb671068bfb32b5f24d19737f1b33"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#gac41bb671068bfb32b5f24d19737f1b33">tinker::electric</a></td></tr>
 <tr class="separator:gac41bb671068bfb32b5f24d19737f1b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -499,16 +515,22 @@ template&lt;size_t Nincr&gt; </div>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
 <tr class="memitem:a6cea1e753fa0fa5dfa065858670c1778"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#a6cea1e753fa0fa5dfa065858670c1778">nmol</a></td></tr>
+<tr class="memdesc:a6cea1e753fa0fa5dfa065858670c1778"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of separate molecules in the system.  <a href="group__ff.html#a6cea1e753fa0fa5dfa065858670c1778">More...</a><br /></td></tr>
 <tr class="separator:a6cea1e753fa0fa5dfa065858670c1778"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5ccec526985adccf6638cf59afe42c1"><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#aa5ccec526985adccf6638cf59afe42c1">imol</a> )[2]</td></tr>
+<tr class="memdesc:aa5ccec526985adccf6638cf59afe42c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">First and last atom of each molecule in the list.  <a href="group__ff.html#aa5ccec526985adccf6638cf59afe42c1">More...</a><br /></td></tr>
 <tr class="separator:aa5ccec526985adccf6638cf59afe42c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2f09707e7453da38cde9cf4ccc719ed"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#af2f09707e7453da38cde9cf4ccc719ed">kmol</a></td></tr>
+<tr class="memdesc:af2f09707e7453da38cde9cf4ccc719ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contiguous list of the atoms in each molecule.  <a href="group__ff.html#af2f09707e7453da38cde9cf4ccc719ed">More...</a><br /></td></tr>
 <tr class="separator:af2f09707e7453da38cde9cf4ccc719ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53d606cf5fd39fe168bb54d73b2c134f"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#a53d606cf5fd39fe168bb54d73b2c134f">molecule</a></td></tr>
+<tr class="memdesc:a53d606cf5fd39fe168bb54d73b2c134f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of the molecule to which each atom belongs.  <a href="group__ff.html#a53d606cf5fd39fe168bb54d73b2c134f">More...</a><br /></td></tr>
 <tr class="separator:a53d606cf5fd39fe168bb54d73b2c134f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a461cbdb7c19cf33518c3206fd53c3221"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#a461cbdb7c19cf33518c3206fd53c3221">totmass</a></td></tr>
+<tr class="memdesc:a461cbdb7c19cf33518c3206fd53c3221"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total weight of all the molecules in the system.  <a href="group__ff.html#a461cbdb7c19cf33518c3206fd53c3221">More...</a><br /></td></tr>
 <tr class="separator:a461cbdb7c19cf33518c3206fd53c3221"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00e2d1a899ad8de245ca06a2571251d2"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#a00e2d1a899ad8de245ca06a2571251d2">molmass</a></td></tr>
+<tr class="memdesc:a00e2d1a899ad8de245ca06a2571251d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Molecular weight for each molecule in the system.  <a href="group__ff.html#a00e2d1a899ad8de245ca06a2571251d2">More...</a><br /></td></tr>
 <tr class="separator:a00e2d1a899ad8de245ca06a2571251d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h4 class="groupheader">Member Data Documentation</h4>
@@ -626,16 +648,22 @@ template&lt;size_t Nincr&gt; </div>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
 <tr class="memitem:aefe6479731ca4fa499feb7493c806a41"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#aefe6479731ca4fa499feb7493c806a41">ngrp</a></td></tr>
+<tr class="memdesc:aefe6479731ca4fa499feb7493c806a41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total number of atom groups in the system.  <a href="group__ff.html#aefe6479731ca4fa499feb7493c806a41">More...</a><br /></td></tr>
 <tr class="separator:aefe6479731ca4fa499feb7493c806a41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c0ae593eb270329d918b85cc2cfb3c4"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#a6c0ae593eb270329d918b85cc2cfb3c4">kgrp</a></td></tr>
+<tr class="memdesc:a6c0ae593eb270329d918b85cc2cfb3c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contiguous list of the atoms in each group.  <a href="group__ff.html#a6c0ae593eb270329d918b85cc2cfb3c4">More...</a><br /></td></tr>
 <tr class="separator:a6c0ae593eb270329d918b85cc2cfb3c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad724111a977e63e3e621482ddd3919b6"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ad724111a977e63e3e621482ddd3919b6">grplist</a></td></tr>
+<tr class="memdesc:ad724111a977e63e3e621482ddd3919b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of the group to which each atom belongs.  <a href="group__ff.html#ad724111a977e63e3e621482ddd3919b6">More...</a><br /></td></tr>
 <tr class="separator:ad724111a977e63e3e621482ddd3919b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab77c15daf26121aa6684bf214214d393"><td class="memItemLeft" align="right" valign="top">int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ab77c15daf26121aa6684bf214214d393">igrp</a> )[2]</td></tr>
+<tr class="memdesc:ab77c15daf26121aa6684bf214214d393"><td class="mdescLeft">&#160;</td><td class="mdescRight">First and last atom of each group in the list.  <a href="group__ff.html#ab77c15daf26121aa6684bf214214d393">More...</a><br /></td></tr>
 <tr class="separator:ab77c15daf26121aa6684bf214214d393"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a910fb97532d8b8f6fa79b1b460a36331"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#a910fb97532d8b8f6fa79b1b460a36331">grpmass</a></td></tr>
+<tr class="memdesc:a910fb97532d8b8f6fa79b1b460a36331"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total mass of all the atoms in each group.  <a href="group__ff.html#a910fb97532d8b8f6fa79b1b460a36331">More...</a><br /></td></tr>
 <tr class="separator:a910fb97532d8b8f6fa79b1b460a36331"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3626cf5ad81206ce5ef980e225b6a477"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#a3626cf5ad81206ce5ef980e225b6a477">wgrp</a></td></tr>
+<tr class="memdesc:a3626cf5ad81206ce5ef980e225b6a477"><td class="mdescLeft">&#160;</td><td class="mdescRight">Weight for each set of group-group interactions.  <a href="group__ff.html#a3626cf5ad81206ce5ef980e225b6a477">More...</a><br /></td></tr>
 <tr class="separator:a3626cf5ad81206ce5ef980e225b6a477"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h4 class="groupheader">Member Data Documentation</h4>
@@ -1794,7 +1822,7 @@ template&lt;size_t Nincr&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Number of atoms padded by <a class="el" href="group__nvidia.html#ga7ee59091eab316e45b0c9dc6d382f3d0" title="Number of threads in a warp.">WARP_SIZE</a>. </p>
+<p>Number of atoms padded by <a class="el" href="group__nvidia.html#ga7ee59091eab316e45b0c9dc6d382f3d0">WARP_SIZE</a>. </p>
 
 </div>
 </div>

@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -80,44 +80,44 @@ $(function() {
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetinker.html">tinker</a> {</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>__device__</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="group__math.html#ga3813648698b545ee7abeba6a22e9d509">   15</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#ga3813648698b545ee7abeba6a22e9d509">ffsnShift</a>(<span class="keywordtype">int</span> c1, <span class="keywordtype">int</span> <a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>)</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>{</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>   <span class="keywordtype">int</span> c2 = c1 - ((c1 &gt;&gt; 1) &amp; 0x55555555);</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>   <span class="keywordtype">int</span> c4 = ((c2 &gt;&gt; 2) &amp; 0x33333333) + (c2 &amp; 0x33333333);</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>   <span class="keywordtype">int</span> c8 = ((c4 &gt;&gt; 4) + c4) &amp; 0x0f0f0f0f;</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>   <span class="keywordtype">int</span> c16 = ((c8 &gt;&gt; 8) + c8);</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>   <span class="comment">// int c32 = ((c16 &gt;&gt; 16) + c16) &amp; 0x3f; // __popc</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>   <span class="keywordtype">int</span> r = 0, i = <a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a> - 1, t;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>   <span class="comment">// clang-format off</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>   t = (c16    ) &amp; 0x1f; <span class="keywordflow">if</span> (i &gt;= t) { r += 16; i -= t; }</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>   t = (c8 &gt;&gt; r) &amp; 0x0f; <span class="keywordflow">if</span> (i &gt;= t) { r +=  8; i -= t; }</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>   t = (c4 &gt;&gt; r) &amp; 0x07; <span class="keywordflow">if</span> (i &gt;= t) { r +=  4; i -= t; }</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>   t = (c2 &gt;&gt; r) &amp; 0x03; <span class="keywordflow">if</span> (i &gt;= t) { r +=  2; i -= t; }</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>   t = (c1 &gt;&gt; r) &amp; 0x01; <span class="keywordflow">if</span> (i &gt;= t) { r +=  1;         }</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>   <span class="keywordflow">if</span> (<a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a> == 0)                         r = -1;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>   <span class="comment">// if (n &gt; c32)                     r = 32;</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>   <span class="comment">// clang-format on</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>   <span class="keywordflow">return</span> r + 1;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>}</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>__device__</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="group__math.html#gade82f17c9ecdcd5c744ebe0190a96875">   38</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#gade82f17c9ecdcd5c744ebe0190a96875">ffsnLoop</a>(<span class="keywordtype">int</span> c1, <span class="keywordtype">int</span> <a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>)</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>{</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>   <span class="keywordtype">int</span> ans = 0;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>   <span class="keywordtype">int</span> i = 0;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>   <span class="keywordflow">while</span> (c1 &amp;&amp; (i++ &lt; <a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>)) {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>      <span class="keywordtype">int</span> pos = __ffs(c1);</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>      ans += pos;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>      c1 &gt;&gt;= pos;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>   }</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>   <span class="keywordflow">return</span> ans;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>}</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>__device__</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="group__math.html#ga3813648698b545ee7abeba6a22e9d509">   16</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#ga3813648698b545ee7abeba6a22e9d509">ffsnShift</a>(<span class="keywordtype">int</span> c1, <span class="keywordtype">int</span> <a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>)</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>   <span class="keywordtype">int</span> c2 = c1 - ((c1 &gt;&gt; 1) &amp; 0x55555555);</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>   <span class="keywordtype">int</span> c4 = ((c2 &gt;&gt; 2) &amp; 0x33333333) + (c2 &amp; 0x33333333);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>   <span class="keywordtype">int</span> c8 = ((c4 &gt;&gt; 4) + c4) &amp; 0x0f0f0f0f;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>   <span class="keywordtype">int</span> c16 = ((c8 &gt;&gt; 8) + c8);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>   <span class="comment">// int c32 = ((c16 &gt;&gt; 16) + c16) &amp; 0x3f; // __popc</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>   <span class="keywordtype">int</span> r = 0, i = <a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a> - 1, t;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>   <span class="comment">// clang-format off</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>   t = (c16    ) &amp; 0x1f; <span class="keywordflow">if</span> (i &gt;= t) { r += 16; i -= t; }</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>   t = (c8 &gt;&gt; r) &amp; 0x0f; <span class="keywordflow">if</span> (i &gt;= t) { r +=  8; i -= t; }</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>   t = (c4 &gt;&gt; r) &amp; 0x07; <span class="keywordflow">if</span> (i &gt;= t) { r +=  4; i -= t; }</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>   t = (c2 &gt;&gt; r) &amp; 0x03; <span class="keywordflow">if</span> (i &gt;= t) { r +=  2; i -= t; }</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>   t = (c1 &gt;&gt; r) &amp; 0x01; <span class="keywordflow">if</span> (i &gt;= t) { r +=  1;         }</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>   <span class="keywordflow">if</span> (<a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a> == 0)                         r = -1;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>   <span class="comment">// if (n &gt; c32)                     r = 32;</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>   <span class="comment">// clang-format on</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>   <span class="keywordflow">return</span> r + 1;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>__device__</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="group__math.html#gade82f17c9ecdcd5c744ebe0190a96875">   39</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="group__math.html#gade82f17c9ecdcd5c744ebe0190a96875">ffsnLoop</a>(<span class="keywordtype">int</span> c1, <span class="keywordtype">int</span> <a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>)</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>{</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>   <span class="keywordtype">int</span> ans = 0;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>   <span class="keywordtype">int</span> i = 0;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>   <span class="keywordflow">while</span> (c1 &amp;&amp; (i++ &lt; <a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>)) {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>      <span class="keywordtype">int</span> pos = __ffs(c1);</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>      ans += pos;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>      c1 &gt;&gt;= pos;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>   }</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>   <span class="keywordflow">return</span> ans;</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>}</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
 <div class="ttc" id="agroup__ff_html_gad2e089162a2f11d8850f715592d9acdb"><div class="ttname"><a href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">tinker::n</a></div><div class="ttdeci">int n</div><div class="ttdoc">Number of atoms padded by WARP_SIZE.</div></div>
-<div class="ttc" id="agroup__math_html_ga3813648698b545ee7abeba6a22e9d509"><div class="ttname"><a href="group__math.html#ga3813648698b545ee7abeba6a22e9d509">tinker::ffsnShift</a></div><div class="ttdeci">__device__ int ffsnShift(int c1, int n)</div><div class="ttdoc">Find the position of the n-th least significant bit set in a 32-bit integer. Returns a value from 0 t...</div><div class="ttdef"><b>Definition:</b> ffsn.h:15</div></div>
-<div class="ttc" id="agroup__math_html_gade82f17c9ecdcd5c744ebe0190a96875"><div class="ttname"><a href="group__math.html#gade82f17c9ecdcd5c744ebe0190a96875">tinker::ffsnLoop</a></div><div class="ttdeci">__device__ int ffsnLoop(int c1, int n)</div><div class="ttdoc">An alternative implementation of ffsn using loop.</div><div class="ttdef"><b>Definition:</b> ffsn.h:38</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="agroup__math_html_ga3813648698b545ee7abeba6a22e9d509"><div class="ttname"><a href="group__math.html#ga3813648698b545ee7abeba6a22e9d509">tinker::ffsnShift</a></div><div class="ttdeci">__device__ int ffsnShift(int c1, int n)</div><div class="ttdoc">Find the position of the n-th least significant bit set in a 32-bit integer. Returns a value from 0 t...</div><div class="ttdef"><b>Definition:</b> ffsn.h:16</div></div>
+<div class="ttc" id="agroup__math_html_gade82f17c9ecdcd5c744ebe0190a96875"><div class="ttname"><a href="group__math.html#gade82f17c9ecdcd5c744ebe0190a96875">tinker::ffsnLoop</a></div><div class="ttdeci">__device__ int ffsnLoop(int c1, int n)</div><div class="ttdoc">An alternative implementation of ffsn using loop.</div><div class="ttdef"><b>Definition:</b> ffsn.h:39</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:9</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

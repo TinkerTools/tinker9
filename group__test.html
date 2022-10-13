@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -81,42 +81,61 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:classtinker_1_1_test_file"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#classtinker_1_1_test_file">tinker::TestFile</a></td></tr>
+<tr class="memdesc:classtinker_1_1_test_file"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a file to disk in its constructor and removes the file in its destructor, unless the file is set to be kept.  <a href="group__test.html#classtinker_1_1_test_file">More...</a><br /></td></tr>
 <tr class="separator:classtinker_1_1_test_file"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:classtinker_1_1_test_remove_file_on_exit"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#classtinker_1_1_test_remove_file_on_exit">tinker::TestRemoveFileOnExit</a></td></tr>
+<tr class="memdesc:classtinker_1_1_test_remove_file_on_exit"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the file in its destructor as necessary.  <a href="group__test.html#classtinker_1_1_test_remove_file_on_exit">More...</a><br /></td></tr>
 <tr class="separator:classtinker_1_1_test_remove_file_on_exit"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:classtinker_1_1_test_reference"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#classtinker_1_1_test_reference">tinker::TestReference</a></td></tr>
+<tr class="memdesc:classtinker_1_1_test_reference"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads reference values from a text file.  <a href="group__test.html#classtinker_1_1_test_reference">More...</a><br /></td></tr>
 <tr class="separator:classtinker_1_1_test_reference"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:ga07b230adc56d9874f252466b635d99d0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga07b230adc56d9874f252466b635d99d0">COMPARE_INTS</a>(i1,  refi)&#160;&#160;&#160;REQUIRE(i1 == refi)</td></tr>
+<tr class="memdesc:ga07b230adc56d9874f252466b635d99d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares two integers.  <a href="group__test.html#ga07b230adc56d9874f252466b635d99d0">More...</a><br /></td></tr>
 <tr class="separator:ga07b230adc56d9874f252466b635d99d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6961bd46a5ddd80398602e22e694535c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga6961bd46a5ddd80398602e22e694535c">COMPARE_INTS_EPS</a>(i1,  refi,  epsi)</td></tr>
+<tr class="memdesc:ga6961bd46a5ddd80398602e22e694535c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Approximately compares two integers.  <a href="group__test.html#ga6961bd46a5ddd80398602e22e694535c">More...</a><br /></td></tr>
+<tr class="separator:ga6961bd46a5ddd80398602e22e694535c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa82f04925c4d16ca5aaee6671dbfa85a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gaa82f04925c4d16ca5aaee6671dbfa85a">COMPARE_REALS</a>(v1,  refv,  eps)&#160;&#160;&#160;REQUIRE(v1 == Approx(refv).margin(eps))</td></tr>
+<tr class="memdesc:gaa82f04925c4d16ca5aaee6671dbfa85a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares two floating-point numbers with a margin of error.  <a href="group__test.html#gaa82f04925c4d16ca5aaee6671dbfa85a">More...</a><br /></td></tr>
 <tr class="separator:gaa82f04925c4d16ca5aaee6671dbfa85a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae5b7fba502059f9183a9e514dfbb1723"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gae5b7fba502059f9183a9e514dfbb1723">COMPARE_ENERGY</a>(gpuptr,  ref_eng,  eps)</td></tr>
+<tr class="memdesc:gae5b7fba502059f9183a9e514dfbb1723"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reduces the energy from the energy buffer and compares to the reference value with a margin of error.  <a href="group__test.html#gae5b7fba502059f9183a9e514dfbb1723">More...</a><br /></td></tr>
 <tr class="separator:gae5b7fba502059f9183a9e514dfbb1723"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga059d50f2ecb9a98db35cf11f62a21249"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga059d50f2ecb9a98db35cf11f62a21249">COMPARE_COUNT</a>(gpuptr,  ref_count)</td></tr>
+<tr class="memdesc:ga059d50f2ecb9a98db35cf11f62a21249"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reduces the number of interactions from the count buffer and compares to the reference value.  <a href="group__test.html#ga059d50f2ecb9a98db35cf11f62a21249">More...</a><br /></td></tr>
 <tr class="separator:ga059d50f2ecb9a98db35cf11f62a21249"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4e97d3c54989336d977a3c429a71c319"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga4e97d3c54989336d977a3c429a71c319">COMPARE_VIR9</a>(vir1,  ref_v,  eps)</td></tr>
+<tr class="memdesc:ga4e97d3c54989336d977a3c429a71c319"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares a virial tensor to the reference values with a margin of error.  <a href="group__test.html#ga4e97d3c54989336d977a3c429a71c319">More...</a><br /></td></tr>
 <tr class="separator:ga4e97d3c54989336d977a3c429a71c319"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga91e273c825b35ca762018f3763c9fd04"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga91e273c825b35ca762018f3763c9fd04">COMPARE_VIR</a>(gpuptr,  ref_v,  eps)</td></tr>
+<tr class="memdesc:ga91e273c825b35ca762018f3763c9fd04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reduces a virial tensor from a virial buffer and compares to the reference values with a margin of error.  <a href="group__test.html#ga91e273c825b35ca762018f3763c9fd04">More...</a><br /></td></tr>
 <tr class="separator:ga91e273c825b35ca762018f3763c9fd04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga69e86dfc28af6d0e1df671cedbac5e2c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga69e86dfc28af6d0e1df671cedbac5e2c">COMPARE_VIR2</a>(gpuptr,  gpuptr2,  ref_v,  eps)</td></tr>
+<tr class="memdesc:ga69e86dfc28af6d0e1df671cedbac5e2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reduces two virial tensors from two virial buffers and compares the sum to the reference with a margin of error.  <a href="group__test.html#ga69e86dfc28af6d0e1df671cedbac5e2c">More...</a><br /></td></tr>
 <tr class="separator:ga69e86dfc28af6d0e1df671cedbac5e2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad3a3e60271e184f6ce15d90c88e9517a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gad3a3e60271e184f6ce15d90c88e9517a">COMPARE_GRADIENT</a>(ref_grad,  eps)&#160;&#160;&#160;   <a class="el" href="group__test.html#gad5eab462c8de2d5f2663b12570b357f0">COMPARE_GRADIENT2</a>(ref_grad, eps, [](int, int) { return true; })</td></tr>
+<tr class="memitem:gad3a3e60271e184f6ce15d90c88e9517a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gad3a3e60271e184f6ce15d90c88e9517a">COMPARE_GRADIENT</a>(ref_grad,  eps)&#160;&#160;&#160;<a class="el" href="group__test.html#gad5eab462c8de2d5f2663b12570b357f0">COMPARE_GRADIENT2</a>(ref_grad, eps, [](int, int) { return true; })</td></tr>
+<tr class="memdesc:gad3a3e60271e184f6ce15d90c88e9517a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies out gradients from device to host and compares to the reference values with a margin of error.  <a href="group__test.html#gad3a3e60271e184f6ce15d90c88e9517a">More...</a><br /></td></tr>
 <tr class="separator:gad3a3e60271e184f6ce15d90c88e9517a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad5eab462c8de2d5f2663b12570b357f0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gad5eab462c8de2d5f2663b12570b357f0">COMPARE_GRADIENT2</a>(ref_grad,  eps,  check_ij)</td></tr>
+<tr class="memdesc:gad5eab462c8de2d5f2663b12570b357f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares the flitered gradients[i][j] components.  <a href="group__test.html#gad5eab462c8de2d5f2663b12570b357f0">More...</a><br /></td></tr>
 <tr class="separator:gad5eab462c8de2d5f2663b12570b357f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga398ae1a71c38a28e1922c047e96aaa86"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga398ae1a71c38a28e1922c047e96aaa86">tinker::testGetEps</a> (double epsSingle, double epsDouble)</td></tr>
+<tr class="memdesc:ga398ae1a71c38a28e1922c047e96aaa86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns tolerance eps depending on the predefined floating-point precision.  <a href="group__test.html#ga398ae1a71c38a28e1922c047e96aaa86">More...</a><br /></td></tr>
 <tr class="separator:ga398ae1a71c38a28e1922c047e96aaa86"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2e2e1d17176d8956cc393c2e3f629ab8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga2e2e1d17176d8956cc393c2e3f629ab8">tinker::testBeginWithArgs</a> (int argc, const char **argv)</td></tr>
+<tr class="memdesc:ga2e2e1d17176d8956cc393c2e3f629ab8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the test.  <a href="group__test.html#ga2e2e1d17176d8956cc393c2e3f629ab8">More...</a><br /></td></tr>
 <tr class="separator:ga2e2e1d17176d8956cc393c2e3f629ab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4fbe121cde1c7d8d911aaae030276119"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ga4fbe121cde1c7d8d911aaae030276119">tinker::testEnd</a> ()</td></tr>
+<tr class="memdesc:ga4fbe121cde1c7d8d911aaae030276119"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends the test.  <a href="group__test.html#ga4fbe121cde1c7d8d911aaae030276119">More...</a><br /></td></tr>
 <tr class="separator:ga4fbe121cde1c7d8d911aaae030276119"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabe8c25e3bc350ef8b353158181c9788b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#gabe8c25e3bc350ef8b353158181c9788b">tinker::testMdInit</a> (double t=0, double atm=0)</td></tr>
+<tr class="memdesc:gabe8c25e3bc350ef8b353158181c9788b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes MD in the test.  <a href="group__test.html#gabe8c25e3bc350ef8b353158181c9788b">More...</a><br /></td></tr>
 <tr class="separator:gabe8c25e3bc350ef8b353158181c9788b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -132,14 +151,17 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<div class="textblock"><p >Writes a file to disk in its constructor and removes this file in its destructor, unless the file is set to be kept. </p>
+<div class="textblock"><p >Writes a file to disk in its constructor and removes the file in its destructor, unless the file is set to be kept. </p>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Public Member Functions</h3></td></tr>
 <tr class="memitem:a0627af3d4170d0aa72373c3c3c421460"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#a0627af3d4170d0aa72373c3c3c421460">TestFile</a> (std::string src, std::string dst=&quot;&quot;, std::string extra=&quot;&quot;)</td></tr>
+<tr class="memdesc:a0627af3d4170d0aa72373c3c3c421460"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies file from source to destination with optional extra content appended to the new copy.  <a href="group__test.html#a0627af3d4170d0aa72373c3c3c421460">More...</a><br /></td></tr>
 <tr class="separator:a0627af3d4170d0aa72373c3c3c421460"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae45292591a75c41b6d2bbaa47e93653f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ae45292591a75c41b6d2bbaa47e93653f">~TestFile</a> ()</td></tr>
+<tr class="memdesc:ae45292591a75c41b6d2bbaa47e93653f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the file on disk on exit.  <a href="group__test.html#ae45292591a75c41b6d2bbaa47e93653f">More...</a><br /></td></tr>
 <tr class="separator:ae45292591a75c41b6d2bbaa47e93653f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0a169d64b79c106d335d0088d9cbe8c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#ad0a169d64b79c106d335d0088d9cbe8c">__keep</a> ()</td></tr>
+<tr class="memdesc:ad0a169d64b79c106d335d0088d9cbe8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prevents the file from being deleted.  <a href="group__test.html#ad0a169d64b79c106d335d0088d9cbe8c">More...</a><br /></td></tr>
 <tr class="separator:ad0a169d64b79c106d335d0088d9cbe8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h4 class="groupheader">Constructor &amp; Destructor Documentation</h4>
@@ -175,7 +197,15 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Copies file from <code>src</code> to <code>dst</code> and append <code>extra</code> text to the file if <code>extra</code> is not empty. If <code>dst</code> is an empty string, the new file will be written to the current working directory with the same name as <code>src</code>. If <code>src</code> is an empty string, <code>dst</code> must be a valid name for the new file. </p>
+<p>Copies file from source to destination with optional extra content appended to the new copy. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">src</td><td>Path to the source file. If empty, <code>extra</code> will be written to <code>dst</code> which must be a valid path for the new file.</td></tr>
+    <tr><td class="paramname">dst</td><td>Path to the new file. If empty, the source file is copied to the current working directory.</td></tr>
+    <tr><td class="paramname">extra</td><td>Optional extra content. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -214,7 +244,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Prevents the file being deleted. </p>
+<p>Prevents the file from being deleted. </p>
 
 </div>
 </div>
@@ -236,8 +266,10 @@ Functions</h2></td></tr>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Public Member Functions</h3></td></tr>
 <tr class="memitem:a7b9280fefb9dfeaa208cdd342761e404"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#a7b9280fefb9dfeaa208cdd342761e404">TestRemoveFileOnExit</a> (std::string fileToDelete)</td></tr>
+<tr class="memdesc:a7b9280fefb9dfeaa208cdd342761e404"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filename.  <a href="group__test.html#a7b9280fefb9dfeaa208cdd342761e404">More...</a><br /></td></tr>
 <tr class="separator:a7b9280fefb9dfeaa208cdd342761e404"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a097f7aabf439b709dc46d28a54c880c3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#a097f7aabf439b709dc46d28a54c880c3">~TestRemoveFileOnExit</a> ()</td></tr>
+<tr class="memdesc:a097f7aabf439b709dc46d28a54c880c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the file in the destructor.  <a href="group__test.html#a097f7aabf439b709dc46d28a54c880c3">More...</a><br /></td></tr>
 <tr class="separator:a097f7aabf439b709dc46d28a54c880c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h4 class="groupheader">Constructor &amp; Destructor Documentation</h4>
@@ -257,6 +289,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Filename. </p>
+
 </div>
 </div>
 <a id="a097f7aabf439b709dc46d28a54c880c3" name="a097f7aabf439b709dc46d28a54c880c3"></a>
@@ -273,6 +307,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Removes the file in the destructor. </p>
 
 </div>
 </div>
@@ -301,12 +337,12 @@ Functions</h2></td></tr>
 <tr class="separator:a3ddf2d1a8b40ec26fcc8d13a8ddecfc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bb52694b3e799445cdae9c996fcda30"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#a2bb52694b3e799445cdae9c996fcda30">getEnergy</a> () const</td></tr>
 <tr class="separator:a2bb52694b3e799445cdae9c996fcda30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d68d8453bda02ed27371e139387526e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#a0d68d8453bda02ed27371e139387526e">getEnergyCountByName</a> (std::string name, double &amp;<a class="el" href="group__egv.html#ga6de3f41e1e5a4280a6fd8f9edce1fdda">energy</a>, int &amp;count)</td></tr>
-<tr class="separator:a0d68d8453bda02ed27371e139387526e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adca97e4ec6c270eac8a83b28d55c30f8"><td class="memItemLeft" align="right" valign="top">const double(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#adca97e4ec6c270eac8a83b28d55c30f8">getVirial</a> () const)[3]</td></tr>
 <tr class="separator:adca97e4ec6c270eac8a83b28d55c30f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85a35b6880a9e36d1f96b2c11c24fb1c"><td class="memItemLeft" align="right" valign="top">const double(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#a85a35b6880a9e36d1f96b2c11c24fb1c">getGradient</a> () const)[3]</td></tr>
 <tr class="separator:a85a35b6880a9e36d1f96b2c11c24fb1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d68d8453bda02ed27371e139387526e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__test.html#a0d68d8453bda02ed27371e139387526e">getEnergyCountByName</a> (std::string name, double &amp;<a class="el" href="group__egv.html#ga6de3f41e1e5a4280a6fd8f9edce1fdda">energy</a>, int &amp;count)</td></tr>
+<tr class="separator:a0d68d8453bda02ed27371e139387526e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h4 class="groupheader">Constructor &amp; Destructor Documentation</h4>
 <a id="a32004914b22d252b346f28b56f83e817" name="a32004914b22d252b346f28b56f83e817"></a>
@@ -476,9 +512,9 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
-<div class="line">      int count = <a class="code hl_function" href="group__ff.html#ga7cd0a4b251c0c6b96b12e7892a527285">countReduce</a>(gpuptr);                                                             \</div>
-<div class="line">      REQUIRE(count == ref_count);                                                                 \</div>
+<b>Value:</b><div class="fragment"><div class="line">   {                                     \</div>
+<div class="line">      int count = <a class="code hl_function" href="group__ff.html#ga7cd0a4b251c0c6b96b12e7892a527285">countReduce</a>(gpuptr);   \</div>
+<div class="line">      REQUIRE(count == ref_count);       \</div>
 <div class="line">   }</div>
 <div class="ttc" id="agroup__ff_html_ga7cd0a4b251c0c6b96b12e7892a527285"><div class="ttname"><a href="group__ff.html#ga7cd0a4b251c0c6b96b12e7892a527285">tinker::countReduce</a></div><div class="ttdeci">int countReduce(const CountBuffer b)</div></div>
 </div><!-- fragment -->
@@ -517,13 +553,13 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
-<div class="line">      double eng = <a class="code hl_function" href="group__ff.html#gaacf2cc0b57d3253af639886930bb30d9">energyReduce</a>(gpuptr);                                                           \</div>
-<div class="line">      REQUIRE(eng == Approx(ref_eng).margin(eps));                                                 \</div>
+<b>Value:</b><div class="fragment"><div class="line">   {                                               \</div>
+<div class="line">      double eng = <a class="code hl_function" href="group__ff.html#gaacf2cc0b57d3253af639886930bb30d9">energyReduce</a>(gpuptr);           \</div>
+<div class="line">      REQUIRE(eng == Approx(ref_eng).margin(eps)); \</div>
 <div class="line">   }</div>
 <div class="ttc" id="agroup__ff_html_gaacf2cc0b57d3253af639886930bb30d9"><div class="ttname"><a href="group__ff.html#gaacf2cc0b57d3253af639886930bb30d9">tinker::energyReduce</a></div><div class="ttdeci">energy_prec energyReduce(const EnergyBuffer b)</div></div>
 </div><!-- fragment -->
-<p>Reduces the energy from the energy buffer and compares to the reference value with a margin of <code>eps</code>. </p>
+<p>Reduces the energy from the energy buffer and compares to the reference value with a margin of error. </p>
 
 </div>
 </div>
@@ -548,12 +584,12 @@ Functions</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;   <a class="el" href="group__test.html#gad5eab462c8de2d5f2663b12570b357f0">COMPARE_GRADIENT2</a>(ref_grad, eps, [](int, int) { return true; })</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="group__test.html#gad5eab462c8de2d5f2663b12570b357f0">COMPARE_GRADIENT2</a>(ref_grad, eps, [](int, int) { return true; })</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Copies out gradients from device to host and compares to the reference values with a margin of <code>eps</code>. </p>
+<p>Copies out gradients from device to host and compares to the reference values with a margin of error. </p>
 
 </div>
 </div>
@@ -588,17 +624,14 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
-<div class="line">      std::vector&lt;double&gt; gradx(<a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>), grady(<a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>), gradz(<a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>);                                            \</div>
-<div class="line">      copyGradient(calc::grad, gradx.data(), grady.data(), gradz.data());                          \</div>
-<div class="line">      for (<span class="keywordtype">int</span> i = 0; i &lt; <a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>; ++i) {                                                                \</div>
-<div class="line">         if (check_ij(i, 0))                                                                       \</div>
-<div class="line">            REQUIRE(gradx[i] == Approx(ref_grad[i][0]).margin(eps));                               \</div>
-<div class="line">         if (check_ij(i, 1))                                                                       \</div>
-<div class="line">            REQUIRE(grady[i] == Approx(ref_grad[i][1]).margin(eps));                               \</div>
-<div class="line">         if (check_ij(i, 2))                                                                       \</div>
-<div class="line">            REQUIRE(gradz[i] == Approx(ref_grad[i][2]).margin(eps));                               \</div>
-<div class="line">      }                                                                                            \</div>
+<b>Value:</b><div class="fragment"><div class="line">   {                                                                                  \</div>
+<div class="line">      std::vector&lt;double&gt; gradx(<a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>), grady(<a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>), gradz(<a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>);                               \</div>
+<div class="line">      copyGradient(calc::grad, gradx.data(), grady.data(), gradz.data());             \</div>
+<div class="line">      for (<span class="keywordtype">int</span> i = 0; i &lt; <a class="code hl_variable" href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">n</a>; ++i) {                                                   \</div>
+<div class="line">         if (check_ij(i, 0)) REQUIRE(gradx[i] == Approx(ref_grad[i][0]).margin(eps)); \</div>
+<div class="line">         if (check_ij(i, 1)) REQUIRE(grady[i] == Approx(ref_grad[i][1]).margin(eps)); \</div>
+<div class="line">         if (check_ij(i, 2)) REQUIRE(gradz[i] == Approx(ref_grad[i][2]).margin(eps)); \</div>
+<div class="line">      }                                                                               \</div>
 <div class="line">   }</div>
 <div class="ttc" id="agroup__ff_html_gad2e089162a2f11d8850f715592d9acdb"><div class="ttname"><a href="group__ff.html#gad2e089162a2f11d8850f715592d9acdb">tinker::n</a></div><div class="ttdeci">int n</div><div class="ttdoc">Number of atoms padded by WARP_SIZE.</div></div>
 </div><!-- fragment -->
@@ -632,7 +665,49 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Compare two integers. </p>
+<p>Compares two integers. </p>
+
+</div>
+</div>
+<a id="ga6961bd46a5ddd80398602e22e694535c" name="ga6961bd46a5ddd80398602e22e694535c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6961bd46a5ddd80398602e22e694535c">&#9670;&nbsp;</a></span>COMPARE_INTS_EPS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define COMPARE_INTS_EPS</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">i1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">refi, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">epsi&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">   {                                     \</div>
+<div class="line">      int c1 = i1;                       \</div>
+<div class="line">      int r1 = refi;                     \</div>
+<div class="line">      REQUIRE(r1 - epsi &lt;= c1);          \</div>
+<div class="line">      REQUIRE(c1 &lt;= r1 + epsi);          \</div>
+<div class="line">   }</div>
+</div><!-- fragment -->
+<p>Approximately compares two integers. </p>
 
 </div>
 </div>
@@ -668,7 +743,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Compare two floating-point numbers with a margin of <code>eps</code>. </p>
+<p>Compares two floating-point numbers with a margin of error. </p>
 
 </div>
 </div>
@@ -703,21 +778,21 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
-<div class="line">      virial_prec vir1[9];                                                                         \</div>
-<div class="line">      virialReduce(vir1, gpuptr);                                                                  \</div>
-<div class="line">      REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[3] == Approx(ref_v[1][0]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[4] == Approx(ref_v[1][1]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[5] == Approx(ref_v[1][2]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[6] == Approx(ref_v[2][0]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[7] == Approx(ref_v[2][1]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[8] == Approx(ref_v[2][2]).margin(eps));                                         \</div>
+<b>Value:</b><div class="fragment"><div class="line">   {                                                       \</div>
+<div class="line">      virial_prec vir1[9];                                 \</div>
+<div class="line">      virialReduce(vir1, gpuptr);                          \</div>
+<div class="line">      REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[3] == Approx(ref_v[1][0]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[4] == Approx(ref_v[1][1]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[5] == Approx(ref_v[1][2]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[6] == Approx(ref_v[2][0]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[7] == Approx(ref_v[2][1]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[8] == Approx(ref_v[2][2]).margin(eps)); \</div>
 <div class="line">   }</div>
 </div><!-- fragment -->
-<p>Reduces a virial tensor from a virial buffer and compares to the reference values with a margin of <code>eps</code>. </p>
+<p>Reduces a virial tensor from a virial buffer and compares to the reference values with a margin of error. </p>
 
 </div>
 </div>
@@ -758,22 +833,22 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
-<div class="line">      virial_prec vir1[9], vir2[9];                                                                \</div>
-<div class="line">      virialReduce(vir1, gpuptr);                                                                  \</div>
-<div class="line">      virialReduce(vir2, gpuptr2);                                                                 \</div>
-<div class="line">      REQUIRE(vir1[0] + vir2[0] == Approx(ref_v[0][0]).margin(eps));                               \</div>
-<div class="line">      REQUIRE(vir1[1] + vir2[1] == Approx(ref_v[0][1]).margin(eps));                               \</div>
-<div class="line">      REQUIRE(vir1[2] + vir2[2] == Approx(ref_v[0][2]).margin(eps));                               \</div>
-<div class="line">      REQUIRE(vir1[3] + vir2[3] == Approx(ref_v[1][0]).margin(eps));                               \</div>
-<div class="line">      REQUIRE(vir1[4] + vir2[4] == Approx(ref_v[1][1]).margin(eps));                               \</div>
-<div class="line">      REQUIRE(vir1[5] + vir2[5] == Approx(ref_v[1][2]).margin(eps));                               \</div>
-<div class="line">      REQUIRE(vir1[6] + vir2[6] == Approx(ref_v[2][0]).margin(eps));                               \</div>
-<div class="line">      REQUIRE(vir1[7] + vir2[7] == Approx(ref_v[2][1]).margin(eps));                               \</div>
-<div class="line">      REQUIRE(vir1[8] + vir2[8] == Approx(ref_v[2][2]).margin(eps));                               \</div>
+<b>Value:</b><div class="fragment"><div class="line">   {                                                                 \</div>
+<div class="line">      virial_prec vir1[9], vir2[9];                                  \</div>
+<div class="line">      virialReduce(vir1, gpuptr);                                    \</div>
+<div class="line">      virialReduce(vir2, gpuptr2);                                   \</div>
+<div class="line">      REQUIRE(vir1[0] + vir2[0] == Approx(ref_v[0][0]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[1] + vir2[1] == Approx(ref_v[0][1]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[2] + vir2[2] == Approx(ref_v[0][2]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[3] + vir2[3] == Approx(ref_v[1][0]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[4] + vir2[4] == Approx(ref_v[1][1]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[5] + vir2[5] == Approx(ref_v[1][2]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[6] + vir2[6] == Approx(ref_v[2][0]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[7] + vir2[7] == Approx(ref_v[2][1]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[8] + vir2[8] == Approx(ref_v[2][2]).margin(eps)); \</div>
 <div class="line">   }</div>
 </div><!-- fragment -->
-<p>Reduces two virial tensors from two virial buffers and compares the sum to the reference with a margin of <code>eps</code>. </p>
+<p>Reduces two virial tensors from two virial buffers and compares the sum to the reference with a margin of error. </p>
 
 </div>
 </div>
@@ -808,19 +883,19 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">   {                                                                                               \</div>
-<div class="line">      REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[3] == Approx(ref_v[1][0]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[4] == Approx(ref_v[1][1]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[5] == Approx(ref_v[1][2]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[6] == Approx(ref_v[2][0]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[7] == Approx(ref_v[2][1]).margin(eps));                                         \</div>
-<div class="line">      REQUIRE(vir1[8] == Approx(ref_v[2][2]).margin(eps));                                         \</div>
+<b>Value:</b><div class="fragment"><div class="line">   {                                                       \</div>
+<div class="line">      REQUIRE(vir1[0] == Approx(ref_v[0][0]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[1] == Approx(ref_v[0][1]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[2] == Approx(ref_v[0][2]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[3] == Approx(ref_v[1][0]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[4] == Approx(ref_v[1][1]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[5] == Approx(ref_v[1][2]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[6] == Approx(ref_v[2][0]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[7] == Approx(ref_v[2][1]).margin(eps)); \</div>
+<div class="line">      REQUIRE(vir1[8] == Approx(ref_v[2][2]).margin(eps)); \</div>
 <div class="line">   }</div>
 </div><!-- fragment -->
-<p>Compares a virial tensor to the reference values with a margin of <code>eps</code>. </p>
+<p>Compares a virial tensor to the reference values with a margin of error. </p>
 
 </div>
 </div>
@@ -903,8 +978,8 @@ Functions</h2></td></tr>
 <p>Returns tolerance eps depending on the predefined floating-point precision. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">epsSingle</td><td>Larger <code>eps</code> for lower floating-point precision. </td></tr>
-    <tr><td class="paramname">epsDouble</td><td>Smaller <code>eps</code> for higher floating-point precision. </td></tr>
+    <tr><td class="paramname">epsSingle</td><td>Larger eps value for lower floating-point precision.</td></tr>
+    <tr><td class="paramname">epsDouble</td><td>Smaller eps value for higher floating-point precision. </td></tr>
   </table>
   </dd>
 </dl>
@@ -940,7 +1015,7 @@ Functions</h2></td></tr>
 <p>Initializes MD in the test. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">t</td><td>Temperature in Kelvin. </td></tr>
+    <tr><td class="paramname">t</td><td>Temperature in Kelvin.</td></tr>
     <tr><td class="paramname">atm</td><td>Atmosphere in atm. </td></tr>
   </table>
   </dd>

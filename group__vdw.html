@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -77,6 +77,9 @@ $(function() {
   <div class="headertitle"><div class="title">VDW</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Van der Waals.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -100,6 +103,7 @@ Enumerations</h2></td></tr>
 , <a class="el" href="group__vdw.html#gga0d7208589eb41e900a617e7d1a72524ba37a2f93fd56db2dd5f74780e8bca23b3">tinker::Vdw::GAUSS</a>
 <br />
  }</td></tr>
+<tr class="memdesc:ga0d7208589eb41e900a617e7d1a72524b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constant flags for the VDW energy functions.  <a href="group__vdw.html#ga0d7208589eb41e900a617e7d1a72524b">More...</a><br /></td></tr>
 <tr class="separator:ga0d7208589eb41e900a617e7d1a72524b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -109,6 +113,7 @@ Functions</h2></td></tr>
 <tr class="memitem:ga6ad396cf45ab7713c7e9fcf28e839f7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga6ad396cf45ab7713c7e9fcf28e839f7b">tinker::evdw</a> (int vers)</td></tr>
 <tr class="separator:ga6ad396cf45ab7713c7e9fcf28e839f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3e186eab2a6e607d4e5ef5b97b05b1dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga3e186eab2a6e607d4e5ef5b97b05b1dd">tinker::elj</a> (int vers)</td></tr>
+<tr class="memdesc:ga3e186eab2a6e607d4e5ef5b97b05b1dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lennard-Jones 12-6 potential.  <a href="group__vdw.html#ga3e186eab2a6e607d4e5ef5b97b05b1dd">More...</a><br /></td></tr>
 <tr class="separator:ga3e186eab2a6e607d4e5ef5b97b05b1dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaac1167153be8dcb97c1e2d9b2f2d91b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#gaac1167153be8dcb97c1e2d9b2f2d91b3">tinker::elj14</a> (int vers)</td></tr>
 <tr class="separator:gaac1167153be8dcb97c1e2d9b2f2d91b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -119,6 +124,7 @@ Functions</h2></td></tr>
 <tr class="memitem:gaf3b541fada92721abf46072b4f0557aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#gaf3b541fada92721abf46072b4f0557aa">tinker::egauss</a> (int vers)</td></tr>
 <tr class="separator:gaf3b541fada92721abf46072b4f0557aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7b99f9ff61611da0e21a7366f8a203fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga7b99f9ff61611da0e21a7366f8a203fc">tinker::ehal</a> (int vers)</td></tr>
+<tr class="memdesc:ga7b99f9ff61611da0e21a7366f8a203fc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a href="https://doi.org/10.1021/ja00046a032">Halgren buffered 14-7 potential.</a>  <a href="group__vdw.html#ga7b99f9ff61611da0e21a7366f8a203fc">More...</a><br /></td></tr>
 <tr class="separator:ga7b99f9ff61611da0e21a7366f8a203fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga610b928e9642a068a9edcd1be99fe51f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga610b928e9642a068a9edcd1be99fe51f">tinker::ehalReduceXyz</a> ()</td></tr>
 <tr class="separator:ga610b928e9642a068a9edcd1be99fe51f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,30 +154,43 @@ Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:ga936fe95b620a70774e80f9bf18056453"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga936fe95b620a70774e80f9bf18056453">tinker::ghal</a></td></tr>
+<tr class="memdesc:ga936fe95b620a70774e80f9bf18056453"><td class="mdescLeft">&#160;</td><td class="mdescRight">Value of \( \gamma \) in buffered 14-7 vdw potential.  <a href="group__vdw.html#ga936fe95b620a70774e80f9bf18056453">More...</a><br /></td></tr>
 <tr class="separator:ga936fe95b620a70774e80f9bf18056453"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0e9afeff50bac696cb78a16f063912c1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga0e9afeff50bac696cb78a16f063912c1">tinker::dhal</a></td></tr>
+<tr class="memdesc:ga0e9afeff50bac696cb78a16f063912c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Value of \( \delta \) in buffered 14-7 vdw potential.  <a href="group__vdw.html#ga0e9afeff50bac696cb78a16f063912c1">More...</a><br /></td></tr>
 <tr class="separator:ga0e9afeff50bac696cb78a16f063912c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6965cfe29dc21b3743859abc4de6455f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga8286f2194addf403df0dda44fc758703">energy_prec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga6965cfe29dc21b3743859abc4de6455f">tinker::elrc_vol</a></td></tr>
+<tr class="memdesc:ga6965cfe29dc21b3743859abc4de6455f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Long-range energy correction (lrc), used as <code>e += lrc/volume</code>.  <a href="group__vdw.html#ga6965cfe29dc21b3743859abc4de6455f">More...</a><br /></td></tr>
 <tr class="separator:ga6965cfe29dc21b3743859abc4de6455f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9c93ec0a814a63c3470505aea77ccbfc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga2272914c98224d4730e398aacfa17190">virial_prec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga9c93ec0a814a63c3470505aea77ccbfc">tinker::vlrc_vol</a></td></tr>
+<tr class="memdesc:ga9c93ec0a814a63c3470505aea77ccbfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Long-range virial correction (lrc), used as <code>v(i,i) += lrc/volume</code>.  <a href="group__vdw.html#ga9c93ec0a814a63c3470505aea77ccbfc">More...</a><br /></td></tr>
 <tr class="separator:ga9c93ec0a814a63c3470505aea77ccbfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga36d3a26df75d6b7e84fdb802ed197002"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga36d3a26df75d6b7e84fdb802ed197002">tinker::jvdw</a></td></tr>
+<tr class="memdesc:ga36d3a26df75d6b7e84fdb802ed197002"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type or class index into vdw parameters for each atom. The indices have been sorted and start from 0.  <a href="group__vdw.html#ga36d3a26df75d6b7e84fdb802ed197002">More...</a><br /></td></tr>
 <tr class="separator:ga36d3a26df75d6b7e84fdb802ed197002"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga81d3a716e817d4b51bd0801418d38fcf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga81d3a716e817d4b51bd0801418d38fcf">tinker::xred</a></td></tr>
+<tr class="memdesc:ga81d3a716e817d4b51bd0801418d38fcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Halgren buffered 14-7 reduced x, y, z coordinates for each atom.  <a href="group__vdw.html#ga81d3a716e817d4b51bd0801418d38fcf">More...</a><br /></td></tr>
 <tr class="separator:ga81d3a716e817d4b51bd0801418d38fcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad96d2d6ff750f70fc585c0b4faf3e2d9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#gad96d2d6ff750f70fc585c0b4faf3e2d9">tinker::radmin</a></td></tr>
+<tr class="memdesc:gad96d2d6ff750f70fc585c0b4faf3e2d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum energy distance (<a class="el" href="group__vdw.html#gad96d2d6ff750f70fc585c0b4faf3e2d9" title="Minimum energy distance (radmin) or well depth parameter (epsilon) for each jvdw pair....">radmin</a>) or well depth parameter (<a class="el" href="namespacetinker.html#a1bbd32d682ee3c8291857a988de1d659">epsilon</a>) for each <a class="el" href="group__vdw.html#ga36d3a26df75d6b7e84fdb802ed197002" title="Type or class index into vdw parameters for each atom. The indices have been sorted and start from 0.">jvdw</a> pair. Element <code>[j1][j2]</code> is accessed by <code>[njvdw*j1 + j2]</code>.  <a href="group__vdw.html#gad96d2d6ff750f70fc585c0b4faf3e2d9">More...</a><br /></td></tr>
 <tr class="separator:gad96d2d6ff750f70fc585c0b4faf3e2d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga764fdc11c7dfc5ae7ad8754a03a42cd2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga764fdc11c7dfc5ae7ad8754a03a42cd2">tinker::radmin4</a></td></tr>
+<tr class="memdesc:ga764fdc11c7dfc5ae7ad8754a03a42cd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">VDW 1-4 parameters: minimum energy distance and well depth.  <a href="group__vdw.html#ga764fdc11c7dfc5ae7ad8754a03a42cd2">More...</a><br /></td></tr>
 <tr class="separator:ga764fdc11c7dfc5ae7ad8754a03a42cd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf114c3873e7dab225d7f005b8bf88b04"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#gaf114c3873e7dab225d7f005b8bf88b04">tinker::njvdw</a></td></tr>
+<tr class="memdesc:gaf114c3873e7dab225d7f005b8bf88b04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of unique values in the <a class="el" href="group__vdw.html#ga36d3a26df75d6b7e84fdb802ed197002" title="Type or class index into vdw parameters for each atom. The indices have been sorted and start from 0.">jvdw</a> array.  <a href="group__vdw.html#gaf114c3873e7dab225d7f005b8bf88b04">More...</a><br /></td></tr>
 <tr class="separator:gaf114c3873e7dab225d7f005b8bf88b04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga1e3ef571efc3cfe2defaf4347ff0d4e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga753fe0f5b2ef77802a069f67e51f33ab">grad_prec</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga1e3ef571efc3cfe2defaf4347ff0d4e8">tinker::gxred</a></td></tr>
+<tr class="memdesc:ga1e3ef571efc3cfe2defaf4347ff0d4e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Halgren buffered 14-7 reduced vdw gradients for each atom.  <a href="group__vdw.html#ga1e3ef571efc3cfe2defaf4347ff0d4e8">More...</a><br /></td></tr>
 <tr class="separator:ga1e3ef571efc3cfe2defaf4347ff0d4e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa527c396cad7466116d6878483feeb44"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#gaa527c396cad7466116d6878483feeb44">tinker::scexp</a></td></tr>
+<tr class="memdesc:gaa527c396cad7466116d6878483feeb44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exponential factor for soft core buffered 14-7 potential.  <a href="group__vdw.html#gaa527c396cad7466116d6878483feeb44">More...</a><br /></td></tr>
 <tr class="separator:gaa527c396cad7466116d6878483feeb44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2883c5d4a640e1093509af12f7a57114"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga2883c5d4a640e1093509af12f7a57114">tinker::scalpha</a></td></tr>
+<tr class="memdesc:ga2883c5d4a640e1093509af12f7a57114"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scale factor \( \alpha \) for soft core buffered 14-7 potential.  <a href="group__vdw.html#ga2883c5d4a640e1093509af12f7a57114">More...</a><br /></td></tr>
 <tr class="separator:ga2883c5d4a640e1093509af12f7a57114"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5783418c3579cf6f8e6388a803610792"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga5783418c3579cf6f8e6388a803610792">tinker::mut</a></td></tr>
+<tr class="memdesc:ga5783418c3579cf6f8e6388a803610792"><td class="mdescLeft">&#160;</td><td class="mdescRight">State weighting values (lambda) of all atoms for van der Waals potentials.  <a href="group__vdw.html#ga5783418c3579cf6f8e6388a803610792">More...</a><br /></td></tr>
 <tr class="separator:ga5783418c3579cf6f8e6388a803610792"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

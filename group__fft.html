@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -76,10 +76,14 @@ $(function() {
   <div class="headertitle"><div class="title">FFT</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Fast Fourier Transform.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:structtinker_1_1_f_f_t_plan"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__fft.html#structtinker_1_1_f_f_t_plan">tinker::FFTPlan</a></td></tr>
+<tr class="memdesc:structtinker_1_1_f_f_t_plan"><td class="mdescLeft">&#160;</td><td class="mdescRight">FFT plan.  <a href="group__fft.html#structtinker_1_1_f_f_t_plan">More...</a><br /></td></tr>
 <tr class="separator:structtinker_1_1_f_f_t_plan"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -101,24 +105,27 @@ Typedefs</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<div class="textblock"><dl class="section warning"><dt>Warning</dt><dd>PME grid sizes <code>nfft1</code>, <code>nfft2</code>, and <code>nfft3</code> in Tinker are associated with <code>x</code>, <code>y</code>, and <code>z</code> directions, respectively. These three numbers also correspond to a Fortran array <code>qgrid(2,nfft1,nfft2,nfft3)</code>, where <code>nfft1</code> is the fastest changing dimension and <code>nfft3</code> is the slowest changing dimension among the three.</dd></dl>
+<div class="textblock"><p >FFT plan. </p>
+<dl class="section warning"><dt>Warning</dt><dd>PME grid sizes <code>nfft1</code>, <code>nfft2</code>, and <code>nfft3</code> in Tinker are associated with <code>x</code>, <code>y</code>, and <code>z</code> directions, respectively. These three numbers also correspond to a Fortran array <code>qgrid(2,nfft1,nfft2,nfft3)</code>, where <code>nfft1</code> is the fastest changing dimension and <code>nfft3</code> is the slowest changing dimension among the three.</dd></dl>
 <p>The multi-dimensional <code>FFTW3</code> Fortran API in Tinker is called as follows, </p><div class="fragment"><div class="line"><span class="comment">call dfftw_plan_dft_3d (planf,nfft1,nfft2,nfft3,qgrid,qgrid,ifront,iguess)</span></div>
 </div><!-- fragment --><p> which is different from the C API.</p>
-<p >The difference is described on the <a href="http://fftw.org/doc/Reversing-array-dimensions.html#Reversing-array-dimensions">FFTW website</a>:</p>
+<p >The difference is described on the <a href="http://fftw.org/doc/Reversing-array-dimensions.html">FFTW website</a>:</p>
 <blockquote class="doxtable">
 <p >&zwj;A minor annoyance in calling FFTW from Fortran is that FFTW’s array dimensions are defined in the C convention (row-major order), while Fortran’s array dimensions are the opposite convention (column-major order). See Multi-dimensional Array Format. This is just a bookkeeping difference, with no effect on performance. The only consequence of this is that, whenever you create an FFTW plan for a multi-dimensional transform, you must always reverse the ordering of the dimensions. </p>
 </blockquote>
 <p><a href="https://docs.nvidia.com/cuda/cufft/index.html#function-cufftplan3d">cuFFT C API</a> is similar to FFTW C API:</p>
-<div class="fragment"><div class="line">cufftResult cufftPlan3d(cufftHandle *plan, <span class="keywordtype">int</span> nx, <span class="keywordtype">int</span> ny, <span class="keywordtype">int</span> nz, cufftType type);</div>
+<div class="fragment"><div class="line">cufftResult cufftPlan3d(cufftHandle *plan,</div>
+<div class="line">   <span class="keywordtype">int</span> nx, <span class="keywordtype">int</span> ny, <span class="keywordtype">int</span> nz, cufftType type);</div>
 </div><!-- fragment --><blockquote class="doxtable">
 <p >&zwj;nx: The transform size in the x dimension. This is slowest changing dimension of a transform (strided in memory). <br  />
  nz: The transform size in the z dimension. This is fastest changing dimension of a transform (contiguous in memory). </p>
 </blockquote>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Public Member Functions</h3></td></tr>
-<tr class="memitem:ae8c033cc11a7b9cf7858732b98e95bec"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
-<tr class="memitem:ae8c033cc11a7b9cf7858732b98e95bec"><td class="memTemplItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__fft.html#ae8c033cc11a7b9cf7858732b98e95bec">self</a> ()</td></tr>
-<tr class="separator:ae8c033cc11a7b9cf7858732b98e95bec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50530570c8757fa469602752525bbc0d"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a50530570c8757fa469602752525bbc0d"><td class="memTemplItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__fft.html#a50530570c8757fa469602752525bbc0d">castTo</a> ()</td></tr>
+<tr class="memdesc:a50530570c8757fa469602752525bbc0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Statically cast the <a class="el" href="group__fft.html#structtinker_1_1_f_f_t_plan" title="FFT plan.">FFTPlan</a> to one of its derived type.  <a href="group__fft.html#a50530570c8757fa469602752525bbc0d">More...</a><br /></td></tr>
+<tr class="separator:a50530570c8757fa469602752525bbc0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c8030173e763f89fe3b2e7f1b9d0f9c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__fft.html#a6c8030173e763f89fe3b2e7f1b9d0f9c">~FFTPlan</a> ()</td></tr>
 <tr class="separator:a6c8030173e763f89fe3b2e7f1b9d0f9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -149,8 +156,8 @@ Typedefs</h2></td></tr>
 </div>
 </div>
 <h4 class="groupheader">Member Function Documentation</h4>
-<a id="ae8c033cc11a7b9cf7858732b98e95bec" name="ae8c033cc11a7b9cf7858732b98e95bec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8c033cc11a7b9cf7858732b98e95bec">&#9670;&nbsp;</a></span>self()</h2>
+<a id="a50530570c8757fa469602752525bbc0d" name="a50530570c8757fa469602752525bbc0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50530570c8757fa469602752525bbc0d">&#9670;&nbsp;</a></span>castTo()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -161,7 +168,7 @@ template&lt;class T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">T &amp; tinker::FFTPlan::self </td>
+          <td class="memname">T &amp; tinker::FFTPlan::castTo </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -173,6 +180,8 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Statically cast the <a class="el" href="group__fft.html#structtinker_1_1_f_f_t_plan" title="FFT plan.">FFTPlan</a> to one of its derived type. </p>
 
 </div>
 </div>

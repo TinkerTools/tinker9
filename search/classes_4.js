@@ -8,6 +8,5 @@ var searchData=
   ['engalyz_5',['EngAlyz',['../struct_eng_alyz.html',1,'']]],
   ['enggrad_6',['EngGrad',['../struct_eng_grad.html',1,'']]],
   ['enggradvir_7',['EngGradVir',['../struct_eng_grad_vir.html',1,'']]],
-  ['ewald_8',['EWALD',['../class_e_w_a_l_d.html',1,'']]],
-  ['execq_9',['ExecQ',['../group__async.html#classtinker_1_1v1_1_1_exec_q',1,'tinker::ExecQ'],['../group__async.html#classtinker_1_1v1_1_1_exec_q',1,'tinker::v1::ExecQ']]]
+  ['ewald_8',['EWALD',['../class_e_w_a_l_d.html',1,'']]]
 ];

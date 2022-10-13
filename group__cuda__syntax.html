@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -113,30 +113,38 @@ Functions</h2></td></tr>
 <tr class="separator:ga113e5f952ae32ee3252c2e0cf5d2f64a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf8490b7537553978014ab730ee9ced53"><td class="memTemplParams" colspan="2">template&lt;class T , class  = typename std::enable_if&lt;std::is_same&lt;T, float&gt;::value ||      std::is_same&lt;T, double&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:gaf8490b7537553978014ab730ee9ced53"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gaf8490b7537553978014ab730ee9ced53">tinker::atomic_add</a> (T value, <a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a> *buffer, size_t offset=0)</td></tr>
+<tr class="memdesc:gaf8490b7537553978014ab730ee9ced53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds <code>value</code> to <code>buffer[offset]</code> via fixed-point arithmetic.  <a href="group__cuda__syntax.html#gaf8490b7537553978014ab730ee9ced53">More...</a><br /></td></tr>
 <tr class="separator:gaf8490b7537553978014ab730ee9ced53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf850aa84dfc9cf8335e98ea2eb81a27f"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:gaf850aa84dfc9cf8335e98ea2eb81a27f"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gaf850aa84dfc9cf8335e98ea2eb81a27f">tinker::atomic_add</a> (T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, T(*buffer)[8], size_t offset=0)</td></tr>
+<tr class="memdesc:gaf850aa84dfc9cf8335e98ea2eb81a27f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds virial <code>{xx,yx,zx,yy,zy,zz}</code> to <code>buffer[offset][0 to 7]</code>.  <a href="group__cuda__syntax.html#gaf850aa84dfc9cf8335e98ea2eb81a27f">More...</a><br /></td></tr>
 <tr class="separator:gaf850aa84dfc9cf8335e98ea2eb81a27f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga563a3e0fda60c724b911e03bef0364da"><td class="memTemplParams" colspan="2">template&lt;class T , class  = typename std::enable_if&lt;std::is_same&lt;T, float&gt;::value ||      std::is_same&lt;T, double&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:ga563a3e0fda60c724b911e03bef0364da"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga563a3e0fda60c724b911e03bef0364da">tinker::atomic_add</a> (T vxx, T vyx, T vzx, T vyy, T vzy, T vzz, <a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a>(*buffer)[8], size_t offset=0)</td></tr>
 <tr class="separator:ga563a3e0fda60c724b911e03bef0364da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga13b8f3f083445e998421fb82e5b192be"><td class="memTemplParams" colspan="2">template&lt;class G , class T &gt; </td></tr>
 <tr class="memitem:ga13b8f3f083445e998421fb82e5b192be"><td class="memTemplItemLeft" align="right" valign="top">__device__ G&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga13b8f3f083445e998421fb82e5b192be">tinker::floatTo</a> (T val)</td></tr>
+<tr class="memdesc:ga13b8f3f083445e998421fb82e5b192be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts <code>val</code> of floating-point to type <code>G</code>.  <a href="group__cuda__syntax.html#ga13b8f3f083445e998421fb82e5b192be">More...</a><br /></td></tr>
 <tr class="separator:ga13b8f3f083445e998421fb82e5b192be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga04bdc1b484c00b6b7cb2301e598fdeb1"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga04bdc1b484c00b6b7cb2301e598fdeb1"><td class="memTemplItemLeft" align="right" valign="top">__device__ T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga04bdc1b484c00b6b7cb2301e598fdeb1">tinker::fixedTo</a> (<a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a> val)</td></tr>
+<tr class="memdesc:ga04bdc1b484c00b6b7cb2301e598fdeb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts <code>val</code> of fixed-point to floating-point.  <a href="group__cuda__syntax.html#ga04bdc1b484c00b6b7cb2301e598fdeb1">More...</a><br /></td></tr>
 <tr class="separator:ga04bdc1b484c00b6b7cb2301e598fdeb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae93b259fd16f7fd28b04a8749d0ed4aa"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:gae93b259fd16f7fd28b04a8749d0ed4aa"><td class="memTemplItemLeft" align="right" valign="top">__device__ T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#gae93b259fd16f7fd28b04a8749d0ed4aa">tinker::toFloatGrad</a> (<a class="el" href="group__prec.html#ga95b098320737289b637d13efebb5f74d">fixed</a> g)</td></tr>
+<tr class="memdesc:gae93b259fd16f7fd28b04a8749d0ed4aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a fixed-point value <code>g</code> to floating-point value.  <a href="group__cuda__syntax.html#gae93b259fd16f7fd28b04a8749d0ed4aa">More...</a><br /></td></tr>
 <tr class="separator:gae93b259fd16f7fd28b04a8749d0ed4aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga04114fac1803630939755fadf156320d"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga04114fac1803630939755fadf156320d"><td class="memTemplItemLeft" align="right" valign="top">__device__ T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga04114fac1803630939755fadf156320d">tinker::toFloatGrad</a> (double g)</td></tr>
+<tr class="memdesc:ga04114fac1803630939755fadf156320d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a double-precision value <code>g</code> to floating-point value.  <a href="group__cuda__syntax.html#ga04114fac1803630939755fadf156320d">More...</a><br /></td></tr>
 <tr class="separator:ga04114fac1803630939755fadf156320d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga41fdcd29dd0553882401902c8c816210"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ga41fdcd29dd0553882401902c8c816210"><td class="memTemplItemLeft" align="right" valign="top">__device__ T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga41fdcd29dd0553882401902c8c816210">tinker::toFloatGrad</a> (float g)</td></tr>
+<tr class="memdesc:ga41fdcd29dd0553882401902c8c816210"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a single-precision value <code>g</code> to floating-point value.  <a href="group__cuda__syntax.html#ga41fdcd29dd0553882401902c8c816210">More...</a><br /></td></tr>
 <tr class="separator:ga41fdcd29dd0553882401902c8c816210"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga19e6a29d0385cd8f27e67d20fccdc83f"><td class="memTemplParams" colspan="2">template&lt;class T , class U &gt; </td></tr>
 <tr class="memitem:ga19e6a29d0385cd8f27e67d20fccdc83f"><td class="memTemplItemLeft" align="right" valign="top">__device__ __host__ constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__cuda__syntax.html#ga19e6a29d0385cd8f27e67d20fccdc83f">tinker::eq</a> ()</td></tr>
+<tr class="memdesc:ga19e6a29d0385cd8f27e67d20fccdc83f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used as <code><a class="el" href="group__acc__syntax.html#ga8a768ea49f35fd0f7240752ddb711629" title="Used as eq&lt;T1,T2&gt;() for two type identifiers.">eq&lt;T1,T2&gt;()</a></code> for two type identifiers.  <a href="group__cuda__syntax.html#ga19e6a29d0385cd8f27e67d20fccdc83f">More...</a><br /></td></tr>
 <tr class="separator:ga19e6a29d0385cd8f27e67d20fccdc83f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -368,8 +376,7 @@ template&lt;class T , class  = typename std::enable_if&lt;std::is_same&lt;T, flo
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Adds virial <code>{xx,yx,zx,yy,zy,zz}</code> to <code>buffer[offset][0 to 7]</code> via fixed-point arithmetic. </p>
+<p >Adds virial <code>{xx,yx,zx,yy,zy,zz}</code> to <code>buffer[offset][0 to 7]</code> via fixed-point arithmetic. </p>
 
 </div>
 </div>

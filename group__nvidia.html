@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -81,6 +81,7 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:structtinker_1_1_device_attribute"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#structtinker_1_1_device_attribute">tinker::DeviceAttribute</a></td></tr>
+<tr class="memdesc:structtinker_1_1_device_attribute"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device attributes.  <a href="group__nvidia.html#structtinker_1_1_device_attribute">More...</a><br /></td></tr>
 <tr class="separator:structtinker_1_1_device_attribute"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -99,13 +100,17 @@ Variables</h2></td></tr>
 <tr class="memitem:ga7ee59091eab316e45b0c9dc6d382f3d0"><td class="memItemLeft" align="right" valign="top">constexpr unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#ga7ee59091eab316e45b0c9dc6d382f3d0">tinker::WARP_SIZE</a> = 32</td></tr>
 <tr class="separator:ga7ee59091eab316e45b0c9dc6d382f3d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab293ee936bb3df46085aeb4cde02e0d2"><td class="memItemLeft" align="right" valign="top">constexpr unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#gab293ee936bb3df46085aeb4cde02e0d2">tinker::ALL_LANES</a> = 0xFFFFFFFF</td></tr>
+<tr class="memdesc:gab293ee936bb3df46085aeb4cde02e0d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask for all of the lanes in a warp.  <a href="group__nvidia.html#gab293ee936bb3df46085aeb4cde02e0d2">More...</a><br /></td></tr>
 <tr class="separator:gab293ee936bb3df46085aeb4cde02e0d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga973f6264fed111432b9d49f9f9cc209d"><td class="memItemLeft" align="right" valign="top">constexpr unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d">tinker::BLOCK_DIM</a> = 128</td></tr>
+<tr class="memdesc:ga973f6264fed111432b9d49f9f9cc209d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default dimension of thread blocks.  <a href="group__nvidia.html#ga973f6264fed111432b9d49f9f9cc209d">More...</a><br /></td></tr>
 <tr class="separator:ga973f6264fed111432b9d49f9f9cc209d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga040b0470b3b8c4da9840ce2abaf87842"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#ga040b0470b3b8c4da9840ce2abaf87842">tinker::PME_BLOCKDIM</a> = 64</td></tr>
+<tr class="memdesc:ga040b0470b3b8c4da9840ce2abaf87842"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dimension of the thread blocks for some <a class="el" href="group__pme.html#structtinker_1_1_p_m_e" title="Particle mesh ewald girds and parameters.">PME</a> kernels.  <a href="group__nvidia.html#ga040b0470b3b8c4da9840ce2abaf87842">More...</a><br /></td></tr>
 <tr class="separator:ga040b0470b3b8c4da9840ce2abaf87842"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<p >Number of threads in a warp. </p>
 <hr/><h2 class="groupheader">Class Documentation</h2>
 <a name="structtinker_1_1_device_attribute" id="structtinker_1_1_device_attribute"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#structtinker_1_1_device_attribute">&#9670;&nbsp;</a></span>tinker::DeviceAttribute</h2>
@@ -122,42 +127,61 @@ Variables</h2></td></tr>
 </div><table class="memberdecls">
 <tr><td colspan="2"><h3>Public Attributes</h3></td></tr>
 <tr class="memitem:a0967a24d5541c2d25e0d1f327e8ce8b8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a0967a24d5541c2d25e0d1f327e8ce8b8">device</a></td></tr>
+<tr class="memdesc:a0967a24d5541c2d25e0d1f327e8ce8b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device number.  <a href="group__nvidia.html#a0967a24d5541c2d25e0d1f327e8ce8b8">More...</a><br /></td></tr>
 <tr class="separator:a0967a24d5541c2d25e0d1f327e8ce8b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed0064e375b1fa3520ac0ea9d24ff667"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#aed0064e375b1fa3520ac0ea9d24ff667">name</a></td></tr>
+<tr class="memdesc:aed0064e375b1fa3520ac0ea9d24ff667"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device name.  <a href="group__nvidia.html#aed0064e375b1fa3520ac0ea9d24ff667">More...</a><br /></td></tr>
 <tr class="separator:aed0064e375b1fa3520ac0ea9d24ff667"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a472f2acfea107c27f6aeefeaac9507da"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a472f2acfea107c27f6aeefeaac9507da">pci_string</a></td></tr>
+<tr class="memdesc:a472f2acfea107c27f6aeefeaac9507da"><td class="mdescLeft">&#160;</td><td class="mdescRight">PCI Bus ID.  <a href="group__nvidia.html#a472f2acfea107c27f6aeefeaac9507da">More...</a><br /></td></tr>
 <tr class="separator:a472f2acfea107c27f6aeefeaac9507da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71f83c5e04ca9d0db65b57b01ec13db5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a71f83c5e04ca9d0db65b57b01ec13db5">cc_major</a></td></tr>
+<tr class="memdesc:a71f83c5e04ca9d0db65b57b01ec13db5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Major compute capability.  <a href="group__nvidia.html#a71f83c5e04ca9d0db65b57b01ec13db5">More...</a><br /></td></tr>
 <tr class="separator:a71f83c5e04ca9d0db65b57b01ec13db5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a830a286eed5ceda221f77fad39639f4e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a830a286eed5ceda221f77fad39639f4e">cc_minor</a></td></tr>
+<tr class="memdesc:a830a286eed5ceda221f77fad39639f4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minor compute capability.  <a href="group__nvidia.html#a830a286eed5ceda221f77fad39639f4e">More...</a><br /></td></tr>
 <tr class="separator:a830a286eed5ceda221f77fad39639f4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45f521c15314c3cab2b382be643ee15a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a45f521c15314c3cab2b382be643ee15a">cc</a></td></tr>
+<tr class="memdesc:a45f521c15314c3cab2b382be643ee15a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute capability multiplied by 10.  <a href="group__nvidia.html#a45f521c15314c3cab2b382be643ee15a">More...</a><br /></td></tr>
 <tr class="separator:a45f521c15314c3cab2b382be643ee15a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f7c7ac4f21d9b6a93a776c72d7af1c7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a3f7c7ac4f21d9b6a93a776c72d7af1c7">single_double_ratio</a></td></tr>
+<tr class="memdesc:a3f7c7ac4f21d9b6a93a776c72d7af1c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single to double precision performance ratio.  <a href="group__nvidia.html#a3f7c7ac4f21d9b6a93a776c72d7af1c7">More...</a><br /></td></tr>
 <tr class="separator:a3f7c7ac4f21d9b6a93a776c72d7af1c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a886f3385c2a7c75593608ead263a16"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a9a886f3385c2a7c75593608ead263a16">compute_mode_string</a></td></tr>
+<tr class="memdesc:a9a886f3385c2a7c75593608ead263a16"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>exclusive thread</code>, <code>prohibited</code>, <code>exclusive process</code>, or <code>default</code>.  <a href="group__nvidia.html#a9a886f3385c2a7c75593608ead263a16">More...</a><br /></td></tr>
 <tr class="separator:a9a886f3385c2a7c75593608ead263a16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fcdda459fa79907aed042f93766d51e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a4fcdda459fa79907aed042f93766d51e">ecc_string</a></td></tr>
+<tr class="memdesc:a4fcdda459fa79907aed042f93766d51e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>on</code>, or <code>off</code>.  <a href="group__nvidia.html#a4fcdda459fa79907aed042f93766d51e">More...</a><br /></td></tr>
 <tr class="separator:a4fcdda459fa79907aed042f93766d51e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae55b7a95a1d7cbad187af3b6fe2da4ba"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#ae55b7a95a1d7cbad187af3b6fe2da4ba">free_mem_bytes</a></td></tr>
+<tr class="memdesc:ae55b7a95a1d7cbad187af3b6fe2da4ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free device memory in bytes.  <a href="group__nvidia.html#ae55b7a95a1d7cbad187af3b6fe2da4ba">More...</a><br /></td></tr>
 <tr class="separator:ae55b7a95a1d7cbad187af3b6fe2da4ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba91df463feebea41f5e6b83eab2e370"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#aba91df463feebea41f5e6b83eab2e370">total_mem_bytes</a></td></tr>
+<tr class="memdesc:aba91df463feebea41f5e6b83eab2e370"><td class="mdescLeft">&#160;</td><td class="mdescRight">Total device memory in bytes.  <a href="group__nvidia.html#aba91df463feebea41f5e6b83eab2e370">More...</a><br /></td></tr>
 <tr class="separator:aba91df463feebea41f5e6b83eab2e370"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c8f503db1d57ae47b82d56203c1e08f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a1c8f503db1d57ae47b82d56203c1e08f">max_threads_per_block</a></td></tr>
+<tr class="memdesc:a1c8f503db1d57ae47b82d56203c1e08f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum threads per block.  <a href="group__nvidia.html#a1c8f503db1d57ae47b82d56203c1e08f">More...</a><br /></td></tr>
 <tr class="separator:a1c8f503db1d57ae47b82d56203c1e08f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a682d021593a27762848a7d1b1999b13a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a682d021593a27762848a7d1b1999b13a">max_shared_bytes_per_block</a></td></tr>
+<tr class="memdesc:a682d021593a27762848a7d1b1999b13a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum shared memory per block in bytes.  <a href="group__nvidia.html#a682d021593a27762848a7d1b1999b13a">More...</a><br /></td></tr>
 <tr class="separator:a682d021593a27762848a7d1b1999b13a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a434ae4a578ba96916b9d8499d1979d18"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a434ae4a578ba96916b9d8499d1979d18">multiprocessor_count</a></td></tr>
+<tr class="memdesc:a434ae4a578ba96916b9d8499d1979d18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiprocessor count.  <a href="group__nvidia.html#a434ae4a578ba96916b9d8499d1979d18">More...</a><br /></td></tr>
 <tr class="separator:a434ae4a578ba96916b9d8499d1979d18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b2b1af9d6c1e4201b0a7baae14dedb0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a9b2b1af9d6c1e4201b0a7baae14dedb0">max_threads_per_multiprocessor</a></td></tr>
+<tr class="memdesc:a9b2b1af9d6c1e4201b0a7baae14dedb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum threads per multiprocessor.  <a href="group__nvidia.html#a9b2b1af9d6c1e4201b0a7baae14dedb0">More...</a><br /></td></tr>
 <tr class="separator:a9b2b1af9d6c1e4201b0a7baae14dedb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6031fde2e5864451702448574faea179"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a6031fde2e5864451702448574faea179">max_shared_bytes_per_multiprocessor</a></td></tr>
+<tr class="memdesc:a6031fde2e5864451702448574faea179"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum shared memory per mutiprocessor in bytes.  <a href="group__nvidia.html#a6031fde2e5864451702448574faea179">More...</a><br /></td></tr>
 <tr class="separator:a6031fde2e5864451702448574faea179"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b5dae6c1906a03de4ba5abee9779547"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a1b5dae6c1906a03de4ba5abee9779547">max_blocks_per_multiprocessor</a></td></tr>
+<tr class="memdesc:a1b5dae6c1906a03de4ba5abee9779547"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum thread blocks per multiporcessor.  <a href="group__nvidia.html#a1b5dae6c1906a03de4ba5abee9779547">More...</a><br /></td></tr>
 <tr class="separator:a1b5dae6c1906a03de4ba5abee9779547"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa421b203b67da2c61a513a271b9c90a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#afa421b203b67da2c61a513a271b9c90a">cores_per_multiprocessor</a></td></tr>
+<tr class="memdesc:afa421b203b67da2c61a513a271b9c90a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of cores per multiprocessor.  <a href="group__nvidia.html#afa421b203b67da2c61a513a271b9c90a">More...</a><br /></td></tr>
 <tr class="separator:afa421b203b67da2c61a513a271b9c90a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a932ba267b3517a6d9f56148b957a9082"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__nvidia.html#a932ba267b3517a6d9f56148b957a9082">clock_rate_kHz</a></td></tr>
+<tr class="memdesc:a932ba267b3517a6d9f56148b957a9082"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clock frequency in kHz, not memory clock rate.  <a href="group__nvidia.html#a932ba267b3517a6d9f56148b957a9082">More...</a><br /></td></tr>
 <tr class="separator:a932ba267b3517a6d9f56148b957a9082"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h4 class="groupheader">Member Data Documentation</h4>
@@ -633,8 +657,6 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Number of threads in a warp. </p>
 
 </div>
 </div>

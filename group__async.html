@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.4"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Tinker9: Asynchronous Flow Control</title>
+<title>Tinker9: Asynchronous Queues and Streams</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -72,150 +72,57 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#var-members">Variables</a>  </div>
-  <div class="headertitle"><div class="title">Asynchronous Flow Control</div></div>
+  <div class="headertitle"><div class="title">Asynchronous Queues and Streams</div></div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacetinker_1_1g"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetinker_1_1g.html">tinker::g</a></td></tr>
+<tr class="memdesc:namespacetinker_1_1g"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global handles for the GPU runtime libraries. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:classtinker_1_1v1_1_1_exec_q"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#classtinker_1_1v1_1_1_exec_q">tinker::v1::ExecQ</a></td></tr>
-<tr class="separator:classtinker_1_1v1_1_1_exec_q"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:ga61b7eff3a411772763e7c72f53ad08b2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#ga61b7eff3a411772763e7c72f53ad08b2">tinker::g::q0</a></td></tr>
+<tr class="memdesc:ga61b7eff3a411772763e7c72f53ad08b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default OpenACC async queue.  <a href="group__async.html#ga61b7eff3a411772763e7c72f53ad08b2">More...</a><br /></td></tr>
 <tr class="separator:ga61b7eff3a411772763e7c72f53ad08b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga47058c209f953c3d6b1e538c8308c8c0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#ga47058c209f953c3d6b1e538c8308c8c0">tinker::g::q1</a></td></tr>
+<tr class="memdesc:ga47058c209f953c3d6b1e538c8308c8c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default OpenACC sync queue.  <a href="group__async.html#ga47058c209f953c3d6b1e538c8308c8c0">More...</a><br /></td></tr>
 <tr class="separator:ga47058c209f953c3d6b1e538c8308c8c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab9f8fe1e1bb3166015732f66e494a10d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#gab9f8fe1e1bb3166015732f66e494a10d">tinker::g::qpme</a></td></tr>
+<tr class="memdesc:gab9f8fe1e1bb3166015732f66e494a10d"><td class="mdescLeft">&#160;</td><td class="mdescRight">OpenACC async queue for PME.  <a href="group__async.html#gab9f8fe1e1bb3166015732f66e494a10d">More...</a><br /></td></tr>
 <tr class="separator:gab9f8fe1e1bb3166015732f66e494a10d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabdc156b63a67d0dc849a03d30723172a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#gabdc156b63a67d0dc849a03d30723172a">tinker::use_pme_stream</a></td></tr>
+<tr class="memdesc:gabdc156b63a67d0dc849a03d30723172a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logical flag for use of a separate CUDA stream for PME.  <a href="group__async.html#gabdc156b63a67d0dc849a03d30723172a">More...</a><br /></td></tr>
 <tr class="separator:gabdc156b63a67d0dc849a03d30723172a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab995ac27f05dd5048b014a052985ca8f"><td class="memItemLeft" align="right" valign="top">cudaStream_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#gab995ac27f05dd5048b014a052985ca8f">tinker::g::s0</a></td></tr>
+<tr class="memdesc:gab995ac27f05dd5048b014a052985ca8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">CUDA stream for the default OpenACC async queue.  <a href="group__async.html#gab995ac27f05dd5048b014a052985ca8f">More...</a><br /></td></tr>
 <tr class="separator:gab995ac27f05dd5048b014a052985ca8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaec21191881edc31c4ec714b2eaec055d"><td class="memItemLeft" align="right" valign="top">cudaStream_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#gaec21191881edc31c4ec714b2eaec055d">tinker::g::s1</a></td></tr>
+<tr class="memdesc:gaec21191881edc31c4ec714b2eaec055d"><td class="mdescLeft">&#160;</td><td class="mdescRight">CUDA stream for the default OpenACC sync queue.  <a href="group__async.html#gaec21191881edc31c4ec714b2eaec055d">More...</a><br /></td></tr>
 <tr class="separator:gaec21191881edc31c4ec714b2eaec055d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga792bd1c7f55a831b48cf91064d241e30"><td class="memItemLeft" align="right" valign="top">cublasHandle_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#ga792bd1c7f55a831b48cf91064d241e30">tinker::g::h0</a></td></tr>
+<tr class="memdesc:ga792bd1c7f55a831b48cf91064d241e30"><td class="mdescLeft">&#160;</td><td class="mdescRight">CUDA BLAS handle using <a class="el" href="group__async.html#gab995ac27f05dd5048b014a052985ca8f" title="CUDA stream for the default OpenACC async queue.">s0</a>.  <a href="group__async.html#ga792bd1c7f55a831b48cf91064d241e30">More...</a><br /></td></tr>
 <tr class="separator:ga792bd1c7f55a831b48cf91064d241e30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad5c25d313242dfd80b69bc70494dc150"><td class="memItemLeft" align="right" valign="top">cublasHandle_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#gad5c25d313242dfd80b69bc70494dc150">tinker::g::h1</a></td></tr>
+<tr class="memdesc:gad5c25d313242dfd80b69bc70494dc150"><td class="mdescLeft">&#160;</td><td class="mdescRight">CUDA BLAS handle using <a class="el" href="group__async.html#gaec21191881edc31c4ec714b2eaec055d" title="CUDA stream for the default OpenACC sync queue.">s1</a>.  <a href="group__async.html#gad5c25d313242dfd80b69bc70494dc150">More...</a><br /></td></tr>
 <tr class="separator:gad5c25d313242dfd80b69bc70494dc150"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 
 
-<h3><a id="async" name="async"></a>async</h3><div class="textblock">This is a snippet of the OpenACC code. </p><div class="fragment"><div class="line"><span class="preprocessor">#pragma acc parallel loop</span></div>
+<h3><a id="async" name="async"></a>Asynchronous Queues and Streams</h3><div class="textblock">This is a snippet of the OpenACC code. </p><div class="fragment"><div class="line"><span class="preprocessor">#pragma acc parallel loop</span></div>
 <div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; limit; ++i) {</div>
 <div class="line">   array[i] = i;</div>
 <div class="line">}</div>
-</div><!-- fragment --><p> By default, the CPU thread will wait/block until the parallel loop finishes. If you want the CPU thread to proceed without waiting for the parallel loop to finish, you may add the <code>async</code> directive, </p><div class="fragment"><div class="line"><span class="preprocessor">#pragma acc parallel loop async(queue)</span></div>
+</div><!-- fragment --><p> By default, the host thread will wait until the parallel loop finishes. If you want the host thread to proceed without waiting for the parallel loop to finish, you may add <code>async</code>, </p><div class="fragment"><div class="line"><span class="preprocessor">#pragma acc parallel loop async(queue)</span></div>
 <div class="line"><span class="comment">// or #pragma acc parallel loop async</span></div>
 <div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; limit; ++i) {</div>
 <div class="line">   array[i] = i;</div>
 <div class="line">}</div>
-</div><!-- fragment --><p> where <code>queue</code> is an optional hardwired integer or an integer variable. A special integer constant value <code>acc_async_sync</code> is defined in the OpenACC standard that can be used in the <code>async</code> directive as a queue number, to obtain an synchronous/blocking behavior. Implementations may be different on different platforms though, on the CUDA platform, every OpenACC queue is built on top of a CUDA stream. </div><hr/><h2 class="groupheader">Class Documentation</h2>
-<a name="classtinker_1_1v1_1_1_exec_q" id="classtinker_1_1v1_1_1_exec_q"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#classtinker_1_1v1_1_1_exec_q">&#9670;&nbsp;</a></span>tinker::v1::ExecQ</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">class tinker::v1::ExecQ</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<div class="textblock"><p >A helper class for mdsave. </p>
-</div><table class="memberdecls">
-<tr><td colspan="2"><h3>Public Member Functions</h3></td></tr>
-<tr class="memitem:a5c57e3d71f7dac82f1be142bb3b0e347"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#a5c57e3d71f7dac82f1be142bb3b0e347">deallocate</a> ()</td></tr>
-<tr class="separator:a5c57e3d71f7dac82f1be142bb3b0e347"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8468393026fd33aebc3378856fc4f4d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#a8468393026fd33aebc3378856fc4f4d3">allocate</a> ()</td></tr>
-<tr class="separator:a8468393026fd33aebc3378856fc4f4d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99d3d42c36e17b9c8b60d9c0f59e5fc4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#a99d3d42c36e17b9c8b60d9c0f59e5fc4">beginCopyout</a> ()</td></tr>
-<tr class="separator:a99d3d42c36e17b9c8b60d9c0f59e5fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae68a81d3cbe378b26441666a29ddbeaf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__async.html#ae68a81d3cbe378b26441666a29ddbeaf">endCopyout</a> ()</td></tr>
-<tr class="separator:ae68a81d3cbe378b26441666a29ddbeaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<h4 class="groupheader">Member Function Documentation</h4>
-<a id="a8468393026fd33aebc3378856fc4f4d3" name="a8468393026fd33aebc3378856fc4f4d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8468393026fd33aebc3378856fc4f4d3">&#9670;&nbsp;</a></span>allocate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tinker::v1::ExecQ::allocate </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a99d3d42c36e17b9c8b60d9c0f59e5fc4" name="a99d3d42c36e17b9c8b60d9c0f59e5fc4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99d3d42c36e17b9c8b60d9c0f59e5fc4">&#9670;&nbsp;</a></span>beginCopyout()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tinker::v1::ExecQ::beginCopyout </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5c57e3d71f7dac82f1be142bb3b0e347" name="a5c57e3d71f7dac82f1be142bb3b0e347"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5c57e3d71f7dac82f1be142bb3b0e347">&#9670;&nbsp;</a></span>deallocate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tinker::v1::ExecQ::deallocate </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae68a81d3cbe378b26441666a29ddbeaf" name="ae68a81d3cbe378b26441666a29ddbeaf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae68a81d3cbe378b26441666a29ddbeaf">&#9670;&nbsp;</a></span>endCopyout()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void tinker::v1::ExecQ::endCopyout </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-
-</div>
-</div>
-<h2 class="groupheader">Variable Documentation</h2>
+</div><!-- fragment --><p> where <code>queue</code> is an optional hardwired integer or an integer variable. A special integer constant value <code>acc_async_sync</code> is defined by the OpenACC standard that can be used in the <code>async</code> directive as a queue number, to achieve an synchronous/blocking behavior. Implementations may be different on different platforms though, on the CUDA platform every OpenACC queue is built on top of a CUDA stream. </div><h2 class="groupheader">Variable Documentation</h2>
 <a id="ga792bd1c7f55a831b48cf91064d241e30" name="ga792bd1c7f55a831b48cf91064d241e30"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga792bd1c7f55a831b48cf91064d241e30">&#9670;&nbsp;</a></span>h0</h2>
 
@@ -403,6 +310,8 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Logical flag for use of a separate CUDA stream for PME. </p>
 
 </div>
 </div>

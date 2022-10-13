@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -86,6 +86,7 @@ Classes</h2></td></tr>
 <tr class="memitem:classtinker_1_1_bussi_thermostat"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#classtinker_1_1_bussi_thermostat">tinker::BussiThermostat</a></td></tr>
 <tr class="separator:classtinker_1_1_bussi_thermostat"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:classtinker_1_1_nhc_device"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#classtinker_1_1_nhc_device">tinker::NhcDevice</a></td></tr>
+<tr class="memdesc:classtinker_1_1_nhc_device"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies a velocity correction as needed for the Nose-Hoover Chains at the half time step.  <a href="group__mdpt.html#classtinker_1_1_nhc_device">More...</a><br /></td></tr>
 <tr class="separator:classtinker_1_1_nhc_device"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:classtinker_1_1_nhc06_thermostat"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#classtinker_1_1_nhc06_thermostat">tinker::Nhc06Thermostat</a></td></tr>
 <tr class="separator:classtinker_1_1_nhc06_thermostat"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,29 +150,40 @@ Functions</h2></td></tr>
 <tr class="memitem:ga43eae19109a55b45702c90926347f74a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#ga43eae19109a55b45702c90926347f74a">tinker::bussiThermostat</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt, <a class="el" href="group__prec.html#ga30bdd42dc37f1ae5027231939632cfd7">T_prec</a> temp)</td></tr>
 <tr class="separator:ga43eae19109a55b45702c90926347f74a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gafd5c437252109c6cf517418ac656dc99"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#gafd5c437252109c6cf517418ac656dc99">tinker::monteCarloBarostat</a> (<a class="el" href="group__prec.html#ga8286f2194addf403df0dda44fc758703">energy_prec</a> epot, <a class="el" href="group__prec.html#ga30bdd42dc37f1ae5027231939632cfd7">T_prec</a> temp)</td></tr>
+<tr class="memdesc:gafd5c437252109c6cf517418ac656dc99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies a box size correction as needed for the Monte Carlo barostat at the half time step.  <a href="group__mdpt.html#gafd5c437252109c6cf517418ac656dc99">More...</a><br /></td></tr>
 <tr class="separator:gafd5c437252109c6cf517418ac656dc99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2ded40073717b7faf202b8f077c8a8a9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#ga2ded40073717b7faf202b8f077c8a8a9">tinker::berendsenBarostat</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt)</td></tr>
+<tr class="memdesc:ga2ded40073717b7faf202b8f077c8a8a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Berendsen barostat by scaling the coordinates and box dimensions via coupling to an external constant pressure bath. Code for anisotropic pressure coupling was provided by Guido Raos, Dipartimento di Chimica, Politecnico di Milano, Italy.  <a href="group__mdpt.html#ga2ded40073717b7faf202b8f077c8a8a9">More...</a><br /></td></tr>
 <tr class="separator:ga2ded40073717b7faf202b8f077c8a8a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:gaa8c1706dc185af2ee387881a69f94b8b"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#gaa8c1706dc185af2ee387881a69f94b8b">tinker::maxnose</a> = bath::maxnose</td></tr>
+<tr class="memdesc:gaa8c1706dc185af2ee387881a69f94b8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum length of the NH chain.  <a href="group__mdpt.html#gaa8c1706dc185af2ee387881a69f94b8b">More...</a><br /></td></tr>
 <tr class="separator:gaa8c1706dc185af2ee387881a69f94b8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6440cb6aa2f51092130aa6f4986b24cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga8286f2194addf403df0dda44fc758703">energy_prec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#ga6440cb6aa2f51092130aa6f4986b24cc">tinker::eksum</a></td></tr>
+<tr class="memdesc:ga6440cb6aa2f51092130aa6f4986b24cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kinetic energy.  <a href="group__mdpt.html#ga6440cb6aa2f51092130aa6f4986b24cc">More...</a><br /></td></tr>
 <tr class="separator:ga6440cb6aa2f51092130aa6f4986b24cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9c8501475d104dc29a47844f1f726526"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga8286f2194addf403df0dda44fc758703">energy_prec</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#ga9c8501475d104dc29a47844f1f726526">tinker::ekin</a> [3][3]</td></tr>
+<tr class="memdesc:ga9c8501475d104dc29a47844f1f726526"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kinetic energy tensor.  <a href="group__mdpt.html#ga9c8501475d104dc29a47844f1f726526">More...</a><br /></td></tr>
 <tr class="separator:ga9c8501475d104dc29a47844f1f726526"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga366f65814c19e3071aa54b6ccec13386"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga4183083f26700ce2750055bb20a648a8">pos_prec</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#ga366f65814c19e3071aa54b6ccec13386">tinker::x_pmonte</a></td></tr>
+<tr class="memdesc:ga366f65814c19e3071aa54b6ccec13386"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temporary coordinates created for the Monte Carlo barostat.  <a href="group__mdpt.html#ga366f65814c19e3071aa54b6ccec13386">More...</a><br /></td></tr>
 <tr class="separator:ga366f65814c19e3071aa54b6ccec13386"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabfe8ab59f71c7f975c72f44d900e485f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga4183083f26700ce2750055bb20a648a8">pos_prec</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#gabfe8ab59f71c7f975c72f44d900e485f">tinker::y_pmonte</a></td></tr>
+<tr class="memdesc:gabfe8ab59f71c7f975c72f44d900e485f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temporary coordinates created for the Monte Carlo barostat.  <a href="group__mdpt.html#gabfe8ab59f71c7f975c72f44d900e485f">More...</a><br /></td></tr>
 <tr class="separator:gabfe8ab59f71c7f975c72f44d900e485f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga63631aecaf0dd5d9baccb930ab549b7d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga4183083f26700ce2750055bb20a648a8">pos_prec</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#ga63631aecaf0dd5d9baccb930ab549b7d">tinker::z_pmonte</a></td></tr>
+<tr class="memdesc:ga63631aecaf0dd5d9baccb930ab549b7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temporary coordinates created for the Monte Carlo barostat.  <a href="group__mdpt.html#ga63631aecaf0dd5d9baccb930ab549b7d">More...</a><br /></td></tr>
 <tr class="separator:ga63631aecaf0dd5d9baccb930ab549b7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga77d9ae7455d2a74fd57933cddcd57627"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#ga77d9ae7455d2a74fd57933cddcd57627">tinker::qbar</a></td></tr>
+<tr class="memdesc:ga77d9ae7455d2a74fd57933cddcd57627"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mass of the piston.  <a href="group__mdpt.html#ga77d9ae7455d2a74fd57933cddcd57627">More...</a><br /></td></tr>
 <tr class="separator:ga77d9ae7455d2a74fd57933cddcd57627"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa977d21db0573fe2707d904c70a1822c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#gaa977d21db0573fe2707d904c70a1822c">tinker::vbar</a></td></tr>
+<tr class="memdesc:gaa977d21db0573fe2707d904c70a1822c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Velocity of the isotropic piston.  <a href="group__mdpt.html#gaa977d21db0573fe2707d904c70a1822c">More...</a><br /></td></tr>
 <tr class="separator:gaa977d21db0573fe2707d904c70a1822c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6ccc49e0af491d8659fb3b97d1454a2d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdpt.html#ga6ccc49e0af491d8659fb3b97d1454a2d">tinker::vbar_matrix</a> [3][3]</td></tr>
+<tr class="memdesc:ga6ccc49e0af491d8659fb3b97d1454a2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Velocity matrix of the anisotropic piston.  <a href="group__mdpt.html#ga6ccc49e0af491d8659fb3b97d1454a2d">More...</a><br /></td></tr>
 <tr class="separator:ga6ccc49e0af491d8659fb3b97d1454a2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

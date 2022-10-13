@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;905ebae (Wed Aug 31 14:57:59 2022 -0500)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;ba54687 (Thu Oct 13 15:48:53 2022 -0500)</span>
    </div>
   </td>
  </tr>
@@ -86,26 +86,26 @@ $(function() {
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="group__math.html#ga37a6e9288236ffccc1ba59be4bb7ba9d">   19</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__math.html#ga76826de1113213a49ea15b98e1a90cdd">matmul3</a>(T R[3][3], T A[3][3]);</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="group__math.html#ga091a91128c815470f70fae2f47d3b52c">   29</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__math.html#ga091a91128c815470f70fae2f47d3b52c">trimatExp</a>(T ans[3][3], T m[3][3], T t);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="group__math.html#ga869ccc58d228071bd49ed6c64da865f2">   39</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__math.html#ga869ccc58d228071bd49ed6c64da865f2">trimatExpm1c</a>(T ans[3][3], T m[3][3], T t);</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="group__math.html#ga48d66df981ae20afdb89f8d31f197e35">   49</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__math.html#ga48d66df981ae20afdb89f8d31f197e35">trimatTExpm1c</a>(T ans[3][3], T m[3][3], T t)</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>{</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>   <a class="code hl_function" href="group__math.html#ga869ccc58d228071bd49ed6c64da865f2">trimatExpm1c</a>(ans, m, t);</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>   <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 3; ++i)</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; 3; ++j)</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>         ans[i][j] *= t;</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>}</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>}</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="group__math.html#ga091a91128c815470f70fae2f47d3b52c">   30</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__math.html#ga091a91128c815470f70fae2f47d3b52c">trimatExp</a>(T ans[3][3], T m[3][3], T t);</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="group__math.html#ga869ccc58d228071bd49ed6c64da865f2">   41</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__math.html#ga869ccc58d228071bd49ed6c64da865f2">trimatExpm1c</a>(T ans[3][3], T m[3][3], T t);</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="group__math.html#ga48d66df981ae20afdb89f8d31f197e35">   52</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="group__math.html#ga48d66df981ae20afdb89f8d31f197e35">trimatTExpm1c</a>(T ans[3][3], T m[3][3], T t)</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>{</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>   <a class="code hl_function" href="group__math.html#ga869ccc58d228071bd49ed6c64da865f2">trimatExpm1c</a>(ans, m, t);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>   <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 3; ++i)</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; 3; ++j)</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>         ans[i][j] *= t;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>}</div>
 <div class="ttc" id="agroup__math_html_ga091a91128c815470f70fae2f47d3b52c"><div class="ttname"><a href="group__math.html#ga091a91128c815470f70fae2f47d3b52c">tinker::trimatExp</a></div><div class="ttdeci">void trimatExp(T ans[3][3], T m[3][3], T t)</div><div class="ttdoc">. Matrix m is 3 by 3 upper triangular. Matrices are stored in the row-major order (C-style).</div></div>
-<div class="ttc" id="agroup__math_html_ga48d66df981ae20afdb89f8d31f197e35"><div class="ttname"><a href="group__math.html#ga48d66df981ae20afdb89f8d31f197e35">tinker::trimatTExpm1c</a></div><div class="ttdeci">void trimatTExpm1c(T ans[3][3], T m[3][3], T t)</div><div class="ttdoc">. Matrix m is 3 by 3 upper triangular. Matrices are stored in the row-major order (C-style).</div><div class="ttdef"><b>Definition:</b> trimatexp.h:49</div></div>
+<div class="ttc" id="agroup__math_html_ga48d66df981ae20afdb89f8d31f197e35"><div class="ttname"><a href="group__math.html#ga48d66df981ae20afdb89f8d31f197e35">tinker::trimatTExpm1c</a></div><div class="ttdeci">void trimatTExpm1c(T ans[3][3], T m[3][3], T t)</div><div class="ttdoc">. Matrix m is 3 by 3 upper triangular. Matrices are stored in the row-major order (C-style).</div><div class="ttdef"><b>Definition:</b> trimatexp.h:52</div></div>
 <div class="ttc" id="agroup__math_html_ga76826de1113213a49ea15b98e1a90cdd"><div class="ttname"><a href="group__math.html#ga76826de1113213a49ea15b98e1a90cdd">tinker::matmul3</a></div><div class="ttdeci">void matmul3(T R[3][3], T A[3][3], T B[3][3])</div><div class="ttdoc">Matrix multiplication of two 3 by 3 matrices. . Matrices are stored in the row-major order (C-style).</div></div>
 <div class="ttc" id="agroup__math_html_ga869ccc58d228071bd49ed6c64da865f2"><div class="ttname"><a href="group__math.html#ga869ccc58d228071bd49ed6c64da865f2">tinker::trimatExpm1c</a></div><div class="ttdeci">void trimatExpm1c(T ans[3][3], T m[3][3], T t)</div><div class="ttdoc">. Matrix m is 3 by 3 upper triangular. Matrices are stored in the row-major order (C-style).</div></div>
-<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:7</div></div>
+<div class="ttc" id="anamespacetinker_html"><div class="ttname"><a href="namespacetinker.html">tinker</a></div><div class="ttdef"><b>Definition:</b> testrt.h:9</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
