@@ -1,5 +1,4 @@
 #include "ff/amoebamod.h"
-#include "ff/aplusmod.h"
 #include "ff/atom.h"
 #include "ff/image.h"
 #include "ff/nblist.h"

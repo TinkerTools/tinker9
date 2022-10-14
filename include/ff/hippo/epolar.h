@@ -1,5 +1,4 @@
 #pragma once
-#include "ff/precision.h"
 #include "tool/rcman.h"
 
 namespace tinker {
@@ -9,4 +8,9 @@ void epolarChgpenData(RcOp);
 void epolarChgpen(int vers);
 /// \ingroup hippopolar
 void epolarChgpenEwaldRecipSelf(int vers, int use_cf);
+}
+
+namespace tinker {
+void epolarAplusEwald(int vers, int useCF);
+void epolarAplusNonEwald(int vers, int useCF);
 }

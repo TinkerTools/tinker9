@@ -9,3 +9,8 @@ void empoleChgpen(int vers);
 /// \ingroup hippompole
 void empoleChgpenEwaldRecip(int vers, int useCF);
 }
+
+namespace tinker {
+void empoleAplusEwald(int vers, int useCF);
+void empoleAplusNonEwald(int vers, int useCF);
+}

@@ -161,3 +161,8 @@ TINKER_EXTERN real* upalt_lsqr_a;
 TINKER_EXTERN real* udalt_lsqr_b;
 TINKER_EXTERN real* upalt_lsqr_b;
 }
+
+// aplus
+namespace tinker {
+TINKER_EXTERN real* dirdamp;
+}

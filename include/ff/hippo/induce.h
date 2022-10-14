@@ -20,3 +20,9 @@ void sparsePrecondApply2(const real (*rsd)[3], real (*zrsd)[3]);
 void induce2(real (*uind)[3]);
 /// \}
 }
+
+namespace tinker {
+void dfieldAplus(real (*field)[3]);
+void ufieldAplus(const real (*uind)[3], real (*field)[3]);
+void sparsePrecondApply3(const real (*rsd)[3], real (*zrsd)[3]);
+}
