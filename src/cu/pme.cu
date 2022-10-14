@@ -1,5 +1,5 @@
 #include "ff/amoeba/empole.h"
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/box.h"
 #include "ff/elec.h"
 #include "ff/pme.h"

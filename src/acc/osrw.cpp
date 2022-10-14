@@ -1,5 +1,5 @@
 #include "md/osrw.h"
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/atom.h"
 #include "ff/echarge.h"
 #include "ff/evalence.h"

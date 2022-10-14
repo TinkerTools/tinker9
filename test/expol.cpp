@@ -1,4 +1,4 @@
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 
 #include "test.h"
 #include "testrt.h"

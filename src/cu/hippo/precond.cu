@@ -1,5 +1,5 @@
-#include "ff/amoebamod.h"
-#include "ff/hippomod.h"
+#include "ff/modamoeba.h"
+#include "ff/modhippo.h"
 #include "ff/image.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"

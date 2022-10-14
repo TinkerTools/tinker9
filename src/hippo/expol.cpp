@@ -1,7 +1,7 @@
 #include "ff/hippo/expol.h"
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/atom.h"
-#include "ff/hippomod.h"
+#include "ff/modhippo.h"
 #include "tool/darray.h"
 #include "tool/iofortstr.h"
 #include <tinker/detail/expol.hh>

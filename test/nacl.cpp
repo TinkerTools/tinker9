@@ -1,4 +1,4 @@
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/evdw.h"
 
 #include "test.h"

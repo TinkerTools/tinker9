@@ -1,7 +1,7 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/induce.h"
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/hippo/epolar.h"
 #include "ff/elec.h"
 #include "ff/energy.h"

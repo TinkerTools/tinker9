@@ -1,4 +1,4 @@
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "seq/launch.h"
 #include "seq/rotpole.h"
 

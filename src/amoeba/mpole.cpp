@@ -1,4 +1,4 @@
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/atom.h"
 #include "ff/elec.h"
 #include "ff/pme.h"

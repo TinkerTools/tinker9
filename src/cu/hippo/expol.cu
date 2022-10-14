@@ -1,6 +1,6 @@
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/elec.h"
-#include "ff/hippomod.h"
+#include "ff/modhippo.h"
 #include "ff/image.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
@@ -99,7 +99,6 @@ void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy
 #include "ff/cuinduce.h"
 #include "ff/hippo/expol.h"
 #include "ff/hippo/induce.h"
-#include "ff/hippomod.h"
 #include "tool/error.h"
 #include "tool/ioprint.h"
 #include <tinker/detail/inform.hh>

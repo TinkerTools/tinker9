@@ -1,7 +1,7 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/induce.h"
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include <array>
 #include <tinker/detail/units.hh>
 

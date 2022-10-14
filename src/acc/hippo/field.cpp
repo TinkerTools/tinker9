@@ -1,6 +1,6 @@
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/atom.h"
-#include "ff/hippomod.h"
+#include "ff/modhippo.h"
 #include "ff/image.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"

@@ -1,6 +1,6 @@
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/evdw.h"
-#include "ff/hippomod.h"
+#include "ff/modhippo.h"
 
 #include "test.h"
 #include "testrt.h"

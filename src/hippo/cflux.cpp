@@ -1,6 +1,6 @@
 #include "ff/atom.h"
 #include "ff/evalence.h"
-#include "ff/hippomod.h"
+#include "ff/modhippo.h"
 #include "ff/potent.h"
 #include "tool/darray.h"
 #include "tool/externfunc.h"

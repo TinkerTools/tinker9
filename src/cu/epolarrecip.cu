@@ -1,6 +1,6 @@
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/elec.h"
-#include "ff/hippomod.h"
+#include "ff/modhippo.h"
 #include "ff/pme.h"
 #include "seq/add.h"
 #include "seq/launch.h"

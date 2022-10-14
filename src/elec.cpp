@@ -1,8 +1,8 @@
 #include "ff/elec.h"
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/echarge.h"
 #include "ff/energy.h"
-#include "ff/hippomod.h"
+#include "ff/modhippo.h"
 #include "ff/potent.h"
 #include "tool/iofortstr.h"
 #include <tinker/detail/atoms.hh>

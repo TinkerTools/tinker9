@@ -1,4 +1,4 @@
-#include "ff/hippomod.h"
+#include "ff/modhippo.h"
 
 #include "test.h"
 #include "testrt.h"

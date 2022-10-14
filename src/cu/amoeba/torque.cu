@@ -1,4 +1,4 @@
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "math/libfunc.h"
 #include "seq/add.h"
 #include "seq/launch.h"

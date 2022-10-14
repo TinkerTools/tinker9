@@ -1,6 +1,6 @@
 #include "ff/hippo/erepel.h"
 #include "ff/amoeba/empole.h"
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/energy.h"
 #include "ff/hippo/erepel.h"
 #include "ff/potent.h"

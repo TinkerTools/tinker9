@@ -1,6 +1,6 @@
 #define TINKER_EXTERN_DEFINITION_FILE 1
 
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/atom.h"
 #include "ff/box.h"
 #include "ff/echarge.h"
@@ -12,7 +12,7 @@
 #include "ff/evdw.h"
 #include "ff/hippo/edisp.h"
 #include "ff/hippo/erepel.h"
-#include "ff/hippomod.h"
+#include "ff/modhippo.h"
 #include "ff/molecule.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"

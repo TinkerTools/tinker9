@@ -1,5 +1,5 @@
 #include "ff/amoeba/induce.h"
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/cuinduce.h"
 #include "ff/switch.h"
 #include "seq/launch.h"

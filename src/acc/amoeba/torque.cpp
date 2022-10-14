@@ -1,5 +1,5 @@
 #include "seq/torque.h"
-#include "ff/amoebamod.h"
+#include "ff/modamoeba.h"
 #include "ff/atom.h"
 #include "math/libfunc.h"
 #include "seq/add.h"
