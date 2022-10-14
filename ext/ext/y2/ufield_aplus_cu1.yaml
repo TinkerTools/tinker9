@@ -1,0 +1,65 @@
+KERNEL_NAME: ufieldAplus_cu1
+TEMPLATE_PARAMS: template <class ETYP>
+# CONSTEXPR_FLAGS:
+
+# COUNT:
+# ENERGY:
+# VIRIAL:
+# GRADIENT:
+
+# CUT_DISTANCE:
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - uinfo
+SCALE_1X_TYPE: real_const_array
+
+EXTRA_PARAMS: |
+  , const real(*restrict uind)[3]
+  , real(*restrict field)[3]
+  , const real *restrict pdamp
+  , const real *restrict thole
+  , real aewald
+
+I_POSITION:
+  - def: register real xi   from:x
+  - def: register real yi   from:y
+  - def: register real zi   from:z
+K_POSITION:
+  - def: register real xk   from:x
+  - def: register real yk   from:y
+  - def: register real zk   from:z
+I_VARIABLES:
+  - def: shared real uidx   from:uind,0
+  - def: shared real uidy   from:uind,1
+  - def: shared real uidz   from:uind,2
+  - def: shared real pdi    from:pdamp
+  - def: shared real pti    from:thole
+K_VARIABLES:
+  - def: register real ukdx from:uind,0
+  - def: register real ukdy from:uind,1
+  - def: register real ukdz from:uind,2
+  - def: register real pdk  from:pdamp
+  - def: register real ptk  from:thole
+I_FORCE:
+  - def: register real fidx addto:field,0
+  - def: register real fidy addto:field,1
+  - def: register real fidz addto:field,2
+K_FORCE:
+  - def: register real fkdx addto:field,0
+  - def: register real fkdy addto:field,1
+  - def: register real fkdz addto:field,2
+
+# SCALED_PAIRWISE_INTERACTION:
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    pair_ufield_aplus_v2<ETYP>(
+      r2, xr, yr, zr, scalea, @uidx@, @uidy@, @uidz@, @pdi@, @pti@,
+      ukdx, ukdy, ukdz, pdk, ptk, aewald,
+      @fidx@, @fidy@, @fidz@, fkdx, fkdy, fkdz);
+  } // end if (include)

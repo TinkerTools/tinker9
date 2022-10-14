@@ -1,0 +1,81 @@
+KERNEL_NAME: dfieldAplus_cu1
+TEMPLATE_PARAMS: template <class ETYP>
+# CONSTEXPR_FLAGS:
+
+# COUNT:
+# ENERGY:
+# VIRIAL:
+# GRADIENT:
+
+# CUT_DISTANCE:
+OFF_DISTANCE:
+  - 'off'
+
+EXCLUDE_INFO:
+  - dpinfo
+SCALE_1X_TYPE: real3_const_array,1
+
+EXTRA_PARAMS: |
+  , real(*restrict field)[3]
+  , const real(*restrict rpole)[10]
+  , const real *restrict pdamp
+  , const real *restrict dirdamp
+  , real aewald
+
+I_POSITION:
+  - def: register real xi   from:x
+  - def: register real yi   from:y
+  - def: register real zi   from:z
+K_POSITION:
+  - def: register real xk   from:x
+  - def: register real yk   from:y
+  - def: register real zk   from:z
+I_VARIABLES:
+  - def: shared real ci     from:rpole,MPL_PME_0
+  - def: shared real dix    from:rpole,MPL_PME_X
+  - def: shared real diy    from:rpole,MPL_PME_Y
+  - def: shared real diz    from:rpole,MPL_PME_Z
+  - def: shared real qixx   from:rpole,MPL_PME_XX
+  - def: shared real qixy   from:rpole,MPL_PME_XY
+  - def: shared real qixz   from:rpole,MPL_PME_XZ
+  - def: shared real qiyy   from:rpole,MPL_PME_YY
+  - def: shared real qiyz   from:rpole,MPL_PME_YZ
+  - def: shared real qizz   from:rpole,MPL_PME_ZZ
+  - def: shared real pdi    from:pdamp
+  - def: shared real ddi    from:dirdamp
+K_VARIABLES:
+  - def: register real ck   from:rpole,MPL_PME_0
+  - def: register real dkx  from:rpole,MPL_PME_X
+  - def: register real dky  from:rpole,MPL_PME_Y
+  - def: register real dkz  from:rpole,MPL_PME_Z
+  - def: register real qkxx from:rpole,MPL_PME_XX
+  - def: register real qkxy from:rpole,MPL_PME_XY
+  - def: register real qkxz from:rpole,MPL_PME_XZ
+  - def: register real qkyy from:rpole,MPL_PME_YY
+  - def: register real qkyz from:rpole,MPL_PME_YZ
+  - def: register real qkzz from:rpole,MPL_PME_ZZ
+  - def: register real pdk  from:pdamp
+  - def: register real ddk  from:dirdamp
+I_FORCE:
+  - def: register real fidx addto:field,0
+  - def: register real fidy addto:field,1
+  - def: register real fidz addto:field,2
+K_FORCE:
+  - def: register real fkdx addto:field,0
+  - def: register real fkdy addto:field,1
+  - def: register real fkdz addto:field,2
+
+# SCALED_PAIRWISE_INTERACTION:
+FULL_PAIRWISE_INTERACTION: |
+  real xr = xk - @xi@;
+  real yr = yk - @yi@;
+  real zr = zk - @zi@;
+  real r2 = image2(xr, yr, zr);
+  if (r2 <= off * off and incl) {
+    pair_dfield_aplus_v2<ETYP>(
+      r2, xr, yr, zr, scaleb, @ci@, @dix@, @diy@, @diz@, @pdi@, @ddi@,
+      @qixx@, @qixy@, @qixz@, @qiyy@, @qiyz@, @qizz@,
+      ck, dkx, dky, dkz, pdk, ddk,
+      qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, aewald,
+      @fidx@, @fidy@, @fidz@, fkdx, fkdy, fkdz);
+  } // end if (include)
