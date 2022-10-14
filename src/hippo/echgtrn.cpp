@@ -1,6 +1,5 @@
 #include "ff/energy.h"
 #include "ff/hippomod.h"
-#include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
 #include "tool/externfunc.h"

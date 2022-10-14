@@ -3,7 +3,6 @@
 #include "ff/amoebamod.h"
 #include "ff/energy.h"
 #include "ff/hippo/erepel.h"
-#include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
 #include "tool/externfunc.h"

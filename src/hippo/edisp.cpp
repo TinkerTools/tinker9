@@ -1,6 +1,5 @@
 #include "ff/hippo/edisp.h"
 #include "ff/energy.h"
-#include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
 #include "math/zero.h"

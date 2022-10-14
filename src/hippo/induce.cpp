@@ -1,13 +1,6 @@
 #include "ff/amoeba/induce.h"
-#include "ff/atom.h"
-#include "ff/nblist.h"
-#include "ff/potent.h"
 #include "tool/externfunc.h"
-#include "tool/ioprint.h"
-#include <tinker/detail/inform.hh>
-#include <tinker/detail/polar.hh>
 #include <tinker/detail/polpot.hh>
-#include <tinker/detail/units.hh>
 
 namespace tinker {
 TINKER_FVOID2(acc1, cu1, diagPrecond2, const real (*)[3], real (*)[3]);
@@ -22,6 +15,12 @@ TINKER_FVOID2(acc1, cu1, sparsePrecondApply2, const real (*)[3], real (*)[3]);
 void sparsePrecondApply2(const real (*rsd)[3], real (*zrsd)[3])
 {
    TINKER_FCALL2(acc1, cu1, sparsePrecondApply2, rsd, zrsd);
+}
+
+TINKER_FVOID2(acc1, cu1, sparsePrecondApply3, const real (*)[3], real (*)[3]);
+void sparsePrecondApply3(const real (*rsd)[3], real (*zrsd)[3])
+{
+   TINKER_FCALL2(acc1, cu1, sparsePrecondApply3, rsd, zrsd);
 }
 }
 

@@ -6,7 +6,6 @@
 #include "ff/hippo/cflux.h"
 #include "ff/hippo/expol.h"
 #include "ff/hippo/induce.h"
-#include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/zero.h"
 #include "tool/externfunc.h"
@@ -46,9 +45,8 @@ void epolarChgpenData(RcOp op)
       darray::deallocate(work01_, work02_, work03_, work04_, work05_);
 
       if (polpred == UPred::ASPC) {
-         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06,
-            udalt_07, udalt_08, udalt_09, udalt_10, udalt_11, udalt_12, udalt_13, udalt_14,
-            udalt_15);
+         darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06, udalt_07, udalt_08,
+            udalt_09, udalt_10, udalt_11, udalt_12, udalt_13, udalt_14, udalt_15);
       } else if (polpred == UPred::GEAR) {
          darray::deallocate(udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05);
       } else if (polpred == UPred::LSQR) {
@@ -99,26 +97,22 @@ void epolarChgpenData(RcOp op)
 
       if (polpred == UPred::ASPC) {
          maxualt = 16;
-         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05,
-            &udalt_06, &udalt_07, &udalt_08, &udalt_09, &udalt_10, &udalt_11, &udalt_12, &udalt_13,
-            &udalt_14, &udalt_15);
-         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05,
-            udalt_06, udalt_07, udalt_08, udalt_09, udalt_10, udalt_11, udalt_12, udalt_13,
-            udalt_14, udalt_15);
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05, &udalt_06, &udalt_07,
+            &udalt_08, &udalt_09, &udalt_10, &udalt_11, &udalt_12, &udalt_13, &udalt_14, &udalt_15);
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06, udalt_07,
+            udalt_08, udalt_09, udalt_10, udalt_11, udalt_12, udalt_13, udalt_14, udalt_15);
       } else if (polpred == UPred::GEAR) {
          maxualt = 6;
          darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05);
          darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05);
       } else if (polpred == UPred::LSQR) {
          maxualt = 7;
-         darray::allocate(
-            n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05, &udalt_06);
+         darray::allocate(n, &udalt_00, &udalt_01, &udalt_02, &udalt_03, &udalt_04, &udalt_05, &udalt_06);
          int lenb = maxualt - 1;
          int lena = lenb * lenb; // lenb*(lenb+1)/2 should be plenty.
          darray::allocate(lena, &udalt_lsqr_a);
          darray::allocate(lenb, &udalt_lsqr_b);
-         darray::zero(
-            g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06);
+         darray::zero(g::q0, n, udalt_00, udalt_01, udalt_02, udalt_03, udalt_04, udalt_05, udalt_06);
       }
    }
 
@@ -268,5 +262,55 @@ void epolarChgpen(int vers)
       if (do_g)
          sumGradient(gx_elec, gy_elec, gz_elec, depx, depy, depz);
    }
+}
+}
+
+namespace tinker {
+TINKER_FVOID2(acc1, cu1, epolarAplusEwaldReal, int, int, const real (*)[3]);
+static void epolarAplusEwaldReal(int vers, int use_cf)
+{
+   TINKER_FCALL2(acc1, cu1, epolarAplusEwaldReal, vers, use_cf, uind);
+}
+
+static void epolarAplusEwaldRecipSelf(int vers, int use_cf)
+{
+   epolarChgpenEwaldRecipSelf(vers, use_cf);
+}
+
+void epolarAplusEwald(int vers, int use_cf)
+{
+   auto edot = vers & calc::energy; // if not do_e, edot = false
+   if (vers & calc::energy and vers & calc::analyz)
+      edot = 0; // if do_e and do_a, edot = false
+   int ver2 = vers;
+   if (edot)
+      ver2 &= ~calc::energy; // toggle off the calc::energy flag
+
+   induce2(uind);
+   if (edot)
+      epolar0DotProd(uind, udir);
+   if (vers != calc::v0) {
+      epolarAplusEwaldReal(ver2, use_cf);
+      epolarAplusEwaldRecipSelf(ver2, use_cf);
+   }
+}
+}
+
+namespace tinker {
+TINKER_FVOID2(acc1, cu1, epolarAplusNonEwald, int, int, const real (*)[3]);
+void epolarAplusNonEwald(int vers, int use_cf)
+{
+   auto edot = vers & calc::energy; // if not do_e, edot = false
+   if (vers & calc::energy and vers & calc::analyz)
+      edot = 0; // if do_e and do_a, edot = false
+   int ver2 = vers;
+   if (edot)
+      ver2 &= ~calc::energy; // toggle off the calc::energy flag
+
+   induce2(uind);
+   if (edot)
+      epolar0DotProd(uind, udir);
+   if (vers != calc::v0)
+      TINKER_FCALL2(acc1, cu1, epolarAplusNonEwald, ver2, use_cf, uind);
 }
 }
