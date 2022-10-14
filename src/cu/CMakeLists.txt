@@ -1,4 +1,4 @@
-# printf "set (__T9_CU_SRC\n%s\n)\n" "$(LC_COLLATE=C ls -1a *.cu {amoeba,aplus,hippo}/*.cu)" > cmakesrc.txt
+# printf "set (__T9_CU_SRC\n%s\n)\n" "$(LC_COLLATE=C ls -1a *.cu {amoeba,hippo}/*.cu)" > cmakesrc.txt
 cmake_minimum_required (VERSION 3.18)
 
 

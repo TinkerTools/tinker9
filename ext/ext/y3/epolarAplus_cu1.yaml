@@ -1,4 +1,4 @@
-OUTPUT_DIR: src/cu/aplus
+OUTPUT_DIR: src/cu/hippo
 KERNEL_NAME: epolarAplus_cu1
 TEMPLATE_PARAMS: template <class Ver, class ETYP, bool CFLX>
 CONSTEXPR_FLAGS: |

@@ -8,8 +8,6 @@ amoeba/pcg.cu
 amoeba/precond.cu
 amoeba/rotpole.cu
 amoeba/torque.cu
-aplus/epolar.cu
-aplus/field.cu
 atom.cu
 compilers.cu
 cudalib.cu
