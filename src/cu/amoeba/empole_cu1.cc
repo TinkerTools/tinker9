@@ -1,4 +1,4 @@
-// ck.py Version 3.0.0
+// ck.py Version 3.0.2
 template <class Ver, class ETYP>
 __global__
 void empole_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, EnergyBuffer restrict em,

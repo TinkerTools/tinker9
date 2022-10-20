@@ -1,10 +1,10 @@
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/induce.h"
-#include "ff/modamoeba.h"
 #include "ff/cumodamoeba.h"
 #include "ff/elec.h"
 #include "ff/image.h"
+#include "ff/modamoeba.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
 #include "ff/switch.h"
@@ -76,13 +76,11 @@ void rotG2QIMat_v2(const real (&restrict r)[3][3],                   //
 
 template <class Ver, class ETYP>
 __device__
-void pairMplar(                                                           //
-   real r2, real3 dR, real mscale, real dscale, real pscale, real uscale, //
-   real ci, real3 Id, real Iqxx, real Iqxy, real Iqxz, real Iqyy, real Iqyz, real Iqzz, real3 Iud, real3 Iup, real pdi,
-   real pti, //
-   real ck, real3 Kd, real Kqxx, real Kqxy, real Kqxz, real Kqyy, real Kqyz, real Kqzz, real3 Kud, real3 Kup, real pdk,
-   real ptk,            //
-   real f, real aewald, //
+void pairMplar(real r2, real3 dR, real mscale, real dscale, real pscale, real uscale,   //
+   real ci, real3 Id, real Iqxx, real Iqxy, real Iqxz, real Iqyy, real Iqyz, real Iqzz, //
+   real3 Iud, real3 Iup, real pdi, real pti,                                            //
+   real ck, real3 Kd, real Kqxx, real Kqxy, real Kqxz, real Kqyy, real Kqyz, real Kqzz, //
+   real3 Kud, real3 Kup, real pdk, real ptk, real f, real aewald,                       //
    real& restrict frcxi, real& restrict frcyi, real& restrict frczi, real& restrict frcxk, real& restrict frcyk,
    real& restrict frczk, real& restrict trqxi, real& restrict trqyi, real& restrict trqzi, real& restrict trqxk,
    real& restrict trqyk, real& restrict trqzk, real& restrict eo, real& restrict voxx, real& restrict voxy,
@@ -92,73 +90,86 @@ void pairMplar(                                                           //
    constexpr bool do_g = Ver::g;
    constexpr bool do_v = Ver::v;
 
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
+      mscale = 1;
+      dscale = 0.5f;
+      pscale = 0.5f;
+      uscale = 0.5f;
+   } else {
+      dscale *= 0.5f;
+      pscale *= 0.5f;
+      uscale *= 0.5f;
+   }
+
    // a rotation matrix that rotates (xr,yr,zr) to (0,0,r); R G = Q
    real rot[3][3];
    real bn[6];
    real sr3, sr5, sr7, sr9;
    real r = REAL_SQRT(r2);
    real invr1 = REAL_RECIP(r);
-   {
-      real rr2 = invr1 * invr1;
-      real rr1 = invr1;
-      real rr3 = rr1 * rr2;
-      real rr5 = 3 * rr3 * rr2;
-      real rr7 = 5 * rr5 * rr2;
-      real rr9 = 7 * rr7 * rr2;
-      real rr11;
-      if CONSTEXPR (do_g) {
-         rr11 = 9 * rr9 * rr2;
-      }
-
-      if CONSTEXPR (eq<ETYP, EWALD>()) {
-         if CONSTEXPR (!do_g) {
-            damp_ewald<5>(bn, r, invr1, rr2, aewald);
-         } else {
-            damp_ewald<6>(bn, r, invr1, rr2, aewald);
-         }
-      } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
-         bn[0] = rr1;
-         bn[1] = rr3;
-         bn[2] = rr5;
-         bn[3] = rr7;
-         bn[4] = rr9;
-         if CONSTEXPR (do_g) {
-            bn[5] = rr11;
-         }
-      }
-
-      // if use_thole
-      real ex3, ex5, ex7, ex9;
-      damp_thole4(r, pdi, pti, pdk, ptk, ex3, ex5, ex7, ex9);
-      sr3 = bn[1] - ex3 * rr3;
-      sr5 = bn[2] - ex5 * rr5;
-      sr7 = bn[3] - ex7 * rr7;
-      sr9 = bn[4] - ex9 * rr9;
-      // end if use_thole
-
-      real3 rotz = invr1 * dR;
-      // pick a random vector as rotx; rotx and rotz cannot be parallel
-      real3 rotx = rotz;
-      if (dR.y != 0 || dR.z != 0)
-         rotx.x += 1;
-      else
-         rotx.y += 1;
-      // Gram–Schmidt process for rotx with respect to rotz
-      rotx -= dot3(rotx, rotz) * rotz;
-      // normalize rotx
-      real invxlen = REAL_RSQRT(dot3(rotx, rotx));
-      rotx = invxlen * rotx;
-      real3 roty = cross(rotz, rotx);
-      rot[0][0] = rotx.x;
-      rot[0][1] = rotx.y;
-      rot[0][2] = rotx.z;
-      rot[1][0] = roty.x;
-      rot[1][1] = roty.y;
-      rot[1][2] = roty.z;
-      rot[2][0] = rotz.x;
-      rot[2][1] = rotz.y;
-      rot[2][2] = rotz.z;
+   real rr2 = invr1 * invr1;
+   real rr1 = invr1;
+   real rr3 = rr1 * rr2;
+   real rr5 = 3 * rr3 * rr2;
+   real rr7 = 5 * rr5 * rr2;
+   real rr9 = 7 * rr7 * rr2;
+   real rr11;
+   if CONSTEXPR (do_g) {
+      rr11 = 9 * rr9 * rr2;
    }
+
+   if CONSTEXPR (eq<ETYP, EWALD>()) {
+      if CONSTEXPR (!do_g) {
+         damp_ewald<5>(bn, r, invr1, rr2, aewald);
+      } else {
+         damp_ewald<6>(bn, r, invr1, rr2, aewald);
+      }
+   } else if CONSTEXPR (eq<ETYP, NON_EWALD>()) {
+      bn[0] = rr1;
+      bn[1] = rr3;
+      bn[2] = rr5;
+      bn[3] = rr7;
+      bn[4] = rr9;
+      if CONSTEXPR (do_g) {
+         bn[5] = rr11;
+      }
+   }
+
+   // if use_thole
+   real ex3, ex5, ex7, ex9;
+   damp_thole4(r, pdi, pti, pdk, ptk, ex3, ex5, ex7, ex9);
+   sr3 = bn[1] - ex3 * rr3;
+   sr5 = bn[2] - ex5 * rr5;
+   sr7 = bn[3] - ex7 * rr7;
+   sr9 = bn[4] - ex9 * rr9;
+   // end if use_thole
+
+   for (int i = 0; i < 6; ++i) {
+      bn[i] *= mscale;
+   }
+
+   real3 rotz = invr1 * dR;
+   // pick a random vector as rotx; rotx and rotz cannot be parallel
+   real3 rotx = rotz;
+   if (dR.y != 0 || dR.z != 0)
+      rotx.x += 1;
+   else
+      rotx.y += 1;
+   // Gram–Schmidt process for rotx with respect to rotz
+   rotx -= dot3(rotx, rotz) * rotz;
+   // normalize rotx
+   real invxlen = REAL_RSQRT(dot3(rotx, rotx));
+   rotx = invxlen * rotx;
+   real3 roty = cross(rotz, rotx);
+   rot[0][0] = rotx.x;
+   rot[0][1] = rotx.y;
+   rot[0][2] = rotx.z;
+   rot[1][0] = roty.x;
+   rot[1][1] = roty.y;
+   rot[1][2] = roty.z;
+   rot[2][0] = rotz.x;
+   rot[2][1] = rotz.y;
+   rot[2][2] = rotz.z;
 
    real3 di, dk;
    rotG2QIVector(rot, Id, di);
@@ -179,17 +190,6 @@ void pairMplar(                                                           //
    real phi1[10] = {0};
    real phi2[10] = {0};
    real phi1z[10] = {0};
-
-   if CONSTEXPR (eq<ETYP, EWALD>()) {
-      mscale = 1;
-      dscale = 0.5f;
-      pscale = 0.5f;
-      uscale = 0.5f;
-   } else {
-      dscale *= 0.5f;
-      pscale *= 0.5f;
-      uscale *= 0.5f;
-   }
 
    // C-C
    {
@@ -238,7 +238,6 @@ void pairMplar(                                                           //
 
    // Q-C and C-Q
    {
-      real coef3 = bn[1];
       real coef5 = bn[2] * r2;
       real coez5 = bn[2] * r;
       real coez7 = bn[3] * r2 * r;
@@ -247,17 +246,14 @@ void pairMplar(                                                           //
       phi2[0] += coef5 * qizz;
       phi1z[0] += -(2 * coez5 - coez7) * qkzz;
       // d2phi_c q
-      phi1[4] += -coef3 * ck;
-      phi1[5] += -coef3 * ck;
-      phi1[6] += -(coef3 - coef5) * ck;
+      // phi1[4]; phi1[5];
+      phi1[6] += coef5 * ck;
       // phi1[7]; phi1[8]; phi1[9];
-      phi2[4] += -coef3 * ci;
-      phi2[5] += -coef3 * ci;
-      phi2[6] += -(coef3 - coef5) * ci;
+      // phi2[4]; phi2[5];
+      phi2[6] += coef5 * ci;
       // phi2[7]; phi2[8]; phi2[9];
-      phi1z[4] += -coez5 * ck;
-      phi1z[5] += -coez5 * ck;
-      phi1z[6] += -(3 * coez5 - coez7) * ck;
+      // phi1z[4]; phi1z[5];
+      phi1z[6] += -(2 * coez5 - coez7) * ck;
       // phi1z[7]; phi1z[8]; phi1z[9];
    }
 
@@ -278,23 +274,20 @@ void pairMplar(                                                           //
       phi1z[2] += 2 * coez7 * qkyz;
       phi1z[3] += (2 * coez7 - coez9) * qkzz;
       // d2phi_d q
-      phi1[4] += coef5 * dk.z;
-      phi1[5] += coef5 * dk.z;
-      phi1[6] += (3 * coef5 - coef7) * dk.z;
+      // phi1[4]; phi1[5];
+      phi1[6] += (2 * coef5 - coef7) * dk.z;
       // phi1[7];
       phi1[8] += 2 * coef5 * dk.x;
       phi1[9] += 2 * coef5 * dk.y;
       //
-      phi2[4] += -coef5 * di.z;
-      phi2[5] += -coef5 * di.z;
-      phi2[6] += -(3 * coef5 - coef7) * di.z;
+      // phi2[4]; phi2[5];
+      phi2[6] += -(2 * coef5 - coef7) * di.z;
       // phi2[7];
       phi2[8] += -2 * coef5 * di.x;
       phi2[9] += -2 * coef5 * di.y;
       //
-      phi1z[4] += -coez7 * dk.z;
-      phi1z[5] += -coez7 * dk.z;
-      phi1z[6] += -(3 * coez7 - coez9) * dk.z;
+      // phi1z[4]; phi1z[5];
+      phi1z[6] += -(2 * coez7 - coez9) * dk.z;
       // phi1z[7];
       phi1z[8] += -2 * coez7 * dk.x;
       phi1z[9] += -2 * coez7 * dk.y;
@@ -310,33 +303,26 @@ void pairMplar(                                                           //
       real coez9 = bn[4] * r2 * r;
       real coez11 = bn[5] * r2 * r2 * r;
       //
-      phi1[4] += 2 * coef5 * qkxx - coef7 * qkzz;
-      phi1[5] += 2 * coef5 * qkyy - coef7 * qkzz;
-      phi1[6] += (2 * coef5 - 5 * coef7 + coef9) * qkzz;
+      phi1[4] += 2 * coef5 * qkxx;
+      phi1[5] += 2 * coef5 * qkyy;
+      phi1[6] += (2 * coef5 - 4 * coef7 + coef9) * qkzz;
       phi1[7] += 4 * coef5 * qkxy;
       phi1[8] += 4 * (coef5 - coef7) * qkxz;
       phi1[9] += 4 * (coef5 - coef7) * qkyz;
       //
-      phi2[4] += 2 * coef5 * qixx - coef7 * qizz;
-      phi2[5] += 2 * coef5 * qiyy - coef7 * qizz;
-      phi2[6] += (2 * coef5 - 5 * coef7 + coef9) * qizz;
+      phi2[4] += 2 * coef5 * qixx;
+      phi2[5] += 2 * coef5 * qiyy;
+      phi2[6] += (2 * coef5 - 4 * coef7 + coef9) * qizz;
       phi2[7] += 4 * coef5 * qixy;
       phi2[8] += 4 * (coef5 - coef7) * qixz;
       phi2[9] += 4 * (coef5 - coef7) * qiyz;
       //
-      phi1z[4] += 2 * coez7 * qkxx + (2 * coez7 - coez9) * qkzz;
-      phi1z[5] += 2 * coez7 * qkyy + (2 * coez7 - coez9) * qkzz;
-      phi1z[6] += (12 * coez7 - 9 * coez9 + coez11) * qkzz;
+      phi1z[4] += 2 * coez7 * qkxx;
+      phi1z[5] += 2 * coez7 * qkyy;
+      phi1z[6] += (10 * coez7 - 8 * coez9 + coez11) * qkzz;
       phi1z[7] += 4 * coez7 * qkxy;
       phi1z[8] += 4 * (3 * coez7 - coez9) * qkxz;
       phi1z[9] += 4 * (3 * coez7 - coez9) * qkyz;
-   }
-
-   #pragma unroll
-   for (int i = 0; i < 10; ++i) {
-      phi1[i] *= mscale;
-      phi2[i] *= mscale;
-      phi1z[i] *= mscale;
    }
 
    if CONSTEXPR (do_e) {
@@ -418,23 +404,20 @@ void pairMplar(                                                           //
       real coepz7 = pscale * coez7;
       real coepz9 = pscale * coez9;
       // d2phi_u q
-      phi1[4] += coed5 * ukp.z + coep5 * ukd.z;
-      phi1[5] += coed5 * ukp.z + coep5 * ukd.z;
-      phi1[6] += (3 * coed5 - coed7) * ukp.z + (3 * coep5 - coep7) * ukd.z;
+      // phi1[4]; phi1[5];
+      phi1[6] += (2 * coed5 - coed7) * ukp.z + (2 * coep5 - coep7) * ukd.z;
       // phi1[7];
       phi1[8] += 2 * (coed5 * ukp.x + coep5 * ukd.x);
       phi1[9] += 2 * (coed5 * ukp.y + coep5 * ukd.y);
       //
-      phi2[4] += -(coed5 * uip.z + coep5 * uid.z);
-      phi2[5] += -(coed5 * uip.z + coep5 * uid.z);
-      phi2[6] += -(3 * coed5 - coed7) * uip.z - (3 * coep5 - coep7) * uid.z;
+      // phi2[4]; phi2[5];
+      phi2[6] += -(2 * coed5 - coed7) * uip.z - (2 * coep5 - coep7) * uid.z;
       // phi2[7];
       phi2[8] += -2 * (coed5 * uip.x + coep5 * uid.x);
       phi2[9] += -2 * (coed5 * uip.y + coep5 * uid.y);
       //
-      phi1z[4] += -(coedz7 * ukp.z + coepz7 * ukd.z);
-      phi1z[5] += -(coedz7 * ukp.z + coepz7 * ukd.z);
-      phi1z[6] += -(3 * coedz7 - coedz9) * ukp.z - (3 * coepz7 - coepz9) * ukd.z;
+      // phi1z[4]; phi1z[5];
+      phi1z[6] += -(2 * coedz7 - coedz9) * ukp.z - (2 * coepz7 - coepz9) * ukd.z;
       // phi1z[7];
       phi1z[8] += -2 * (coedz7 * ukp.x + coepz7 * ukd.x);
       phi1z[9] += -2 * (coedz7 * ukp.y + coepz7 * ukd.y);

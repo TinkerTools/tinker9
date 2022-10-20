@@ -1,4 +1,4 @@
-// ck.py Version 3.0.0
+// ck.py Version 3.0.2
 template <class ETYP>
 __global__
 void ufield_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict uinfo, int nexclude,

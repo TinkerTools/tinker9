@@ -1,4 +1,4 @@
-// ck.py Version 3.0.1
+// ck.py Version 3.0.2
 template <class ETYP>
 __global__
 void dfieldChgpen_cu1(int n, TINKER_IMAGE_PARAMS, real off, const unsigned* restrict dinfo, int nexclude,

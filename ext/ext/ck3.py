@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+'''
+python3 this_script.py -c y3/config.yaml
+
+or
+
+python3 this_script.py y3/config.yaml
+'''
 
 import os
 import re
@@ -14,14 +21,13 @@ import yaml
 ########################################################################
 
 
-alphabets = {
+rc_alphabets = {
     '0' : 'a', '1' : 'b', '2' : 'c', '3' : 'd', '4' : 'e',
     '5' : 'f', '6' : 'g', '7' : 'h', '8' : 'i', '9' : 'j',
     '10': 'k', '11': 'l', '12': 'm', '13': 'n', '14': 'o',
     '15': 'p', '16': 'q', '17': 'r', '18': 's', '19': 't',
     '20': 'u', '21': 'v', '22': 'w', '23': 'x', '24': 'y',
     '25': 'z'}
-
 
 rc_kernel2c = '''
 TEMPLATE_PARAMS            \
@@ -40,30 +46,23 @@ void KERNEL_NAMEc(         \
     USING_DEVICE_VARIABLES    KERNEL_CONSTEXPR_FLAGS \
     const int ithread = threadIdx.x + blockIdx.x * blockDim.x;
 
-
     DECLARE_ZERO_LOCAL_COUNT    DECLARE_ZERO_LOCAL_ENERGY    DECLARE_ZERO_LOCAL_VIRIAL
     DECLARE_FORCE_I_AND_K       DECLARE_PARAMS_I_AND_K
 
-
     for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
         KERNEL_SCALED_KLANE    KERNEL_ZERO_LOCAL_FORCE
-
 
         int i = exclude[ii][0];
         int k = exclude[ii][1];
         KERNEL_LOAD_1X_SCALES
 
-
         KERNEL_INIT_EXCLUDE_PARAMS_I_AND_K
-
 
         constexpr bool incl = true;
         KERNEL_SCALED_PAIRWISE_INTERACTION
 
-
         KERNEL_SAVE_LOCAL_FORCE
     }
-
 
     KERNEL_SUM_COUNT    KERNEL_SUM_ENERGY    KERNEL_SUM_VIRIAL
 }
@@ -91,19 +90,15 @@ void KERNEL_NAMEb(             \
     const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
     const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
-
     DECLARE_ZERO_LOCAL_COUNT    DECLARE_ZERO_LOCAL_ENERGY   DECLARE_ZERO_LOCAL_VIRIAL
     DECLARE_PARAMS_I_AND_K      DECLARE_FORCE_I_AND_K
-
 
     for (int iw = iwarp; iw < nakpl; iw += nwarp) {
         KERNEL_ZERO_LOCAL_FORCE
 
-
         int tri, tx, ty;
         tri = iakpl[iw];
         tri_to_xy(tri, tx, ty);
-
 
         int iid = ty * WARP_SIZE + ilane;
         int atomi = min(iid, n - 1);
@@ -114,7 +109,6 @@ void KERNEL_NAMEb(             \
         KERNEL_INIT_PARAMS_I_AND_K
         KERNEL_SYNCWARP
 
-
         KERNEL_LOAD_INFO_VARIABLES
         for (int j = 0; j < WARP_SIZE; ++j) {
             int srclane = (ilane + j) & (WARP_SIZE - 1); \
@@ -124,15 +118,12 @@ void KERNEL_NAMEb(             \
             KERNEL_SCALE_1                               \
             KERNEL_FULL_PAIRWISE_INTERACTION
 
-
             iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
             KERNEL_SHUFFLE_PARAMS_I    KERNEL_SHUFFLE_LOCAL_FORCE_I
         }
 
-
         KERNEL_SAVE_LOCAL_FORCE   KERNEL_SYNCWARP
     }
-
 
     KERNEL_SUM_COUNT    KERNEL_SUM_ENERGY    KERNEL_SUM_VIRIAL
 }
@@ -159,14 +150,11 @@ void KERNEL_NAMEa(         \
     const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
     const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
-
     DECLARE_ZERO_LOCAL_COUNT    DECLARE_ZERO_LOCAL_ENERGY   DECLARE_ZERO_LOCAL_VIRIAL
     DECLARE_PARAMS_I_AND_K      DECLARE_FORCE_I_AND_K
 
-
     for (int iw = iwarp; iw < niak; iw += nwarp) {
         KERNEL_ZERO_LOCAL_FORCE
-
 
         int ty = iak[iw];
         int atomi = ty * WARP_SIZE + ilane;
@@ -176,21 +164,17 @@ void KERNEL_NAMEa(         \
         KERNEL_INIT_PARAMS_I_AND_K
         KERNEL_SYNCWARP
 
-
         for (int j = 0; j < WARP_SIZE; ++j) {
             KERNEL_KLANE2          \
             bool incl = atomk > 0; \
             KERNEL_SCALE_1         \
             KERNEL_FULL_PAIRWISE_INTERACTION
 
-
             KERNEL_SHUFFLE_PARAMS_I    KERNEL_SHUFFLE_LOCAL_FORCE_I
         }
 
-
         KERNEL_SAVE_LOCAL_FORCE    KERNEL_SYNCWARP
     }
-
 
     KERNEL_SUM_COUNT    KERNEL_SUM_ENERGY    KERNEL_SUM_VIRIAL
 }
@@ -220,41 +204,32 @@ void KERNEL_NAME(int n,         \
     const int nwarp = blockDim.x * gridDim.x / WARP_SIZE;
     const int ilane = threadIdx.x & (WARP_SIZE - 1);
 
-
     DECLARE_ZERO_LOCAL_COUNT    DECLARE_ZERO_LOCAL_ENERGY   DECLARE_ZERO_LOCAL_VIRIAL
     DECLARE_PARAMS_I_AND_K      DECLARE_FORCE_I_AND_K
-
 
     KERNEL_HAS_1X_SCALE
     for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
         KERNEL_SCALED_KLANE    KERNEL_ZERO_LOCAL_FORCE
 
-
         int i = exclude[ii][0];
         int k = exclude[ii][1];
         KERNEL_LOAD_1X_SCALES
 
-
         KERNEL_INIT_EXCLUDE_PARAMS_I_AND_K
-
 
         constexpr bool incl = true;
         KERNEL_SCALED_PAIRWISE_INTERACTION
-
 
         KERNEL_SAVE_LOCAL_FORCE
     }
     // */
 
-
     for (int iw = iwarp; iw < nakpl; iw += nwarp) {
         KERNEL_ZERO_LOCAL_FORCE
-
 
         int tri, tx, ty;
         tri = iakpl[iw];
         tri_to_xy(tri, tx, ty);
-
 
         int iid = ty * WARP_SIZE + ilane;
         int atomi = min(iid, n - 1);
@@ -265,7 +240,6 @@ void KERNEL_NAME(int n,         \
         KERNEL_INIT_PARAMS_I_AND_K
         KERNEL_SYNCWARP
 
-
         KERNEL_LOAD_INFO_VARIABLES
         for (int j = 0; j < WARP_SIZE; ++j) {
             int srclane = (ilane + j) & (WARP_SIZE - 1); \
@@ -275,19 +249,15 @@ void KERNEL_NAME(int n,         \
             KERNEL_SCALE_1                               \
             KERNEL_FULL_PAIRWISE_INTERACTION
 
-
             iid = __shfl_sync(ALL_LANES, iid, ilane + 1);
             KERNEL_SHUFFLE_PARAMS_I    KERNEL_SHUFFLE_LOCAL_FORCE_I
         }
 
-
         KERNEL_SAVE_LOCAL_FORCE   KERNEL_SYNCWARP
     }
 
-
     for (int iw = iwarp; iw < niak; iw += nwarp) {
         KERNEL_ZERO_LOCAL_FORCE
-
 
         int ty = iak[iw];
         int atomi = ty * WARP_SIZE + ilane;
@@ -297,21 +267,17 @@ void KERNEL_NAME(int n,         \
         KERNEL_INIT_PARAMS_I_AND_K
         KERNEL_SYNCWARP
 
-
         for (int j = 0; j < WARP_SIZE; ++j) {
             KERNEL_KLANE2          \
             bool incl = atomk > 0; \
             KERNEL_SCALE_1         \
             KERNEL_FULL_PAIRWISE_INTERACTION
 
-
             KERNEL_SHUFFLE_PARAMS_I    KERNEL_SHUFFLE_LOCAL_FORCE_I
         }
 
-
         KERNEL_SAVE_LOCAL_FORCE    KERNEL_SYNCWARP
     }
-
 
     KERNEL_SUM_COUNT
     KERNEL_SUM_ENERGY
@@ -570,7 +536,7 @@ class KernelWriter:
                 v = ''
                 for i in range(1,len(ss)):
                     idx = ss[i]
-                    al = alphabets[idx]
+                    al = rc_alphabets[idx]
                     if input is None:
                         if not separate_scaled_pairwise:
                             v = v + '{} {}{} = 1;'.format(t, stem, al)
@@ -610,6 +576,8 @@ class KernelWriter:
             return self.config[k]
         else:
             return ''
+
+
     def cudaReplaceDict(self) -> dict:
         d = {}
         config = self.config
