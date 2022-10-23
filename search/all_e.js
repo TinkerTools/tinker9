@@ -49,7 +49,7 @@ var searchData=
   ['niak_46',['niak',['../group__nblist.html#a1632c25da2146c5ca0f7c9c301c7c61f',1,'tinker::Spatial']]],
   ['niprop_47',['niprop',['../group__tors.html#gaad96161ad76249f4b25b5cc1ee722970',1,'tinker']]],
   ['nitors_48',['nitors',['../group__tors.html#ga1c4cd2f37a7f58f27e72a2d2f8460688',1,'tinker']]],
-  ['njpolar_49',['njpolar',['../namespacetinker.html#a0e02488b64288c75332d8662ed4d5f3a',1,'tinker::njpolar()'],['../namespacetinker_1_1d.html#a0d0eca2ff05c07ed984892eb6303c752',1,'tinker::d::njpolar()']]],
+  ['njpolar_49',['njpolar',['../namespacetinker_1_1d.html#a0d0eca2ff05c07ed984892eb6303c752',1,'tinker::d::njpolar()'],['../namespacetinker.html#a0e02488b64288c75332d8662ed4d5f3a',1,'tinker::njpolar()']]],
   ['njvdw_50',['njvdw',['../group__vdw.html#gaf114c3873e7dab225d7f005b8bf88b04',1,'tinker']]],
   ['nlst_51',['nlst',['../group__nblist.html#adfd8e8b83ddb90176ff219bc5976fb73',1,'tinker::NBList']]],
   ['nmdpuexclude_52',['nmdpuexclude',['../namespacetinker.html#a9075630102ba9b0fb793bf5fa769cde4',1,'tinker']]],

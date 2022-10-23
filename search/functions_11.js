@@ -19,13 +19,12 @@ var searchData=
   ['sparseprecondapply3_16',['sparsePrecondApply3',['../namespacetinker.html#ae25007c8902c52cfda4ec0317dccb3ca',1,'tinker']]],
   ['sparseprecondbuild_17',['sparsePrecondBuild',['../group__polar.html#ga546408983385eb564394a6b7f999a187',1,'tinker']]],
   ['sparseprecondbuild2_18',['sparsePrecondBuild2',['../group__hippopolar.html#ga14d2e43bb5010ef58b80101936b4f71b',1,'tinker']]],
-  ['sparseprecondbuild3_19',['sparsePrecondBuild3',['../namespacetinker.html#a40f4eb97a90206305098a9a2e6b006c3',1,'tinker']]],
-  ['spatialupdate_20',['spatialUpdate',['../group__nblist.html#ga9854f6b353e8153d33b3aadecdea7235',1,'tinker']]],
-  ['split_21',['split',['../group__io__text.html#aecea6100d340eb28fec30e2b60587996',1,'tinker::Text']]],
-  ['string_22',['string',['../group__io__text.html#a4cc7b00bf9796b0fbee79bc834a12958',1,'tinker::Text']]],
-  ['sumgradient_23',['sumGradient',['../group__egv.html#ga65391785a38e3eb601e3e38d5e45be2e',1,'tinker::sumGradient(grad_prec *g0x, grad_prec *g0y, grad_prec *g0z, const grad_prec *g1x, const grad_prec *g1y, const grad_prec *g1z)'],['../group__egv.html#ga4eaa908c73c51decec21ab27d64163ce',1,'tinker::sumGradient(double scale, grad_prec *g0x, grad_prec *g0y, grad_prec *g0z, const grad_prec *g1x, const grad_prec *g1y, const grad_prec *g1z)']]],
-  ['switchcut_24',['switchCut',['../group__ff.html#gaa1d20f3a6bd49c132148dee094ed1336',1,'tinker']]],
-  ['switchoff_25',['switchOff',['../group__ff.html#ga7fc2b15374199d570b948dab973551e7',1,'tinker']]],
-  ['switchtaper5_26',['switchTaper5',['../group__math.html#ga20491637de2b68bc2f4896ac196e7fde',1,'tinker']]],
-  ['symlusolve_27',['symlusolve',['../group__math.html#ga6954d199f89c92bc0dda21617e7cb892',1,'tinker']]]
+  ['spatialupdate_19',['spatialUpdate',['../group__nblist.html#ga9854f6b353e8153d33b3aadecdea7235',1,'tinker']]],
+  ['split_20',['split',['../group__io__text.html#aecea6100d340eb28fec30e2b60587996',1,'tinker::Text']]],
+  ['string_21',['string',['../group__io__text.html#a4cc7b00bf9796b0fbee79bc834a12958',1,'tinker::Text']]],
+  ['sumgradient_22',['sumGradient',['../group__egv.html#ga65391785a38e3eb601e3e38d5e45be2e',1,'tinker::sumGradient(grad_prec *g0x, grad_prec *g0y, grad_prec *g0z, const grad_prec *g1x, const grad_prec *g1y, const grad_prec *g1z)'],['../group__egv.html#ga4eaa908c73c51decec21ab27d64163ce',1,'tinker::sumGradient(double scale, grad_prec *g0x, grad_prec *g0y, grad_prec *g0z, const grad_prec *g1x, const grad_prec *g1y, const grad_prec *g1z)']]],
+  ['switchcut_23',['switchCut',['../group__ff.html#gaa1d20f3a6bd49c132148dee094ed1336',1,'tinker']]],
+  ['switchoff_24',['switchOff',['../group__ff.html#ga7fc2b15374199d570b948dab973551e7',1,'tinker']]],
+  ['switchtaper5_25',['switchTaper5',['../group__math.html#ga20491637de2b68bc2f4896ac196e7fde',1,'tinker']]],
+  ['symlusolve_26',['symlusolve',['../group__math.html#ga6954d199f89c92bc0dda21617e7cb892',1,'tinker']]]
 ];
