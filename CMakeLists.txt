@@ -415,9 +415,8 @@ elseif (GPU_LANG STREQUAL "OPENACC")
    # set this line before project()
    set (CMAKE_CXX_COMPILER "${T9_ACC_COMPILER}")
    # 11   unrecognized preprocessing directive
-   # 82   storage class is not first
    # 177  variable was declared but never referenced
-   string (APPEND CMAKE_CXX_FLAGS " --diag_suppress=11,82,177")
+   string (APPEND CMAKE_CXX_FLAGS " --diag_suppress=11,177")
    # Compute Capability 60,70 -> ,cc60,cc70
    set (__T9_ACC_CCLST4) # ""
    foreach (var ${T9_CUCCLIST})

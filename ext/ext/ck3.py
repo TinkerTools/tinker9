@@ -29,7 +29,17 @@ rc_alphabets = {
     '20': 'u', '21': 'v', '22': 'w', '23': 'x', '24': 'y',
     '25': 'z'}
 
-rc_kernel2c = '''
+rc_kernel11 = '''
+TEMPLATE_PARAMS __global__
+STATIC_KERNEL void KERNEL_NAME(SINGLE_LOOP_LIMIT_PARAM EXTRA_KERNEL_PARAMS)
+{
+    KERNEL_SINGLE_LOOP_BEGIN
+    KERNEL_SINGLE_LOOP_CODE
+    KERNEL_SINGLE_LOOP_END
+}
+'''
+
+rc_kernel23c = '''
 TEMPLATE_PARAMS            \
 __global__                 \
 void KERNEL_NAMEc(         \
@@ -69,7 +79,7 @@ void KERNEL_NAMEc(         \
 '''
 
 
-rc_kernel2b = '''
+rc_kernel23b = '''
 TEMPLATE_PARAMS                \
 __global__                     \
 void KERNEL_NAMEb(             \
@@ -130,7 +140,7 @@ void KERNEL_NAMEb(             \
 '''
 
 
-rc_kernel2a = '''
+rc_kernel23a = '''
 TEMPLATE_PARAMS            \
 __global__                 \
 void KERNEL_NAMEa(         \
@@ -181,7 +191,7 @@ void KERNEL_NAMEa(         \
 '''
 
 
-rc_kernel1 = '''
+rc_kernel21 = '''
 TEMPLATE_PARAMS                 \
 __global__                      \
 void KERNEL_NAME(int n,         \
@@ -393,6 +403,13 @@ class Variable:
         return code
 
 
+    def iterreplace(self, code:str) -> str:
+        old_name = '@{}@'.format('i')
+        new_name = self.name
+        code = code.replace(old_name, new_name)
+        return code
+
+
 class VariableDefinitions:
     def __init__(self, iork:str, lst:list) -> None:
         self.shared, self.register = {}, {}
@@ -548,9 +565,10 @@ class KernelWriter:
     def __init__(self, config) -> None:
         self.config = config
 
-        self.yk_split_kernel = 'SPLIT_KERNEL'
+        self.yk_kernel_version_number = 'KERNEL_VERSION_NUMBER'
 
         self.yk_output_dir = 'OUTPUT_DIR'
+        self.yk_kernel_is_static = 'KERNEL_IS_STATIC'
         self.yk_kernel_name = 'KERNEL_NAME'
         self.yk_template_params = 'TEMPLATE_PARAMS'
         self.yk_constexpr_flags = 'CONSTEXPR_FLAGS'
@@ -570,6 +588,9 @@ class KernelWriter:
         self.yk_scaled_pairwise = 'SCALED_PAIRWISE_INTERACTION'
         self.yk_full_pairwise = 'FULL_PAIRWISE_INTERACTION'
 
+        self.yk_single_loop_limit = 'SINGLE_LOOP_LIMIT'
+        self.yk_single_loop_iter = 'SINGLE_LOOP_ITER'
+        self.yk_single_loop_code = 'SINGLE_LOOP_CODE'
 
     def _kv(self, k:str):
         if k in self.config.keys():
@@ -588,6 +609,13 @@ class KernelWriter:
         d[k] = v
 
         # kernel name
+        k, v = 'STATIC_KERNEL', ''
+        kcfg, vcfg = self.yk_kernel_is_static, False
+        if kcfg in keys:
+            vcfg = config[kcfg]
+        if vcfg:
+            v = 'static'
+        d[k] = v
         k, v = 'KERNEL_NAME', self._kv(self.yk_kernel_name)
         d[k] = v
 
@@ -619,25 +647,29 @@ class KernelWriter:
         k, v = 'KERNEL_CONSTEXPR_FLAGS', self._kv(self.yk_constexpr_flags)
         d[k] = v
 
-        # i and k declaration
-        ivars, kvars = VariableDefinitions('i', config[self.yk_i_variables]), VariableDefinitions('k', config[self.yk_k_variables])
-        ifrcs, kfrcs = VariableDefinitions('i', config[self.yk_i_force]), VariableDefinitions('k', config[self.yk_k_force])
-        if len(ifrcs.shared.keys()):
-            raise ValueError('I_FORCE cannot be put on shared memory.')
-        if len(kfrcs.shared.keys()):
-            raise ValueError('F_FORCE cannot be put on shared memory.')
-        k1, v1 = 'DECLARE_PARAMS_I_AND_K', ivars.declare() + kvars.declare()
-        k2, v2 = 'DECLARE_FORCE_I_AND_K', ifrcs.declare() + kfrcs.declare()
-        d[k1], d[k2] = v1, v2
+        use_ikvars = False
+        if self.yk_i_variables in keys and self.yk_k_variables in keys:
+            use_ikvars = True
+        if use_ikvars:
+            # i and k declaration
+            ivars, kvars = VariableDefinitions('i', config[self.yk_i_variables]), VariableDefinitions('k', config[self.yk_k_variables])
+            ifrcs, kfrcs = VariableDefinitions('i', config[self.yk_i_force]), VariableDefinitions('k', config[self.yk_k_force])
+            if len(ifrcs.shared.keys()):
+                raise ValueError('I_FORCE cannot be put on shared memory.')
+            if len(kfrcs.shared.keys()):
+                raise ValueError('F_FORCE cannot be put on shared memory.')
+            k1, v1 = 'DECLARE_PARAMS_I_AND_K', ivars.declare() + kvars.declare()
+            k2, v2 = 'DECLARE_FORCE_I_AND_K', ifrcs.declare() + kfrcs.declare()
+            d[k1], d[k2] = v1, v2
 
-        # i and k in exclude block
-        k1, v1 = 'KERNEL_INIT_EXCLUDE_PARAMS_I_AND_K', ''
-        k2, v2 = 'KERNEL_INIT_PARAMS_I_AND_K', ''
-        k3, v3 = 'KERNEL_SHUFFLE_PARAMS_I', ''
-        v1 = v1 + ivars.init_exclude() + kvars.init_exclude()
-        v2 = v2 + ivars.init_block() + kvars.init_block()
-        v3 = v3 + ivars.shuffle()
-        d[k1], d[k2], d[k3] = v1, v2, v3
+            # i and k in exclude block
+            k1, v1 = 'KERNEL_INIT_EXCLUDE_PARAMS_I_AND_K', ''
+            k2, v2 = 'KERNEL_INIT_PARAMS_I_AND_K', ''
+            k3, v3 = 'KERNEL_SHUFFLE_PARAMS_I', ''
+            v1 = v1 + ivars.init_exclude() + kvars.init_exclude()
+            v2 = v2 + ivars.init_block() + kvars.init_block()
+            v3 = v3 + ivars.shuffle()
+            d[k1], d[k2], d[k3] = v1, v2, v3
 
         # count
         k1, v1 = 'COUNT_KERNEL_PARAMS', ''
@@ -696,39 +728,46 @@ class KernelWriter:
             v3 = 'if CONSTEXPR (do_v) {%s}' % total
         d[k1], d[k2], d[k3] = v1, v2, v3
 
-        # gradient
-        k, v = 'GRADIENT_KERNEL_PARAMS', ''
-        kcfg = self.yk_gradient
-        if kcfg in keys:
-            vcfg = config[kcfg]
-            for t in vcfg:
-                v = v + ', grad_prec* restrict {}'.format(t)
-        k1, v1 = 'KERNEL_ZERO_LOCAL_FORCE', ifrcs.zero() + kfrcs.zero()
-        k2, v2 = 'KERNEL_SAVE_LOCAL_FORCE', ifrcs.save() + kfrcs.save()
-        k3, v3 = 'KERNEL_SHUFFLE_LOCAL_FORCE_I', ifrcs.shuffle()
-        kcfg = self.yk_constexpr_flags
-        if kcfg in keys:
-            vcfg = config[kcfg]
-            if 'constexpr bool do_g =' in vcfg:
-                v1 = 'if CONSTEXPR (do_g) {%s}' % v1
-                v2 = 'if CONSTEXPR (do_g) {%s}' % v2
-            if v3 != '':
-                v3 = 'if CONSTEXPR (do_g) {%s}' % v3
-        d[k], d[k1], d[k2], d[k3] = v, v1, v2, v3
+        if use_ikvars:
+            # sync warp
+            k1, v1 = 'KERNEL_SYNCWARP', '__syncwarp();'
+            if len(ivars.shared) == 0 and len(kvars.shared) == 0 and len(ifrcs.shared) == 0 and len(kfrcs.shared) == 0:
+                v1 = ''
+            d[k1] = v1
 
-        # klane -- True only if ivar uses shared memory
-        k1, v1 = 'KERNEL_KLANE1', ''
-        k2, v2 = 'KERNEL_KLANE2', ''
-        k3, v3 = 'KERNEL_SCALED_KLANE', ''
-        use_klane = False
-        if len(ivars.shared.keys()):
-            use_klane = True
-        if use_klane:
-            v1 = 'int klane = srclane + threadIdx.x - ilane;'
-            v2 = v2 + 'int srclane = (ilane + j) & (WARP_SIZE - 1);'
-            v2 = v2 + 'int klane = srclane + threadIdx.x - ilane;'
-            v3 = 'const int klane = threadIdx.x;'
-        d[k1], d[k2], d[k3] = v1, v2, v3
+            # gradient
+            k, v = 'GRADIENT_KERNEL_PARAMS', ''
+            kcfg = self.yk_gradient
+            if kcfg in keys:
+                vcfg = config[kcfg]
+                for t in vcfg:
+                    v = v + ', grad_prec* restrict {}'.format(t)
+            k1, v1 = 'KERNEL_ZERO_LOCAL_FORCE', ifrcs.zero() + kfrcs.zero()
+            k2, v2 = 'KERNEL_SAVE_LOCAL_FORCE', ifrcs.save() + kfrcs.save()
+            k3, v3 = 'KERNEL_SHUFFLE_LOCAL_FORCE_I', ifrcs.shuffle()
+            kcfg = self.yk_constexpr_flags
+            if kcfg in keys:
+                vcfg = config[kcfg]
+                if 'constexpr bool do_g =' in vcfg:
+                    v1 = 'if CONSTEXPR (do_g) {%s}' % v1
+                    v2 = 'if CONSTEXPR (do_g) {%s}' % v2
+                if v3 != '':
+                    v3 = 'if CONSTEXPR (do_g) {%s}' % v3
+            d[k], d[k1], d[k2], d[k3] = v, v1, v2, v3
+
+            # klane -- True only if ivar uses shared memory
+            k1, v1 = 'KERNEL_KLANE1', ''
+            k2, v2 = 'KERNEL_KLANE2', ''
+            k3, v3 = 'KERNEL_SCALED_KLANE', ''
+            use_klane = False
+            if len(ivars.shared.keys()):
+                use_klane = True
+            if use_klane:
+                v1 = 'int klane = srclane + threadIdx.x - ilane;'
+                v2 = v2 + 'int srclane = (ilane + j) & (WARP_SIZE - 1);'
+                v2 = v2 + 'int klane = srclane + threadIdx.x - ilane;'
+                v3 = 'const int klane = threadIdx.x;'
+            d[k1], d[k2], d[k3] = v1, v2, v3
 
         # exclude
         k1, v1 = 'EXCLUDE_INFO_KERNEL_PARAMS', ''
@@ -780,18 +819,31 @@ class KernelWriter:
             v2 = kfrcs.ikreplace(v2)
         d[k1], d[k2] = v1, v2
 
-        # sync warp
-        k1, v1 = 'KERNEL_SYNCWARP', '__syncwarp();'
-        if len(ivars.shared) == 0 and len(kvars.shared) == 0 and len(ifrcs.shared) == 0 and len(kfrcs.shared) == 0:
-            v1 = ''
-        d[k1] = v1
+        # single loop
+        k0, v0 = 'SINGLE_LOOP_LIMIT_PARAM', ''
+        k1, v1 = 'KERNEL_SINGLE_LOOP_CODE', ''
+        k2, v2 = 'KERNEL_SINGLE_LOOP_BEGIN', ''
+        k3, v3 = 'KERNEL_SINGLE_LOOP_END', ''
+        kcfg = self.yk_single_loop_code
+        if kcfg in keys:
+            v0 = config[self.yk_single_loop_limit]
+            v1 = config[kcfg]
+            sl_limit, sl_iter = config[self.yk_single_loop_limit], config[self.yk_single_loop_iter]
+            sl_limit = 'register ' + sl_limit + ' from:dummy'
+            sl_iter = 'register ' + sl_iter + ' from:dummy'
+            var_limit = Variable('k', sl_limit)
+            var_iter = Variable('k', sl_iter)
+            v2 = 'for(%s %s = ITHREAD; %s < %s; %s += STRIDE) {' % (var_iter.type, var_iter.name, var_iter.name, var_limit.name, var_iter.name)
+            v3 = '}'
+            v1 = var_iter.iterreplace(v1)
+        d[k0], d[k1], d[k2], d[k3] = v0, v1, v2, v3
 
         return d
 
 
     @staticmethod
     def version() -> str:
-        return '3.0.2'
+        return '3.1.0'
 
 
     @staticmethod
@@ -808,13 +860,18 @@ class KernelWriter:
     def write(self, output) -> None:
         d = self.cudaReplaceDict()
         outstr = '// ck.py Version {}'.format(self.version())
-        if self.yk_split_kernel in self.config.keys():
+        kernel_num = 21 # default
+        if self.yk_kernel_version_number in self.config.keys():
+            kernel_num = self.config[self.yk_kernel_version_number]
+        if kernel_num == 11:
+            outstr = outstr + self._replace(rc_kernel11, d)
+        elif kernel_num == 23:
             if self.yk_scale_1x_type in self.config.keys():
-                outstr = outstr + self._replace(rc_kernel2c, d)
-            outstr = outstr + self._replace(rc_kernel2b, d)
-            outstr = outstr + self._replace(rc_kernel2a, d)
+                outstr = outstr + self._replace(rc_kernel23c, d)
+            outstr = outstr + self._replace(rc_kernel23b, d)
+            outstr = outstr + self._replace(rc_kernel23a, d)
         else:
-            outstr = outstr + self._replace(rc_kernel1, d)
+            outstr = outstr + self._replace(rc_kernel21, d)
         print(outstr, file=output)
 
 

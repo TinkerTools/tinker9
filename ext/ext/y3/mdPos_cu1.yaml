@@ -1,0 +1,18 @@
+KERNEL_VERSION_NUMBER: 11
+
+KERNEL_IS_STATIC: True
+KERNEL_NAME: mdPos_cu1
+SINGLE_LOOP_LIMIT: int n
+SINGLE_LOOP_ITER: int i
+SINGLE_LOOP_CODE: |
+  qx[@i@] += dt * vlx[@i@];
+  qy[@i@] += dt * vly[@i@];
+  qz[@i@] += dt * vlz[@i@];
+EXTRA_PARAMS: |
+  , time_prec dt
+  , pos_prec* restrict qx
+  , pos_prec* restrict qy
+  , pos_prec* restrict qz
+  , const vel_prec* restrict vlx
+  , const vel_prec* restrict vly
+  , const vel_prec* restrict vlz
