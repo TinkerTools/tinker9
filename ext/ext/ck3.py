@@ -307,7 +307,7 @@ class Variable:
     def __init__(self, iork:str, defstr:str) -> None:
         vs = defstr.split()
         self.iork = iork
-        self.location = vs[0] # shared / register
+        self.location = vs[0]  # shared / register
         self.type = vs[1]
         self.name = vs[2]
         self.readfrom, self.addto, self.onlyif = None, None, None
@@ -323,7 +323,6 @@ class Variable:
                 s3 = s2.replace('onlyif:', '')
                 self.onlyif = s3
 
-
     @staticmethod
     def _get_src(src, index) -> str:
         if ',' in src:
@@ -332,17 +331,15 @@ class Variable:
         else:
             return '{}[{}]'.format(src, index)
 
-
     def zero(self) -> str:
         v1 = ''
         if self.location == 'shared':
             v1 = '{}[threadIdx.x] = 0;'.format(self.name)
         else:
             v1 = '{} = 0;'.format(self.name)
-        if self.onlyif != None:
-            v1 =  'if CONSTEXPR ({}) {}'.format(self.onlyif, v1)
+        if self.onlyif is not None:
+            v1 = 'if CONSTEXPR ({}) {}'.format(self.onlyif, v1)
         return v1
-
 
     def save(self) -> str:
         dst = self.addto
@@ -354,10 +351,9 @@ class Variable:
         else:
             vs = dst.split(',')
             v1 = 'atomic_add({}{}, &{}[{}][{}]);'.format(self.name, suffix, vs[0], self.iork, vs[1])
-        if self.onlyif != None:
+        if self.onlyif is not None:
             v1 = 'if CONSTEXPR ({}) {}'.format(self.onlyif, v1)
         return v1
-
 
     def init_exclude(self) -> str:
         rhs = self._get_src(self.readfrom, self.iork)
@@ -368,7 +364,6 @@ class Variable:
                 return '{}[threadIdx.x] = {};'.format(self.name, rhs)
         else:
             return '{} = {};'.format(self.name, rhs)
-
 
     def init_block(self) -> str:
         if self.readfrom in ['x', 'y', 'z']:
@@ -382,13 +377,11 @@ class Variable:
             else:
                 return '{} = {};'.format(self.name, self._get_src(self.readfrom, self.iork))
 
-
     def shuffle(self) -> str:
         if self.location == 'register':
             return '{0:} = __shfl_sync(ALL_LANES, {0:}, ilane + 1);'.format(self.name)
         else:
             raise ValueError('Cannot shuffle variables in the shared memory.')
-
 
     def ikreplace(self, code:str) -> str:
         old_name = '@{}@'.format(self.name)
@@ -401,7 +394,6 @@ class Variable:
                 new_name = new_name + '[threadIdx.x]'
         code = code.replace(old_name, new_name)
         return code
-
 
     def iterreplace(self, code:str) -> str:
         old_name = '@{}@'.format('i')
@@ -425,7 +417,6 @@ class VariableDefinitions:
             else:
                 d[v.type] = [v]
 
-
     def declare(self) -> str:
         s = ''
         for t in self.shared.keys():
@@ -441,7 +432,6 @@ class VariableDefinitions:
         s = s.replace(',;', ';')
         return s
 
-
     def zero(self) -> str:
         s = ''
         for t in self.shared.keys():
@@ -451,7 +441,6 @@ class VariableDefinitions:
             for v in self.register[t]:
                 s = s + v.zero()
         return s
-
 
     def save(self) -> str:
         s = ''
@@ -463,7 +452,6 @@ class VariableDefinitions:
                 s = s + v.save()
         return s
 
-
     def init_exclude(self) -> str:
         s = ''
         for t in self.shared.keys():
@@ -473,7 +461,6 @@ class VariableDefinitions:
             for v in self.register[t]:
                 s = s + v.init_exclude()
         return s
-
 
     def init_block(self) -> str:
         s = ''
@@ -485,14 +472,12 @@ class VariableDefinitions:
                 s = s + v.init_block()
         return s
 
-
     def shuffle(self) -> str:
         s = ''
         for t in self.register.keys():
             for v in self.register[t]:
                 s = s + v.shuffle()
         return s
-
 
     def ikreplace(self, code:str) -> str:
         for t in self.shared.keys():
@@ -531,7 +516,6 @@ class KernelWriter:
         else:
             raise ValueError('Do not know how to parse type: {}'.format(ptype))
 
-
     @staticmethod
     def _load_scale_param(ptype:str, stem:str, input:str, separate_scaled_pairwise:bool) -> str:
         if ptype == 'real_const_array':
@@ -551,7 +535,7 @@ class KernelWriter:
                 # dim = match.group(2)
                 ss = ptype.split(',')
                 v = ''
-                for i in range(1,len(ss)):
+                for i in range(1, len(ss)):
                     idx = ss[i]
                     al = rc_alphabets[idx]
                     if input is None:
@@ -560,7 +544,6 @@ class KernelWriter:
                     else:
                         v = v + '{} {}{} = {}[ii][{}];'.format(t, stem, al, input, idx)
                 return v
-
 
     def __init__(self, config) -> None:
         self.config = config
@@ -597,7 +580,6 @@ class KernelWriter:
             return self.config[k]
         else:
             return ''
-
 
     def cudaReplaceDict(self) -> dict:
         d = {}
@@ -679,10 +661,10 @@ class KernelWriter:
         if kcfg in keys:
             vcfg, decl, zero, total = config[kcfg], '', '', ''
             for t in vcfg:
-               v1 = v1 + ', CountBuffer restrict {}'.format(t)
-               decl = decl + 'int {}tl;'.format(t)
-               zero = zero + '{}tl = 0;'.format(t)
-               total = total + 'atomic_add({}tl, {}, ithread);'.format(t, t)
+                v1 = v1 + ', CountBuffer restrict {}'.format(t)
+                decl = decl + 'int {}tl;'.format(t)
+                zero = zero + '{}tl = 0;'.format(t)
+                total = total + 'atomic_add({}tl, {}, ithread);'.format(t, t)
             v2 = '%s if CONSTEXPR (do_a) {%s}' % (decl, zero)
             v3 = 'if CONSTEXPR (do_a) {%s}' % (total)
         d[k1], d[k2], d[k3] = v1, v2, v3
@@ -809,7 +791,7 @@ class KernelWriter:
             v1 = kvars.ikreplace(v1)
             v1 = ifrcs.ikreplace(v1)
             v1 = kfrcs.ikreplace(v1)
-            v2 = v1 # in case no scaled pairwise interaction is given
+            v2 = v1  # in case no scaled pairwise interaction is given
         kcfg = self.yk_scaled_pairwise
         if kcfg in keys:
             v2 = config[kcfg]
@@ -840,27 +822,24 @@ class KernelWriter:
 
         return d
 
-
     @staticmethod
     def version() -> str:
         return '3.1.0'
-
 
     @staticmethod
     def _replace(s:str, d:dict) -> str:
         output = s
         for k in d.keys():
             v = d[k]
-            if v == None:
+            if v is None:
                 v = ''
             output = output.replace(k, v)
         return output
 
-
     def write(self, output) -> None:
         d = self.cudaReplaceDict()
         outstr = '// ck.py Version {}'.format(self.version())
-        kernel_num = 21 # default
+        kernel_num = 21  # default
         if self.yk_kernel_version_number in self.config.keys():
             kernel_num = self.config[self.yk_kernel_version_number]
         if kernel_num == 11:
@@ -895,7 +874,6 @@ def show_command(argv):
     d = os.path.dirname(p)
     d2 = os.path.join(d, '../..')
     d = os.path.abspath(d2)
-
 
     yaml_file = argv[1]
     with open(yaml_file) as input_file:

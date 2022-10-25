@@ -9,13 +9,13 @@
 
 namespace tinker {
 static const char* main_name = "tinker9";
-static const std::string analyze_name = "analyze";
-static const std::string bar_name = "bar";
-static const std::string dynamic_name = "dynamic";
-static const std::string helper_name = "help";
-static const std::string info_name = "info";
-static const std::string minimize_name = "minimize";
-static const std::string testgrad_name = "testgrad";
+static const char* analyze_name = "analyze";
+static const char* bar_name = "bar";
+static const char* dynamic_name = "dynamic";
+static const char* helper_name = "help";
+static const char* info_name = "info";
+static const char* minimize_name = "minimize";
+static const char* testgrad_name = "testgrad";
 
 static const std::map<std::string, std::function<void(int, char**)>>& launcher()
 {
@@ -41,7 +41,8 @@ static std::string getArg0(const char* a0)
    for (const auto& x : l) {
       k = x.first;
       if (k != helper_name)
-         if (k + "9" == s0) return k;
+         if (k + "9" == s0)
+            return k;
    }
    return main_name;
 }
@@ -54,7 +55,8 @@ int main(int argc, char** argv)
    std::string arg0;
    arg0 = getArg0(argv[0]);
    if (arg0 == main_name) {
-      if (argc < 2) goto help_message;
+      if (argc < 2)
+         goto help_message;
 
       argc--;
       argv++;
@@ -68,8 +70,7 @@ int main(int argc, char** argv)
       try {
          launcher().at(arg0)(argc, argv);
       } catch (const std::exception& err) {
-         print(stdout, " Terminating with uncaught exception :  %s\n",
-            err.what());
+         print(stdout, " Terminating with uncaught exception :  %s\n", err.what());
       }
       tinkerFortranRuntimeEnd();
       return 0;
@@ -84,9 +85,10 @@ namespace tinker {
 void xHelp(int, char**)
 {
    std::vector<std::string> keys;
-   for (const auto& x : launcher()) {
-      if (x.first != helper_name) keys.push_back(x.first);
-   }
+   for (const auto& x : launcher())
+      if (x.first != helper_name)
+         keys.push_back(x.first);
+
    std::sort(keys.begin(), keys.end());
    keys.push_back(helper_name);
 

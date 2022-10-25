@@ -4,20 +4,9 @@
 #include <tinker/detail/units.hh>
 
 namespace tinker {
-__global__
-static void mdPos_cu1(int n, time_prec dt,                              //
-   pos_prec* restrict qx, pos_prec* restrict qy, pos_prec* restrict qz, //
-   const vel_prec* restrict vlx, const vel_prec* restrict vly, const vel_prec* restrict vlz)
-{
-   for (int i = ITHREAD; i < n; i += STRIDE) {
-      qx[i] += dt * vlx[i];
-      qy[i] += dt * vly[i];
-      qz[i] += dt * vlz[i];
-   }
-}
-
-void mdPos_cu(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx,
-   const vel_prec* vly, const vel_prec* vlz)
+#include "mdPos_cu1.cc"
+void mdPos_cu(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_prec* vlx, const vel_prec* vly,
+   const vel_prec* vlz)
 {
    launch_k1s(g::s0, n, mdPos_cu1, //
       n, dt, qx, qy, qz, vlx, vly, vlz);
@@ -25,8 +14,8 @@ void mdPos_cu(time_prec dt, pos_prec* qx, pos_prec* qy, pos_prec* qz, const vel_
 
 __global__
 static void mdPosAxbv_cu1(int n, pos_prec sa, pos_prec sb, //
-   pos_prec* restrict xpos, pos_prec* restrict ypos, pos_prec* restrict zpos,
-   const vel_prec* restrict vx, const vel_prec* restrict vy, const vel_prec* restrict vz)
+   pos_prec* restrict xpos, pos_prec* restrict ypos, pos_prec* restrict zpos, const vel_prec* restrict vx,
+   const vel_prec* restrict vy, const vel_prec* restrict vz)
 {
    for (int i = ITHREAD; i < n; i += STRIDE) {
       xpos[i] = sa * xpos[i] + sb * vx[i];
@@ -45,8 +34,8 @@ __global__
 static void mdPosAxbvAn_cu1(int n,     //
    double3 a0, double3 a1, double3 a2, //
    double3 b0, double3 b1, double3 b2, //
-   pos_prec* restrict xpos, pos_prec* restrict ypos, pos_prec* restrict zpos,
-   const vel_prec* restrict vx, const vel_prec* restrict vy, const vel_prec* restrict vz)
+   pos_prec* restrict xpos, pos_prec* restrict ypos, pos_prec* restrict zpos, const vel_prec* restrict vx,
+   const vel_prec* restrict vy, const vel_prec* restrict vz)
 {
    pos_prec a00 = a0.x, a01 = a0.y, a02 = a0.z;
    pos_prec a10 = a1.x, a11 = a1.y, a12 = a1.z;
@@ -94,20 +83,19 @@ static void mdVel_cu1(int n, time_prec dt, const double* restrict massinv, //
    }
 }
 
-void mdVel_cu(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, const grad_prec* grx,
-   const grad_prec* gry, const grad_prec* grz)
+void mdVel_cu(time_prec dt, vel_prec* vlx, vel_prec* vly, vel_prec* vlz, const grad_prec* grx, const grad_prec* gry,
+   const grad_prec* grz)
 {
    launch_k1s(g::s0, n, mdVel_cu1, //
       n, dt, massinv, vlx, vly, vlz, grx, gry, grz);
 }
 
 __global__
-static void mdVel2_cu1(int n, const double* restrict massinv, vel_prec* restrict vlx,
-   vel_prec* restrict vly, vel_prec* restrict vlz, //
+static void mdVel2_cu1(int n, const double* restrict massinv, vel_prec* restrict vlx, vel_prec* restrict vly,
+   vel_prec* restrict vlz, //
    time_prec dt1, const grad_prec* restrict grx1, const grad_prec* restrict gry1,
    const grad_prec* restrict grz1, //
-   time_prec dt2, const grad_prec* restrict grx2, const grad_prec* restrict gry2,
-   const grad_prec* restrict grz2)
+   time_prec dt2, const grad_prec* restrict grx2, const grad_prec* restrict gry2, const grad_prec* restrict grz2)
 {
    const vel_prec ekcal = units::ekcal;
    for (int i = ITHREAD; i < n; i += STRIDE) {
@@ -124,8 +112,8 @@ static void mdVel2_cu1(int n, const double* restrict massinv, vel_prec* restrict
    }
 }
 
-void mdVel2_cu(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz,
-   time_prec dt2, const grad_prec* grx2, const grad_prec* gry2, const grad_prec* grz2)
+void mdVel2_cu(time_prec dt, const grad_prec* grx, const grad_prec* gry, const grad_prec* grz, time_prec dt2,
+   const grad_prec* grx2, const grad_prec* gry2, const grad_prec* grz2)
 {
    launch_k1s(g::s0, n, mdVel2_cu1, //
       n, massinv, vx, vy, vz,       //
