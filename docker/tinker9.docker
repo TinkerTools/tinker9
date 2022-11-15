@@ -62,7 +62,7 @@ Synopsis
 class Ubuntu:
     @classmethod
     def dockerRunInstallCmake(cls, version: str) -> str:
-        if version == '18.04':
+        if version == '18.04' or version == '20.04':
             c = '''# update cmake https://apt.kitware.com
 RUN apt install -y gpg wget
 RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
@@ -71,8 +71,8 @@ RUN apt update -y
 RUN rm /usr/share/keyrings/kitware-archive-keyring.gpg
 RUN apt install -y kitware-archive-keyring
 RUN apt update -y && apt install -y cmake'''
-        elif version == '20.04':
-            c = 'RUN apt install -y cmake'
+        # elif version == '20.04':
+        #     c = 'RUN apt install -y cmake'
         else:
             raise Exception('Unknown Ubuntu version %s' % version)
         return c
