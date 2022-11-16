@@ -12,7 +12,7 @@ The oldest NVIDIA GPU Tinker9 has been tested on is GeForce GTX 675MX (compute c
 OS and Toolchain   Version
 =================  ===========================
 OS                 Linux, WSL2, macOS <= 10.13
-CMake              >= 3.15
+CMake              >= 3.18
 Fortran            GNU or Intel
 C++                [a]
 CUDA/nvcc          [b]
