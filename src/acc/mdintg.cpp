@@ -148,9 +148,9 @@ void mdrest_acc(int istep)
          pos_prec xdel = xpos[i] - xtot;
          pos_prec ydel = ypos[i] - ytot;
          pos_prec zdel = zpos[i] - ztot;
-         vx[i] -= vang[1] * zdel + vang[2] * ydel;
-         vy[i] -= vang[2] * xdel + vang[0] * zdel;
-         vz[i] -= vang[0] * ydel + vang[1] * xdel;
+         vx[i] = vx[i] - vang[1] * zdel + vang[2] * ydel;
+         vy[i] = vy[i] - vang[2] * xdel + vang[0] * zdel;
+         vz[i] = vz[i] - vang[0] * ydel + vang[1] * xdel;
       }
 
       // print the angular velocity of the overall system
