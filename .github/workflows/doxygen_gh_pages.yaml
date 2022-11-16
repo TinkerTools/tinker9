@@ -14,7 +14,7 @@ jobs:
          - name: Install doxygen
 #            run: sudo apt-get install -y doxygen
            run: |
-              wget https://www.doxygen.nl/files/doxygen-1.9.4.linux.bin.tar.gz
+              wget https://www.doxygen.nl/files/doxygen-1.9.5.linux.bin.tar.gz
               tar -xvzf doxygen-1.9.4.linux.bin.tar.gz
               ln -s doxygen-1.9.4/bin/doxygen doxygen
          - name: Generate doxygen html
