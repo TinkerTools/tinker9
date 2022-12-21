@@ -185,7 +185,7 @@ class CompileFile(DockerFile):
     def tag(self) -> str:
         return 'temp_build_tinker9-%s' % self.cudaVersion
 
-    def cmakeArgComputeCapability(cls, version: str) -> str:
+    def cmakeArgComputeCapability(self, version: str) -> str:
         if version == '10.1':
             c = '50,60,70,75'
         elif version == '11.2.2':
