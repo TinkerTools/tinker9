@@ -26,7 +26,7 @@ The executables included in these images were compiled on a recent computer. It 
 
 Use `Git` to retrieve the source code. If you want to specify a release version,
 use command `git clone --depth 1 --branch $VERSION https://github.com/TinkerTools/tinker9`.
-Do not download the `zip` or tarball file from the release page.
+Do not download the zip or tarball file from the release page.
 
    1. [Prerequisites](doc/manual/m/install/preq.rst)
    2. [Download the Canonical Tinker (important to get the REQUIRED version)](doc/manual/m/install/tinker.rst)

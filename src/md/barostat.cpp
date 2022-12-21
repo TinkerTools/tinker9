@@ -194,7 +194,7 @@ void IsoBaroDevice::control_1_2(time_prec dt, int idx)
    double gbar = 2 * eksu1 * al - tr_vir - dim * vol0 * bath::atmsph / units::prescon;
    gbar /= qbar;
    if (m_langevin)
-      vbar = OUProcess(dt2, vbar, m_fric, gbar, b, m_rdn);
+      vbar = OUProcess(dt2, vbar, m_fric, gbar, b, m_rnd);
    else
       vbar += gbar * dt2;
 }
@@ -204,7 +204,7 @@ IsoBaroDevice::IsoBaroDevice(double fric)
    , m_vir(nullptr)
    , m_eksum(nullptr)
    , m_fric(fric)
-   , m_rdn()
+   , m_rnd()
    , m_langevin(fric != 0.0)
 {
    if (atomic) {
@@ -216,7 +216,7 @@ IsoBaroDevice::IsoBaroDevice(double fric)
    }
 
    if (m_langevin)
-      m_rdn = normal<double>();
+      m_rnd = normal<double>();
 
    dofP = mdstuf::nfree;
 
@@ -254,7 +254,7 @@ void IsoBaroDevice::control2(time_prec dt)
       return;
 
    if (m_langevin)
-      m_rdn = normal<double>();
+      m_rnd = normal<double>();
    control_1_2(dt, 2);
 }
 
@@ -339,7 +339,7 @@ void AnisoBaroDevice::control_1_2(time_prec dt, int idx)
       gbar[i][j] += (2 * c_ekin[i][j] - c_vir[3 * i + j]);
       gbar[i][j] /= qbar;
       if (m_langevin)
-         vbar_matrix[i][j] = OUProcess(dt2, vbar_matrix[i][j], m_fric, gbar[i][j], b, m_rdn[i][j]);
+         vbar_matrix[i][j] = OUProcess(dt2, vbar_matrix[i][j], m_fric, gbar[i][j], b, m_rnd[i][j]);
       else
          vbar_matrix[i][j] += gbar[i][j] * dt2;
    }
@@ -355,7 +355,7 @@ AnisoBaroDevice::AnisoBaroDevice(double fric)
    , m_eksum(nullptr)
    , m_ekin(nullptr)
    , m_fric(fric)
-   , m_rdn()
+   , m_rnd()
    , m_langevin(fric != 0.0)
 {
    if (atomic) {
@@ -372,7 +372,7 @@ AnisoBaroDevice::AnisoBaroDevice(double fric)
       for (int k = 0; k < arrayLength; ++k) {
          int i = indexArray[k][0];
          int j = indexArray[k][1];
-         m_rdn[i][j] = normal<double>();
+         m_rnd[i][j] = normal<double>();
       }
    }
 
@@ -418,7 +418,7 @@ void AnisoBaroDevice::control2(time_prec dt)
       for (int k = 0; k < arrayLength; ++k) {
          int i = indexArray[k][0];
          int j = indexArray[k][1];
-         m_rdn[i][j] = normal<double>();
+         m_rnd[i][j] = normal<double>();
       }
    }
    control_1_2(dt, 2);

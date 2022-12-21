@@ -78,9 +78,9 @@ public:
    /// \param nrespa  Number of inner RESPA steps per time-step.
    virtual void velR2(time_prec t, int nrespa) {}
 
-   virtual void rattleSave();
-   virtual void rattle(time_prec dt);
-   virtual void rattle2(time_prec dt, bool useVirial);
+   void rattleSave();
+   void rattle(time_prec dt);
+   void rattle2(time_prec dt, bool useVirial);
 
    static BasicPropagator* create(int nRespaLogV, PropagatorEnum pe);
 };
@@ -301,7 +301,7 @@ protected:
    double* m_eksum;
 
    double m_fric;
-   double m_rdn;
+   double m_rnd;
    bool m_langevin;
 
    void control_1_2(time_prec dt, int idx);
@@ -324,7 +324,7 @@ protected:
    double (*m_ekin)[3];
 
    double m_fric;
-   double m_rdn[3][3];
+   double m_rnd[3][3];
    bool m_langevin;
 
    void control_1_2(time_prec dt, int idx);

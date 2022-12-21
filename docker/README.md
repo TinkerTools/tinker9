@@ -9,6 +9,9 @@ Use command `tinker9.docker -h` to see the valid values of `CudaVersion` and `St
 
 # Steps to Install Docker on Ubuntu
 
+Checking the newest official installation guide for nvidia container toolkit
+is recommended.
+
 ### 1. Remove the old docker version as necessary
 ```bash
 sudo apt remove docker docker-engine docker.io containerd runc
