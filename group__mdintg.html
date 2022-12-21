@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;9eca28a (Wed Nov 16 16:43:45 2022 -0600)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;00e86db (Wed Dec 21 13:13:14 2022 -0600)</span>
    </div>
   </td>
  </tr>
@@ -631,12 +631,12 @@ Variables</h2></td></tr>
 <tr class="memitem:ab2309ef2bb5db26cfee62fcecbdfaa71"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab2309ef2bb5db26cfee62fcecbdfaa71">velR2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> t, int <a class="el" href="group__mdintg.html#af6e72b78518af23d09a65798864617a6">nrespa</a>)</td></tr>
 <tr class="memdesc:ab2309ef2bb5db26cfee62fcecbdfaa71"><td class="mdescLeft">&#160;</td><td class="mdescRight">The second half-step velocity update for RESPA.  <a href="group__mdintg.html#ab2309ef2bb5db26cfee62fcecbdfaa71">More...</a><br /></td></tr>
 <tr class="separator:ab2309ef2bb5db26cfee62fcecbdfaa71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b80b50fb66832bfc7706bc51d120a7c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a4b80b50fb66832bfc7706bc51d120a7c">rattleSave</a> ()</td></tr>
-<tr class="separator:a4b80b50fb66832bfc7706bc51d120a7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a005517104a009fa45910feae5c1d0566"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a005517104a009fa45910feae5c1d0566">rattle</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt)</td></tr>
-<tr class="separator:a005517104a009fa45910feae5c1d0566"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41dfff904cbd9f52eafbc8087e578c0d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a41dfff904cbd9f52eafbc8087e578c0d">rattle2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt, bool useVirial)</td></tr>
-<tr class="separator:a41dfff904cbd9f52eafbc8087e578c0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac25f1b75a04bbc0cf721d9541962bedd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ac25f1b75a04bbc0cf721d9541962bedd">rattleSave</a> ()</td></tr>
+<tr class="separator:ac25f1b75a04bbc0cf721d9541962bedd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab46c97684914be5825ea15e7f5fcbb1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab46c97684914be5825ea15e7f5fcbb1e">rattle</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt)</td></tr>
+<tr class="separator:ab46c97684914be5825ea15e7f5fcbb1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5bfe385d848bc6d66831b2ea533856b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab5bfe385d848bc6d66831b2ea533856b">rattle2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt, bool useVirial)</td></tr>
+<tr class="separator:ab5bfe385d848bc6d66831b2ea533856b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><h3>Static Public Member Functions</h3></td></tr>
 <tr class="memitem:a1ce7618feb0db2b2bb8cf662fe3ec83c"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="group__mdintg.html#classtinker_1_1_basic_propagator">BasicPropagator</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a1ce7618feb0db2b2bb8cf662fe3ec83c">create</a> (int nRespaLogV, <a class="el" href="group__mdintg.html#gaeaf0ea94fb47f9ccf176ab1db2d26fc5">PropagatorEnum</a> pe)</td></tr>
 <tr class="separator:a1ce7618feb0db2b2bb8cf662fe3ec83c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -833,43 +833,32 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a005517104a009fa45910feae5c1d0566" name="a005517104a009fa45910feae5c1d0566"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a005517104a009fa45910feae5c1d0566">&#9670;&#160;</a></span>rattle()</h2>
+<a id="ab46c97684914be5825ea15e7f5fcbb1e" name="ab46c97684914be5825ea15e7f5fcbb1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab46c97684914be5825ea15e7f5fcbb1e">&#9670;&#160;</a></span>rattle()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void tinker::BasicPropagator::rattle </td>
+          <td class="memname">void tinker::BasicPropagator::rattle </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a>&#160;</td>
           <td class="paramname"><em>dt</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a41dfff904cbd9f52eafbc8087e578c0d" name="a41dfff904cbd9f52eafbc8087e578c0d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41dfff904cbd9f52eafbc8087e578c0d">&#9670;&#160;</a></span>rattle2()</h2>
+<a id="ab5bfe385d848bc6d66831b2ea533856b" name="ab5bfe385d848bc6d66831b2ea533856b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5bfe385d848bc6d66831b2ea533856b">&#9670;&#160;</a></span>rattle2()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void tinker::BasicPropagator::rattle2 </td>
+          <td class="memname">void tinker::BasicPropagator::rattle2 </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a>&#160;</td>
           <td class="paramname"><em>dt</em>, </td>
@@ -886,36 +875,23 @@ Additional Inherited Members</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a4b80b50fb66832bfc7706bc51d120a7c" name="a4b80b50fb66832bfc7706bc51d120a7c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b80b50fb66832bfc7706bc51d120a7c">&#9670;&#160;</a></span>rattleSave()</h2>
+<a id="ac25f1b75a04bbc0cf721d9541962bedd" name="ac25f1b75a04bbc0cf721d9541962bedd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac25f1b75a04bbc0cf721d9541962bedd">&#9670;&#160;</a></span>rattleSave()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void tinker::BasicPropagator::rattleSave </td>
+          <td class="memname">void tinker::BasicPropagator::rattleSave </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -1166,12 +1142,12 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:ab2309ef2bb5db26cfee62fcecbdfaa71 inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab2309ef2bb5db26cfee62fcecbdfaa71">velR2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> t, int <a class="el" href="group__mdintg.html#af6e72b78518af23d09a65798864617a6">nrespa</a>)</td></tr>
 <tr class="memdesc:ab2309ef2bb5db26cfee62fcecbdfaa71 inherit pub_methods_group__mdintg"><td class="mdescLeft">&#160;</td><td class="mdescRight">The second half-step velocity update for RESPA.  <a href="group__mdintg.html#ab2309ef2bb5db26cfee62fcecbdfaa71">More...</a><br /></td></tr>
 <tr class="separator:ab2309ef2bb5db26cfee62fcecbdfaa71 inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b80b50fb66832bfc7706bc51d120a7c inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a4b80b50fb66832bfc7706bc51d120a7c">rattleSave</a> ()</td></tr>
-<tr class="separator:a4b80b50fb66832bfc7706bc51d120a7c inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a005517104a009fa45910feae5c1d0566 inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a005517104a009fa45910feae5c1d0566">rattle</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt)</td></tr>
-<tr class="separator:a005517104a009fa45910feae5c1d0566 inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41dfff904cbd9f52eafbc8087e578c0d inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a41dfff904cbd9f52eafbc8087e578c0d">rattle2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt, bool useVirial)</td></tr>
-<tr class="separator:a41dfff904cbd9f52eafbc8087e578c0d inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac25f1b75a04bbc0cf721d9541962bedd inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ac25f1b75a04bbc0cf721d9541962bedd">rattleSave</a> ()</td></tr>
+<tr class="separator:ac25f1b75a04bbc0cf721d9541962bedd inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab46c97684914be5825ea15e7f5fcbb1e inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab46c97684914be5825ea15e7f5fcbb1e">rattle</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt)</td></tr>
+<tr class="separator:ab46c97684914be5825ea15e7f5fcbb1e inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5bfe385d848bc6d66831b2ea533856b inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab5bfe385d848bc6d66831b2ea533856b">rattle2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt, bool useVirial)</td></tr>
+<tr class="separator:ab5bfe385d848bc6d66831b2ea533856b inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -1305,12 +1281,12 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:ab2309ef2bb5db26cfee62fcecbdfaa71 inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab2309ef2bb5db26cfee62fcecbdfaa71">velR2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> t, int <a class="el" href="group__mdintg.html#af6e72b78518af23d09a65798864617a6">nrespa</a>)</td></tr>
 <tr class="memdesc:ab2309ef2bb5db26cfee62fcecbdfaa71 inherit pub_methods_group__mdintg"><td class="mdescLeft">&#160;</td><td class="mdescRight">The second half-step velocity update for RESPA.  <a href="group__mdintg.html#ab2309ef2bb5db26cfee62fcecbdfaa71">More...</a><br /></td></tr>
 <tr class="separator:ab2309ef2bb5db26cfee62fcecbdfaa71 inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b80b50fb66832bfc7706bc51d120a7c inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a4b80b50fb66832bfc7706bc51d120a7c">rattleSave</a> ()</td></tr>
-<tr class="separator:a4b80b50fb66832bfc7706bc51d120a7c inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a005517104a009fa45910feae5c1d0566 inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a005517104a009fa45910feae5c1d0566">rattle</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt)</td></tr>
-<tr class="separator:a005517104a009fa45910feae5c1d0566 inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41dfff904cbd9f52eafbc8087e578c0d inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a41dfff904cbd9f52eafbc8087e578c0d">rattle2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt, bool useVirial)</td></tr>
-<tr class="separator:a41dfff904cbd9f52eafbc8087e578c0d inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac25f1b75a04bbc0cf721d9541962bedd inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ac25f1b75a04bbc0cf721d9541962bedd">rattleSave</a> ()</td></tr>
+<tr class="separator:ac25f1b75a04bbc0cf721d9541962bedd inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab46c97684914be5825ea15e7f5fcbb1e inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab46c97684914be5825ea15e7f5fcbb1e">rattle</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt)</td></tr>
+<tr class="separator:ab46c97684914be5825ea15e7f5fcbb1e inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5bfe385d848bc6d66831b2ea533856b inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab5bfe385d848bc6d66831b2ea533856b">rattle2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt, bool useVirial)</td></tr>
+<tr class="separator:ab5bfe385d848bc6d66831b2ea533856b inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><h3>Protected Member Functions</h3></td></tr>
 <tr class="memitem:ab2f86048ca9ed2373db2980f49a359a5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab2f86048ca9ed2373db2980f49a359a5">RespaDevice</a> (int nrspa)</td></tr>
 <tr class="separator:ab2f86048ca9ed2373db2980f49a359a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1633,12 +1609,12 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:ab2309ef2bb5db26cfee62fcecbdfaa71 inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab2309ef2bb5db26cfee62fcecbdfaa71">velR2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> t, int <a class="el" href="group__mdintg.html#af6e72b78518af23d09a65798864617a6">nrespa</a>)</td></tr>
 <tr class="memdesc:ab2309ef2bb5db26cfee62fcecbdfaa71 inherit pub_methods_group__mdintg"><td class="mdescLeft">&#160;</td><td class="mdescRight">The second half-step velocity update for RESPA.  <a href="group__mdintg.html#ab2309ef2bb5db26cfee62fcecbdfaa71">More...</a><br /></td></tr>
 <tr class="separator:ab2309ef2bb5db26cfee62fcecbdfaa71 inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b80b50fb66832bfc7706bc51d120a7c inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a4b80b50fb66832bfc7706bc51d120a7c">rattleSave</a> ()</td></tr>
-<tr class="separator:a4b80b50fb66832bfc7706bc51d120a7c inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a005517104a009fa45910feae5c1d0566 inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a005517104a009fa45910feae5c1d0566">rattle</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt)</td></tr>
-<tr class="separator:a005517104a009fa45910feae5c1d0566 inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41dfff904cbd9f52eafbc8087e578c0d inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#a41dfff904cbd9f52eafbc8087e578c0d">rattle2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt, bool useVirial)</td></tr>
-<tr class="separator:a41dfff904cbd9f52eafbc8087e578c0d inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac25f1b75a04bbc0cf721d9541962bedd inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ac25f1b75a04bbc0cf721d9541962bedd">rattleSave</a> ()</td></tr>
+<tr class="separator:ac25f1b75a04bbc0cf721d9541962bedd inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab46c97684914be5825ea15e7f5fcbb1e inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab46c97684914be5825ea15e7f5fcbb1e">rattle</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt)</td></tr>
+<tr class="separator:ab46c97684914be5825ea15e7f5fcbb1e inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5bfe385d848bc6d66831b2ea533856b inherit pub_methods_group__mdintg"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ab5bfe385d848bc6d66831b2ea533856b">rattle2</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> dt, bool useVirial)</td></tr>
+<tr class="separator:ab5bfe385d848bc6d66831b2ea533856b inherit pub_methods_group__mdintg"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><h3>Protected Member Functions</h3></td></tr>
 <tr class="memitem:ac25fcb0b55a67f1ac833696f12e17384"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__mdintg.html#ac25fcb0b55a67f1ac833696f12e17384">velImpl</a> (<a class="el" href="group__prec.html#ga43b06cf25b6e6e04e1439c46c163f5aa">time_prec</a> t, int idx, int <a class="el" href="group__mdintg.html#af6e72b78518af23d09a65798864617a6">nrespa</a>)</td></tr>
 <tr class="separator:ac25fcb0b55a67f1ac833696f12e17384"><td class="memSeparator" colspan="2">&#160;</td></tr>
