@@ -158,17 +158,17 @@ class RuntimeFile(DockerFile):
         return 'tinkertools/tinker9-runtime:%s' % t
 
     def content(self) -> str:
-        develFile = DevelFile(self.cudaVersion)
+        c = '''FROM nvidia/cuda:%s''' % self.config[kRuntimeUbuntu]
 
-        c = '''FROM %s AS tool_image
-FROM nvidia/cuda:%s''' % (develFile.tag(), self.config[kRuntimeUbuntu])
-
-        c += NewLine
         c += NewLine
         c += '''# git and cmake are no longer necessary
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update -y && apt install -y ca-certificates libssl-dev gfortran'''
 
+#         develFile = DevelFile(self.cudaVersion)
+#         c += NewLine
+#         c += '''FROM %s AS tool_image
+# FROM nvidia/cuda:%s''' % (develFile.tag(), self.config[kRuntimeUbuntu])
 #         c += '''ARG LibPath=/opt/nvidia/hpc_sdk/Linux_x86_64/%s/compilers/lib
 # COPY --from=tool_image "${LibPath}" "${LibPath}"
 # ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${LibPath}"''' % self.nvhpc
