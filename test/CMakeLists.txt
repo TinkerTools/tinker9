@@ -16,6 +16,7 @@ if (14 LESS_EQUAL ${T9_CPPSTD})
          SOURCE_DIR     "${PROJECT_SOURCE_DIR}/ext/ext/catch2v3"
          CMAKE_ARGS     -DCMAKE_BUILD_TYPE=release
                         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/catch2
+                        -DCMAKE_INSTALL_LIBDIR=lib
                         -DCMAKE_CXX_STANDARD=${T9_CPPSTD}
                         -DCMAKE_CXX_EXTENSIONS=OFF
                         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}

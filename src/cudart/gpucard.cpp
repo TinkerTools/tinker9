@@ -33,8 +33,8 @@ std::string gpuCudaDriverVersion()
 
 std::string gpuThrustVersion()
 {
-   return format("%d.%d.%d patch %d", THRUST_MAJOR_VERSION, THRUST_MINOR_VERSION,
-      THRUST_SUBMINOR_VERSION, THRUST_PATCH_NUMBER);
+   return format("%d.%d.%d patch %d", THRUST_MAJOR_VERSION, THRUST_MINOR_VERSION, THRUST_SUBMINOR_VERSION,
+      THRUST_PATCH_NUMBER);
 }
 
 std::vector<DeviceAttribute>& gpuDeviceAttributes()
@@ -101,9 +101,13 @@ static void getDeviceAttribute(DeviceAttribute& a, int device = 0)
    bool found_cc = true;
 
    // Maximum number of resident blocks per multiprocessor
-   if (a.cc > 86)
+   if (a.cc > 90)
       found_cc = false;
-   else if (a.cc >= 86)
+   else if (a.cc >= 90)
+      a.max_blocks_per_multiprocessor = 32;
+   else if (a.cc >= 89)
+      a.max_blocks_per_multiprocessor = 24;
+   else if (a.cc >= 87)
       a.max_blocks_per_multiprocessor = 16;
    else if (a.cc >= 80)
       a.max_blocks_per_multiprocessor = 32;
@@ -116,17 +120,18 @@ static void getDeviceAttribute(DeviceAttribute& a, int device = 0)
    else
       found_cc = false;
 
-   // Number of CUDA cores per multiprocessor, not tabulated in cuda-c-programming-guide;
+   // Number of CUDA cores (FP32) per multiprocessor, not tabulated;
    // documented in "Compute Capability - architecture"
-   // 8.6: 128
+   // 9.0: 128
+   // 8.6, 8.7, 8.9: 128
    // 7.0 7.2 7.5 8.0: 64
    // 6.1 6.2: 128
    // 6.0: 64
    // 5.0 5.2: 128
    // 3.0 3.5 3.7: 192
-   if (a.cc > 86)
+   if (a.cc > 90)
       found_cc = false;
-   else if (a.cc >= 86)
+   else if (a.cc >= 90)
       a.cores_per_multiprocessor = 128;
    else if (a.cc >= 80)
       a.cores_per_multiprocessor = 64;
@@ -322,15 +327,13 @@ void gpuData(RcOp op)
       int kdevice = -1;
       check_rt(cudaGetDevice(&kdevice));
       if (kdevice != idevice)
-         TINKER_THROW(
-            format("Device %d in use is different than the selected Device %d.", kdevice, idevice));
+         TINKER_THROW(format("Device %d in use is different than the selected Device %d.", kdevice, idevice));
 
       unsigned int kflags = 0;
       check_rt(cudaGetDeviceFlags(&kflags));
       if (kflags != cuda_device_flags)
-         TINKER_THROW(
-            format("Cuda device flag %u in use is different than the pre-selected flag %u.", kflags,
-               cuda_device_flags));
+         TINKER_THROW(format("Cuda device flag %u in use is different than the pre-selected flag %u.", kflags,
+            cuda_device_flags));
    }
 }
 
@@ -339,9 +342,8 @@ int gpuGridSize(int nthreads_per_block)
    const auto& a = gpuDeviceAttributes()[idevice];
 
    nthreads_per_block = std::min(nthreads_per_block, a.max_threads_per_block);
-   int max_nblocks_per_MP =
-      std::min((a.max_threads_per_multiprocessor + nthreads_per_block - 1) / nthreads_per_block,
-         a.max_blocks_per_multiprocessor);
+   int max_nblocks_per_MP = std::min((a.max_threads_per_multiprocessor + nthreads_per_block - 1) / nthreads_per_block,
+      a.max_blocks_per_multiprocessor);
 
    return a.multiprocessor_count * max_nblocks_per_MP;
 }
