@@ -1,5 +1,6 @@
 #pragma once
 #include "ff/energybuffer.h"
+#include "ff/evdw.h"
 #include "tool/rcman.h"
 
 namespace tinker {

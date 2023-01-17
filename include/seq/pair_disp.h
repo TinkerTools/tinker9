@@ -11,8 +11,8 @@ namespace tinker {
 template <bool DO_G, class DTYP, int SCALE>
 SEQ_CUDA
 void pair_disp_obsolete(real r, real r2, real rr1, //
-   real dspscale, real aewald, real ci, real ai, real ck, real ak, real edcut,
-   real edoff, real& restrict e, real& restrict de)
+   real dspscale, real aewald, real ci, real ai, real ck, real ak, real vlambda,
+   real edcut, real edoff, real& restrict e, real& restrict de)
 {
    if (r > edoff) {
       e = 0;
@@ -97,11 +97,11 @@ void pair_disp_obsolete(real r, real r2, real rr1, //
 }
 
 #pragma acc routine seq
-template <bool DO_G, class DTYP, int SCALE>
+template <bool DO_G, class DTYP, int SCALE, bool SOFTCORE>
 SEQ_CUDA
 void pair_disp(real r, real r2, real rr1, //
-   real dspscale, real aewald, real ci, real ai, real ck, real ak, real edcut,
-   real edoff, real& restrict e, real& restrict de)
+   real dspscale, real aewald, real ci, real ai, real ck, real ak, real vlambda,
+   real edcut, real edoff, real& restrict e, real& restrict de)
 {
    if (r > edoff) {
       e = 0;
@@ -122,6 +122,9 @@ void pair_disp(real r, real r2, real rr1, //
       real term = 1 + ralpha2 + 0.5f * ralpha2 * ralpha2;
       real expterm = REAL_EXP(-ralpha2);
       real expa = expterm * term;
+
+      // set use of lambda scaling for decoupling or annihilation
+      if CONSTEXPR (SOFTCORE) dspscale *= vlambda;
       e = -ci * ck * rr6 * (dspscale * damp * damp + expa - 1);
       if CONSTEXPR (DO_G) {
          real rterm = -ralpha2 * ralpha2 * ralpha2 * rr1 * expterm;
@@ -130,6 +133,10 @@ void pair_disp(real r, real r2, real rr1, //
       }
    } else if CONSTEXPR (eq<DTYP, NON_EWALD_TAPER>()) {
       e = -ci * ck * rr6;
+
+      // set use of lambda scaling for decoupling or annihilation
+      if CONSTEXPR (SOFTCORE) e *= vlambda;
+
       if CONSTEXPR (DO_G) {
          de = -6 * e * rr1;
          de = de * damp * damp + 2 * e * damp * ddamp;

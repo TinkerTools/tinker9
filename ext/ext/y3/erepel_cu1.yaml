@@ -32,6 +32,9 @@ EXTRA_PARAMS: |
   , const real *restrict sizpr
   , const real *restrict elepr
   , const real* restrict dmppr
+  , const int* restrict mut
+  , real vlam
+  , Vdw vcouple
 # IMPLICIT_PARAMS:
 
 I_VARIABLES:
@@ -51,6 +54,7 @@ I_VARIABLES:
   - shared real sizi from:sizpr
   - shared real dmpi from:dmppr
   - shared real vali from:elepr
+  - shared int imut from:mut
 K_VARIABLES:
   - shared   real xk  from:x
   - shared   real yk  from:y
@@ -68,6 +72,7 @@ K_VARIABLES:
   - register real sizk from:sizpr
   - register real dmpk from:dmppr
   - register real valk from:elepr
+  - register int kmut from:mut
 I_FORCE:
   - register real gxi addto:gx
   - register real gyi addto:gy
@@ -95,12 +100,14 @@ FULL_PAIRWISE_INTERACTION: |
 
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
-    pair_repel<do_g>( //
+    real vlambda = 1;
+    vlambda = pair_vlambda(vlam, vcouple, @imut@, @kmut@);
+    pair_repel<do_g, 1>( //
       r2, scalea, cut, off, xr, yr, zr,
       @sizi@, @dmpi@, @vali@, @ci@, @dix@, @diy@, @diz@, @qixx@, @qixy@,
       @qixz@, @qiyy@, @qiyz@, @qizz@,
       @sizk@, @dmpk@, @valk@, @ck@, @dkx@, @dky@, @dkz@, @qkxx@, @qkxy@,
-      @qkxz@, @qkyy@, @qkyz@, @qkzz@,
+      @qkxz@, @qkyy@, @qkyz@, @qkzz@, vlambda,
       e, pgrad);
 
     if CONSTEXPR (do_a)

@@ -1,4 +1,4 @@
-// ck.py Version 3.0.2
+// ck.py Version 3.1.0
 template <class Ver>
 __global__
 void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffer restrict er, VirialBuffer restrict vr,
@@ -7,7 +7,8 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
    const real* restrict x, const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
    int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
    real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
-   const real* restrict sizpr, const real* restrict elepr, const real* restrict dmppr)
+   const real* restrict sizpr, const real* restrict elepr, const real* restrict dmppr, const int* restrict mut,
+   real vlam, Vdw vcouple)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -40,8 +41,10 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
    __shared__ real xi[BLOCK_DIM], yi[BLOCK_DIM], zi[BLOCK_DIM], ci[BLOCK_DIM], dix[BLOCK_DIM], diy[BLOCK_DIM],
       diz[BLOCK_DIM], qixx[BLOCK_DIM], qixy[BLOCK_DIM], qixz[BLOCK_DIM], qiyy[BLOCK_DIM], qiyz[BLOCK_DIM],
       qizz[BLOCK_DIM], sizi[BLOCK_DIM], dmpi[BLOCK_DIM], vali[BLOCK_DIM];
+   __shared__ int imut[BLOCK_DIM];
    __shared__ real xk[BLOCK_DIM], yk[BLOCK_DIM], zk[BLOCK_DIM], dkx[BLOCK_DIM], dky[BLOCK_DIM], dkz[BLOCK_DIM];
    real ck, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, sizk, dmpk, valk;
+   int kmut;
    real gxi, gyi, gzi, txi, tyi, tzi;
    real gxk, gyk, gzk, txk, tyk, tzk;
 
@@ -83,6 +86,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
       sizi[klane] = sizpr[i];
       dmpi[klane] = dmppr[i];
       vali[klane] = elepr[i];
+      imut[klane] = mut[i];
       xk[threadIdx.x] = x[k];
       yk[threadIdx.x] = y[k];
       zk[threadIdx.x] = z[k];
@@ -99,6 +103,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
       sizk = sizpr[k];
       dmpk = dmppr[k];
       valk = elepr[k];
+      kmut = mut[k];
 
       constexpr bool incl = true;
       real xr = xk[threadIdx.x] - xi[klane];
@@ -111,10 +116,13 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
 
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         pair_repel<do_g>( //
+         real vlambda = 1;
+         vlambda = pair_vlambda(vlam, vcouple, imut[klane], kmut);
+         pair_repel<do_g, 1>( //
             r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane], diy[klane],
             diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], sizk, dmpk, valk,
-            ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, e, pgrad);
+            ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, vlambda, e,
+            pgrad);
 
          if CONSTEXPR (do_a)
             if (e != 0)
@@ -205,6 +213,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
       sizi[threadIdx.x] = sizpr[i];
       dmpi[threadIdx.x] = dmppr[i];
       vali[threadIdx.x] = elepr[i];
+      imut[threadIdx.x] = mut[i];
       xk[threadIdx.x] = sorted[atomk].x;
       yk[threadIdx.x] = sorted[atomk].y;
       zk[threadIdx.x] = sorted[atomk].z;
@@ -221,6 +230,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
       sizk = sizpr[k];
       dmpk = dmppr[k];
       valk = elepr[k];
+      kmut = mut[k];
       __syncwarp();
 
       unsigned int rinfo0 = rinfo[iw * WARP_SIZE + ilane];
@@ -241,11 +251,13 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_repel<do_g>( //
+            real vlambda = 1;
+            vlambda = pair_vlambda(vlam, vcouple, imut[klane], kmut);
+            pair_repel<do_g, 1>( //
                r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane],
                diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
                sizk, dmpk, valk, ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz,
-               qkzz, e, pgrad);
+               qkzz, vlambda, e, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -342,6 +354,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
       sizi[threadIdx.x] = sizpr[i];
       dmpi[threadIdx.x] = dmppr[i];
       vali[threadIdx.x] = elepr[i];
+      imut[threadIdx.x] = mut[i];
       xk[threadIdx.x] = sorted[atomk].x;
       yk[threadIdx.x] = sorted[atomk].y;
       zk[threadIdx.x] = sorted[atomk].z;
@@ -358,6 +371,7 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
       sizk = sizpr[k];
       dmpk = dmppr[k];
       valk = elepr[k];
+      kmut = mut[k];
       __syncwarp();
 
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -375,11 +389,13 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            pair_repel<do_g>( //
+            real vlambda = 1;
+            vlambda = pair_vlambda(vlam, vcouple, imut[klane], kmut);
+            pair_repel<do_g, 1>( //
                r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane],
                diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
                sizk, dmpk, valk, ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz,
-               qkzz, e, pgrad);
+               qkzz, vlambda, e, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)

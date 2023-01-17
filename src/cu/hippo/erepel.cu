@@ -6,6 +6,7 @@
 #include "seq/add.h"
 #include "seq/launch.h"
 #include "seq/pair_repel.h"
+#include "seq/pair_vlambda.h"
 #include "seq/triangle.h"
 
 namespace tinker {
@@ -21,7 +22,7 @@ static void erepel_cu2()
    int ngrid = gpuGridSize(BLOCK_DIM);
    erepel_cu1<Ver><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nrep, er, vir_er, derx, dery, derz, cut,
       off, st.si2.bit0, nrepexclude, repexclude, repexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
-      st.niak, st.iak, st.lst, trqx, trqy, trqz, rpole, sizpr, elepr, dmppr);
+      st.niak, st.iak, st.lst, trqx, trqy, trqz, rpole, sizpr, elepr, dmppr, mut, vlam, vcouple);
 }
 
 void erepel_cu(int vers)

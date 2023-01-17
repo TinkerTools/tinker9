@@ -29,6 +29,35 @@ static std::vector<new_type> jvec;
 static std::vector<new_type> jvdwbuf;
 static int jcount;
 
+void softcoreData(RcOp op)
+{
+   if (op & RcOp::DEALLOC) {
+      darray::deallocate(mut);
+   }
+
+   if (op & RcOp::ALLOC) {
+      darray::allocate(n, &mut);
+   }
+
+   if (op & RcOp::INIT) {
+      if (static_cast<int>(Vdw::DECOUPLE) == mutant::vcouple)
+            vcouple = Vdw::DECOUPLE;
+         else if (static_cast<int>(Vdw::ANNIHILATE) == mutant::vcouple)
+            vcouple = Vdw::ANNIHILATE;
+         std::vector<int> mutvec(n);
+         for (int i = 0; i < n; ++i) {
+            if (mutant::mut[i]) {
+               mutvec[i] = 1;
+            } else {
+               mutvec[i] = 0;
+            }
+         }
+         darray::copyin(g::q0, n, mut, mutvec.data());
+         waitFor(g::q0);
+         vlam = mutant::vlambda;
+   }
+}
+
 void evdwData(RcOp op)
 {
    if (not use(Potent::VDW))
@@ -46,7 +75,7 @@ void evdwData(RcOp op)
       if (vdwtyp == Vdw::HAL)
          darray::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred);
 
-      darray::deallocate(jvdw, radmin, epsilon, mut);
+      darray::deallocate(jvdw, radmin, epsilon);
 
       nvexclude = 0;
       darray::deallocate(vexclude, vexclude_scale);
@@ -164,7 +193,7 @@ void evdwData(RcOp op)
 
       darray::allocate(jcount * jcount, &radmin, &epsilon);
 
-      darray::allocate(n, &mut);
+      // darray::allocate(n, &mut);
 
       v2scale = vdwpot::v2scale;
       v3scale = vdwpot::v3scale;
@@ -413,22 +442,6 @@ void evdwData(RcOp op)
          darray::copyin(g::q0, jcount * jcount, epsilon4, eps4buf.data());
          waitFor(g::q0);
       }
-
-      if (static_cast<int>(Vdw::DECOUPLE) == mutant::vcouple)
-         vcouple = Vdw::DECOUPLE;
-      else if (static_cast<int>(Vdw::ANNIHILATE) == mutant::vcouple)
-         vcouple = Vdw::ANNIHILATE;
-      std::vector<int> mutvec(n);
-      for (int i = 0; i < n; ++i) {
-         if (mutant::mut[i]) {
-            mutvec[i] = 1;
-         } else {
-            mutvec[i] = 0;
-         }
-      }
-      darray::copyin(g::q0, n, mut, mutvec.data());
-      waitFor(g::q0);
-      vlam = mutant::vlambda;
 
       // Initialize elrc and vlrc.
       if (vdwpot::use_vcorr) {

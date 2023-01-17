@@ -26,13 +26,13 @@ inline void zero(PairRepelGrad& pgrad)
 }
 
 #pragma acc routine seq
-template <bool do_g>
+template <bool do_g, bool SOFTCORE>
 SEQ_CUDA
 void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    real zr, real sizi, real dmpi, real vali, real ci, real dix, real diy,
    real diz, real qixx, real qixy, real qixz, real qiyy, real qiyz, real qizz,
    real sizk, real dmpk, real valk, real ck, real dkx, real dky, real dkz,
-   real qkxx, real qkxy, real qkxz, real qkyy, real qkyz, real qkzz,
+   real qkxx, real qkxy, real qkxz, real qkyy, real qkyz, real qkzz, real vlambda,
    real& restrict e, PairRepelGrad& restrict pgrad)
 {
    real cut2 = cut * cut;
@@ -94,6 +94,14 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
       + term4 * dmpik[3] + term5 * dmpik[4];
 
    e = sizik * eterm * rInv;
+
+   // energy via soft core lambda scaling
+   real termsc, soft;
+   if CONSTEXPR (SOFTCORE) {
+      termsc = 1 - vlambda + r2;
+      soft = vlambda * r / REAL_SQRT(termsc);
+      e *= soft;
+   }
    // gradient
    if CONSTEXPR (do_g) {
       real de = term1 * dmpik[1] + term2 * dmpik[2] + term3 * dmpik[3]
@@ -213,6 +221,21 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
       pgrad.ttqk[0] += sizik * rr1 * trq0.x;
       pgrad.ttqk[1] += sizik * rr1 * trq0.y;
       pgrad.ttqk[2] += sizik * rr1 * trq0.z;
+
+      // force via soft core lambda scaling
+      if CONSTEXPR (SOFTCORE) {
+         real dsoft = e * soft * (rr2 - 1/termsc);
+         pgrad.frcx = pgrad.frcx * soft - dsoft * xr;
+         pgrad.frcy = pgrad.frcy * soft - dsoft * yr;
+         pgrad.frcz = pgrad.frcz * soft - dsoft * zr;
+
+         pgrad.ttqi[0] *= soft; 
+         pgrad.ttqi[1] *= soft; 
+         pgrad.ttqi[2] *= soft; 
+         pgrad.ttqk[0] *= soft;
+         pgrad.ttqk[1] *= soft;
+         pgrad.ttqk[2] *= soft;
+      }
    }
 
    if (r2 > cut2) {

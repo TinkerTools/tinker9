@@ -438,9 +438,10 @@ void energyData(RcOp op)
    RcMan egeom42{egeomData, op};
 
    // non-bonded terms
-
+   
+   RcMan softcore42{softcoreData, op};
    RcMan evdw42{evdwData, op};
-
+   
    // Must call elecData() before any electrostatics routine.
 
    RcMan elec42{elecData, op};
