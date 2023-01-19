@@ -86,7 +86,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
          if CONSTEXPR (do_e) {
             edtl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
-               if (scalea != 0 and e != 0)
+               if (scalea * vlambda != 0 and e != 0)
                   ndtl += 1;
             }
          }
@@ -177,7 +177,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
             if CONSTEXPR (do_e) {
                edtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
-                  if (e != 0)
+                  if (vlambda != 0 and e != 0)
                      ndtl += 1;
                }
             }
@@ -272,7 +272,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
             if CONSTEXPR (do_e) {
                edtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
-                  if (e != 0)
+                  if (vlambda != 0 and e != 0)
                      ndtl += 1;
                }
             }
