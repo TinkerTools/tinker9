@@ -11,7 +11,7 @@ namespace tinker {
 template <bool DO_G, class DTYP, int SCALE>
 SEQ_CUDA
 void pair_disp_obsolete(real r, real r2, real rr1, //
-   real dspscale, real aewald, real ci, real ai, real ck, real ak, real vlambda,
+   real dspscale, real aewald, real ci, real ai, real ck, real ak,
    real edcut, real edoff, real& restrict e, real& restrict de)
 {
    if (r > edoff) {

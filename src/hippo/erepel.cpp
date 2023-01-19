@@ -1,7 +1,7 @@
 #include "ff/hippo/erepel.h"
 #include "ff/amoeba/empole.h"
-#include "ff/modamoeba.h"
 #include "ff/energy.h"
+#include "ff/modamoeba.h"
 #include "ff/potent.h"
 #include "math/zero.h"
 #include "tool/externfunc.h"

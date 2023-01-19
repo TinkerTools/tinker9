@@ -173,10 +173,10 @@ void energy_core(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
    ecore_ele = false;
 
    if (pltfm_config & Platform::CUDA) {
-      bool calc_val = use(Potent::BOND) or use(Potent::ANGLE) or use(Potent::STRBND) or
-         use(Potent::UREY) or use(Potent::OPBEND) or use(Potent::IMPROP) or use(Potent::IMPTORS) or
-         use(Potent::TORSION) or use(Potent::PITORS) or use(Potent::STRTOR) or
-         use(Potent::ANGTOR) or use(Potent::TORTOR) or use(Potent::GEOM);
+      bool calc_val = use(Potent::BOND) or use(Potent::ANGLE) or use(Potent::STRBND) or use(Potent::UREY)
+         or use(Potent::OPBEND) or use(Potent::IMPROP) or use(Potent::IMPTORS) or use(Potent::TORSION)
+         or use(Potent::PITORS) or use(Potent::STRTOR) or use(Potent::ANGTOR) or use(Potent::TORTOR)
+         or use(Potent::GEOM);
       if (calc_val and tscfg("evalence", ecore_val))
          evalence(vers);
    } else {
@@ -438,10 +438,10 @@ void energyData(RcOp op)
    RcMan egeom42{egeomData, op};
 
    // non-bonded terms
-   
+
    RcMan softcore42{softcoreData, op};
    RcMan evdw42{evdwData, op};
-   
+
    // Must call elecData() before any electrostatics routine.
 
    RcMan elec42{elecData, op};
