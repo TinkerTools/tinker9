@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 from datetime import datetime
+import psutil
 import subprocess
 import sys
 
 ThisVersion = 3
-DefaultNProc = 8
+def DefaultNProc():
+    cnt = psutil.cpu_count()
+    if cnt < 3:
+        return 1
+    else:
+        return cnt - 2
 
 NewLine = '\n'
 kUbuntu = 'ubuntu'
@@ -214,7 +220,7 @@ RUN cmake $T9Dir -B $T9Dir/build -DCOMPUTE_CAPABILITY=%s -DGPU_LANG=CUDA -DCMAKE
 # make tinker9
 WORKDIR $T9Dir/build
 RUN make -j%d
-RUN make install''' % (self.cmakeArgComputeCapability(self.cudaVersion), DefaultNProc)
+RUN make install''' % (self.cmakeArgComputeCapability(self.cudaVersion), DefaultNProc())
 
         return c
 
