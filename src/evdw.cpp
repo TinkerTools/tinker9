@@ -191,8 +191,6 @@ void evdwData(RcOp op)
 
       darray::allocate(jcount * jcount, &radmin, &epsilon);
 
-      // darray::allocate(n, &mut);
-
       v2scale = vdwpot::v2scale;
       v3scale = vdwpot::v3scale;
       v4scale = vdwpot::v4scale;
