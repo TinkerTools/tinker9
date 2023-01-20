@@ -71,7 +71,7 @@ static void erepel_acc1()
          real sizk = sizpr[k];
          real dmpk = dmppr[k];
          real valk = elepr[k];
-         kmut = mut[k];
+         int kmut = mut[k];
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {

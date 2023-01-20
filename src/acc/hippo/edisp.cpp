@@ -163,6 +163,8 @@ static void edisp_acc1()
       real xr = xi - x[k];
       real yr = yi - y[k];
       real zr = zi - z[k];
+      int imut = mut[i];
+      int kmut = mut[k];
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off) {
          real r = REAL_SQRT(r2);
@@ -222,6 +224,7 @@ static void edisp_acc1()
       real zi = z[i];
       real ci = csix[i];
       real ai = adisp[i];
+      int imut = mut[i];
       MAYBE_UNUSED int ctl = 0;
       MAYBE_UNUSED real etl = 0;
       MAYBE_UNUSED real vxxtl = 0, vyxtl = 0, vzxtl = 0, vyytl = 0, vzytl = 0, vzztl = 0;
@@ -236,6 +239,7 @@ static void edisp_acc1()
          real zr = zi - z[k];
          real ck = csix[k];
          real ak = adisp[k];
+         int kmut = mut[k];
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off) {
             real r = REAL_SQRT(r2);
