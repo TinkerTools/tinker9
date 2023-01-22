@@ -8,17 +8,17 @@ namespace tinker {
 template <bool DO_G>
 SEQ_CUDA
 void pair_chgtrn_aplus(real r, real cut, real off, real mscale, real f,
-   real alphai, real chgi, real alphak, real chgk, e_prec& restrict e,
+   real alphai, real chgi, real alphak, real chgk, real elambda, e_prec& restrict e,
    e_prec& restrict de)
 {
    f *= mscale;
    real alphaik = 0.5 * (alphai + alphak);
    real chgik = REAL_SQRT(chgi * chgk);
    e = -chgik * REAL_EXP(-alphaik * r);
-   e *= f;
+   e *= f * elambda;
    if CONSTEXPR (DO_G) {
       de = alphaik * chgik * REAL_EXP(-alphaik * r);
-      de *= f;
+      de *= f * elambda;
    }
    if (r > cut) {
       real taper, dtaper;
