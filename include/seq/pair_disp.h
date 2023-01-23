@@ -135,7 +135,7 @@ void pair_disp(real r, real r2, real rr1, //
       e = -ci * ck * rr6;
 
       // set use of lambda scaling for decoupling or annihilation
-      if CONSTEXPR (SOFTCORE) e *= vlambda;
+      if CONSTEXPR (SOFTCORE) dspscale *= vlambda;
 
       if CONSTEXPR (DO_G) {
          de = -6 * e * rr1;
