@@ -1914,10 +1914,10 @@ inline void tinker_f_moments(tinker_fchars mode) {
 // mutate.f
 void mutate_();
 #define tinker_f_mutate mutate_
-void alttors_(int* ntbnd, int* itbnd);
-#define tinker_f_alttors alttors_
 void altelec_();
 #define tinker_f_altelec altelec_
+void alttors_(int* ntbnd, int* itbnd);
+#define tinker_f_alttors alttors_
 
 // nblist.f
 void nblist_();
@@ -2494,9 +2494,9 @@ void trust_(int* n, int* m, double* xc, double* fcnorm, double* gc, double* a, i
 #define tinker_f_trust trust_
 
 // suffix.f
-void suffix_(char* filename, char* extension, char* status, tinker_fchar_len_t filename_cap, tinker_fchar_len_t extension_cap, tinker_fchar_len_t status_cap);
-inline void tinker_f_suffix(tinker_fchars filename, tinker_fchars extension, tinker_fchars status) {
-    return suffix_(filename.string, extension.string, status.string, filename.capacity, extension.capacity, status.capacity);
+void suffix_(char* string, char* extension, char* status, tinker_fchar_len_t string_cap, tinker_fchar_len_t extension_cap, tinker_fchar_len_t status_cap);
+inline void tinker_f_suffix(tinker_fchars string, tinker_fchars extension, tinker_fchars status) {
+    return suffix_(string.string, extension.string, status.string, string.capacity, extension.capacity, status.capacity);
 }
 
 // surface.f
@@ -2606,9 +2606,9 @@ void verlet_(int* istep, double* dt);
 #define tinker_f_verlet verlet_
 
 // version.f
-void version_(char* filename, char* status, tinker_fchar_len_t filename_cap, tinker_fchar_len_t status_cap);
-inline void tinker_f_version(tinker_fchars filename, tinker_fchars status) {
-    return version_(filename.string, status.string, filename.capacity, status.capacity);
+void version_(char* string, char* status, tinker_fchar_len_t string_cap, tinker_fchar_len_t status_cap);
+inline void tinker_f_version(tinker_fchars string, tinker_fchars status) {
+    return version_(string.string, status.string, string.capacity, status.capacity);
 }
 
 // volume.f
