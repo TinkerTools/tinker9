@@ -20,7 +20,7 @@ For versions prior to this commit, please refer to the following.
    Alternatively, remove the directory *tinker9/tinker* and clone
    `Tinker from GitHub <https://github.com/tinkertools/tinker>`_
    to replace the deleted directory,
-   then checkout the required version **cc62211b**.
+   then checkout the required version **556b58bf**.
 
    .. code-block:: bash
 
