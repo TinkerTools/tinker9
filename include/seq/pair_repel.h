@@ -98,8 +98,11 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    // energy via soft core lambda scaling
    real termsc, soft;
    if CONSTEXPR (SOFTCORE) {
-      termsc = 1 - vlambda + r2;
-      soft = vlambda * r / REAL_SQRT(termsc);
+      real vlambda3 = vlambda * vlambda * vlambda;
+      real vlambda4 = vlambda3 * vlambda;
+      real vlambda5 = vlambda4 * vlambda;
+      termsc = vlambda3 - vlambda4 + r2;
+      soft = vlambda5 * r / REAL_SQRT(termsc);
       e *= soft;
    }
    // gradient

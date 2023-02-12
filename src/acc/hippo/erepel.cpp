@@ -11,7 +11,7 @@
 
 namespace tinker {
 #define DEVICE_PTRS \
-   x, y, z, derx, dery, derz, rpole, sizpr, dmppr, elepr, nrep, er, vir_er, trqx, trqy, trqz, mut, vlam, vcouple
+   x, y, z, derx, dery, derz, rrepole, sizpr, dmppr, elepr, nrep, er, vir_er, trqx, trqy, trqz, mut, vlam, vcouple
 template <class Ver>
 static void erepel_acc1()
 {
@@ -40,16 +40,16 @@ static void erepel_acc1()
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real ci = rpole[i][MPL_PME_0];
-      real dix = rpole[i][MPL_PME_X];
-      real diy = rpole[i][MPL_PME_Y];
-      real diz = rpole[i][MPL_PME_Z];
-      real qixx = rpole[i][MPL_PME_XX];
-      real qixy = rpole[i][MPL_PME_XY];
-      real qixz = rpole[i][MPL_PME_XZ];
-      real qiyy = rpole[i][MPL_PME_YY];
-      real qiyz = rpole[i][MPL_PME_YZ];
-      real qizz = rpole[i][MPL_PME_ZZ];
+      real ci = rrepole[i][MPL_PME_0];
+      real dix = rrepole[i][MPL_PME_X];
+      real diy = rrepole[i][MPL_PME_Y];
+      real diz = rrepole[i][MPL_PME_Z];
+      real qixx = rrepole[i][MPL_PME_XX];
+      real qixy = rrepole[i][MPL_PME_XY];
+      real qixz = rrepole[i][MPL_PME_XZ];
+      real qiyy = rrepole[i][MPL_PME_YY];
+      real qiyz = rrepole[i][MPL_PME_YZ];
+      real qizz = rrepole[i][MPL_PME_ZZ];
       real sizi = sizpr[i];
       real dmpi = dmppr[i];
       real vali = elepr[i];
@@ -81,9 +81,9 @@ static void erepel_acc1()
             vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
             pair_repel<do_g, 1>( //
                r2, 1, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
-               sizk, dmpk, valk, rpole[k][MPL_PME_0], rpole[k][MPL_PME_X], rpole[k][MPL_PME_Y], rpole[k][MPL_PME_Z],
-               rpole[k][MPL_PME_XX], rpole[k][MPL_PME_XY], rpole[k][MPL_PME_XZ], rpole[k][MPL_PME_YY],
-               rpole[k][MPL_PME_YZ], rpole[k][MPL_PME_ZZ], vlambda, e, pgrad);
+               sizk, dmpk, valk, rrepole[k][MPL_PME_0], rrepole[k][MPL_PME_X], rrepole[k][MPL_PME_Y], rrepole[k][MPL_PME_Z],
+               rrepole[k][MPL_PME_XX], rrepole[k][MPL_PME_XY], rrepole[k][MPL_PME_XZ], rrepole[k][MPL_PME_YY],
+               rrepole[k][MPL_PME_YZ], rrepole[k][MPL_PME_ZZ], vlambda, e, pgrad);
             if CONSTEXPR (do_a)
                if (e != 0)
                   atomic_add(1, nrep, offset);
@@ -143,16 +143,16 @@ static void erepel_acc1()
       real xi = x[i];
       real yi = y[i];
       real zi = z[i];
-      real ci = rpole[i][MPL_PME_0];
-      real dix = rpole[i][MPL_PME_X];
-      real diy = rpole[i][MPL_PME_Y];
-      real diz = rpole[i][MPL_PME_Z];
-      real qixx = rpole[i][MPL_PME_XX];
-      real qixy = rpole[i][MPL_PME_XY];
-      real qixz = rpole[i][MPL_PME_XZ];
-      real qiyy = rpole[i][MPL_PME_YY];
-      real qiyz = rpole[i][MPL_PME_YZ];
-      real qizz = rpole[i][MPL_PME_ZZ];
+      real ci = rrepole[i][MPL_PME_0];
+      real dix = rrepole[i][MPL_PME_X];
+      real diy = rrepole[i][MPL_PME_Y];
+      real diz = rrepole[i][MPL_PME_Z];
+      real qixx = rrepole[i][MPL_PME_XX];
+      real qixy = rrepole[i][MPL_PME_XY];
+      real qixz = rrepole[i][MPL_PME_XZ];
+      real qiyy = rrepole[i][MPL_PME_YY];
+      real qiyz = rrepole[i][MPL_PME_YZ];
+      real qizz = rrepole[i][MPL_PME_ZZ];
       real sizi = sizpr[i];
       real dmpi = dmppr[i];
       real vali = elepr[i];
@@ -173,9 +173,9 @@ static void erepel_acc1()
          vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
          pair_repel<do_g, 1>( //
             r2, rscale, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
-            sizk, dmpk, valk, rpole[k][MPL_PME_0], rpole[k][MPL_PME_X], rpole[k][MPL_PME_Y], rpole[k][MPL_PME_Z],
-            rpole[k][MPL_PME_XX], rpole[k][MPL_PME_XY], rpole[k][MPL_PME_XZ], rpole[k][MPL_PME_YY],
-            rpole[k][MPL_PME_YZ], rpole[k][MPL_PME_ZZ], vlambda, e, pgrad);
+            sizk, dmpk, valk, rrepole[k][MPL_PME_0], rrepole[k][MPL_PME_X], rrepole[k][MPL_PME_Y], rrepole[k][MPL_PME_Z],
+            rrepole[k][MPL_PME_XX], rrepole[k][MPL_PME_XY], rrepole[k][MPL_PME_XZ], rrepole[k][MPL_PME_YY],
+            rrepole[k][MPL_PME_YZ], rrepole[k][MPL_PME_ZZ], vlambda, e, pgrad);
          if CONSTEXPR (do_a)
             if (rscale == -1 and e != 0)
                atomic_add(-1, nrep, offset);

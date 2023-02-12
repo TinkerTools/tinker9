@@ -1,5 +1,6 @@
 #pragma once
 #include "ff/amoeba/mpole.h"
+#include "ff/hippo/erepel.h"
 #include "math/libfunc.h"
 #include "seq/seq.h"
 

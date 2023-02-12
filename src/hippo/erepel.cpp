@@ -6,6 +6,7 @@
 #include "math/zero.h"
 #include "tool/externfunc.h"
 #include <tinker/detail/couple.hh>
+#include <tinker/detail/mpole.hh>
 #include <tinker/detail/repel.hh>
 #include <tinker/detail/reppot.hh>
 
@@ -21,6 +22,7 @@ void erepelData(RcOp op)
       darray::deallocate(sizpr, dmppr, elepr);
       nrepexclude = 0;
       darray::deallocate(repexclude, repexclude_scale);
+      darray::deallocate(repole, rrepole);
 
       if (rc_a) {
          bufferDeallocate(rc_flag, nrep);
@@ -36,6 +38,7 @@ void erepelData(RcOp op)
 
    if (op & RcOp::ALLOC) {
       darray::allocate(n, &sizpr, &dmppr, &elepr);
+      darray::allocate(n, &repole, &rrepole);
 
       nrep = nullptr;
       er = eng_buf_vdw;
@@ -129,7 +132,53 @@ void erepelData(RcOp op)
       darray::copyin(g::q0, n, dmppr, repel::dmppr);
       darray::copyin(g::q0, n, elepr, repel::elepr);
       waitFor(g::q0);
+
+      std::vector<double> polebuf(MPL_TOTAL * n);
+      for (int i = 0; i < n; ++i) {
+         int b1 = MPL_TOTAL * i;
+         int b2 = mpole::maxpole * i;
+         // Tinker c = 0, dx = 1, dy = 2, dz = 3
+         // Tinker qxx = 4, qxy = 5, qxz = 6
+         //        qyx    , qyy = 8, qyz = 9
+         //        qzx    , qzy    , qzz = 12
+         polebuf[b1 + MPL_PME_0] = repel::repole[b2 + 0];
+         polebuf[b1 + MPL_PME_X] = repel::repole[b2 + 1];
+         polebuf[b1 + MPL_PME_Y] = repel::repole[b2 + 2];
+         polebuf[b1 + MPL_PME_Z] = repel::repole[b2 + 3];
+         polebuf[b1 + MPL_PME_XX] = repel::repole[b2 + 4];
+         polebuf[b1 + MPL_PME_XY] = repel::repole[b2 + 5];
+         polebuf[b1 + MPL_PME_XZ] = repel::repole[b2 + 6];
+         polebuf[b1 + MPL_PME_YY] = repel::repole[b2 + 8];
+         polebuf[b1 + MPL_PME_YZ] = repel::repole[b2 + 9];
+         polebuf[b1 + MPL_PME_ZZ] = repel::repole[b2 + 12];
+      }
+      darray::copyin(g::q0, n, repole, polebuf.data());
+      waitFor(g::q0);
    }
+}
+
+TINKER_FVOID2(acc1, cu1, chkpole);
+static void chkpole()
+{
+   TINKER_FCALL2(acc1, cu1, chkpole);
+}
+
+TINKER_FVOID2(acc1, cu1, rotrepole);
+static void rotrepole()
+{
+   TINKER_FCALL2(acc1, cu1, rotrepole);
+}
+
+void repoleInit(int vers)
+{
+   if (vers & calc::grad)
+      darray::zero(g::q0, n, trqx, trqy, trqz);
+   if (vers & calc::virial)
+      darray::zero(g::q0, bufferSize(), vir_trq);
+
+   chkpole();
+   rotrepole();
+
 }
 
 TINKER_FVOID2(acc1, cu1, erepel, int);
@@ -154,7 +203,7 @@ void erepel(int vers)
          darray::zero(g::q0, n, derx, dery, derz);
    }
 
-   mpoleInit(vers);
+   repoleInit(vers);
 
    TINKER_FCALL2(acc1, cu1, erepel, vers);
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "ff/amoeba/mpole.h"
 #include "ff/energybuffer.h"
 #include "ff/evdw.h"
 #include "tool/rcman.h"
@@ -8,6 +9,8 @@ namespace tinker {
 void erepelData(RcOp);
 /// \ingroup repel
 void erepel(int vers);
+/// \ingroup repel
+void repoleInit(int vers);
 }
 
 //====================================================================//
@@ -17,6 +20,8 @@ void erepel(int vers);
 //====================================================================//
 
 namespace tinker {
+TINKER_EXTERN real (*repole)[MPL_TOTAL];
+TINKER_EXTERN real (*rrepole)[MPL_TOTAL];
 TINKER_EXTERN real* sizpr;
 TINKER_EXTERN real* dmppr;
 TINKER_EXTERN real* elepr;
