@@ -153,7 +153,7 @@ public:
    virtual ~BasicThermostat();
    virtual void printDetail(FILE*);
    virtual void control1(time_prec timeStep);
-   virtual void control2(time_prec timeStep, bool save);
+   virtual void control2(time_prec timeStep, bool calcEkin);
 
    static BasicThermostat* create(ThermostatEnum);
 };
@@ -187,15 +187,15 @@ protected:
    int nnose, nhc_nc;
    double g0;
    double vnh[maxnose], qnh[maxnose];
+   double* m_kin_ptr;
    double (*f_kin)();
    void (*scale_vel)(double);
    std::string name;
 
-   void controlImpl(double timeStep);
+   void controlImpl(double timeStep, bool calcEkin);
 
 public:
-   NhcDevice(int nhclen, int nc, double dfree, //
-      double (*kin)(), void (*scale)(double), std::string str);
+   NhcDevice(int nhclen, int nc, double dfree, double* kin_ptr, double (*kin)(), void (*scale)(double), std::string str);
    void printDetail(FILE*) override;
    void control1(time_prec time_prec) override;
    void control2(time_prec time_prec, bool) override;
@@ -217,7 +217,7 @@ public:
 
    void printDetail(FILE*) override;
    void control1(time_prec dt) override;
-   void control2(time_prec dt, bool save) override;
+   void control2(time_prec dt, bool) override;
 
    static double kineticRattleGroup();
    static void scaleVelocityRattleGroup(double scale);
@@ -299,6 +299,7 @@ class IsoBaroDevice : public BasicBarostat
 protected:
    double* m_vir;
    double* m_eksum;
+   double (*f_kin)();
 
    double m_fric;
    double m_rnd;
@@ -322,6 +323,7 @@ protected:
    double* m_vir;
    double* m_eksum;
    double (*m_ekin)[3];
+   void (*f_kin)();
 
    double m_fric;
    double m_rnd[3][3];
@@ -404,8 +406,7 @@ protected:
 
 public:
    void printDetail(FILE*);
-   BasicIntegrator(int nRespaLogV, PropagatorEnum pe, ThermostatEnum te,
-      BarostatEnum be);
+   BasicIntegrator(int nRespaLogV, PropagatorEnum pe, ThermostatEnum te, BarostatEnum be);
    BasicIntegrator();
    virtual ~BasicIntegrator();
    virtual void dynamic(int istep, time_prec dt);

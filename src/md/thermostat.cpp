@@ -9,6 +9,16 @@
 #include <cmath>
 
 namespace tinker {
+namespace {
+class DummyThermostat : public BasicThermostat
+{
+public:
+   void control2(time_prec, bool) override {}
+};
+}
+}
+
+namespace tinker {
 void BasicThermostat::printBasic(FILE* o)
 {
    print(o, " Temperature        %12.1lf Kelvin\n", bath::kelvin);
@@ -23,9 +33,9 @@ void BasicThermostat::printDetail(FILE* o) {}
 
 void BasicThermostat::control1(time_prec) {}
 
-void BasicThermostat::control2(time_prec, bool save)
+void BasicThermostat::control2(time_prec, bool calcEkin)
 {
-   if (save) {
+   if (calcEkin) {
       T_prec temp;
       kinetic(temp);
    }
@@ -40,9 +50,13 @@ BasicThermostat* BasicThermostat::create(ThermostatEnum te)
       break;
    case ThermostatEnum::NHC:
       t = new NhcDevice(5, 5, static_cast<double>(mdstuf::nfree), //
-         NhcDevice::kineticAtomic,                                //
+         &eksum, NhcDevice::kineticAtomic,                        //
          NhcDevice::scaleVelocityAtomic,                          //
          std::string("NHC Atomic Temperature"));
+      break;
+   case ThermostatEnum::m_LP2022:
+   case ThermostatEnum::m_NHC2006:
+      t = new DummyThermostat;
       break;
    default:
       t = new BasicThermostat;
@@ -69,7 +83,7 @@ void BussiThermostat::control2(time_prec dt, bool)
 }
 
 namespace tinker {
-void NhcDevice::controlImpl(time_prec dt)
+void NhcDevice::controlImpl(time_prec dt, bool calcEkin)
 {
    const int nc = nhc_nc;
    constexpr int ns = nhc_nsy;
@@ -82,7 +96,11 @@ void NhcDevice::controlImpl(time_prec dt)
    double kbt = units::gasconst * bath::kelvin;
 
    double dtc = dt / nc;
-   double eksum0 = f_kin();
+   double eksum0;
+   if (calcEkin or m_kin_ptr == nullptr)
+      eksum0 = f_kin();
+   else
+      eksum0 = *m_kin_ptr;
    double velsc0 = 1.0;
    for (int k = 0; k < nc; ++k) {
       for (int j = 0; j < ns; ++j) {
@@ -129,12 +147,13 @@ void NhcDevice::controlImpl(time_prec dt)
    scale_vel(velsc0);
 }
 
-NhcDevice::NhcDevice(
-   int nhclen, int nc, double dfree, double (*kin)(), void (*scale)(double), std::string str)
+NhcDevice::NhcDevice(int nhclen, int nc, double dfree, double* kin_ptr, double (*kin)(), void (*scale)(double),
+   std::string str)
    : BasicThermostat()
    , nnose(nhclen)
    , nhc_nc(nc)
    , g0(dfree)
+   , m_kin_ptr(kin_ptr)
    , f_kin(kin)
    , scale_vel(scale)
    , name(str)
@@ -152,6 +171,8 @@ NhcDevice::NhcDevice(
       vnh[i] = 0;
    }
    qnh[0] *= g0;
+
+   f_kin();
 }
 
 void NhcDevice::printDetail(FILE* o)
@@ -172,12 +193,13 @@ void NhcDevice::printDetail(FILE* o)
 
 void NhcDevice::control1(time_prec dt)
 {
-   this->controlImpl(dt);
+   bool calcEkin = false;
+   this->controlImpl(dt, calcEkin);
 }
 
-void NhcDevice::control2(time_prec dt, bool)
+void NhcDevice::control2(time_prec dt, bool calcEkin)
 {
-   this->controlImpl(dt);
+   this->controlImpl(dt, calcEkin);
 }
 
 double NhcDevice::kineticAtomic()
@@ -209,16 +231,16 @@ Nhc06Thermostat::Nhc06Thermostat()
    // tpart
    if (atomic) {
       dofT = mdstuf::nfree;
-      m_tpart = new NhcDevice(nhclen, nc, dofT, NhcDevice::kineticAtomic,
-         NhcDevice::scaleVelocityAtomic, "NHC Atomic Temperature");
+      m_tpart = new NhcDevice(nhclen, nc, dofT, &eksum, NhcDevice::kineticAtomic, NhcDevice::scaleVelocityAtomic,
+         "NHC Atomic Temperature");
    } else {
       dofT = 3.0 * (rattle_dmol.nmol - 1);
-      m_tpart = new NhcDevice(nhclen, nc, dofT, Nhc06Thermostat::kineticRattleGroup,
+      m_tpart = new NhcDevice(nhclen, nc, dofT, &hc_eksum, Nhc06Thermostat::kineticRattleGroup,
          Nhc06Thermostat::scaleVelocityRattleGroup, "NHC Group Temperature");
    }
 
    // tbaro
-   m_tbaro = new NhcDevice(nhclen, nc, dofVbar(), Nhc06Thermostat::kineticVbar,
+   m_tbaro = new NhcDevice(nhclen, nc, dofVbar(), nullptr, Nhc06Thermostat::kineticVbar,
       Nhc06Thermostat::scaleVelocityVbar, "NHC Barostat Temperature");
 }
 
@@ -241,11 +263,17 @@ void Nhc06Thermostat::control1(time_prec dt)
    m_tpart->control1(dt);
 }
 
-void Nhc06Thermostat::control2(time_prec dt, bool save)
+void Nhc06Thermostat::control2(time_prec dt, bool)
 {
-   m_tpart->control2(dt, save);
-   if (applyBaro)
-      m_tbaro->control2(dt, false);
+   bool calcEkin;
+   if (applyBaro) {
+      calcEkin = false; // in nhc06 barostat, ek will be calculated in the barostat
+      m_tpart->control2(dt, calcEkin);
+      m_tbaro->control2(dt, calcEkin);
+   } else {
+      calcEkin = true;
+      m_tpart->control2(dt, calcEkin);
+   }
 }
 
 double Nhc06Thermostat::kineticRattleGroup()
