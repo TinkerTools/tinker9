@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['f_5fkin_0',['f_kin',['../group__mdpt.html#a72c31e0c223c767aba1d1ac4d548e7db',1,'tinker::NhcDevice']]],
+  ['f_5fkin_0',['f_kin',['../group__mdpt.html#a72c31e0c223c767aba1d1ac4d548e7db',1,'tinker::NhcDevice::f_kin()'],['../group__mdpt.html#a3a326b4d991525c8754299b81f116359',1,'tinker::IsoBaroDevice::f_kin()'],['../group__mdpt.html#a0a452d132f31c26e345c5ebdddfda660',1,'tinker::AnisoBaroDevice::f_kin()']]],
   ['fatalerror_1',['FatalError',['../group__error.html#af14f3933afd56a9b9a62e63d0f8cdf8c',1,'tinker::FatalError::FatalError(const char *msg)'],['../group__error.html#aa1f2daf42b99b2ea643c1b4acf551a73',1,'tinker::FatalError::FatalError(const std::string &amp;msg)'],['../group__error.html#a2ee5afe0432dfcbb315a5a5b7c1ae314',1,'tinker::FatalError::FatalError(const FatalError &amp;e)'],['../group__error.html#classtinker_1_1_fatal_error',1,'tinker::FatalError']]],
   ['fdip_5fphi1_2',['fdip_phi1',['../group__pme.html#gaac71f83d04b1447cd50fcec6f1004dea',1,'tinker']]],
   ['fdip_5fphi2_3',['fdip_phi2',['../group__pme.html#ga1c386b661a211897a59dfac948158c14',1,'tinker']]],
@@ -14,7 +14,7 @@ var searchData=
   ['fftplanunit_11',['FFTPlanUnit',['../group__fft.html#gaeb5072c07cba4f699778dfe8b35169be',1,'tinker']]],
   ['finish_12',['finish',['../group__general.html#ga842871bcdc9ec230f4db497c8c97e119',1,'tinker']]],
   ['fixed_13',['fixed',['../group__prec.html#ga95b098320737289b637d13efebb5f74d',1,'tinker']]],
-  ['fixedto_14',['fixedTo',['../group__cuda__syntax.html#ga04bdc1b484c00b6b7cb2301e598fdeb1',1,'tinker::fixedTo(fixed val)'],['../group__acc__syntax.html#ga47b708b2c42affd1f96e149525f3f15b',1,'tinker::fixedTo(fixed val)']]],
+  ['fixedto_14',['fixedTo',['../group__acc__syntax.html#ga47b708b2c42affd1f96e149525f3f15b',1,'tinker::fixedTo(fixed val)'],['../group__cuda__syntax.html#ga04bdc1b484c00b6b7cb2301e598fdeb1',1,'tinker::fixedTo(fixed val)']]],
   ['float2_15',['float2',['../group__acc__syntax.html#structtinker_1_1float2',1,'tinker']]],
   ['float3_16',['float3',['../group__acc__syntax.html#structtinker_1_1float3',1,'tinker']]],
   ['float4_17',['float4',['../group__acc__syntax.html#structtinker_1_1float4',1,'tinker']]],

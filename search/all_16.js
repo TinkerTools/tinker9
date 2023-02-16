@@ -1,8 +1,8 @@
 var searchData=
 [
   ['v_0',['v',['../classtinker_1_1calc_1_1_vers.html#ad340dc87141d65f17a6bdf0a83f3ab81',1,'tinker::calc::Vers']]],
-  ['v0_1',['V0',['../group__rc.html#a7022e01a3499819831f1de25e3dc235a',1,'tinker::calc']]],
-  ['v0_2',['v0',['../group__rc.html#a9ca88cd864e9dabaa945a8135634f93f',1,'tinker::calc']]],
+  ['v0_1',['v0',['../group__rc.html#a9ca88cd864e9dabaa945a8135634f93f',1,'tinker::calc']]],
+  ['v0_2',['V0',['../group__rc.html#a7022e01a3499819831f1de25e3dc235a',1,'tinker::calc']]],
   ['v1_3',['V1',['../group__rc.html#a8273dc767dfedff97b93a2fe07e8062e',1,'tinker::calc']]],
   ['v1_4',['v1',['../group__rc.html#aca613218d865f22705dd9b745ee3867f',1,'tinker::calc']]],
   ['v2scale_5',['v2scale',['../namespacetinker.html#a5d713995385a35d035f40b02d41de8d1',1,'tinker']]],
@@ -15,8 +15,8 @@ var searchData=
   ['v5_12',['v5',['../group__rc.html#abde63e831b7697f613cedadfb2192119',1,'tinker::calc']]],
   ['v5_13',['V5',['../group__rc.html#a97954f874dfb6936b835b5f57741eceb',1,'tinker::calc']]],
   ['v5scale_14',['v5scale',['../namespacetinker.html#aabeafa129a35e155f2cdfd0bb39b9057',1,'tinker']]],
-  ['v6_15',['V6',['../group__rc.html#a803fdfbb7b989ff2399d68bc557c4124',1,'tinker::calc']]],
-  ['v6_16',['v6',['../group__rc.html#aa068611913c552799f039d448c9e07cc',1,'tinker::calc']]],
+  ['v6_15',['v6',['../group__rc.html#aa068611913c552799f039d448c9e07cc',1,'tinker::calc']]],
+  ['v6_16',['V6',['../group__rc.html#a803fdfbb7b989ff2399d68bc557c4124',1,'tinker::calc']]],
   ['v_5fprec_17',['v_prec',['../group__prec.html#ga20634088e71bda42a3103ce07b75121b',1,'tinker']]],
   ['valence_18',['Valence',['../group__bonded.html',1,'']]],
   ['valid_19',['valid',['../group__rc.html#a2c9b9c111b3026de7c8b85464ea38ead',1,'tinker::GenericUnit']]],

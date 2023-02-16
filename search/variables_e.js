@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['n_0',['n',['../structtinker_1_1_ptr_trait_3_01_t_01_5_01_4.html#acff492f795ebd578df05ea301d684da1',1,'tinker::PtrTrait&lt; T * &gt;::n()'],['../group__ff.html#gad2e089162a2f11d8850f715592d9acdb',1,'tinker::n()'],['../group__nblist.html#a0ffde4b2ea57b07d6fdcf5dc18896819',1,'tinker::Spatial::n()']]],
-  ['n_1',['N',['../group__ff.html#a733713f515a34cf0652e7bba71ab6429',1,'tinker::v1::BufferTraits&lt; float, Nincr &gt;']]],
-  ['n_2',['n',['../structtinker_1_1_ptr_trait_3_01_t_07_5_08_0f_n_0e_4.html#ad84b89ada4493ae79e044ac5d722275f',1,'tinker::PtrTrait&lt; T(*)[N]&gt;']]],
-  ['n_3',['N',['../group__ff.html#ae217b75f9825e618e65492a708e1d859',1,'tinker::v1::BufferTraits']]],
+  ['n_0',['N',['../group__ff.html#a733713f515a34cf0652e7bba71ab6429',1,'tinker::v1::BufferTraits&lt; float, Nincr &gt;']]],
+  ['n_1',['n',['../group__ff.html#gad2e089162a2f11d8850f715592d9acdb',1,'tinker']]],
+  ['n_2',['N',['../group__ff.html#ae217b75f9825e618e65492a708e1d859',1,'tinker::v1::BufferTraits']]],
+  ['n_3',['n',['../structtinker_1_1_ptr_trait_3_01_t_07_5_08_0f_n_0e_4.html#ad84b89ada4493ae79e044ac5d722275f',1,'tinker::PtrTrait&lt; T(*)[N]&gt;::n()'],['../group__nblist.html#a0ffde4b2ea57b07d6fdcf5dc18896819',1,'tinker::Spatial::n()'],['../structtinker_1_1_ptr_trait_3_01_t_01_5_01_4.html#acff492f795ebd578df05ea301d684da1',1,'tinker::PtrTrait&lt; T * &gt;::n()']]],
   ['nafix_4',['nafix',['../group__geom.html#ga5e7d37036da6382e79c9c2cb663d7ba2',1,'tinker']]],
   ['nakpl_5',['nakpl',['../group__nblist.html#afe1736857e00e7b8a5e0d6c4665262ca',1,'tinker::Spatial']]],
   ['name_6',['name',['../group__mdpt.html#afdff3441cf795cf048943d8d2f15f082',1,'tinker::NhcDevice::name()'],['../group__nvidia.html#aed0064e375b1fa3520ac0ea9d24ff667',1,'tinker::DeviceAttribute::name()']]],
