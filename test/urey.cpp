@@ -8,7 +8,7 @@ using namespace tinker;
 TEST_CASE("Urey-Ten-Water", "[ff][eurey][h2o10]")
 {
    const char* k = "test_h2o10.key";
-   const char* k0 = "ureyterm  only\n";
+   const char* k0 = "ureybradterm  only\n";
    const char* x1 = "test_h2o10.xyz";
 
    TestFile fke(TINKER9_DIRSTR "/test/file/water10/h2o10.key", k, k0);

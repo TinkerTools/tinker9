@@ -89,7 +89,7 @@ bool use(Potent term)
       val = potent::use_disp;
       break;
    case Potent::REPULS:
-      val = potent::use_repuls;
+      val = potent::use_repel;
       break;
 
    case Potent::CHGFLX:

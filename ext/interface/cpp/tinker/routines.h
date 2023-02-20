@@ -1120,7 +1120,7 @@ double erfinv_(double* x);
 // erxnfld.f
 void erxnfld_();
 #define tinker_f_erxnfld erxnfld_
-void erfik_(int* ii, int* kk, int* i, int* k, double* rpi, double* rpk, double* eik);
+void erfik_(int* i, int* k, double* rpi, double* rpk, double* eik);
 #define tinker_f_erfik erfik_
 void rfindex_(int* n, int* m, int* ind_x, int* ind_y, int* ind_z, int* p_s, int* p_e);
 #define tinker_f_rfindex rfindex_
@@ -1341,6 +1341,20 @@ inline void tinker_f_evcorr(tinker_fchars mode, double* elrc) {
 void evcorr1_(char* mode, double* elrc, double* vlrc, tinker_fchar_len_t mode_cap);
 inline void tinker_f_evcorr1(tinker_fchars mode, double* elrc, double* vlrc) {
     return evcorr1_(mode.string, elrc, vlrc, mode.capacity);
+}
+
+// exfield.f
+void exfield_(char* mode, double* exf, tinker_fchar_len_t mode_cap);
+inline void tinker_f_exfield(tinker_fchars mode, double* exf) {
+    return exfield_(mode.string, exf, mode.capacity);
+}
+void exfield1_(char* mode, double* exf, tinker_fchar_len_t mode_cap);
+inline void tinker_f_exfield1(tinker_fchars mode, double* exf) {
+    return exfield1_(mode.string, exf, mode.capacity);
+}
+void exfield3_(char* mode, double* exf, tinker_fchar_len_t mode_cap);
+inline void tinker_f_exfield3(tinker_fchars mode, double* exf) {
+    return exfield3_(mode.string, exf, mode.capacity);
 }
 
 // extra.f
@@ -2334,13 +2348,17 @@ void rotlist_(int* base, int* partner);
 #define tinker_f_rotlist rotlist_
 
 // rotpole.f
-void rotpole_(double* inpole, double* outpole);
-#define tinker_f_rotpole rotpole_
-void rotrpole_(double* inpole, double* outpole);
-#define tinker_f_rotrpole rotrpole_
+void rotpole_(char* poltype, tinker_fchar_len_t poltype_cap);
+inline void tinker_f_rotpole(tinker_fchars poltype) {
+    return rotpole_(poltype.string, poltype.capacity);
+}
+void rotrpole_(char* poltype, tinker_fchar_len_t poltype_cap);
+inline void tinker_f_rotrpole(tinker_fchars poltype) {
+    return rotrpole_(poltype.string, poltype.capacity);
+}
 void rotmat_(int* i, double* a, int* planar);
 #define tinker_f_rotmat rotmat_
-void rotsite_(int* isite, double* a, int* planar, double* inpole, double* outpole);
+void rotsite_(int* ii, double* a, int* planar, double* inpole, double* outpole);
 #define tinker_f_rotsite rotsite_
 
 // sdstep.f
