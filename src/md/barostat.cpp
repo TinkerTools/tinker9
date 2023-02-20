@@ -173,7 +173,11 @@ void IsoBaroDevice::control_1_2(time_prec dt, int idx)
    double dim = 3.0;
    double al = 1.0 + dim / dofP;
    double tr_vir = m_vir[0] + m_vir[4] + m_vir[8];
-   double eksu1 = *m_eksum;
+   double eksu1;
+   if (idx == 1)
+      eksu1 = *m_eksum;
+   else
+      eksu1 = f_kin();
 
    if (idx == 2 and printPressure) {
       auto o = stdout;
@@ -203,6 +207,7 @@ IsoBaroDevice::IsoBaroDevice(double fric)
    : BasicBarostat()
    , m_vir(nullptr)
    , m_eksum(nullptr)
+   , f_kin(nullptr)
    , m_fric(fric)
    , m_rnd()
    , m_langevin(fric != 0.0)
@@ -210,9 +215,11 @@ IsoBaroDevice::IsoBaroDevice(double fric)
    if (atomic) {
       m_vir = vir;
       m_eksum = &eksum;
+      f_kin = NhcDevice::kineticAtomic;
    } else {
       m_vir = hc_vir;
       m_eksum = &hc_eksum;
+      f_kin = Nhc06Thermostat::kineticRattleGroup;
    }
 
    if (m_langevin)
@@ -273,6 +280,12 @@ void IsoBaroDevice::control3(time_prec dt)
 }
 
 namespace tinker {
+static void kineticForAnisoBaroDeviceAtomic()
+{
+   double temp;
+   kinetic(temp);
+}
+
 void AnisoBaroDevice::control_1_2(time_prec dt, int idx)
 {
    time_prec dt2 = dt * 0.5;
@@ -281,6 +294,8 @@ void AnisoBaroDevice::control_1_2(time_prec dt, int idx)
    if (m_langevin)
       b = std::sqrt(2 * m_fric * units::gasconst * bath::kelvin / qbar);
 
+   if (idx == 2)
+      f_kin();
    double eksu1 = *m_eksum;
    double gbar[3][3] = {0};
    for (int i = 0; i < 3; ++i)
@@ -354,6 +369,7 @@ AnisoBaroDevice::AnisoBaroDevice(double fric)
    , m_vir(nullptr)
    , m_eksum(nullptr)
    , m_ekin(nullptr)
+   , f_kin(nullptr)
    , m_fric(fric)
    , m_rnd()
    , m_langevin(fric != 0.0)
@@ -362,10 +378,12 @@ AnisoBaroDevice::AnisoBaroDevice(double fric)
       m_vir = vir;
       m_eksum = &eksum;
       m_ekin = ekin;
+      f_kin = kineticForAnisoBaroDeviceAtomic;
    } else {
       m_vir = hc_vir;
       m_eksum = &hc_eksum;
       m_ekin = hc_ekin;
+      f_kin = hcKinetic;
    }
 
    if (m_langevin) {
@@ -431,8 +449,7 @@ void AnisoBaroDevice::control3(time_prec dt)
 
    double scal[3][3];
    trimatExp(scal, vbar_matrix, dt);
-   double h0[3][3] = {
-      {lvec1.x, lvec1.y, lvec1.z}, {lvec2.x, lvec2.y, lvec2.z}, {lvec3.x, lvec3.y, lvec3.z}};
+   double h0[3][3] = {{lvec1.x, lvec1.y, lvec1.z}, {lvec2.x, lvec2.y, lvec2.z}, {lvec3.x, lvec3.y, lvec3.z}};
    matmul3(h0, scal);
    lvec1.x = h0[0][0], lvec1.y = h0[0][1], lvec1.z = h0[0][2];
    lvec2.x = h0[1][0], lvec2.y = h0[1][1], lvec2.z = h0[1][2];
