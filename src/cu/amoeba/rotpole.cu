@@ -15,6 +15,19 @@ void chkpole_cu()
 {
    launch_k1s(g::s0, n, chkpole_cu1, n, pole, zaxis, x, y, z);
 }
+
+__global__
+void chkrepole_cu1(int n, real (*restrict repole)[MPL_TOTAL], LocalFrame* zaxis, const real* restrict x,
+   const real* restrict y, const real* restrict z)
+{
+   for (int i = ITHREAD; i < n; i += STRIDE)
+      chkpoleAtomI(i, repole, zaxis, x, y, z);
+}
+
+void chkrepole_cu()
+{
+   launch_k1s(g::s0, n, chkrepole_cu1, n, repole, zaxis, x, y, z);
+}
 }
 
 namespace tinker {

@@ -157,10 +157,10 @@ void erepelData(RcOp op)
    }
 }
 
-TINKER_FVOID2(acc1, cu1, chkpole);
-static void chkpole()
+TINKER_FVOID2(acc1, cu1, chkrepole);
+static void chkrepole()
 {
-   TINKER_FCALL2(acc1, cu1, chkpole);
+   TINKER_FCALL2(acc1, cu1, chkrepole);
 }
 
 TINKER_FVOID2(acc1, cu1, rotrepole);
@@ -176,7 +176,7 @@ void repoleInit(int vers)
    if (vers & calc::virial)
       darray::zero(g::q0, bufferSize(), vir_trq);
 
-   chkpole();
+   chkrepole();
    rotrepole();
 
 }

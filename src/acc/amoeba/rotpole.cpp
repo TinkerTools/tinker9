@@ -18,6 +18,13 @@ void rotpole_acc()
       rotpoleAtomI(i, rpole, pole, zaxis, x, y, z);
 }
 
+void chkrepole_acc()
+{
+   #pragma acc parallel loop independent async deviceptr(x,y,z,zaxis,repole)
+   for (int i = 0; i < n; ++i)
+      chkpoleAtomI(i, repole, zaxis, x, y, z);
+}
+
 void rotrepole_acc()
 {
    #pragma acc parallel loop independent async deviceptr(x,y,z,zaxis,rrepole,repole)

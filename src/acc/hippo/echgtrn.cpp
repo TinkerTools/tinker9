@@ -10,7 +10,7 @@
 #include <cassert>
 
 namespace tinker {
-#define DEVICE_PTRS x, y, z, dectx, decty, dectz, chgct, dmpct, nct, ect, vir_ect
+#define DEVICE_PTRS x, y, z, dectx, decty, dectz, chgct, dmpct, mut, elam, nct, ect, vir_ect
 template <class Ver>
 static void echgtrn_acc1()
 {
@@ -42,6 +42,7 @@ static void echgtrn_acc1()
       real zi = z[i];
       real chgi = chgct[i];
       real alphai = dmpct[i];
+      int imut = mut[i];
 
       MAYBE_UNUSED real gxi = 0, gyi = 0, gzi = 0;
 
@@ -57,12 +58,14 @@ static void echgtrn_acc1()
          real zr = z[k] - zi;
          real chgk = chgct[k];
          real alphak = dmpct[k];
+         int kmut = mut[k];
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off2) {
             real r = REAL_SQRT(r2);
+            real elambda = (imut || kmut ? elam : 1);
             MAYBE_UNUSED real e, de;
-            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
+            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, elambda, e, de);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -121,8 +124,10 @@ static void echgtrn_acc1()
       real zi = z[i];
       real chgi = chgct[i];
       real alphai = dmpct[i];
+      int imut = mut[k];
       real chgk = chgct[k];
       real alphak = dmpct[k];
+      int kmut = mut[k];
 
       real xr = x[k] - xi;
       real yr = y[k] - yi;
@@ -131,12 +136,13 @@ static void echgtrn_acc1()
       real r2 = image2(xr, yr, zr);
       if (r2 <= off2) {
          real r = REAL_SQRT(r2);
+         real elambda = (imut || kmut ? elam : 1);
          MAYBE_UNUSED real e, de;
-         pair_chgtrn<do_g>(r, cut, off, mscale, f, alphai, chgi, alphak, chgk, e, de);
+         pair_chgtrn<do_g>(r, cut, off, mscale, f, alphai, chgi, alphak, chgk, elambda, e, de);
 
          if CONSTEXPR (do_a) {
             real e1, de1;
-            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e1, de1);
+            pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, elambda, e1, de1);
 
             if (mscale == -1 and e1 != 0)
                atomic_add(-1, nct, offset);
