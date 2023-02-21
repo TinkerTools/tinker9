@@ -42,10 +42,12 @@ target_link_libraries (all.tests
 )
 
 
-set_property (TARGET tinker9 all.tests
-   APPEND_STRING PROPERTY
-      LINK_FLAGS " CUDA_HOME=${CUDA_DIR}"
-)
+if (GPU_LANG STREQUAL "OPENACC")
+   set_property (TARGET tinker9 all.tests
+      APPEND_STRING PROPERTY
+         LINK_FLAGS " CUDA_HOME=${CUDA_DIR}"
+   )
+endif ()
 
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL Darwin)
