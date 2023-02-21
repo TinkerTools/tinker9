@@ -16,9 +16,3 @@ void echgtrnData(RcOp);
 /// \ingroup chgtrn
 void echgtrn(int vers);
 }
-
-namespace tinker {
-/// \ingroup chgtrn
-/// \brief state weighting value for electrostatic potentials
-TINKER_EXTERN real elam;
-}

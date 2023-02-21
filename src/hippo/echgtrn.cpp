@@ -6,7 +6,6 @@
 #include "tool/iofortstr.h"
 #include <tinker/detail/chgtrn.hh>
 #include <tinker/detail/ctrpot.hh>
-#include <tinker/detail/mutant.hh>
 
 namespace tinker {
 void echgtrnData(RcOp op)
@@ -66,7 +65,6 @@ void echgtrnData(RcOp op)
       }
       darray::copyin(g::q0, n, dmpct, dmpctvec.data());
       waitFor(g::q0);
-      elam = mutant::elambda;
    }
 }
 

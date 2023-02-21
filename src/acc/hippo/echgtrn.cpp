@@ -10,7 +10,7 @@
 #include <cassert>
 
 namespace tinker {
-#define DEVICE_PTRS x, y, z, dectx, decty, dectz, chgct, dmpct, mut, elam, nct, ect, vir_ect
+#define DEVICE_PTRS x, y, z, dectx, decty, dectz, chgct, dmpct, mut, nct, ect, vir_ect
 template <class Ver>
 static void echgtrn_acc1()
 {
