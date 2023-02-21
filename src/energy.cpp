@@ -439,7 +439,7 @@ void energyData(RcOp op)
 
    // non-bonded terms
 
-   RcMan softcore42{softcoreData, op};
+   RcMan vdwsSoftcore42{vdwSoftcoreData, op};
    RcMan evdw42{evdwData, op};
 
    // Must call elecData() before any electrostatics routine.

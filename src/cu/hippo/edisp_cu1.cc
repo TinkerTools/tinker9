@@ -80,8 +80,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
          real r = REAL_SQRT(r2);
          real rr1 = REAL_RECIP(r);
          real e, de;
-         real vlambda = 1;
-         vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+         real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
          pair_disp<do_g, DTYP, 0, 1>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak, vlambda, cut, off, e, de);
          if CONSTEXPR (do_e) {
             edtl += floatTo<ebuf_prec>(e);
@@ -171,8 +170,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
             real r = REAL_SQRT(r2);
             real rr1 = REAL_RECIP(r);
             real e, de;
-            real vlambda = 1;
-            vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+            real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
             pair_disp<do_g, DTYP, 1, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, vlambda, cut, off, e, de);
             if CONSTEXPR (do_e) {
                edtl += floatTo<ebuf_prec>(e);
@@ -266,8 +264,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
             real r = REAL_SQRT(r2);
             real rr1 = REAL_RECIP(r);
             real e, de;
-            real vlambda = 1;
-            vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+            real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
             pair_disp<do_g, DTYP, 1, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, vlambda, cut, off, e, de);
             if CONSTEXPR (do_e) {
                edtl += floatTo<ebuf_prec>(e);

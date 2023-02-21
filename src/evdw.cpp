@@ -29,8 +29,11 @@ static std::vector<new_type> jvec;
 static std::vector<new_type> jvdwbuf;
 static int jcount;
 
-void softcoreData(RcOp op)
+void vdwSoftcoreData(RcOp op)
 {
+   if ((not use(Potent::VDW)) and (not use(Potent::REPULS)) and (not use(Potent::DISP)))
+      return;
+
    if (op & RcOp::DEALLOC)
       darray::deallocate(mut);
 
@@ -38,6 +41,7 @@ void softcoreData(RcOp op)
       darray::allocate(n, &mut);
 
    if (op & RcOp::INIT) {
+      vlam = mutant::vlambda;
       if (static_cast<int>(Vdw::DECOUPLE) == mutant::vcouple)
          vcouple = Vdw::DECOUPLE;
       else if (static_cast<int>(Vdw::ANNIHILATE) == mutant::vcouple)
@@ -52,7 +56,6 @@ void softcoreData(RcOp op)
       }
       darray::copyin(g::q0, n, mut, mutvec.data());
       waitFor(g::q0);
-      vlam = mutant::vlambda;
    }
 }
 

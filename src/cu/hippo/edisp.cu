@@ -6,7 +6,6 @@
 #include "seq/bsplgen.h"
 #include "seq/launch.h"
 #include "seq/pair_disp.h"
-#include "seq/pair_vlambda.h"
 #include "seq/triangle.h"
 
 namespace tinker {

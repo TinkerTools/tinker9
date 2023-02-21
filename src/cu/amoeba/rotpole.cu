@@ -16,17 +16,9 @@ void chkpole_cu()
    launch_k1s(g::s0, n, chkpole_cu1, n, pole, zaxis, x, y, z);
 }
 
-__global__
-void chkrepole_cu1(int n, real (*restrict repole)[MPL_TOTAL], LocalFrame* zaxis, const real* restrict x,
-   const real* restrict y, const real* restrict z)
-{
-   for (int i = ITHREAD; i < n; i += STRIDE)
-      chkpoleAtomI(i, repole, zaxis, x, y, z);
-}
-
 void chkrepole_cu()
 {
-   launch_k1s(g::s0, n, chkrepole_cu1, n, repole, zaxis, x, y, z);
+   launch_k1s(g::s0, n, chkpole_cu1, n, repole, zaxis, x, y, z);
 }
 }
 
@@ -45,17 +37,8 @@ void rotpole_cu()
    launch_k1s(g::s0, n, rotpole_cu1, n, rpole, pole, zaxis, x, y, z);
 }
 
-__global__
-void rotrepole_cu1(int n, real (*restrict rrepole)[MPL_TOTAL], const real (*restrict repole)[MPL_TOTAL],
-   const LocalFrame* restrict zaxis, const real* restrict x, const real* restrict y,
-   const real* restrict z)
-{
-   for (int i = ITHREAD; i < n; i += STRIDE)
-      rotpoleAtomI(i, rrepole, repole, zaxis, x, y, z);
-}
-
 void rotrepole_cu()
 {
-   launch_k1s(g::s0, n, rotrepole_cu1, n, rrepole, repole, zaxis, x, y, z);
+   launch_k1s(g::s0, n, rotpole_cu1, n, rrepole, repole, zaxis, x, y, z);
 }
 }

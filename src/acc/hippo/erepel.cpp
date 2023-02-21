@@ -6,12 +6,11 @@
 #include "ff/switch.h"
 #include "seq/add.h"
 #include "seq/pair_repel.h"
-#include "seq/pair_vlambda.h"
 #include "tool/gpucard.h"
 
 namespace tinker {
 #define DEVICE_PTRS \
-   x, y, z, derx, dery, derz, rrepole, sizpr, dmppr, elepr, nrep, er, vir_er, trqx, trqy, trqz, mut, vlam, vcouple
+   x, y, z, derx, dery, derz, rrepole, sizpr, dmppr, elepr, nrep, er, vir_er, trqx, trqy, trqz, mut
 template <class Ver>
 static void erepel_acc1()
 {
@@ -77,13 +76,12 @@ static void erepel_acc1()
          if (r2 <= off2) {
             real e;
             zero(pgrad);
-            real vlambda = 1;
-            vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+            real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
             pair_repel<do_g, 1>( //
-               r2, 1, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
+               r2, 1, vlambda, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
                sizk, dmpk, valk, rrepole[k][MPL_PME_0], rrepole[k][MPL_PME_X], rrepole[k][MPL_PME_Y], rrepole[k][MPL_PME_Z],
                rrepole[k][MPL_PME_XX], rrepole[k][MPL_PME_XY], rrepole[k][MPL_PME_XZ], rrepole[k][MPL_PME_YY],
-               rrepole[k][MPL_PME_YZ], rrepole[k][MPL_PME_ZZ], vlambda, e, pgrad);
+               rrepole[k][MPL_PME_YZ], rrepole[k][MPL_PME_ZZ], e, pgrad);
             if CONSTEXPR (do_a)
                if (e != 0)
                   atomic_add(1, nrep, offset);
@@ -169,13 +167,12 @@ static void erepel_acc1()
       real r2 = image2(xr, yr, zr);
       if (r2 <= off2 and rscale != 0) {
          real e;
-         real vlambda = 1;
-         vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+         real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
          pair_repel<do_g, 1>( //
-            r2, rscale, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
+            r2, rscale, vlambda, cut, off, xr, yr, zr, sizi, dmpi, vali, ci, dix, diy, diz, qixx, qixy, qixz, qiyy, qiyz, qizz,
             sizk, dmpk, valk, rrepole[k][MPL_PME_0], rrepole[k][MPL_PME_X], rrepole[k][MPL_PME_Y], rrepole[k][MPL_PME_Z],
             rrepole[k][MPL_PME_XX], rrepole[k][MPL_PME_XY], rrepole[k][MPL_PME_XZ], rrepole[k][MPL_PME_YY],
-            rrepole[k][MPL_PME_YZ], rrepole[k][MPL_PME_ZZ], vlambda, e, pgrad);
+            rrepole[k][MPL_PME_YZ], rrepole[k][MPL_PME_ZZ], e, pgrad);
          if CONSTEXPR (do_a)
             if (rscale == -1 and e != 0)
                atomic_add(-1, nrep, offset);

@@ -6,7 +6,6 @@
 #include "seq/add.h"
 #include "seq/launch.h"
 #include "seq/pair_repel.h"
-#include "seq/pair_vlambda.h"
 #include "seq/triangle.h"
 
 namespace tinker {

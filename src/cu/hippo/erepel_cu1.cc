@@ -116,12 +116,11 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
 
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
-         real vlambda = 1;
-         vlambda = pair_vlambda(vlam, vcouple, imut[klane], kmut);
+         real vlambda = pair_vlambda(vlam, vcouple, imut[klane], kmut);
          pair_repel<do_g, 1>( //
-            r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane], diy[klane],
-            diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], sizk, dmpk, valk,
-            ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, vlambda, e,
+            r2, scalea, vlambda, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane],
+            diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane], sizk,
+            dmpk, valk, ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, e,
             pgrad);
 
          if CONSTEXPR (do_a)
@@ -251,13 +250,12 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            real vlambda = 1;
-            vlambda = pair_vlambda(vlam, vcouple, imut[klane], kmut);
+            real vlambda = pair_vlambda(vlam, vcouple, imut[klane], kmut);
             pair_repel<do_g, 1>( //
-               r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane],
+               r2, scalea, vlambda, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane],
                diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
                sizk, dmpk, valk, ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz,
-               qkzz, vlambda, e, pgrad);
+               qkzz, e, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)
@@ -389,13 +387,12 @@ void erepel_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nr, EnergyBuffe
 
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
-            real vlambda = 1;
-            vlambda = pair_vlambda(vlam, vcouple, imut[klane], kmut);
+            real vlambda = pair_vlambda(vlam, vcouple, imut[klane], kmut);
             pair_repel<do_g, 1>( //
-               r2, scalea, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane],
+               r2, scalea, vlambda, cut, off, xr, yr, zr, sizi[klane], dmpi[klane], vali[klane], ci[klane], dix[klane],
                diy[klane], diz[klane], qixx[klane], qixy[klane], qixz[klane], qiyy[klane], qiyz[klane], qizz[klane],
                sizk, dmpk, valk, ck, dkx[threadIdx.x], dky[threadIdx.x], dkz[threadIdx.x], qkxx, qkxy, qkxz, qkyy, qkyz,
-               qkzz, vlambda, e, pgrad);
+               qkzz, e, pgrad);
 
             if CONSTEXPR (do_a)
                if (e != 0)

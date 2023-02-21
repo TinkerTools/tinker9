@@ -6,7 +6,6 @@
 #include "ff/switch.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_disp.h"
-#include "seq/pair_vlambda.h"
 #include "tool/gpucard.h"
 
 namespace tinker {
@@ -145,7 +144,7 @@ static void edisp_acc1()
 
    #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,dedspx,dedspy,dedspz,ndisp,edsp,vir_edsp,\
-               csix,adisp,dspexclude,dspexclude_scale, mut, vlam, vcouple)
+               csix,adisp,dspexclude,dspexclude_scale,mut)
    #pragma acc loop independent
    for (int ii = 0; ii < ndspexclude; ++ii) {
       int offset = ii & (bufsize - 1);
@@ -170,8 +169,7 @@ static void edisp_acc1()
          real r = REAL_SQRT(r2);
          real rr1 = REAL_RECIP(r);
          real e0, de0, e1, de1;
-         real vlambda = 1;
-         vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+         real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
          pair_disp<do_g, DTYP, 0, 1>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak, vlambda, cut, off, e0, de0);
          pair_disp<do_g, DTYP, 1, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, vlambda, cut, off, e1, de1);
          real e, de;
@@ -215,7 +213,7 @@ static void edisp_acc1()
    MAYBE_UNUSED int ngrid = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,dedspx,dedspy,dedspz,ndisp,edsp,vir_edsp,\
-               csix,adisp,nlst,lst,mut,vlam,vcouple) num_gangs(ngrid) vector_length(BLOCK_DIM)
+               csix,adisp,nlst,lst,mut) num_gangs(ngrid) vector_length(BLOCK_DIM)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       int offset = i & (bufsize - 1);
@@ -245,8 +243,7 @@ static void edisp_acc1()
             real r = REAL_SQRT(r2);
             real rr1 = REAL_RECIP(r);
             real e, de;
-            real vlambda = 1;
-            vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+            real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
             pair_disp<do_g, DTYP, 1, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, vlambda, cut, off, e, de);
             if CONSTEXPR (do_e) {
                etl += e;

@@ -30,19 +30,19 @@ EXTRA_PARAMS: |
 # IMPLICIT_PARAMS:
 
 I_VARIABLES:
-  - register real xi from:x
-  - register real yi from:y
-  - register real zi from:z
-  - register real ci from:csix
-  - register real ai from:adisp
-  - register int imut from:mut
+  - register real xi   from:x
+  - register real yi   from:y
+  - register real zi   from:z
+  - register real ci   from:csix
+  - register real ai   from:adisp
+  - register int  imut from:mut
 K_VARIABLES:
-  - register real xk from:x
-  - register real yk from:y
-  - register real zk from:z
-  - register real ck from:csix
-  - register real ak from:adisp
-  - register int kmut from:mut
+  - register real xk   from:x
+  - register real yk   from:y
+  - register real zk   from:z
+  - register real ck   from:csix
+  - register real ak   from:adisp
+  - register int  kmut from:mut
 I_FORCE:
   - register real gxi addto:gx
   - register real gyi addto:gy
@@ -61,8 +61,7 @@ SCALED_PAIRWISE_INTERACTION: |
     real r = REAL_SQRT(r2);
     real rr1 = REAL_RECIP(r);
     real e, de;
-    real vlambda = 1;
-    vlambda = pair_vlambda(vlam, vcouple, @imut@, @kmut@);
+    real vlambda = pair_vlambda(vlam, vcouple, @imut@, @kmut@);
     pair_disp<do_g, DTYP, 0, 1>(r, r2, rr1,
       scalea, aewald, @ci@, @ai@, @ck@, @ak@, vlambda, cut, off, e, de);
     if CONSTEXPR (do_e) {
@@ -103,8 +102,7 @@ FULL_PAIRWISE_INTERACTION: |
     real r = REAL_SQRT(r2);
     real rr1 = REAL_RECIP(r);
     real e, de;
-    real vlambda = 1;
-    vlambda = pair_vlambda(vlam, vcouple, @imut@, @kmut@);
+    real vlambda = pair_vlambda(vlam, vcouple, @imut@, @kmut@);
     pair_disp<do_g, DTYP, 1, 1>(r, r2, rr1,
       1, aewald, @ci@, @ai@, @ck@, @ak@, vlambda, cut, off, e, de);
     if CONSTEXPR (do_e) {
