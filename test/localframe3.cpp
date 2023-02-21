@@ -17,7 +17,7 @@ a-axis          20.0
 bondterm        none
 angleterm       none
 strbndterm      none
-ureyterm        none
+ureybradterm    none
 torsionterm     none
 vdwterm         none
 )**";

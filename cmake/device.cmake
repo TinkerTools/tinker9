@@ -42,6 +42,12 @@ target_link_libraries (all.tests
 )
 
 
+set_property (TARGET tinker9 all.tests
+   APPEND_STRING PROPERTY
+      LINK_FLAGS " CUDA_HOME=${CUDA_DIR}"
+)
+
+
 if (${CMAKE_SYSTEM_NAME} STREQUAL Darwin)
    add_subdirectory (src/objc)
    target_link_libraries (tinker9 tinker9_objc "-framework CoreFoundation -framework IOKit")
