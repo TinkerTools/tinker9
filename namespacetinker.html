@@ -29,7 +29,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Tinker9<span id="projectnumber">&#160;2334c76 (Tue Feb 21 15:20:14 2023 -0600)</span>
+   <div id="projectname">Tinker9<span id="projectnumber">&#160;e5ac642 (Wed Feb 22 01:42:51 2023 -0600)</span>
    </div>
   </td>
  </tr>
@@ -855,6 +855,8 @@ Functions</h2></td></tr>
 <tr class="separator:gaeeff1b49ced17fdacbb5c6c3513010d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gacb3b853c91932f939cec74cc7f6f88b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__geom.html#gacb3b853c91932f939cec74cc7f6f88b1">egeom</a> (int vers)</td></tr>
 <tr class="separator:gacb3b853c91932f939cec74cc7f6f88b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga092e9179121ccbf5f2a003606deae745"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga092e9179121ccbf5f2a003606deae745">vdwSoftcoreData</a> (<a class="el" href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">RcOp</a>)</td></tr>
+<tr class="separator:ga092e9179121ccbf5f2a003606deae745"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadbe2cc7bb0ba86658d4017b0fb6795d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#gadbe2cc7bb0ba86658d4017b0fb6795d9">evdwData</a> (<a class="el" href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">RcOp</a>)</td></tr>
 <tr class="separator:gadbe2cc7bb0ba86658d4017b0fb6795d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6ad396cf45ab7713c7e9fcf28e839f7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga6ad396cf45ab7713c7e9fcf28e839f7b">evdw</a> (int vers)</td></tr>
@@ -959,6 +961,8 @@ Functions</h2></td></tr>
 <tr class="separator:ga7955042fb09128a08abfdea70999339c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga5da75d11f5fe291058f07dab773c6da7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__repel.html#ga5da75d11f5fe291058f07dab773c6da7">erepel</a> (int vers)</td></tr>
 <tr class="separator:ga5da75d11f5fe291058f07dab773c6da7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaea885bdd48a45414f352bfdd58613986"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__repel.html#gaea885bdd48a45414f352bfdd58613986">repoleInit</a> (int vers)</td></tr>
+<tr class="separator:gaea885bdd48a45414f352bfdd58613986"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4258b5bc79fbc2b9b18160b4f19bc1ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a4258b5bc79fbc2b9b18160b4f19bc1ea">expolData</a> (<a class="el" href="group__rc.html#gaa2180c702b53e2f135f4238ea3fa0cfa">RcOp</a>)</td></tr>
 <tr class="separator:a4258b5bc79fbc2b9b18160b4f19bc1ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ed687ee082164e803a375b4b6a6c7d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a3ed687ee082164e803a375b4b6a6c7d8">alterpol</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>(*<a class="el" href="namespacetinker.html#ace39268efbde19c536a5807dd8594c47">polscale</a>)[3][3], <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>(*<a class="el" href="namespacetinker.html#ab106699c56e6cf40c99fc0b61de64b90">polinv</a>)[3][3])</td></tr>
@@ -1458,15 +1462,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a46340084428d25a0080c5c805ab1fab2"><td class="memTemplParams" colspan="2">template&lt;bool DO_G, class ETYP , int SCALE&gt; </td></tr>
 <tr class="memitem:a46340084428d25a0080c5c805ab1fab2"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a46340084428d25a0080c5c805ab1fab2">pair_chg_v3</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> cscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> <a class="el" href="namespacetinker.html#aed7080afc3ca9a49c41d6c6a0e74c2e4">ebuffer</a>, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> f, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> aewald, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> eccut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ecoff, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ <a class="el" href="namespacetinker.html#a02524b3f5b806886b16d237e529e9c19">ec</a>, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ dec)</td></tr>
 <tr class="separator:a46340084428d25a0080c5c805ab1fab2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87f4ecb78ab31c669e9fcd4fe07d4a34"><td class="memTemplParams" colspan="2">template&lt;bool DO_G&gt; </td></tr>
-<tr class="memitem:a87f4ecb78ab31c669e9fcd4fe07d4a34"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a87f4ecb78ab31c669e9fcd4fe07d4a34">pair_chgtrn</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> cut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> off, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> mscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> f, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphai, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphak, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgk, <a class="el" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a> &amp;__restrict__ e, <a class="el" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a> &amp;__restrict__ de)</td></tr>
-<tr class="separator:a87f4ecb78ab31c669e9fcd4fe07d4a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adeba2e5ea4cf96ac58a2d0274ef17038"><td class="memTemplParams" colspan="2">template&lt;bool DO_G&gt; </td></tr>
+<tr class="memitem:adeba2e5ea4cf96ac58a2d0274ef17038"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#adeba2e5ea4cf96ac58a2d0274ef17038">pair_chgtrn</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> cut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> off, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> mscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> f, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphai, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphak, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> elambda, <a class="el" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a> &amp;__restrict__ e, <a class="el" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a> &amp;__restrict__ de)</td></tr>
+<tr class="separator:adeba2e5ea4cf96ac58a2d0274ef17038"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a003e3ffa25e8f79046271154784bd60c"><td class="memTemplParams" colspan="2">template&lt;bool DO_G, class DTYP , int SCALE&gt; </td></tr>
 <tr class="memitem:a003e3ffa25e8f79046271154784bd60c"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a003e3ffa25e8f79046271154784bd60c">pair_disp_obsolete</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r2, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> rr1, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dspscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> aewald, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ci, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ai, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ck, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> <a class="el" href="group__angle.html#ga9683850e74e34dfc7810d04727eb478e">ak</a>, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> edcut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> edoff, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ e, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ de)</td></tr>
 <tr class="separator:a003e3ffa25e8f79046271154784bd60c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae389377507388c51b5aa5480e758cce9"><td class="memTemplParams" colspan="2">template&lt;bool DO_G, class DTYP , int SCALE&gt; </td></tr>
-<tr class="memitem:ae389377507388c51b5aa5480e758cce9"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#ae389377507388c51b5aa5480e758cce9">pair_disp</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r2, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> rr1, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dspscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> aewald, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ci, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ai, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ck, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> <a class="el" href="group__angle.html#ga9683850e74e34dfc7810d04727eb478e">ak</a>, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> edcut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> edoff, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ e, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ de)</td></tr>
-<tr class="separator:ae389377507388c51b5aa5480e758cce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4aa31490d6e730cc8ac369a247d46ed"><td class="memTemplParams" colspan="2">template&lt;bool DO_G, class DTYP , int SCALE, int SOFTCORE&gt; </td></tr>
+<tr class="memitem:ab4aa31490d6e730cc8ac369a247d46ed"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#ab4aa31490d6e730cc8ac369a247d46ed">pair_disp</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r2, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> rr1, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dspscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> aewald, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ci, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ai, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ck, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> <a class="el" href="group__angle.html#ga9683850e74e34dfc7810d04727eb478e">ak</a>, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> vlambda, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> edcut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> edoff, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ e, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ de)</td></tr>
+<tr class="separator:ab4aa31490d6e730cc8ac369a247d46ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e385c1dcd6366e9ce15b4f147b20f27"><td class="memTemplParams" colspan="2">template&lt;class ETYP &gt; </td></tr>
 <tr class="memitem:a8e385c1dcd6366e9ce15b4f147b20f27"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a8e385c1dcd6366e9ce15b4f147b20f27">pair_dfield</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r2, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> xr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> yr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> zr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> pscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ci, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dix, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> diy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> diz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qiyy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qiyz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qizz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> pdi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> pti, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ck, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dkx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dky, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dkz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkyy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkyz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkzz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> pdk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ptk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> aewald, <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a> &amp;__restrict__ fid, <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a> &amp;__restrict__ fip, <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a> &amp;__restrict__ fkd, <a class="el" href="group__math.html#gad7ed414566b9a16d7d834c8290c56f6f">real3</a> &amp;__restrict__ fkp)</td></tr>
 <tr class="separator:a8e385c1dcd6366e9ce15b4f147b20f27"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1528,14 +1532,14 @@ Functions</h2></td></tr>
 <tr class="separator:a46119191339a23771e9aa9412cd79c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5125508de61b65e3c1667a5b554ad2b2"><td class="memItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a5125508de61b65e3c1667a5b554ad2b2">zero</a> (<a class="el" href="structtinker_1_1_pair_repel_grad.html">PairRepelGrad</a> &amp;pgrad)</td></tr>
 <tr class="separator:a5125508de61b65e3c1667a5b554ad2b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6462625c121559ea3bb9b5e1d85d61f7"><td class="memTemplParams" colspan="2">template&lt;bool do_g&gt; </td></tr>
-<tr class="memitem:a6462625c121559ea3bb9b5e1d85d61f7"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a6462625c121559ea3bb9b5e1d85d61f7">pair_repel</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r2, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> rscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> cut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> off, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> xr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> yr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> zr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> sizi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dmpi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> vali, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ci, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dix, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> diy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> diz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qiyy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qiyz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qizz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> sizk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dmpk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> valk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ck, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dkx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dky, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dkz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkyy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkyz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkzz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ e, <a class="el" href="structtinker_1_1_pair_repel_grad.html">PairRepelGrad</a> &amp;__restrict__ pgrad)</td></tr>
-<tr class="separator:a6462625c121559ea3bb9b5e1d85d61f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3c64185c8c0520bcc740dd40da7c097"><td class="memTemplParams" colspan="2">template&lt;bool do_g, int SOFTCORE&gt; </td></tr>
+<tr class="memitem:af3c64185c8c0520bcc740dd40da7c097"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#af3c64185c8c0520bcc740dd40da7c097">pair_repel</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r2, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> rscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> vlambda, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> cut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> off, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> xr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> yr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> zr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> sizi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dmpi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> vali, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ci, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dix, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> diy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> diz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qiyy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qiyz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qizz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> sizk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dmpk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> valk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ck, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dkx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dky, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dkz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkyy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkyz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkzz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ e, <a class="el" href="structtinker_1_1_pair_repel_grad.html">PairRepelGrad</a> &amp;__restrict__ pgrad)</td></tr>
+<tr class="separator:af3c64185c8c0520bcc740dd40da7c097"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0869431aa790d4cfd778c05e4894ffe4"><td class="memItemLeft" align="right" valign="top">__device__ <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__vdw.html#ga0869431aa790d4cfd778c05e4894ffe4">pair_vlambda</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> <a class="el" href="namespacetinker.html#a051355837d25006b617787e77d3a44bc">vlam</a>, <a class="el" href="group__vdw.html#ga0d7208589eb41e900a617e7d1a72524b">Vdw</a> <a class="el" href="namespacetinker.html#aad6d30766a9fdac168453960225e9d19">vcouple</a>, int imut, int kmut)</td></tr>
 <tr class="separator:ga0869431aa790d4cfd778c05e4894ffe4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16c6d7aff62e48895bd7fa6543d9797b"><td class="memTemplParams" colspan="2">template&lt;bool DO_G&gt; </td></tr>
-<tr class="memitem:a16c6d7aff62e48895bd7fa6543d9797b"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a16c6d7aff62e48895bd7fa6543d9797b">pair_chgtrn_aplus</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> cut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> off, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> mscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> f, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphai, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphak, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgk, <a class="el" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a> &amp;__restrict__ e, <a class="el" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a> &amp;__restrict__ de)</td></tr>
-<tr class="separator:a16c6d7aff62e48895bd7fa6543d9797b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79879cae1e14ade1fbdca6542b536c14"><td class="memTemplParams" colspan="2">template&lt;bool DO_G&gt; </td></tr>
+<tr class="memitem:a79879cae1e14ade1fbdca6542b536c14"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a79879cae1e14ade1fbdca6542b536c14">pair_chgtrn_aplus</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> cut, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> off, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> mscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> f, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphai, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> alphak, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> chgk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> elambda, <a class="el" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a> &amp;__restrict__ e, <a class="el" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a> &amp;__restrict__ de)</td></tr>
+<tr class="separator:a79879cae1e14ade1fbdca6542b536c14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94289606d2a371da7ad760c11d730662"><td class="memTemplParams" colspan="2">template&lt;class ETYP &gt; </td></tr>
 <tr class="memitem:a94289606d2a371da7ad760c11d730662"><td class="memTemplItemLeft" align="right" valign="top">__device__ void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a94289606d2a371da7ad760c11d730662">pair_dfield_aplus</a> (<a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> r2, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> xr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> yr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> zr, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dscale, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ci, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dix, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> diy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> diz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> pdi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ddi, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qixz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qiyy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qiyz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qizz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ck, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dkx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dky, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> dkz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> pdk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> ddk, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkxz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkyy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkyz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> qkzz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> aewald, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ fidx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ fidy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ fidz, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ fkdx, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ fkdy, <a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> &amp;__restrict__ fkdz)</td></tr>
 <tr class="separator:a94289606d2a371da7ad760c11d730662"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2123,6 +2127,8 @@ Variables</h2></td></tr>
 <tr class="separator:gac41bb671068bfb32b5f24d19737f1b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9c10b6b0203ee16d221156cbab02dbed"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga9c10b6b0203ee16d221156cbab02dbed">dielec</a></td></tr>
 <tr class="separator:ga9c10b6b0203ee16d221156cbab02dbed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga66545ea070a0f5e404446581cf790b79"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__ff.html#ga66545ea070a0f5e404446581cf790b79">elam</a></td></tr>
+<tr class="separator:ga66545ea070a0f5e404446581cf790b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae66407598372ac4da504a14585058d68"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga753fe0f5b2ef77802a069f67e51f33ab">grad_prec</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__egv.html#gae66407598372ac4da504a14585058d68">gx</a></td></tr>
 <tr class="memdesc:gae66407598372ac4da504a14585058d68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gradient of valence terms; also works as total gradient array.  <a href="group__egv.html#gae66407598372ac4da504a14585058d68">More...</a><br /></td></tr>
 <tr class="separator:gae66407598372ac4da504a14585058d68"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3096,6 +3102,10 @@ Variables</h2></td></tr>
 <tr class="separator:ac413c157bef004cf05057975f42d10c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7d931107bbba754ab7e0e7a2433ee59"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetinker.html#af7d931107bbba754ab7e0e7a2433ee59">vlrc_vol_dsp</a></td></tr>
 <tr class="separator:af7d931107bbba754ab7e0e7a2433ee59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c85358c1c42d42f57bfcf8901bbf548"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a0c85358c1c42d42f57bfcf8901bbf548">repole</a> )[<a class="el" href="namespacetinker.html#a2fe96f96df7f67bbf2472c62f459fdb2afdb37afe98223da88cadf149167cbac9">MPL_TOTAL</a>]</td></tr>
+<tr class="separator:a0c85358c1c42d42f57bfcf8901bbf548"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03fb6f9aa81c595082d657a52b7b9491"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a03fb6f9aa81c595082d657a52b7b9491">rrepole</a> )[<a class="el" href="namespacetinker.html#a2fe96f96df7f67bbf2472c62f459fdb2afdb37afe98223da88cadf149167cbac9">MPL_TOTAL</a>]</td></tr>
+<tr class="separator:a03fb6f9aa81c595082d657a52b7b9491"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac21d30198226bd6c5ea614508889daa6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetinker.html#ac21d30198226bd6c5ea614508889daa6">sizpr</a></td></tr>
 <tr class="separator:ac21d30198226bd6c5ea614508889daa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56a414114d09ad05f574e339be1a8c09"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetinker.html#a56a414114d09ad05f574e339be1a8c09">dmppr</a></td></tr>
@@ -9399,8 +9409,8 @@ template&lt;bool DO_G, class ETYP , int SCALE&gt; </div>
 
 </div>
 </div>
-<a id="a87f4ecb78ab31c669e9fcd4fe07d4a34" name="a87f4ecb78ab31c669e9fcd4fe07d4a34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87f4ecb78ab31c669e9fcd4fe07d4a34">&#9670;&#160;</a></span>pair_chgtrn()</h2>
+<a id="adeba2e5ea4cf96ac58a2d0274ef17038" name="adeba2e5ea4cf96ac58a2d0274ef17038"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adeba2e5ea4cf96ac58a2d0274ef17038">&#9670;&#160;</a></span>pair_chgtrn()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -9464,6 +9474,12 @@ template&lt;bool DO_G&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td>
+          <td class="paramname"><em>elambda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="group__prec.html#gabc121daa698817106e68e6ea701ee8b2">e_prec</a> &amp;__restrict__&#160;</td>
           <td class="paramname"><em>e</em>, </td>
         </tr>
@@ -9483,8 +9499,8 @@ template&lt;bool DO_G&gt; </div>
 
 </div>
 </div>
-<a id="a16c6d7aff62e48895bd7fa6543d9797b" name="a16c6d7aff62e48895bd7fa6543d9797b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a16c6d7aff62e48895bd7fa6543d9797b">&#9670;&#160;</a></span>pair_chgtrn_aplus()</h2>
+<a id="a79879cae1e14ade1fbdca6542b536c14" name="a79879cae1e14ade1fbdca6542b536c14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79879cae1e14ade1fbdca6542b536c14">&#9670;&#160;</a></span>pair_chgtrn_aplus()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -9544,6 +9560,12 @@ template&lt;bool DO_G&gt; </div>
           <td></td>
           <td class="paramtype"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td>
           <td class="paramname"><em>chgk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td>
+          <td class="paramname"><em>elambda</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -10941,13 +10963,13 @@ template&lt;class ETYP &gt; </div>
 
 </div>
 </div>
-<a id="ae389377507388c51b5aa5480e758cce9" name="ae389377507388c51b5aa5480e758cce9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae389377507388c51b5aa5480e758cce9">&#9670;&#160;</a></span>pair_disp()</h2>
+<a id="ab4aa31490d6e730cc8ac369a247d46ed" name="ab4aa31490d6e730cc8ac369a247d46ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4aa31490d6e730cc8ac369a247d46ed">&#9670;&#160;</a></span>pair_disp()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;bool DO_G, class DTYP , int SCALE&gt; </div>
+template&lt;bool DO_G, class DTYP , int SCALE, int SOFTCORE&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">__device__ void tinker::pair_disp </td>
@@ -11002,6 +11024,12 @@ template&lt;bool DO_G, class DTYP , int SCALE&gt; </div>
           <td></td>
           <td class="paramtype"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td>
           <td class="paramname"><em>ak</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td>
+          <td class="paramname"><em>vlambda</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -13701,13 +13729,13 @@ template&lt;class Ver , class ETYP &gt; </div>
 
 </div>
 </div>
-<a id="a6462625c121559ea3bb9b5e1d85d61f7" name="a6462625c121559ea3bb9b5e1d85d61f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6462625c121559ea3bb9b5e1d85d61f7">&#9670;&#160;</a></span>pair_repel()</h2>
+<a id="af3c64185c8c0520bcc740dd40da7c097" name="af3c64185c8c0520bcc740dd40da7c097"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3c64185c8c0520bcc740dd40da7c097">&#9670;&#160;</a></span>pair_repel()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;bool do_g&gt; </div>
+template&lt;bool do_g, int SOFTCORE&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">__device__ void tinker::pair_repel </td>
@@ -13720,6 +13748,12 @@ template&lt;bool do_g&gt; </div>
           <td></td>
           <td class="paramtype"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td>
           <td class="paramname"><em>rscale</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>&#160;</td>
+          <td class="paramname"><em>vlambda</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -20530,6 +20564,28 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
+<a id="a0c85358c1c42d42f57bfcf8901bbf548" name="a0c85358c1c42d42f57bfcf8901bbf548"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c85358c1c42d42f57bfcf8901bbf548">&#9670;&#160;</a></span>repole</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>(* tinker::repole)[<a class="el" href="namespacetinker.html#a2fe96f96df7f67bbf2472c62f459fdb2afdb37afe98223da88cadf149167cbac9">MPL_TOTAL</a>]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a57de518305d8a2b01b10ea5ac77f50b6" name="a57de518305d8a2b01b10ea5ac77f50b6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a57de518305d8a2b01b10ea5ac77f50b6">&#9670;&#160;</a></span>rpole</h2>
 
@@ -20541,6 +20597,28 @@ template&lt;class T &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>(* tinker::rpole)[<a class="el" href="namespacetinker.html#a2fe96f96df7f67bbf2472c62f459fdb2afdb37afe98223da88cadf149167cbac9">MPL_TOTAL</a>]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a03fb6f9aa81c595082d657a52b7b9491" name="a03fb6f9aa81c595082d657a52b7b9491"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03fb6f9aa81c595082d657a52b7b9491">&#9670;&#160;</a></span>rrepole</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__prec.html#ga705b733820a8480aac42d7dcb3bbd7e0">real</a>(* tinker::rrepole)[<a class="el" href="namespacetinker.html#a2fe96f96df7f67bbf2472c62f459fdb2afdb37afe98223da88cadf149167cbac9">MPL_TOTAL</a>]</td>
         </tr>
       </table>
   </td>

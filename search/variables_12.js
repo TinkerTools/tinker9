@@ -27,7 +27,9 @@ var searchData=
   ['recipc_24',['recipc',['../group__box.html#a7c780f92c1ec73c03b914798cd02b0e6',1,'tinker::Box::recipc()'],['../group__box.html#ga39e1dda7d1b9aa56f759efe6939454b0',1,'tinker::recipc()']]],
   ['repexclude_25',['repexclude',['../namespacetinker.html#ae5c9fcede75a9a8d3818f7c86315aeae',1,'tinker']]],
   ['repexclude_5fscale_26',['repexclude_scale',['../namespacetinker.html#a907ed45ef448e4558ec914c9d106960d',1,'tinker']]],
-  ['respa_5ffast_27',['RESPA_FAST',['../group__mdintg.html#gaf829bb91a26efbec24281ce6854aa987',1,'tinker']]],
-  ['respa_5fslow_28',['RESPA_SLOW',['../group__mdintg.html#gaf6a3636adf0df0a485700beac28828d5',1,'tinker']]],
-  ['rpole_29',['rpole',['../namespacetinker.html#a57de518305d8a2b01b10ea5ac77f50b6',1,'tinker']]]
+  ['repole_27',['repole',['../namespacetinker.html#a0c85358c1c42d42f57bfcf8901bbf548',1,'tinker']]],
+  ['respa_5ffast_28',['RESPA_FAST',['../group__mdintg.html#gaf829bb91a26efbec24281ce6854aa987',1,'tinker']]],
+  ['respa_5fslow_29',['RESPA_SLOW',['../group__mdintg.html#gaf6a3636adf0df0a485700beac28828d5',1,'tinker']]],
+  ['rpole_30',['rpole',['../namespacetinker.html#a57de518305d8a2b01b10ea5ac77f50b6',1,'tinker']]],
+  ['rrepole_31',['rrepole',['../namespacetinker.html#a03fb6f9aa81c595082d657a52b7b9491',1,'tinker']]]
 ];
