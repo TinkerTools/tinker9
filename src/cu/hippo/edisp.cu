@@ -175,7 +175,7 @@ static void edisp_cu()
    int ngrid = gpuGridSize(BLOCK_DIM);
    edisp_cu1<Ver, DTYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, ndisp, edsp, vir_edsp, dedspx, dedspy,
       dedspz, cut, off, st.si1.bit0, ndspexclude, dspexclude, dspexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl,
-      st.iakpl, st.niak, st.iak, st.lst, csix, adisp, aewald);
+      st.iakpl, st.niak, st.iak, st.lst, csix, adisp, aewald, mut, vlam, vcouple);
 }
 
 void edispEwaldReal_cu(int vers)

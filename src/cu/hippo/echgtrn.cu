@@ -24,7 +24,7 @@ static void echgtrn_cu2()
    int ngrid = gpuGridSize(BLOCK_DIM);
    echgtrn_cu1<Ver, CT><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nct, ect, vir_ect, dectx, decty, dectz,
       cut, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
-      st.niak, st.iak, st.lst, chgct, dmpct, f);
+      st.niak, st.iak, st.lst, chgct, dmpct, f, mut, elam);
 }
 
 void echgtrn_cu(int vers)

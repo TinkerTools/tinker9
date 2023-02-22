@@ -75,6 +75,7 @@ void elecData(RcOp);
 
 TINKER_EXTERN real electric;
 TINKER_EXTERN real dielec;
+TINKER_EXTERN real elam;
 
 /// \}
 }

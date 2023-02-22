@@ -29,6 +29,36 @@ static std::vector<new_type> jvec;
 static std::vector<new_type> jvdwbuf;
 static int jcount;
 
+void vdwSoftcoreData(RcOp op)
+{
+   if ((not use(Potent::VDW)) and (not use(Potent::REPULS)) and (not use(Potent::DISP)))
+      return;
+
+   if (op & RcOp::DEALLOC)
+      darray::deallocate(mut);
+
+   if (op & RcOp::ALLOC)
+      darray::allocate(n, &mut);
+
+   if (op & RcOp::INIT) {
+      vlam = mutant::vlambda;
+      if (static_cast<int>(Vdw::DECOUPLE) == mutant::vcouple)
+         vcouple = Vdw::DECOUPLE;
+      else if (static_cast<int>(Vdw::ANNIHILATE) == mutant::vcouple)
+         vcouple = Vdw::ANNIHILATE;
+      std::vector<int> mutvec(n);
+      for (int i = 0; i < n; ++i) {
+         if (mutant::mut[i]) {
+            mutvec[i] = 1;
+         } else {
+            mutvec[i] = 0;
+         }
+      }
+      darray::copyin(g::q0, n, mut, mutvec.data());
+      waitFor(g::q0);
+   }
+}
+
 void evdwData(RcOp op)
 {
    if (not use(Potent::VDW))
@@ -46,7 +76,7 @@ void evdwData(RcOp op)
       if (vdwtyp == Vdw::HAL)
          darray::deallocate(ired, kred, xred, yred, zred, gxred, gyred, gzred);
 
-      darray::deallocate(jvdw, radmin, epsilon, mut);
+      darray::deallocate(jvdw, radmin, epsilon);
 
       nvexclude = 0;
       darray::deallocate(vexclude, vexclude_scale);
@@ -163,8 +193,6 @@ void evdwData(RcOp op)
 #endif
 
       darray::allocate(jcount * jcount, &radmin, &epsilon);
-
-      darray::allocate(n, &mut);
 
       v2scale = vdwpot::v2scale;
       v3scale = vdwpot::v3scale;
@@ -316,14 +344,12 @@ void evdwData(RcOp op)
             int nn = couple::n14[i];
             int bask = i * maxn14;
             int i_vclass = vdw::jvdw[i] - 1;
-            bool i_has_v14prm =
-               (kvdws__rad4.count(i_vclass) > 0) || (kvdws__eps4.count(i_vclass) > 0);
+            bool i_has_v14prm = (kvdws__rad4.count(i_vclass) > 0) || (kvdws__eps4.count(i_vclass) > 0);
             for (int j = 0; j < nn; ++j) {
                int k = couple::i14[bask + j];
                k -= 1;
                int k_vclass = vdw::jvdw[k] - 1;
-               bool k_has_v14prm =
-                  (kvdws__rad4.count(k_vclass) > 0) || (kvdws__eps4.count(k_vclass) > 0);
+               bool k_has_v14prm = (kvdws__rad4.count(k_vclass) > 0) || (kvdws__eps4.count(k_vclass) > 0);
                if (k > i && (i_has_v14prm || k_has_v14prm)) {
                   v14ikbuf.push_back(i);
                   v14ikbuf.push_back(k);
@@ -413,22 +439,6 @@ void evdwData(RcOp op)
          darray::copyin(g::q0, jcount * jcount, epsilon4, eps4buf.data());
          waitFor(g::q0);
       }
-
-      if (static_cast<int>(Vdw::DECOUPLE) == mutant::vcouple)
-         vcouple = Vdw::DECOUPLE;
-      else if (static_cast<int>(Vdw::ANNIHILATE) == mutant::vcouple)
-         vcouple = Vdw::ANNIHILATE;
-      std::vector<int> mutvec(n);
-      for (int i = 0; i < n; ++i) {
-         if (mutant::mut[i]) {
-            mutvec[i] = 1;
-         } else {
-            mutvec[i] = 0;
-         }
-      }
-      darray::copyin(g::q0, n, mut, mutvec.data());
-      waitFor(g::q0);
-      vlam = mutant::vlambda;
 
       // Initialize elrc and vlrc.
       if (vdwpot::use_vcorr) {

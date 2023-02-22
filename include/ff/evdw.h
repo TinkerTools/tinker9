@@ -59,6 +59,8 @@ enum class Vdw : int
 
 namespace tinker {
 /// \ingroup vdw
+void vdwSoftcoreData(RcOp);
+/// \ingroup vdw
 void evdwData(RcOp);
 /// \ingroup vdw
 void evdw(int vers);

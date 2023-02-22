@@ -2,6 +2,7 @@
 #include "math/realn.h"
 #include "math/switch.h"
 #include "seq/damp_hippo.h"
+#include "seq/pair_vlambda.h"
 
 namespace tinker {
 struct PairRepelGrad
@@ -26,14 +27,44 @@ inline void zero(PairRepelGrad& pgrad)
 }
 
 #pragma acc routine seq
-template <bool do_g>
+template <bool do_g, int SOFTCORE>
 SEQ_CUDA
-void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
-   real zr, real sizi, real dmpi, real vali, real ci, real dix, real diy,
-   real diz, real qixx, real qixy, real qixz, real qiyy, real qiyz, real qizz,
-   real sizk, real dmpk, real valk, real ck, real dkx, real dky, real dkz,
-   real qkxx, real qkxy, real qkxz, real qkyy, real qkyz, real qkzz,
-   real& restrict e, PairRepelGrad& restrict pgrad)
+void pair_repel(real r2,
+                real rscale,
+                real vlambda,
+                real cut,
+                real off,
+                real xr,
+                real yr,
+                real zr,
+                real sizi,
+                real dmpi,
+                real vali,
+                real ci,
+                real dix,
+                real diy,
+                real diz,
+                real qixx,
+                real qixy,
+                real qixz,
+                real qiyy,
+                real qiyz,
+                real qizz,
+                real sizk,
+                real dmpk,
+                real valk,
+                real ck,
+                real dkx,
+                real dky,
+                real dkz,
+                real qkxx,
+                real qkxy,
+                real qkxz,
+                real qkyy,
+                real qkyz,
+                real qkzz,
+                real& restrict e,
+                PairRepelGrad& restrict pgrad)
 {
    real cut2 = cut * cut;
    real r = REAL_SQRT(r2);
@@ -45,7 +76,8 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    real rr7 = 5 * rr5 * rr2;
    real rr9 = 7 * rr7 * rr2;
    real rr11 = 0;
-   if CONSTEXPR (do_g) rr11 = 9 * rr9 * rr2;
+   if CONSTEXPR (do_g)
+      rr11 = 9 * rr9 * rr2;
 
    real3 dr = make_real3(xr, yr, zr);
    real3 di = make_real3(dix, diy, diz);
@@ -80,8 +112,7 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    real qik = dot3(qi_dr, qk_dr);
    real diqk = dot3(di, qk_dr);
    real dkqi = dot3(dk, qi_dr);
-   real qiqk = dot3(qixx, qiyy, qizz, qkxx, qkyy, qkzz)
-      + 2 * dot3(qixy, qixz, qiyz, qkxy, qkxz, qkyz);
+   real qiqk = dot3(qixx, qiyy, qizz, qkxx, qkyy, qkzz) + 2 * dot3(qixy, qixz, qiyz, qkxy, qkxz, qkyz);
 
    real term1 = vali * valk;
    real term2 = valk * dir - vali * dkr + dik;
@@ -90,14 +121,23 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
    real term5 = qir * qkr;
 
    real sizik = sizi * sizk * rscale;
-   real eterm = term1 * dmpik[0] + term2 * dmpik[1] + term3 * dmpik[2]
-      + term4 * dmpik[3] + term5 * dmpik[4];
+   real eterm = term1 * dmpik[0] + term2 * dmpik[1] + term3 * dmpik[2] + term4 * dmpik[3] + term5 * dmpik[4];
 
    e = sizik * eterm * rInv;
+
+   // energy via soft core lambda scaling
+   real termsc, soft;
+   if CONSTEXPR (SOFTCORE) {
+      real vlambda3 = vlambda * vlambda * vlambda;
+      real vlambda4 = vlambda3 * vlambda;
+      real vlambda5 = vlambda4 * vlambda;
+      termsc = vlambda3 - vlambda4 + r2;
+      soft = vlambda5 * r / REAL_SQRT(termsc);
+      e *= soft;
+   }
    // gradient
    if CONSTEXPR (do_g) {
-      real de = term1 * dmpik[1] + term2 * dmpik[2] + term3 * dmpik[3]
-         + term4 * dmpik[4] + term5 * dmpik[5];
+      real de = term1 * dmpik[1] + term2 * dmpik[2] + term3 * dmpik[3] + term4 * dmpik[4] + term5 * dmpik[5];
       term1 = -valk * dmpik[1] + dkr * dmpik[2] - qkr * dmpik[3];
       term2 = vali * dmpik[1] + dir * dmpik[2] + qir * dmpik[3];
       term3 = 2 * dmpik[2];
@@ -128,12 +168,9 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
       real dkqiz = dk.x * qixz + dk.y * qiyz + dk.z * qizz;
 
       real3 frc0;
-      frc0.x = de * dr.x + term1 * di.x + term2 * dk.x + term3 * (diqkx - dkqix)
-         + term4 * qix + term5 * qkx + term6 * (qixk + qkxi);
-      frc0.y = de * dr.y + term1 * di.y + term2 * dk.y + term3 * (diqky - dkqiy)
-         + term4 * qiy + term5 * qky + term6 * (qiyk + qkyi);
-      frc0.z = de * dr.z + term1 * di.z + term2 * dk.z + term3 * (diqkz - dkqiz)
-         + term4 * qiz + term5 * qkz + term6 * (qizk + qkzi);
+      frc0.x = de * dr.x + term1 * di.x + term2 * dk.x + term3 * (diqkx - dkqix) + term4 * qix + term5 * qkx + term6 * (qixk + qkxi);
+      frc0.y = de * dr.y + term1 * di.y + term2 * dk.y + term3 * (diqky - dkqiy) + term4 * qiy + term5 * qky + term6 * (qiyk + qkyi);
+      frc0.z = de * dr.z + term1 * di.z + term2 * dk.z + term3 * (diqkz - dkqiz) + term4 * qiz + term5 * qkz + term6 * (qizk + qkzi);
 
       pgrad.frcx = frc0.x * rr1 + eterm * rr3 * dr.x;
       pgrad.frcy = frc0.y * rr1 + eterm * rr3 * dr.y;
@@ -178,41 +215,41 @@ void pair_repel(real r2, real rscale, real cut, real off, real xr, real yr,
       real dkqiry = dkqix * dr.z - dkqiz * dr.x;
       real dkqirz = dkqiy * dr.x - dkqix * dr.y;
 
-      real dqikx = di.y * qkz - di.z * qky + dk.y * qiz - dk.z * qiy
-         - 2
-            * (qixy * qkxz + qiyy * qkyz + qiyz * qkzz - qixz * qkxy
-               - qiyz * qkyy - qizz * qkyz);
-      real dqiky = di.z * qkx - di.x * qkz + dk.z * qix - dk.x * qiz
-         - 2
-            * (qixz * qkxx + qiyz * qkxy + qizz * qkxz - qixx * qkxz
-               - qixy * qkyz - qixz * qkzz);
-      real dqikz = di.x * qky - di.y * qkx + dk.x * qiy - dk.y * qix
-         - 2
-            * (qixx * qkxy + qixy * qkyy + qixz * qkyz - qixy * qkxx
-               - qiyy * qkxy - qiyz * qkxz);
+      real dqikx = di.y * qkz - di.z * qky + dk.y * qiz - dk.z * qiy - 2 * (qixy * qkxz + qiyy * qkyz + qiyz * qkzz - qixz * qkxy - qiyz * qkyy - qizz * qkyz);
+      real dqiky = di.z * qkx - di.x * qkz + dk.z * qix - dk.x * qiz - 2 * (qixz * qkxx + qiyz * qkxy + qizz * qkxz - qixx * qkxz - qixy * qkyz - qixz * qkzz);
+      real dqikz = di.x * qky - di.y * qkx + dk.x * qiy - dk.y * qix - 2 * (qixx * qkxy + qixy * qkyy + qixz * qkyz - qixy * qkxx - qiyy * qkxy - qiyz * qkxz);
 
       real3 trq0;
-      trq0.x = -dmpik[1] * dikx + term1 * dirx + term3 * (dqikx + dkqirx)
-         - term4 * qirx - term6 * (qikrx + qikx);
-      trq0.y = -dmpik[1] * diky + term1 * diry + term3 * (dqiky + dkqiry)
-         - term4 * qiry - term6 * (qikry + qiky);
-      trq0.z = -dmpik[1] * dikz + term1 * dirz + term3 * (dqikz + dkqirz)
-         - term4 * qirz - term6 * (qikrz + qikz);
+      trq0.x = -dmpik[1] * dikx + term1 * dirx + term3 * (dqikx + dkqirx) - term4 * qirx - term6 * (qikrx + qikx);
+      trq0.y = -dmpik[1] * diky + term1 * diry + term3 * (dqiky + dkqiry) - term4 * qiry - term6 * (qikry + qiky);
+      trq0.z = -dmpik[1] * dikz + term1 * dirz + term3 * (dqikz + dkqirz) - term4 * qirz - term6 * (qikrz + qikz);
 
       pgrad.ttqi[0] += sizik * rr1 * trq0.x;
       pgrad.ttqi[1] += sizik * rr1 * trq0.y;
       pgrad.ttqi[2] += sizik * rr1 * trq0.z;
 
-      trq0.x = dmpik[1] * dikx + term2 * dkrx - term3 * (dqikx + diqkrx)
-         - term5 * qkrx - term6 * (qkirx - qikx);
-      trq0.y = dmpik[1] * diky + term2 * dkry - term3 * (dqiky + diqkry)
-         - term5 * qkry - term6 * (qkiry - qiky);
-      trq0.z = dmpik[1] * dikz + term2 * dkrz - term3 * (dqikz + diqkrz)
-         - term5 * qkrz - term6 * (qkirz - qikz);
+      trq0.x = dmpik[1] * dikx + term2 * dkrx - term3 * (dqikx + diqkrx) - term5 * qkrx - term6 * (qkirx - qikx);
+      trq0.y = dmpik[1] * diky + term2 * dkry - term3 * (dqiky + diqkry) - term5 * qkry - term6 * (qkiry - qiky);
+      trq0.z = dmpik[1] * dikz + term2 * dkrz - term3 * (dqikz + diqkrz) - term5 * qkrz - term6 * (qkirz - qikz);
 
       pgrad.ttqk[0] += sizik * rr1 * trq0.x;
       pgrad.ttqk[1] += sizik * rr1 * trq0.y;
       pgrad.ttqk[2] += sizik * rr1 * trq0.z;
+
+      // force via soft core lambda scaling
+      if CONSTEXPR (SOFTCORE) {
+         real dsoft = e * soft * (rr2 - 1 / termsc);
+         pgrad.frcx = pgrad.frcx * soft - dsoft * xr;
+         pgrad.frcy = pgrad.frcy * soft - dsoft * yr;
+         pgrad.frcz = pgrad.frcz * soft - dsoft * zr;
+
+         pgrad.ttqi[0] *= soft;
+         pgrad.ttqi[1] *= soft;
+         pgrad.ttqi[2] *= soft;
+         pgrad.ttqk[0] *= soft;
+         pgrad.ttqk[1] *= soft;
+         pgrad.ttqk[2] *= soft;
+      }
    }
 
    if (r2 > cut2) {

@@ -28,6 +28,8 @@ EXTRA_PARAMS: |
   , real *restrict chgct
   , real *restrict dmpct
   , real f
+  , const int* restrict mut
+  , real elam
 # IMPLICIT_PARAMS:
 
 I_VARIABLES:
@@ -36,12 +38,14 @@ I_VARIABLES:
   - register real zi     from:z
   - register real chgi   from:chgct
   - register real alphai from:dmpct
+  - register int  imut   from:mut
 K_VARIABLES:
   - register real xk     from:x
   - register real yk     from:y
   - register real zk     from:z
   - register real chgk   from:chgct
   - register real alphak from:dmpct
+  - register int  kmut   from:mut
 I_FORCE:
   - register real gxi addto:gx
   - register real gyi addto:gy
@@ -58,11 +62,12 @@ SCALED_PAIRWISE_INTERACTION: |
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     real r = REAL_SQRT(r2);
+    real elambda = (imut || kmut ? elam : 1);
     e_prec e, de;
     if CONSTEXPR (CT == Chgtrn::SEPARATE)
-      pair_chgtrn<do_g>      (r, cut, off, scalea, f, @alphai@, @chgi@, @alphak@, @chgk@, e, de);
+      pair_chgtrn<do_g>      (r, cut, off, scalea, f, @alphai@, @chgi@, @alphak@, @chgk@, elambda, e, de);
     else if CONSTEXPR (CT == Chgtrn::COMBINED)
-      pair_chgtrn_aplus<do_g>(r, cut, off, scalea, f, @alphai@, @chgi@, @alphak@, @chgk@, e, de);
+      pair_chgtrn_aplus<do_g>(r, cut, off, scalea, f, @alphai@, @chgi@, @alphak@, @chgk@, elambda, e, de);
     if CONSTEXPR (do_a)
         if (e != 0 and scalea != 0)
           nctl += 1;
@@ -98,11 +103,12 @@ FULL_PAIRWISE_INTERACTION: |
   real r2 = image2(xr, yr, zr);
   if (r2 <= off * off and incl) {
     real r = REAL_SQRT(r2);
+    real elambda = (imut || kmut ? elam : 1);
     e_prec e, de;
     if CONSTEXPR (CT == Chgtrn::SEPARATE)
-      pair_chgtrn<do_g>      (r, cut, off, 1, f, @alphai@, @chgi@, @alphak@, @chgk@, e, de);
+      pair_chgtrn<do_g>      (r, cut, off, 1, f, @alphai@, @chgi@, @alphak@, @chgk@, elambda, e, de);
     else if CONSTEXPR (CT == Chgtrn::COMBINED)
-      pair_chgtrn_aplus<do_g>(r, cut, off, 1, f, @alphai@, @chgi@, @alphak@, @chgk@, e, de);
+      pair_chgtrn_aplus<do_g>(r, cut, off, 1, f, @alphai@, @chgi@, @alphak@, @chgk@, elambda, e, de);
     if CONSTEXPR (do_a)
         if (e != 0)
           nctl += 1;

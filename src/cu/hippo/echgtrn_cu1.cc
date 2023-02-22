@@ -1,4 +1,4 @@
-// ck.py Version 3.0.2
+// ck.py Version 3.1.0
 template <class Ver, Chgtrn CT>
 __global__
 void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuffer restrict ec,
@@ -6,7 +6,7 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
    const unsigned* restrict minfo, int nexclude, const int (*restrict exclude)[2],
    const real (*restrict exclude_scale)[3], const real* restrict x, const real* restrict y, const real* restrict z,
    const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak, const int* restrict iak,
-   const int* restrict lst, real* restrict chgct, real* restrict dmpct, real f)
+   const int* restrict lst, real* restrict chgct, real* restrict dmpct, real f, const int* restrict mut, real elam)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -37,7 +37,9 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
       vctlzz = 0;
    }
    real xi, yi, zi, chgi, alphai;
+   int imut;
    real xk, yk, zk, chgk, alphak;
+   int kmut;
    real gxi, gyi, gzi;
    real gxk, gyk, gzk;
 
@@ -61,11 +63,13 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
       zi = z[i];
       chgi = chgct[i];
       alphai = dmpct[i];
+      imut = mut[i];
       xk = x[k];
       yk = y[k];
       zk = z[k];
       chgk = chgct[k];
       alphak = dmpct[k];
+      kmut = mut[k];
 
       constexpr bool incl = true;
       real xr = xk - xi;
@@ -74,11 +78,12 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
       real r2 = image2(xr, yr, zr);
       if (r2 <= off * off and incl) {
          real r = REAL_SQRT(r2);
+         real elambda = (imut || kmut ? elam : 1);
          e_prec e, de;
          if CONSTEXPR (CT == Chgtrn::SEPARATE)
-            pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk, e, de);
+            pair_chgtrn<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk, elambda, e, de);
          else if CONSTEXPR (CT == Chgtrn::COMBINED)
-            pair_chgtrn_aplus<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk, e, de);
+            pair_chgtrn_aplus<do_g>(r, cut, off, scalea, f, alphai, chgi, alphak, chgk, elambda, e, de);
          if CONSTEXPR (do_a)
             if (e != 0 and scalea != 0)
                nctl += 1;
@@ -144,11 +149,13 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
       zi = sorted[atomi].z;
       chgi = chgct[i];
       alphai = dmpct[i];
+      imut = mut[i];
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
       chgk = chgct[k];
       alphak = dmpct[k];
+      kmut = mut[k];
 
       unsigned int minfo0 = minfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -162,11 +169,12 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
+            real elambda = (imut || kmut ? elam : 1);
             e_prec e, de;
             if CONSTEXPR (CT == Chgtrn::SEPARATE)
-               pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
+               pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, elambda, e, de);
             else if CONSTEXPR (CT == Chgtrn::COMBINED)
-               pair_chgtrn_aplus<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
+               pair_chgtrn_aplus<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, elambda, e, de);
             if CONSTEXPR (do_a)
                if (e != 0)
                   nctl += 1;
@@ -202,6 +210,7 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
          zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
          chgi = __shfl_sync(ALL_LANES, chgi, ilane + 1);
          alphai = __shfl_sync(ALL_LANES, alphai, ilane + 1);
+         imut = __shfl_sync(ALL_LANES, imut, ilane + 1);
          if CONSTEXPR (do_g) {
             gxi = __shfl_sync(ALL_LANES, gxi, ilane + 1);
             gyi = __shfl_sync(ALL_LANES, gyi, ilane + 1);
@@ -239,11 +248,13 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
       zi = sorted[atomi].z;
       chgi = chgct[i];
       alphai = dmpct[i];
+      imut = mut[i];
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
       chgk = chgct[k];
       alphak = dmpct[k];
+      kmut = mut[k];
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          bool incl = atomk > 0;
@@ -253,11 +264,12 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
          real r2 = image2(xr, yr, zr);
          if (r2 <= off * off and incl) {
             real r = REAL_SQRT(r2);
+            real elambda = (imut || kmut ? elam : 1);
             e_prec e, de;
             if CONSTEXPR (CT == Chgtrn::SEPARATE)
-               pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
+               pair_chgtrn<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, elambda, e, de);
             else if CONSTEXPR (CT == Chgtrn::COMBINED)
-               pair_chgtrn_aplus<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, e, de);
+               pair_chgtrn_aplus<do_g>(r, cut, off, 1, f, alphai, chgi, alphak, chgk, elambda, e, de);
             if CONSTEXPR (do_a)
                if (e != 0)
                   nctl += 1;
@@ -292,6 +304,7 @@ void echgtrn_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nc, EnergyBuff
          zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
          chgi = __shfl_sync(ALL_LANES, chgi, ilane + 1);
          alphai = __shfl_sync(ALL_LANES, alphai, ilane + 1);
+         imut = __shfl_sync(ALL_LANES, imut, ilane + 1);
          if CONSTEXPR (do_g) {
             gxi = __shfl_sync(ALL_LANES, gxi, ilane + 1);
             gyi = __shfl_sync(ALL_LANES, gyi, ilane + 1);

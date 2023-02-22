@@ -1,4 +1,4 @@
-// ck.py Version 3.0.2
+// ck.py Version 3.1.0
 template <class Ver, class DTYP>
 __global__
 void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer restrict ed, VirialBuffer restrict vd,
@@ -6,7 +6,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
    const unsigned* restrict dinfo, int nexclude, const int (*restrict exclude)[2], const real* restrict exclude_scale,
    const real* restrict x, const real* restrict y, const real* restrict z, const Spatial::SortedAtom* restrict sorted,
    int nakpl, const int* restrict iakpl, int niak, const int* restrict iak, const int* restrict lst,
-   const real* restrict csix, const real* restrict adisp, real aewald)
+   const real* restrict csix, const real* restrict adisp, real aewald, const int* restrict mut, real vlam, Vdw vcouple)
 {
    constexpr bool do_a = Ver::a;
    constexpr bool do_e = Ver::e;
@@ -37,7 +37,9 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
       vdtlzz = 0;
    }
    real xi, yi, zi, ci, ai;
+   int imut;
    real xk, yk, zk, ck, ak;
+   int kmut;
    real gxi, gyi, gzi;
    real gxk, gyk, gzk;
 
@@ -61,11 +63,13 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
       zi = z[i];
       ci = csix[i];
       ai = adisp[i];
+      imut = mut[i];
       xk = x[k];
       yk = y[k];
       zk = z[k];
       ck = csix[k];
       ak = adisp[k];
+      kmut = mut[k];
 
       constexpr bool incl = true;
       real xr = xi - xk;
@@ -76,7 +80,8 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
          real r = REAL_SQRT(r2);
          real rr1 = REAL_RECIP(r);
          real e, de;
-         pair_disp<do_g, DTYP, 0>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak, cut, off, e, de);
+         real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+         pair_disp<do_g, DTYP, 0, 1>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak, vlambda, cut, off, e, de);
          if CONSTEXPR (do_e) {
             edtl += floatTo<ebuf_prec>(e);
             if CONSTEXPR (do_a) {
@@ -143,11 +148,13 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
       zi = sorted[atomi].z;
       ci = csix[i];
       ai = adisp[i];
+      imut = mut[i];
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
       ck = csix[k];
       ak = adisp[k];
+      kmut = mut[k];
 
       unsigned int dinfo0 = dinfo[iw * WARP_SIZE + ilane];
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -163,7 +170,8 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
             real r = REAL_SQRT(r2);
             real rr1 = REAL_RECIP(r);
             real e, de;
-            pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut, off, e, de);
+            real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+            pair_disp<do_g, DTYP, 1, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, vlambda, cut, off, e, de);
             if CONSTEXPR (do_e) {
                edtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -200,6 +208,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
          zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
          ci = __shfl_sync(ALL_LANES, ci, ilane + 1);
          ai = __shfl_sync(ALL_LANES, ai, ilane + 1);
+         imut = __shfl_sync(ALL_LANES, imut, ilane + 1);
          if CONSTEXPR (do_g) {
             gxi = __shfl_sync(ALL_LANES, gxi, ilane + 1);
             gyi = __shfl_sync(ALL_LANES, gyi, ilane + 1);
@@ -237,11 +246,13 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
       zi = sorted[atomi].z;
       ci = csix[i];
       ai = adisp[i];
+      imut = mut[i];
       xk = sorted[atomk].x;
       yk = sorted[atomk].y;
       zk = sorted[atomk].z;
       ck = csix[k];
       ak = adisp[k];
+      kmut = mut[k];
 
       for (int j = 0; j < WARP_SIZE; ++j) {
          bool incl = atomk > 0;
@@ -253,7 +264,8 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
             real r = REAL_SQRT(r2);
             real rr1 = REAL_RECIP(r);
             real e, de;
-            pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, cut, off, e, de);
+            real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
+            pair_disp<do_g, DTYP, 1, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, vlambda, cut, off, e, de);
             if CONSTEXPR (do_e) {
                edtl += floatTo<ebuf_prec>(e);
                if CONSTEXPR (do_a) {
@@ -289,6 +301,7 @@ void edisp_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nd, EnergyBuffer
          zi = __shfl_sync(ALL_LANES, zi, ilane + 1);
          ci = __shfl_sync(ALL_LANES, ci, ilane + 1);
          ai = __shfl_sync(ALL_LANES, ai, ilane + 1);
+         imut = __shfl_sync(ALL_LANES, imut, ilane + 1);
          if CONSTEXPR (do_g) {
             gxi = __shfl_sync(ALL_LANES, gxi, ilane + 1);
             gyi = __shfl_sync(ALL_LANES, gyi, ilane + 1);
