@@ -5,8 +5,8 @@
 /// \addtogroup general
 /// \{
 #define TINKER9_VERSION_MAJOR 1
-#define TINKER9_VERSION_MINOR 3
-#define TINKER9_VERSION_PATCH 1
+#define TINKER9_VERSION_MINOR 4
+#define TINKER9_VERSION_PATCH 0
 /// \}
 
 // clang-format off
@@ -28,7 +28,7 @@
 "  ###                                                                      ### ""\n" \
 " ###            Tinker9  --  Software Tools for Molecular Design            ###""\n" \
 " ##                                                                          ##""\n" \
-" ##                       Version 1.3.1  November 2022                       ##""\n" \
+" ##                       Version 1.4.0  February 2023                       ##""\n" \
 " ##                                                                          ##""\n" \
 " ##                 Copyright (c)  Zhi Wang & the Ponder Lab                 ##""\n" \
 " ###                           All Rights Reserved                          ###""\n" \

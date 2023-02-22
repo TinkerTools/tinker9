@@ -106,7 +106,7 @@ FULL_PAIRWISE_INTERACTION: |
       @sizi@, @dmpi@, @vali@, @ci@, @dix@, @diy@, @diz@, @qixx@, @qixy@,
       @qixz@, @qiyy@, @qiyz@, @qizz@,
       @sizk@, @dmpk@, @valk@, @ck@, @dkx@, @dky@, @dkz@, @qkxx@, @qkxy@,
-      @qkxz@, @qkyy@, @qkyz@, @qkzz@, 
+      @qkxz@, @qkyy@, @qkyz@, @qkzz@,
       e, pgrad);
 
     if CONSTEXPR (do_a)
