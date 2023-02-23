@@ -1,11 +1,17 @@
 # About This Python Script
 
+The following commands are expected to run in the directory `tinker9/docker`.
+The parent directory `tinker9` should be a git clone.
+
 To use this script, run
 ```bash
 tinker9.docker [CudaVersion] [Stage] | bash
 ```
 
 Use command `tinker9.docker -h` to see the valid values of `CudaVersion` and `Stage`.
+
+These commands will create `*.dockerfile` files which will be ignored by git.
+Feel free to delete them anytime.
 
 # Steps to Install Docker on Ubuntu
 
