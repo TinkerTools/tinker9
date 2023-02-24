@@ -10,7 +10,7 @@ an example to compile the GPU code without OpenACC:
 .. code-block:: bash
 
    cd tinker9 && mkdir build
-   FC=gfortran compute_capability=70 gpu_lang=cuda cmake ..
+   FC=gfortran compute_capability=70 gpu_lang= cmake ..
    make
    make test
 
