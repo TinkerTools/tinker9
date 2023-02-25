@@ -66,6 +66,9 @@ namespace tinker {
 
 bool useEwald();
 void elecData(RcOp);
+void exfield(int vers,     ///< Common integer flag for the energy components.
+             int useDipole ///< If 0, use partial charge; otherwise, also include dipole.
+);
 
 //====================================================================//
 //                                                                    //
