@@ -827,4 +827,13 @@ void exfield(int vers, int useDipole)
    else
       TINKER_FCALL2(acc1, cu1, exfieldCharge, vers);
 }
+
+TINKER_FVOID2(acc1, cu1, extfieldModifyDField, real (*)[3], real (*)[3]);
+void extfieldModifyDField(real (*field)[3], real (*fieldp)[3])
+{
+   if (not extfld::use_exfld)
+      return;
+
+   TINKER_FCALL2(acc1, cu1, extfieldModifyDField, field, fieldp);
+}
 }

@@ -261,4 +261,30 @@ void exfieldDipole_acc(int vers)
       }
    }
 }
+
+void extfieldModifyDField_acc(real (*field)[3], real (*fieldp)[3])
+{
+   real ex1 = extfld::exfld[0];
+   real ex2 = extfld::exfld[1];
+   real ex3 = extfld::exfld[2];
+
+   if (fieldp) {
+      #pragma acc parallel loop independent async deviceptr(field,fieldp)
+      for (int i = 0; i < n; ++i) {
+         field[i][0] += ex1;
+         field[i][1] += ex2;
+         field[i][2] += ex3;
+         fieldp[i][0] += ex1;
+         fieldp[i][1] += ex2;
+         fieldp[i][2] += ex3;
+      }
+   } else {
+      #pragma acc parallel loop independent async deviceptr(field)
+      for (int i = 0; i < n; ++i) {
+         field[i][0] += ex1;
+         field[i][1] += ex2;
+         field[i][2] += ex3;
+      }
+   }
+}
 }

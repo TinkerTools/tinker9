@@ -1,4 +1,4 @@
- extfield.cpp
+ extfield.cpp -- multipole term
 
  Energy Component Breakdown :           Kcal/mole        Interactions
  Atomic Multipoles                        39.7407               33
