@@ -3,9 +3,9 @@
  Energy Component Breakdown :           Kcal/mole        Interactions
  Atomic Multipoles                        39.7407               33
 
- Internal Virial Tensor :                   8.034       -1.807       32.838
-                                           -1.807      -20.769       -9.504
-                                           32.838       -9.504       43.938
+ Internal Virial Tensor :                   8.034       -0.430       19.176
+                                           -0.430      -20.769       -6.245
+                                           19.176       -6.245       43.938
 
  Cartesian Gradient Breakdown over Individual Atoms :
 

@@ -404,9 +404,9 @@ void exfieldCharge_acc(int vers)
             real vxx = xi * frx;
             real vyy = yi * fry;
             real vzz = zi * frz;
-            real vxy = yi * frx + xi * fry;
-            real vxz = zi * frx + xi * frz;
-            real vyz = zi * fry + yi * frz;
+            real vxy = (yi * frx + xi * fry) / 2;
+            real vxz = (zi * frx + xi * frz) / 2;
+            real vyz = (zi * fry + yi * frz) / 2;
             atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ec, offset);
          }
       }
