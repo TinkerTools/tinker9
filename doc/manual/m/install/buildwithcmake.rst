@@ -10,7 +10,7 @@ an example to compile the GPU code without OpenACC:
 .. code-block:: bash
 
    cd tinker9 && mkdir build
-   FC=gfortran compute_capability=70 gpu_lang=CUDA cmake ..
+   FC=gfortran compute_capability=70 gpu_lang=cuda cmake ..
    make
    make test
 
@@ -51,7 +51,7 @@ Configure Compilers
 -------------------
 If we are lucky, we do not need to specify compilers in the *cmake*
 configuration. However, specifying these compilers is preferred because
-programs are not always installed they way we wanted.
+programs are not always installed the way we wanted.
 Set *CXX=...*, *CUDACXX=...*, and *FC=...* to specify the non-default C++,
 CUDA, and Fortran compilers, respectively. These environmental variables
 are supported by *cmake*.
@@ -99,9 +99,10 @@ different from the default cmake behavior to install the program under */usr/loc
 C++ syntax standard. The source code is c++11-compliant, and should have no
 problems compiled with c++14. If set to *14* here, users should make sure
 the compilers are c++14-compliant.
-In general, Users should not worry about the C++ standard for Tinker9.
-Using a more recent C++ standard is unlikely to speed up the performance of
-Tinker9 and may harm the availablity of Tinker9 to older machines.
+In general, users should not worry about the C++ standard for Tinker9.
+Using a more recent C++ standard to write the source code is unlikely
+to speed up the performance of Tinker9 and may harm the availability of
+Tinker9 to older machines.
 
 **-DPREC (prec) = mixed**
 
