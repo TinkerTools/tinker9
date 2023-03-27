@@ -53,15 +53,24 @@ cmake_minimum_required (VERSION 3.18)
 !!/
 !!/ Configure Compilers
 !!/ -------------------
+!!/ If we are lucky, we do not need to specify compilers in the *cmake*
+!!/ configuration. However, specifying these compilers is preferred because
+!!/ programs are not always installed the way we wanted.
 !!/ Set *CXX=...*, *CUDACXX=...*, and *FC=...* to specify the non-default C++,
 !!/ CUDA, and Fortran compilers, respectively. These environmental variables
 !!/ are supported by *cmake*.
+!!/ Do not use nvfortran.
 !!/
 !!/ This cmake script checks a custom environmental variable *ACC=...*
-!!/ *only* for the GPU code.
+!!/ *only* for the OpenACC GPU code.
 !!/ If not set, the building script will take a guess at the OpenACC compiler.
 !!/ *ACC* will also be used as the C++ compiler. The value of *CXX* (if set)
 !!/ will be neglected.
+!!/
+!!/ The only place where a C compiler may be used in Tinker9 is on the old Mac
+!!/ computers that had Nvidia support. clang is hardwired in the cmake scripts
+!!/ to compile the Objective-C and C source files. Thus, *CC=...* is not worth
+!!/ setting in the cmake configuration.
 !!/
 !!/ Configure Tinker9
 !!/ -----------------
@@ -150,6 +159,10 @@ endif ()
 !!/ C++ syntax standard. The source code is c++11-compliant, and should have no
 !!/ problems compiled with c++14. If set to *14* here, users should make sure
 !!/ the compilers are c++14-compliant.
+!!/ In general, Users should not worry about the C++ standard for Tinker9.
+!!/ Using a more recent C++ standard to write the source code is unlikely
+!!/ to speed up the performance of Tinker9 and may harm the availability of
+!!/ Tinker9 to older machines.
 !!/
 ]]
 if (DEFINED ENV{std})
