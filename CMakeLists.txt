@@ -159,7 +159,7 @@ endif ()
 !!/ C++ syntax standard. The source code is c++11-compliant, and should have no
 !!/ problems compiled with c++14. If set to *14* here, users should make sure
 !!/ the compilers are c++14-compliant.
-!!/ In general, Users should not worry about the C++ standard for Tinker9.
+!!/ In general, users should not worry about the C++ standard for Tinker9.
 !!/ Using a more recent C++ standard to write the source code is unlikely
 !!/ to speed up the performance of Tinker9 and may harm the availability of
 !!/ Tinker9 to older machines.
