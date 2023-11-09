@@ -598,7 +598,7 @@ add_subdirectory (test)
 
 ## executables
 add_library (__t9_main_o OBJECT src/main.cc)
-target_link_libraries (__t9_main_o PRIVATE __t9_intf PRIVATE tinkerFToCpp)
+target_link_libraries (__t9_main_o PRIVATE __t9_intf tinkerFToCpp)
 set_target_properties (__t9_main_o PROPERTIES CXX_STANDARD ${T9_CPPSTD})
 ## tinker9 and all.tests
 list (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")

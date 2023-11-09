@@ -16,7 +16,7 @@ set_target_properties (tinker9_cu
       CUDA_ARCHITECTURES          "${T9_CUCCLIST}"
 )
 target_include_directories (tinker9_cu PRIVATE "${PROJECT_SOURCE_DIR}/include/syntax/cu")
-target_link_libraries (tinker9_cu PRIVATE __t9_intf PRIVATE tinkerFToCpp)
+target_link_libraries (tinker9_cu PRIVATE __t9_intf tinkerFToCpp)
 target_link_libraries (tinker9_cu PUBLIC cufft cublas)
 
 # ## -gencode arch=compute_60,code=sm_60 -gencode arch=compute_70,code=sm_70

@@ -52,7 +52,8 @@ extern "C"
 #   endif
 
 #   if TINKER_REAL_SIZE == 4
-#      define REAL_ABS std::fabsf
+// Bug. Cannot use std::fabsf. See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=79700
+#      define REAL_ABS ::fabsf
 #   endif
 #endif
 
