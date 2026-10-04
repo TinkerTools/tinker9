@@ -122,7 +122,9 @@ SCALED_PAIRWISE_INTERACTION: |
     }
     if CONSTEXPR (do_g) {
       real dedx, dedy, dedz;
-      de = de * REAL_RECIP(r);
+      // Two sites at the same point have no direction to push along.
+      real rinv = (r == 0 ? 0 : REAL_RECIP(r));
+      de = de * rinv;
       dedx = de * xr;
       dedy = de * yr;
       dedz = de * zr;
@@ -133,7 +135,7 @@ SCALED_PAIRWISE_INTERACTION: |
       @fky@ -= dedy;
       @fkz@ -= dedz;
       if (mutik) {
-        dlde = dlde * dv1 * REAL_RECIP(r);
+        dlde = dlde * dv1 * rinv;
         real dldedx = dlde * xr;
         real dldedy = dlde * yr;
         real dldedz = dlde * zr;
@@ -207,7 +209,9 @@ FULL_PAIRWISE_INTERACTION: |
     }
     if CONSTEXPR (do_g) {
       real dedx, dedy, dedz;
-      de = de * REAL_RECIP(r);
+      // Two sites at the same point have no direction to push along.
+      real rinv = (r == 0 ? 0 : REAL_RECIP(r));
+      de = de * rinv;
       dedx = de * xr;
       dedy = de * yr;
       dedz = de * zr;
@@ -218,7 +222,7 @@ FULL_PAIRWISE_INTERACTION: |
       @fky@ -= dedy;
       @fkz@ -= dedz;
       if (mutik) {
-        dlde = dlde * dv1 * REAL_RECIP(r);
+        dlde = dlde * dv1 * rinv;
         real dldedx = dlde * xr;
         real dldedy = dlde * yr;
         real dldedz = dlde * zr;

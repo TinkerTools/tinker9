@@ -122,7 +122,8 @@ static void ehal_acc1()
             if CONSTEXPR (do_e)
                atomic_add(e, ev, offset);
             if CONSTEXPR (do_g) {
-               de *= REAL_RECIP(rik);
+               // Two sites at the same point have no direction to push along.
+               de *= (rik == 0 ? 0 : REAL_RECIP(rik));
                real dedx = de * xr;
                real dedy = de * yr;
                real dedz = de * zr;
@@ -217,7 +218,8 @@ static void ehal_acc1()
          if CONSTEXPR (do_e)
             atomic_add(e, ev, offset);
          if CONSTEXPR (do_g) {
-            de *= REAL_RECIP(rik);
+            // Two sites at the same point have no direction to push along.
+            de *= (rik == 0 ? 0 : REAL_RECIP(rik));
             real dedx = de * xr;
             real dedy = de * yr;
             real dedz = de * zr;

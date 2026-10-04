@@ -148,7 +148,9 @@ void ehaldlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyB
          }
          if CONSTEXPR (do_g) {
             real dedx, dedy, dedz;
-            de = de * REAL_RECIP(r);
+            // Two sites at the same point have no direction to push along.
+            real rinv = (r == 0 ? 0 : REAL_RECIP(r));
+            de = de * rinv;
             dedx = de * xr;
             dedy = de * yr;
             dedz = de * zr;
@@ -159,7 +161,7 @@ void ehaldlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyB
             fky -= dedy;
             fkz -= dedz;
             if (mutik) {
-               dlde = dlde * dv1 * REAL_RECIP(r);
+               dlde = dlde * dv1 * rinv;
                real dldedx = dlde * xr;
                real dldedy = dlde * yr;
                real dldedz = dlde * zr;
@@ -295,7 +297,9 @@ void ehaldlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyB
             }
             if CONSTEXPR (do_g) {
                real dedx, dedy, dedz;
-               de = de * REAL_RECIP(r);
+               // Two sites at the same point have no direction to push along.
+               real rinv = (r == 0 ? 0 : REAL_RECIP(r));
+               de = de * rinv;
                dedx = de * xr;
                dedy = de * yr;
                dedz = de * zr;
@@ -306,7 +310,7 @@ void ehaldlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyB
                fky -= dedy;
                fkz -= dedz;
                if (mutik) {
-                  dlde = dlde * dv1 * REAL_RECIP(r);
+                  dlde = dlde * dv1 * rinv;
                   real dldedx = dlde * xr;
                   real dldedy = dlde * yr;
                   real dldedz = dlde * zr;
@@ -450,7 +454,9 @@ void ehaldlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyB
             }
             if CONSTEXPR (do_g) {
                real dedx, dedy, dedz;
-               de = de * REAL_RECIP(r);
+               // Two sites at the same point have no direction to push along.
+               real rinv = (r == 0 ? 0 : REAL_RECIP(r));
+               de = de * rinv;
                dedx = de * xr;
                dedy = de * yr;
                dedz = de * zr;
@@ -461,7 +467,7 @@ void ehaldlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nev, EnergyB
                fky -= dedy;
                fkz -= dedz;
                if (mutik) {
-                  dlde = dlde * dv1 * REAL_RECIP(r);
+                  dlde = dlde * dv1 * rinv;
                   real dldedx = dlde * xr;
                   real dldedy = dlde * yr;
                   real dldedz = dlde * zr;
