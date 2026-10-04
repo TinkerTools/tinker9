@@ -58,15 +58,15 @@ static void emplarast_cu(const real (*uind)[3], const real (*uinp)[3])
    int ngrid = gpuGridSize(BLOCK_DIM);
    auto kera = emplarast_cu1a<Ver, ETYP>;
    kera<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, demdl_buf, vir_em, demx, demy, demz, off, trqx, trqy,
-      trqz, rpole, uind, uinp, emGroup(), f, aewald, grpScale(elam), deldlmda, //
+      trqz, rpole, uind, uinp, emGroup(), f, aewald, grpScale(elam), deldlmda, elecLiveMask(), //
       st.sorted, st.niak, st.iak, st.lst);
    auto kerb = emplarast_cu1b<Ver, ETYP>;
    kerb<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, demdl_buf, vir_em, demx, demy, demz, off, trqx, trqy,
-      trqz, rpole, uind, uinp, emGroup(), f, aewald, grpScale(elam), deldlmda, //
+      trqz, rpole, uind, uinp, emGroup(), f, aewald, grpScale(elam), deldlmda, elecLiveMask(), //
       st.sorted, st.n, st.nakpl, st.iakpl);
    auto kerc = emplarast_cu1c<Ver, ETYP>;
    kerc<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, demdl_buf, vir_em, demx, demy, demz, off, trqx, trqy,
-      trqz, rpole, uind, uinp, emGroup(), f, aewald, grpScale(elam), deldlmda, //
+      trqz, rpole, uind, uinp, emGroup(), f, aewald, grpScale(elam), deldlmda, elecLiveMask(), //
       nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z);
 }
 

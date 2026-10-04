@@ -1,4 +1,5 @@
 #include "ff/atom.h"
+#include "ff/dlmda.h"
 #include "ff/image.h"
 #include "ff/modamoeba.h"
 #include "ff/nblist.h"
@@ -32,6 +33,10 @@ void dfieldEwaldReal_acc(real (*field)[3], real (*fieldp)[3])
 {
    const real off = switchOff(Switch::EWALD);
    const real off2 = off * off;
+   // a pair with a dead group has no multipole or induced dipole;
+   // grp is null when every group is live
+   const int* grp = elecDeadGroups();
+   const RdtMask live = elecLiveMask();
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
@@ -41,7 +46,7 @@ void dfieldEwaldReal_acc(real (*field)[3], real (*fieldp)[3])
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(DFIELD_DPTRS,mlst)
+               deviceptr(DFIELD_DPTRS,grp,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -72,7 +77,7 @@ void dfieldEwaldReal_acc(real (*field)[3], real (*fieldp)[3])
          real zr = z[k] - zi;
 
          real r2 = image2(xr, yr, zr);
-         if (r2 <= off2) {
+         if (r2 <= off2 and (not grp or grpPairLive(live, grp[i], grp[k]))) {
             real3 fid = make_real3(0, 0, 0);
             real3 fip = make_real3(0, 0, 0);
             real3 fkd = make_real3(0, 0, 0);
@@ -114,7 +119,7 @@ void dfieldEwaldReal_acc(real (*field)[3], real (*fieldp)[3])
 
    #pragma acc parallel async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(DFIELD_DPTRS,dpexclude,dpexclude_scale)
+               deviceptr(DFIELD_DPTRS,grp,dpexclude,dpexclude_scale)
    #pragma acc loop independent
    for (int ii = 0; ii < ndpexclude; ++ii) {
       int i = dpexclude[ii][0];
@@ -143,7 +148,7 @@ void dfieldEwaldReal_acc(real (*field)[3], real (*fieldp)[3])
       real zr = z[k] - zi;
 
       real r2 = image2(xr, yr, zr);
-      if (r2 <= off2) {
+      if (r2 <= off2 and (not grp or grpPairLive(live, grp[i], grp[k]))) {
          real3 fid = make_real3(0, 0, 0);
          real3 fip = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);
@@ -224,6 +229,10 @@ void ufieldEwaldReal_acc(const real (*uind)[3], const real (*uinp)[3], real (*fi
 {
    const real off = switchOff(Switch::EWALD);
    const real off2 = off * off;
+   // a pair with a dead group has no multipole or induced dipole;
+   // grp is null when every group is live
+   const int* grp = elecDeadGroups();
+   const RdtMask live = elecLiveMask();
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
@@ -233,7 +242,7 @@ void ufieldEwaldReal_acc(const real (*uind)[3], const real (*uinp)[3], real (*fi
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(UFIELD_DPTRS,mlst)
+               deviceptr(UFIELD_DPTRS,grp,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -260,7 +269,7 @@ void ufieldEwaldReal_acc(const real (*uind)[3], const real (*uinp)[3], real (*fi
          real zr = z[k] - zi;
 
          real r2 = image2(xr, yr, zr);
-         if (r2 <= off2) {
+         if (r2 <= off2 and (not grp or grpPairLive(live, grp[i], grp[k]))) {
             real3 fid = make_real3(0, 0, 0);
             real3 fip = make_real3(0, 0, 0);
             real3 fkd = make_real3(0, 0, 0);
@@ -299,7 +308,7 @@ void ufieldEwaldReal_acc(const real (*uind)[3], const real (*uinp)[3], real (*fi
 
    #pragma acc parallel async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(UFIELD_DPTRS,uexclude,uexclude_scale)
+               deviceptr(UFIELD_DPTRS,grp,uexclude,uexclude_scale)
    #pragma acc loop independent
    for (int ii = 0; ii < nuexclude; ++ii) {
       int i = uexclude[ii][0];
@@ -323,7 +332,7 @@ void ufieldEwaldReal_acc(const real (*uind)[3], const real (*uinp)[3], real (*fi
       real zr = z[k] - zi;
 
       real r2 = image2(xr, yr, zr);
-      if (r2 <= off2) {
+      if (r2 <= off2 and (not grp or grpPairLive(live, grp[i], grp[k]))) {
          real3 fid = make_real3(0, 0, 0);
          real3 fip = make_real3(0, 0, 0);
          real3 fkd = make_real3(0, 0, 0);

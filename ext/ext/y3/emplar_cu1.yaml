@@ -30,6 +30,7 @@ EXTRA_PARAMS: |
   , const real (*restrict rpole)[10]
   , const real (*restrict uind)[3], const real (*restrict uinp)[3]
   , real f, real aewald
+  , const int* restrict grp, RdtMask live
 IMPLICIT_PARAMS:
   - d::jpolar
   - d::njpolar
@@ -58,6 +59,7 @@ I_VARIABLES:
   - shared real uipz from:uinp,2
   - shared real pdi  from:pdamp
   - shared int  jpi  from:jpolar
+  - shared int gi from:grp ifset:grp
 K_VARIABLES:
   - shared   real xk   from:x
   - shared   real yk   from:y
@@ -80,6 +82,7 @@ K_VARIABLES:
   - register real ukpz from:uinp,2
   - register real pdk  from:pdamp
   - register int  jpk  from:jpolar
+  - register int gk from:grp ifset:grp
 I_FORCE:
   - register real frcxi addto:gx
   - register real frcyi addto:gy
@@ -100,7 +103,9 @@ SCALED_PAIRWISE_INTERACTION: |
   real yr = @yk@ - @yi@;
   real zr = @zk@ - @zi@;
   real r2 = image2(xr, yr, zr);
-  if (r2 <= off * off and incl) {
+  // a pair with a dead group has no multipole or induced dipole;
+  // grp is null when every group is live
+  if (r2 <= off * off and incl and (not grp or grpPairLive(live, @gi@, @gk@))) {
     real pga = thlval[njpolar * jpi[klane] + jpk];
     real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
     pairMplar<Ver, NON_EWALD>(
@@ -134,7 +139,9 @@ FULL_PAIRWISE_INTERACTION: |
   real yr = @yk@ - @yi@;
   real zr = @zk@ - @zi@;
   real r2 = image2(xr, yr, zr);
-  if (r2 <= off * off and incl) {
+  // a pair with a dead group has no multipole or induced dipole;
+  // grp is null when every group is live
+  if (r2 <= off * off and incl and (not grp or grpPairLive(live, @gi@, @gk@))) {
     real pga = thlval[njpolar * jpi[klane] + jpk];
     real e, vxx, vyx, vzx, vyy, vzy, vzz;
     pairMplar<Ver, ETYP>(

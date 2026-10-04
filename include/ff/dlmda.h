@@ -2,6 +2,7 @@
 #include "ff/amoeba/mpole.h"
 #include "ff/energybuffer.h"
 #include "ff/termbuf.h"
+#include "seq/seq.h"
 #include "tool/rcman.h"
 #include <vector>
 
@@ -18,6 +19,21 @@ enum class RdtMask : unsigned
    B = LIGB,
    ALL = 7,
 };
+
+/// Whether an atom group (0 environment, 1 ligand 1, 2 ligand 2) is in \c mask.
+SEQ_ROUTINE
+inline bool grpLive(RdtMask mask, int group)
+{
+   auto bits = static_cast<unsigned>(mask);
+   return bits & (1u << group);
+}
+
+/// Whether both atom groups of a pair are in \c mask.
+SEQ_ROUTINE
+inline bool grpPairLive(RdtMask mask, int groupi, int groupk)
+{
+   return grpLive(mask, groupi) && grpLive(mask, groupk);
+}
 
 /// Mapping type from the main lambda to a sub-lambda.
 enum class Lmdamap
@@ -105,6 +121,15 @@ RdtMask chargeMask();
 /// The fully coupled state, the environment plus the charging ligand; the
 /// other ligand of a staged relative leg is annihilated.
 RdtMask coupledMask();
+
+/// The groups that carry multipoles, polarizability or a lambda slope now. A
+/// pair with a site outside the mask contributes nothing, so the pair kernels
+/// skip it rather than form 0 * (1/r^n) for two sites that may overlap.
+RdtMask elecLiveMask();
+
+/// The group array the pair kernels test against \c elecLiveMask(), or null
+/// when every group is live and there is nothing to skip.
+const int* elecDeadGroups();
 
 /// Fills the six mixing weights of \c DtCoef from the interpolation weight and
 /// its two derivatives. \c chain and \c d2chain are the sub-lambda derivatives

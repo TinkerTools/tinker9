@@ -6,7 +6,6 @@
 #include "ff/potent.h"
 #include "ff/termbuf.h"
 #include "math/zero.h"
-#include "seq/ost.h"
 #include "tool/error.h"
 #include "tool/externfunc.h"
 #include "tool/iofortstr.h"
@@ -44,9 +43,10 @@ static double vlam_lrc0;
 
 void vdwSoftcoreData(RcOp op)
 {
-   // mpoleScale() reads the ligand groups whenever poleorig exists.
+   // mpoleScale() reads the ligand groups whenever poleorig exists, and the
+   // multipole and polarization pair kernels read them to skip dead groups.
    if ((not use(Potent::VDW)) and (not use(Potent::REPULS)) and (not use(Potent::DISP)) and (not use(Potent::CHGTRN))
-      and (not usePoleorig()))
+      and (not use(Potent::MPOLE)) and (not use(Potent::POLAR)) and (not usePoleorig()))
       return;
 
    if (op & RcOp::DEALLOC)

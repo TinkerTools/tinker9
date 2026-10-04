@@ -34,6 +34,7 @@ EXTRA_PARAMS: |
   , const real (*restrict uind)[3], const real (*restrict uinp)[3]
   , const int* restrict grp
   , real f, real aewald, GrpScale esc, real deldl
+  , RdtMask live
 IMPLICIT_PARAMS:
   - d::jpolar
   - d::njpolar
@@ -109,8 +110,8 @@ SCALED_PAIRWISE_INTERACTION: |
   real si = esc.s[@gi@], dsi = esc.ds[@gi@];
   real sk = esc.s[@gk@], dsk = esc.ds[@gk@];
   // an annihilated site has no multipole and no induced dipole
-  bool live = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
-  if (r2 <= off * off and incl and live) {
+  bool weighted = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
+  if (r2 <= off * off and incl and weighted and grpPairLive(live, @gi@, @gk@)) {
     real pga = thlval[njpolar * jpi[klane] + jpk];
     real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
     real edl1 = 0;
@@ -151,8 +152,8 @@ FULL_PAIRWISE_INTERACTION: |
   real si = esc.s[@gi@], dsi = esc.ds[@gi@];
   real sk = esc.s[@gk@], dsk = esc.ds[@gk@];
   // an annihilated site has no multipole and no induced dipole
-  bool live = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
-  if (r2 <= off * off and incl and live) {
+  bool weighted = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
+  if (r2 <= off * off and incl and weighted and grpPairLive(live, @gi@, @gk@)) {
     real pga = thlval[njpolar * jpi[klane] + jpk];
     real e, vxx, vyx, vzx, vyy, vzy, vzz;
     real edl = 0;

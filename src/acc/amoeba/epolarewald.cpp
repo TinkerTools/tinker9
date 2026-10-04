@@ -1,5 +1,6 @@
 #include "ff/amoeba/mpolestate.h"
 #include "ff/atom.h"
+#include "ff/dlmda.h"
 #include "ff/image.h"
 #include "ff/modamoeba.h"
 #include "ff/nblist.h"
@@ -25,6 +26,10 @@ static void epolarEwaldReal_acc1(const real (*uind)[3], const real (*uinp)[3])
 
    const real off = switchOff(Switch::EWALD);
    const real off2 = off * off;
+   // a pair with a dead group has no multipole or induced dipole;
+   // grp is null when every group is live
+   const int* grp = elecDeadGroups();
+   const RdtMask live = elecLiveMask();
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
@@ -39,7 +44,7 @@ static void epolarEwaldReal_acc1(const real (*uind)[3], const real (*uinp)[3])
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(POLAR_DPTRS,mlst)
+               deviceptr(POLAR_DPTRS,grp,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -82,7 +87,7 @@ static void epolarEwaldReal_acc1(const real (*uind)[3], const real (*uinp)[3])
          real zr = z[k] - zi;
 
          real r2 = image2(xr, yr, zr);
-         if (r2 <= off2) {
+         if (r2 <= off2 and (not grp or grpPairLive(live, grp[i], grp[k]))) {
             real ck = rpole[k][MPL_PME_0];
             real dkx = rpole[k][MPL_PME_X];
             real dky = rpole[k][MPL_PME_Y];
@@ -180,7 +185,7 @@ static void epolarEwaldReal_acc1(const real (*uind)[3], const real (*uinp)[3])
 
    #pragma acc parallel async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(POLAR_DPTRS,dpuexclude,dpuexclude_scale)
+               deviceptr(POLAR_DPTRS,grp,dpuexclude,dpuexclude_scale)
    #pragma acc loop independent private(pgrad)
    for (int ii = 0; ii < ndpuexclude; ++ii) {
       int offset = ii & (bufsize - 1);
@@ -221,7 +226,7 @@ static void epolarEwaldReal_acc1(const real (*uind)[3], const real (*uinp)[3])
       real zr = z[k] - zi;
 
       real r2 = image2(xr, yr, zr);
-      if (r2 <= off2) {
+      if (r2 <= off2 and (not grp or grpPairLive(live, grp[i], grp[k]))) {
          real ck = rpole[k][MPL_PME_0];
          real dkx = rpole[k][MPL_PME_X];
          real dky = rpole[k][MPL_PME_Y];

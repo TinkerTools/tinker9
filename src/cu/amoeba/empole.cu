@@ -50,11 +50,12 @@ static void empole_cu()
       empoledlmda_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nem, em, demdl_buf, d2emdl2_buf,
          vir_em, dvirdl_buf, demx, demy, demz, dfdlx, dfdly, dfdlz, off, st.si1.bit0, nmdpuexclude,
          mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst,
-         trqx, trqy, trqz, dltrqx, dltrqy, dltrqz, rpole, emGroup(), f, aewald, grpScale(elam), deldlmda, d2eldlmda2);
+         trqx, trqy, trqz, dltrqx, dltrqy, dltrqz, rpole, emGroup(), f, aewald, grpScale(elam), deldlmda, d2eldlmda2,
+         elecLiveMask());
    } else {
       empole_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nem, em, vir_em, demx, demy, demz,
          off, st.si1.bit0, nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
-         st.niak, st.iak, st.lst, trqx, trqy, trqz, rpole, f, aewald);
+         st.niak, st.iak, st.lst, trqx, trqy, trqz, rpole, f, aewald, elecDeadGroups(), elecLiveMask());
    }
 }
 

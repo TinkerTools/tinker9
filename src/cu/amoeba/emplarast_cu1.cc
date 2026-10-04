@@ -5,8 +5,8 @@ void emplarast_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, EnergyBuffe
    VirialBuffer restrict vbuf, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
    real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
    const real (*restrict uind)[3], const real (*restrict uinp)[3], const int* restrict grp, real f, real aewald,
-   GrpScale esc, real deldl, int nexclude, const int (*restrict exclude)[2], const real (*restrict exclude_scale)[4],
-   const real* restrict x, const real* restrict y, const real* restrict z)
+   GrpScale esc, real deldl, RdtMask live, int nexclude, const int (*restrict exclude)[2],
+   const real (*restrict exclude_scale)[4], const real* restrict x, const real* restrict y, const real* restrict z)
 {
    using d::jpolar;
    using d::njpolar;
@@ -126,8 +126,8 @@ void emplarast_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, EnergyBuffe
       real si = esc.s[gi[klane]], dsi = esc.ds[gi[klane]];
       real sk = esc.s[gk], dsk = esc.ds[gk];
       // an annihilated site has no multipole and no induced dipole
-      bool live = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
-      if (r2 <= off * off and incl and live) {
+      bool weighted = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
+      if (r2 <= off * off and incl and weighted and grpPairLive(live, gi[klane], gk)) {
          real pga = thlval[njpolar * jpi[klane] + jpk];
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
          real edl1 = 0;
@@ -187,7 +187,8 @@ void emplarast_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, EnergyBuffe
    VirialBuffer restrict vbuf, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
    real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
    const real (*restrict uind)[3], const real (*restrict uinp)[3], const int* restrict grp, real f, real aewald,
-   GrpScale esc, real deldl, const Spatial::SortedAtom* restrict sorted, int n, int nakpl, const int* restrict iakpl)
+   GrpScale esc, real deldl, RdtMask live, const Spatial::SortedAtom* restrict sorted, int n, int nakpl,
+   const int* restrict iakpl)
 {
    using d::jpolar;
    using d::njpolar;
@@ -316,8 +317,8 @@ void emplarast_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, EnergyBuffe
          real si = esc.s[gi[klane]], dsi = esc.ds[gi[klane]];
          real sk = esc.s[gk], dsk = esc.ds[gk];
          // an annihilated site has no multipole and no induced dipole
-         bool live = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
-         if (r2 <= off * off and incl and live) {
+         bool weighted = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
+         if (r2 <= off * off and incl and weighted and grpPairLive(live, gi[klane], gk)) {
             real pga = thlval[njpolar * jpi[klane] + jpk];
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             real edl = 0;
@@ -389,8 +390,8 @@ void emplarast_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, EnergyBuffe
    VirialBuffer restrict vbuf, grad_prec* restrict gx, grad_prec* restrict gy, grad_prec* restrict gz, real off,
    real* restrict trqx, real* restrict trqy, real* restrict trqz, const real (*restrict rpole)[10],
    const real (*restrict uind)[3], const real (*restrict uinp)[3], const int* restrict grp, real f, real aewald,
-   GrpScale esc, real deldl, const Spatial::SortedAtom* restrict sorted, int niak, const int* restrict iak,
-   const int* restrict lst)
+   GrpScale esc, real deldl, RdtMask live, const Spatial::SortedAtom* restrict sorted, int niak,
+   const int* restrict iak, const int* restrict lst)
 {
    using d::jpolar;
    using d::njpolar;
@@ -515,8 +516,8 @@ void emplarast_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, EnergyBuffe
          real si = esc.s[gi[klane]], dsi = esc.ds[gi[klane]];
          real sk = esc.s[gk], dsk = esc.ds[gk];
          // an annihilated site has no multipole and no induced dipole
-         bool live = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
-         if (r2 <= off * off and incl and live) {
+         bool weighted = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
+         if (r2 <= off * off and incl and weighted and grpPairLive(live, gi[klane], gk)) {
             real pga = thlval[njpolar * jpi[klane] + jpk];
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             real edl = 0;

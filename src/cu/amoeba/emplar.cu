@@ -2,6 +2,7 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/induce.h"
 #include "ff/cumodamoeba.h"
+#include "ff/dlmda.h"
 #include "ff/elec.h"
 #include "ff/image.h"
 #include "ff/modamoeba.h"
@@ -43,18 +44,15 @@ static void emplar_cu(const real (*uind)[3], const real (*uinp)[3])
    int ngrid = gpuGridSize(BLOCK_DIM);
    auto kera = emplar_cu1a<Ver, ETYP>;
    kera<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx, trqy, trqz, rpole,
-      uind, uinp, f,
-      aewald, //
+      uind, uinp, f, aewald, elecDeadGroups(), elecLiveMask(), //
       st.sorted, st.niak, st.iak, st.lst);
    auto kerb = emplar_cu1b<Ver, ETYP>;
    kerb<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx, trqy, trqz, rpole,
-      uind, uinp, f,
-      aewald, //
+      uind, uinp, f, aewald, elecDeadGroups(), elecLiveMask(), //
       st.sorted, st.n, st.nakpl, st.iakpl);
    auto kerc = emplar_cu1c<Ver, ETYP>;
    kerc<<<ngrid, BLOCK_DIM, 0, g::s0>>>(TINKER_IMAGE_ARGS, em, vir_em, demx, demy, demz, off, trqx, trqy, trqz, rpole,
-      uind, uinp, f,
-      aewald, //
+      uind, uinp, f, aewald, elecDeadGroups(), elecLiveMask(), //
       nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z);
 }
 

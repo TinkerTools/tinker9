@@ -312,6 +312,7 @@ class Variable:
         self.name = vs[2]
         self.readfrom, self.addto, self.onlyif = None, None, None
         self.scale, self.dlsink = None, None
+        self.ifset = None
         for i in range(3, len(vs)):
             s2 = vs[i]
             if s2.startswith('from:'):
@@ -323,6 +324,9 @@ class Variable:
             elif s2.startswith('onlyif:'):
                 s3 = s2.replace('onlyif:', '')
                 self.onlyif = s3
+            elif s2.startswith('ifset:'):
+                # runtime guard: read 0 when this pointer is null
+                self.ifset = s2.replace('ifset:', '')
             elif s2.startswith('scale:'):
                 self.scale = s2.replace('scale:', '')
             elif s2.startswith('dlsink:'):
@@ -337,6 +341,12 @@ class Variable:
             return '{}[{}][{}]'.format(vs[0], index, vs[1])
         else:
             return '{}[{}]'.format(src, index)
+
+    def _load(self) -> str:
+        rhs = self._get_src(self.readfrom, self.iork)
+        if self.ifset is not None:
+            rhs = '({} ? {} : 0)'.format(self.ifset, rhs)
+        return rhs
 
     def zero(self) -> str:
         v1 = ''
@@ -371,7 +381,7 @@ class Variable:
         return v1
 
     def init_exclude(self) -> str:
-        rhs = self._get_src(self.readfrom, self.iork)
+        rhs = self._load()
         if self.location == 'shared':
             if self.iork == 'i':
                 return '{}[klane] = {};'.format(self.name, rhs)
@@ -388,9 +398,9 @@ class Variable:
                 return '{} = sorted[atom{}].{};'.format(self.name, self.iork, self.readfrom)
         else:
             if self.location == 'shared':
-                return '{}[threadIdx.x] = {};'.format(self.name, self._get_src(self.readfrom, self.iork))
+                return '{}[threadIdx.x] = {};'.format(self.name, self._load())
             else:
-                return '{} = {};'.format(self.name, self._get_src(self.readfrom, self.iork))
+                return '{} = {};'.format(self.name, self._load())
 
     def shuffle(self) -> str:
         if self.location == 'register':

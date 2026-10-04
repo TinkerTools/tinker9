@@ -149,7 +149,7 @@ static void epolar_cu(const real (*uind)[3], const real (*uinp)[3])
    int ngrid = gpuGridSize(BLOCK_DIM);
    epolar_cu1<Ver, ETYP><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep, ep, vir_ep, depx, depy, depz,
       off, st.si1.bit0, nmdpuexclude, mdpuexclude, mdpuexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl,
-      st.niak, st.iak, st.lst, ufld, dufld, rpole, uind, uinp, f, aewald);
+      st.niak, st.iak, st.lst, ufld, dufld, rpole, uind, uinp, f, aewald, elecDeadGroups(), elecLiveMask());
 
    // torque
    if CONSTEXPR (do_g) {

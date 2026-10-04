@@ -10,7 +10,7 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
    const Spatial::SortedAtom* restrict sorted, int nakpl, const int* restrict iakpl, int niak, const int* restrict iak,
    const int* restrict lst, real* restrict trqx, real* restrict trqy, real* restrict trqz, real* restrict dltrqx,
    real* restrict dltrqy, real* restrict dltrqz, const real (*restrict rpole)[10], const int* restrict grp, real f,
-   real aewald, GrpScale esc, real deldl, real d2eldl2)
+   real aewald, GrpScale esc, real deldl, real d2eldl2, RdtMask live)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -154,8 +154,8 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
       real si = esc.s[gi[klane]], dsi = esc.ds[gi[klane]];
       real sk = esc.s[gk], dsk = esc.ds[gk];
       // a pair with an annihilated site has neither energy nor lambda derivative
-      bool live = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
-      if (r2 <= off * off and incl and live) {
+      bool weighted = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
+      if (r2 <= off * off and incl and weighted and grpPairLive(live, gi[klane], gk)) {
          real e, vxx, vyx, vzx, vyy, vzy, vzz;
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
          real pfrcxi = 0, pfrcyi = 0, pfrczi = 0;
@@ -382,8 +382,8 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
          real si = esc.s[gi[klane]], dsi = esc.ds[gi[klane]];
          real sk = esc.s[gk], dsk = esc.ds[gk];
          // a pair with an annihilated site has neither energy nor lambda derivative
-         bool live = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
-         if (r2 <= off * off and incl and live) {
+         bool weighted = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
+         if (r2 <= off * off and incl and weighted and grpPairLive(live, gi[klane], gk)) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             real pfrcxi = 0, pfrcyi = 0, pfrczi = 0;
             real pfrcxk = 0, pfrcyk = 0, pfrczk = 0;
@@ -605,8 +605,8 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
          real si = esc.s[gi[klane]], dsi = esc.ds[gi[klane]];
          real sk = esc.s[gk], dsk = esc.ds[gk];
          // a pair with an annihilated site has neither energy nor lambda derivative
-         bool live = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
-         if (r2 <= off * off and incl and live) {
+         bool weighted = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
+         if (r2 <= off * off and incl and weighted and grpPairLive(live, gi[klane], gk)) {
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             real pfrcxi = 0, pfrcyi = 0, pfrczi = 0;
             real pfrcxk = 0, pfrcyk = 0, pfrczk = 0;

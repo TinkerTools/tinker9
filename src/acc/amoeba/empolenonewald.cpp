@@ -1,4 +1,5 @@
 #include "ff/energy.h"
+#include "ff/dlmda.h"
 #include "ff/image.h"
 #include "ff/modamoeba.h"
 #include "ff/nblist.h"
@@ -21,6 +22,10 @@ void empoleNonEwald_acc1()
 
    const real off = switchOff(Switch::MPOLE);
    const real off2 = off * off;
+   // a pair with a dead group has no multipole or induced dipole;
+   // grp is null when every group is live
+   const int* grp = elecDeadGroups();
+   const RdtMask live = elecLiveMask();
    const int maxnlst = mlist_unit->maxnlst;
    const auto* mlst = mlist_unit.deviceptr();
 
@@ -30,7 +35,7 @@ void empoleNonEwald_acc1()
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(DEVICE_PTRS,mlst)
+               deviceptr(DEVICE_PTRS,grp,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -61,7 +66,7 @@ void empoleNonEwald_acc1()
          real zr = z[k] - zi;
 
          real r2 = image2(xr, yr, zr);
-         if (r2 <= off2) {
+         if (r2 <= off2 and (not grp or grpPairLive(live, grp[i], grp[k]))) {
             MAYBE_UNUSED real e;
             pair_mpole<do_e, do_g, NON_EWALD>(                        //
                r2, xr, yr, zr, 1,                                     //
@@ -119,7 +124,7 @@ void empoleNonEwald_acc1()
 
    #pragma acc parallel async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(DEVICE_PTRS,mexclude,mexclude_scale)
+               deviceptr(DEVICE_PTRS,grp,mexclude,mexclude_scale)
    #pragma acc loop independent private(pgrad)
    for (int ii = 0; ii < nmexclude; ++ii) {
       int offset = ii & (bufsize - 1);
@@ -147,7 +152,7 @@ void empoleNonEwald_acc1()
       real zr = z[k] - zi;
 
       real r2 = image2(xr, yr, zr);
-      if (r2 <= off2) {
+      if (r2 <= off2 and (not grp or grpPairLive(live, grp[i], grp[k]))) {
          MAYBE_UNUSED real e;
          pair_mpole<do_e, do_g, NON_EWALD>(                        //
             r2, xr, yr, zr, mscale,                                //

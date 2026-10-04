@@ -1,4 +1,5 @@
 #include "ff/cumodamoeba.h"
+#include "ff/dlmda.h"
 #include "ff/image.h"
 #include "ff/modamoeba.h"
 #include "ff/spatial.h"
@@ -39,6 +40,6 @@ void sparsePrecondApply_cu(const real (*rsd)[3], const real (*rsdp)[3], real (*z
    nparallel = std::max(nparallel, ngrid);
    launch_k1s(g::s0, nparallel, sparsePrecond_cu1, //
       st.n, TINKER_IMAGE_ARGS, off, st.si1.bit0, nuexclude, uexclude, uexclude_scale, st.x, st.y, st.z, st.sorted,
-      st.nakpl, st.iakpl, st.niak, st.iak, st.lst, rsd, rsdp, zrsd, zrsdp, polarity);
+      st.nakpl, st.iakpl, st.niak, st.iak, st.lst, rsd, rsdp, zrsd, zrsdp, polarity, elecDeadGroups(), elecLiveMask());
 }
 }

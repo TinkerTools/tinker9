@@ -45,6 +45,7 @@ EXTRA_PARAMS: |
   , const real (*restrict rpole)[10], const int* restrict grp
   , real f, real aewald, GrpScale esc
   , real deldl, real d2eldl2
+  , RdtMask live
 # IMPLICIT_PARAMS:
 
 I_VARIABLES:
@@ -114,8 +115,8 @@ SCALED_PAIRWISE_INTERACTION: |
   real si = esc.s[@gi@], dsi = esc.ds[@gi@];
   real sk = esc.s[@gk@], dsk = esc.ds[@gk@];
   // a pair with an annihilated site has neither energy nor lambda derivative
-  bool live = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
-  if (r2 <= off * off and incl and live) {
+  bool weighted = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
+  if (r2 <= off * off and incl and weighted and grpPairLive(live, @gi@, @gk@)) {
     real e, vxx, vyx, vzx, vyy, vzy, vzz;
     real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
     real pfrcxi = 0, pfrcyi = 0, pfrczi = 0;
@@ -229,8 +230,8 @@ FULL_PAIRWISE_INTERACTION: |
   real si = esc.s[@gi@], dsi = esc.ds[@gi@];
   real sk = esc.s[@gk@], dsk = esc.ds[@gk@];
   // a pair with an annihilated site has neither energy nor lambda derivative
-  bool live = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
-  if (r2 <= off * off and incl and live) {
+  bool weighted = (si != 0 or dsi != 0) and (sk != 0 or dsk != 0);
+  if (r2 <= off * off and incl and weighted and grpPairLive(live, @gi@, @gk@)) {
     real e, vxx, vyx, vzx, vyy, vzy, vzz;
     real pfrcxi = 0, pfrcyi = 0, pfrczi = 0;
     real pfrcxk = 0, pfrcyk = 0, pfrczk = 0;

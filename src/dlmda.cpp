@@ -10,7 +10,6 @@
 #include "ff/potent.h"
 #include "math/const.h"
 #include "math/random.h"
-#include "seq/ost.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 #include "tool/externfunc.h"
@@ -123,6 +122,22 @@ RdtMask chargeMask()
 RdtMask coupledMask()
 {
    return static_cast<RdtMask>(static_cast<unsigned>(RdtMask::ENV) | static_cast<unsigned>(chargeMask()));
+}
+
+RdtMask elecLiveMask()
+{
+   // The charging ligand is dead as well when it is held uncharged with no
+   // lambda derivative left to take: the VDWM leg, or an absolute vdw leg.
+   bool dead = elam == 0 and plam == 0 and not edlmdaActive() and not pdlmdaActive();
+   return dead ? RdtMask::ENV : coupledMask();
+}
+
+const int* elecDeadGroups()
+{
+   // A relative leg always annihilates one ligand; otherwise only a dead
+   // charging ligand leaves a group out of the mask.
+   bool anydead = use_rel or elecLiveMask() == RdtMask::ENV;
+   return anydead ? emGroup() : nullptr;
 }
 
 // E = w*E1 + (1-w)*E0, so dE/dl = dw*(E1-E0) and d2E/dl2 = d2w*(E1-E0), which

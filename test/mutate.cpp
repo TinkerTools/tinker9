@@ -31,9 +31,9 @@
 
 using namespace tinker;
 
-// The fixtures that need neither lambda derivatives nor dual topology (001-029
-// and most of 089-103) run on the OpenACC build's own kernels too; the rest of
-// this file is CUDA only.
+// The fixtures that need neither lambda derivatives nor dual topology (001-029,
+// most of 089-103, 180 and 182) run on the OpenACC build's own kernels too; the
+// rest of this file is CUDA only.
 #if TINKER_GPULANG_CUDA || TINKER_GPULANG_OPENACC
 
 namespace {
@@ -258,6 +258,15 @@ const Fixture kFixtures[] = {
    {"177_water_rels_ne_l085", "water2", true, true, true, true},
    {"178_water_adt_d1_ne_l06", "water2", false, true, false, true},
    {"179_ionwat_ast_l05", "ionwat", true, true, true, true},
+   {"180_wat2ovl_m00v00", "wat2ovl", false, false, false, false},
+   {"181_wat2ovl_m00_d1_l00", "wat2ovl", false, false, false, true},
+   {"182_wat2near_m00v00", "wat2near", false, false, false, false},
+   {"183_wat2near_m00_d1_l00", "wat2near", false, false, false, true},
+   {"184_wat2ovl_ye_m00_d1_l00", "wat2ovl", true, true, false, true},
+   {"185_water2ovl_rels_ye_lig1_ex3_l085", "water2ovl", true, true, true, true},
+   {"186_water2ovl_rels_ne_lig2_l015", "water2ovl", true, true, true, true},
+   {"187_water2ovl_rels_ye_vdwm_exp_l050", "water2ovl", true, true, true, true},
+   {"188_water2near_rels_ye_vdwm_exp_l050", "water2near", true, true, true, true},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -1001,6 +1010,12 @@ TEST_CASE("MUTATE-097_water_lmda_e_l06", "[ff][mutate][lmdadrv]") { runFixture(f
 TEST_CASE("MUTATE-099_water_lmda_v_l06", "[ff][mutate][lmdadrv]") { runFixture(fx("099_water_lmda_v_l06")); }
 TEST_CASE("MUTATE-101_water_lmda_ev_l06", "[ff][mutate][lmdadrv]") { runFixture(fx("101_water_lmda_ev_l06")); }
 
+// An annihilated ligand sitting exactly on other atoms, or 1.0e-6 Ang off them
+// (test_mutate.f: test_mutate_overlap). Every pair that touches the ligand has
+// to be skipped rather than evaluated as 0 * (1/r^n).
+TEST_CASE("MUTATE-180_wat2ovl_m00v00", "[ff][mutate][overlap]") { runFixture(fx("180_wat2ovl_m00v00")); }
+TEST_CASE("MUTATE-182_wat2near_m00v00", "[ff][mutate][overlap]") { runFixture(fx("182_wat2near_m00v00")); }
+
 #if TINKER_GPULANG_CUDA
 TEST_CASE("MUTATE-030_water_ast_ye_m10", "[ff][mutate][ast]") { runFixture(fx("030_water_ast_ye_m10")); }
 TEST_CASE("MUTATE-031_water_ast_ne_m10", "[ff][mutate][ast]") { runFixture(fx("031_water_ast_ne_m10")); }
@@ -1141,6 +1156,13 @@ TEST_CASE("MUTATE-176_water_rels_st_ne_l085", "[ff][mutate][noewald][astpol][emp
 TEST_CASE("MUTATE-177_water_rels_ne_l085", "[ff][mutate][noewald]") { runFixture(fx("177_water_rels_ne_l085")); }
 TEST_CASE("MUTATE-178_water_adt_d1_ne_l06", "[ff][mutate][noewald]") { runFixture(fx("178_water_adt_d1_ne_l06")); }
 TEST_CASE("MUTATE-179_ionwat_ast_l05", "[ff][mutate][ion][astpol][emplar]") { runEmplarAstFixture(fx("179_ionwat_ast_l05")); }
+TEST_CASE("MUTATE-181_wat2ovl_m00_d1_l00", "[ff][mutate][overlap]") { runFixture(fx("181_wat2ovl_m00_d1_l00")); }
+TEST_CASE("MUTATE-183_wat2near_m00_d1_l00", "[ff][mutate][overlap]") { runFixture(fx("183_wat2near_m00_d1_l00")); }
+TEST_CASE("MUTATE-184_wat2ovl_ye_m00_d1_l00", "[ff][mutate][overlap]") { runFixture(fx("184_wat2ovl_ye_m00_d1_l00")); }
+TEST_CASE("MUTATE-185_water2ovl_rels_ye_lig1_ex3_l085", "[ff][mutate][overlap][rels]") { runFixture(fx("185_water2ovl_rels_ye_lig1_ex3_l085")); }
+TEST_CASE("MUTATE-186_water2ovl_rels_ne_lig2_l015", "[ff][mutate][overlap][rels][noewald]") { runFixture(fx("186_water2ovl_rels_ne_lig2_l015")); }
+TEST_CASE("MUTATE-187_water2ovl_rels_ye_vdwm_exp_l050", "[ff][mutate][overlap][rels]") { runFixture(fx("187_water2ovl_rels_ye_vdwm_exp_l050")); }
+TEST_CASE("MUTATE-188_water2near_rels_ye_vdwm_exp_l050", "[ff][mutate][overlap][rels]") { runFixture(fx("188_water2near_rels_ye_vdwm_exp_l050")); }
 
 // The fused kernel on its own. The ordinary case of each fixture asks for
 // interaction counts and so goes through the separate empole and epolar
@@ -1273,6 +1295,15 @@ TEST_CASE("MUTATE-DYN-173_water_vsoft_n1_d1_l005", "[ff][mutate][dyn]") { runFix
 TEST_CASE("MUTATE-DYN-174_water_rels_vdwm_n1_d1_l10", "[ff][mutate][dyn]") { runFixture(fx("174_water_rels_vdwm_n1_d1_l10"), Fuse::Auto); }
 TEST_CASE("MUTATE-DYN-177_water_rels_ne_l085", "[ff][mutate][dyn]") { runFixture(fx("177_water_rels_ne_l085"), Fuse::Auto); }
 TEST_CASE("MUTATE-DYN-178_water_adt_d1_ne_l06", "[ff][mutate][dyn]") { runFixture(fx("178_water_adt_d1_ne_l06"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-180_wat2ovl_m00v00", "[ff][mutate][dyn][overlap]") { runFixture(fx("180_wat2ovl_m00v00"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-181_wat2ovl_m00_d1_l00", "[ff][mutate][dyn][overlap]") { runFixture(fx("181_wat2ovl_m00_d1_l00"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-182_wat2near_m00v00", "[ff][mutate][dyn][overlap]") { runFixture(fx("182_wat2near_m00v00"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-183_wat2near_m00_d1_l00", "[ff][mutate][dyn][overlap]") { runFixture(fx("183_wat2near_m00_d1_l00"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-184_wat2ovl_ye_m00_d1_l00", "[ff][mutate][dyn][overlap]") { runFixture(fx("184_wat2ovl_ye_m00_d1_l00"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-185_water2ovl_rels_ye_lig1_ex3_l085", "[ff][mutate][dyn][overlap]") { runFixture(fx("185_water2ovl_rels_ye_lig1_ex3_l085"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-186_water2ovl_rels_ne_lig2_l015", "[ff][mutate][dyn][overlap]") { runFixture(fx("186_water2ovl_rels_ne_lig2_l015"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-187_water2ovl_rels_ye_vdwm_exp_l050", "[ff][mutate][dyn][overlap]") { runFixture(fx("187_water2ovl_rels_ye_vdwm_exp_l050"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-188_water2near_rels_ye_vdwm_exp_l050", "[ff][mutate][dyn][overlap]") { runFixture(fx("188_water2near_rels_ye_vdwm_exp_l050"), Fuse::Auto); }
 TEST_CASE("MUTATE-DYN-TI-050_water_qnt_ast_l05", "[ff][mutate][dyn][ti]") { runFixture(fx("050_water_qnt_ast_l05"), Fuse::Auto, LmdaMode::ThermIntg); }
 TEST_CASE("MUTATE-DYN-TI-053_water_qnt_adt_l05", "[ff][mutate][dyn][ti]") { runFixture(fx("053_water_qnt_adt_l05"), Fuse::Auto, LmdaMode::ThermIntg); }
 TEST_CASE("MUTATE-DYN-TI-116_water_rels_ye_vdwm_exp_l050", "[ff][mutate][dyn][ti]") { runFixture(fx("116_water_rels_ye_vdwm_exp_l050"), Fuse::Auto, LmdaMode::ThermIntg); }

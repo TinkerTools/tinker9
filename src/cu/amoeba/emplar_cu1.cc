@@ -4,8 +4,9 @@ __global__
 void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf, grad_prec* restrict gx,
    grad_prec* restrict gy, grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
    real* restrict trqz, const real (*restrict rpole)[10], const real (*restrict uind)[3],
-   const real (*restrict uinp)[3], real f, real aewald, int nexclude, const int (*restrict exclude)[2],
-   const real (*restrict exclude_scale)[4], const real* restrict x, const real* restrict y, const real* restrict z)
+   const real (*restrict uinp)[3], real f, real aewald, const int* restrict grp, RdtMask live, int nexclude,
+   const int (*restrict exclude)[2], const real (*restrict exclude_scale)[4], const real* restrict x,
+   const real* restrict y, const real* restrict z)
 {
    using d::jpolar;
    using d::njpolar;
@@ -38,10 +39,10 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       diz[BLOCK_DIM], qixx[BLOCK_DIM], qixy[BLOCK_DIM], qixz[BLOCK_DIM], qiyy[BLOCK_DIM], qiyz[BLOCK_DIM],
       qizz[BLOCK_DIM], uidx[BLOCK_DIM], uidy[BLOCK_DIM], uidz[BLOCK_DIM], uipx[BLOCK_DIM], uipy[BLOCK_DIM],
       uipz[BLOCK_DIM], pdi[BLOCK_DIM];
-   __shared__ int jpi[BLOCK_DIM];
+   __shared__ int jpi[BLOCK_DIM], gi[BLOCK_DIM];
    __shared__ real xk[BLOCK_DIM], yk[BLOCK_DIM], zk[BLOCK_DIM], dkx[BLOCK_DIM], dky[BLOCK_DIM], dkz[BLOCK_DIM];
    real ck, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx, ukdy, ukdz, ukpx, ukpy, ukpz, pdk;
-   int jpk;
+   int jpk, gk;
 
    for (int ii = ithread; ii < nexclude; ii += blockDim.x * gridDim.x) {
       const int klane = threadIdx.x;
@@ -88,6 +89,7 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       uipz[klane] = uinp[i][2];
       pdi[klane] = pdamp[i];
       jpi[klane] = jpolar[i];
+      gi[klane] = (grp ? grp[i] : 0);
       xk[threadIdx.x] = x[k];
       yk[threadIdx.x] = y[k];
       zk[threadIdx.x] = z[k];
@@ -109,13 +111,16 @@ void emplar_cu1c(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       ukpz = uinp[k][2];
       pdk = pdamp[k];
       jpk = jpolar[k];
+      gk = (grp ? grp[k] : 0);
 
       constexpr bool incl = true;
       real xr = xk[threadIdx.x] - xi[klane];
       real yr = yk[threadIdx.x] - yi[klane];
       real zr = zk[threadIdx.x] - zi[klane];
       real r2 = image2(xr, yr, zr);
-      if (r2 <= off * off and incl) {
+      // a pair with a dead group has no multipole or induced dipole;
+      // grp is null when every group is live
+      if (r2 <= off * off and incl and (not grp or grpPairLive(live, gi[klane], gk))) {
          real pga = thlval[njpolar * jpi[klane] + jpk];
          real e1, vxx1, vyx1, vzx1, vyy1, vzy1, vzz1;
          pairMplar<Ver, NON_EWALD>(r2, make_real3(xr, yr, zr), scalea - 1, scaleb - 1, scalec - 1, scaled - 1,
@@ -167,8 +172,8 @@ __global__
 void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf, grad_prec* restrict gx,
    grad_prec* restrict gy, grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
    real* restrict trqz, const real (*restrict rpole)[10], const real (*restrict uind)[3],
-   const real (*restrict uinp)[3], real f, real aewald, const Spatial::SortedAtom* restrict sorted, int n, int nakpl,
-   const int* restrict iakpl)
+   const real (*restrict uinp)[3], real f, real aewald, const int* restrict grp, RdtMask live,
+   const Spatial::SortedAtom* restrict sorted, int n, int nakpl, const int* restrict iakpl)
 {
    using d::jpolar;
    using d::njpolar;
@@ -202,10 +207,10 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       diz[BLOCK_DIM], qixx[BLOCK_DIM], qixy[BLOCK_DIM], qixz[BLOCK_DIM], qiyy[BLOCK_DIM], qiyz[BLOCK_DIM],
       qizz[BLOCK_DIM], uidx[BLOCK_DIM], uidy[BLOCK_DIM], uidz[BLOCK_DIM], uipx[BLOCK_DIM], uipy[BLOCK_DIM],
       uipz[BLOCK_DIM], pdi[BLOCK_DIM];
-   __shared__ int jpi[BLOCK_DIM];
+   __shared__ int jpi[BLOCK_DIM], gi[BLOCK_DIM];
    __shared__ real xk[BLOCK_DIM], yk[BLOCK_DIM], zk[BLOCK_DIM], dkx[BLOCK_DIM], dky[BLOCK_DIM], dkz[BLOCK_DIM];
    real ck, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx, ukdy, ukdz, ukpx, ukpy, ukpz, pdk;
-   int jpk;
+   int jpk, gk;
    real frcxi, frcyi, frczi, trqxi, trqyi, trqzi;
    real frcxk, frcyk, frczk, trqxk, trqyk, trqzk;
 
@@ -256,6 +261,7 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       uipz[threadIdx.x] = uinp[i][2];
       pdi[threadIdx.x] = pdamp[i];
       jpi[threadIdx.x] = jpolar[i];
+      gi[threadIdx.x] = (grp ? grp[i] : 0);
       xk[threadIdx.x] = sorted[atomk].x;
       yk[threadIdx.x] = sorted[atomk].y;
       zk[threadIdx.x] = sorted[atomk].z;
@@ -277,6 +283,7 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       ukpz = uinp[k][2];
       pdk = pdamp[k];
       jpk = jpolar[k];
+      gk = (grp ? grp[k] : 0);
       __syncwarp();
 
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -287,7 +294,9 @@ void emplar_cu1b(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
          real yr = yk[threadIdx.x] - yi[klane];
          real zr = zk[threadIdx.x] - zi[klane];
          real r2 = image2(xr, yr, zr);
-         if (r2 <= off * off and incl) {
+         // a pair with a dead group has no multipole or induced dipole;
+         // grp is null when every group is live
+         if (r2 <= off * off and incl and (not grp or grpPairLive(live, gi[klane], gk))) {
             real pga = thlval[njpolar * jpi[klane] + jpk];
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             pairMplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci[klane],
@@ -351,8 +360,8 @@ __global__
 void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer restrict vbuf, grad_prec* restrict gx,
    grad_prec* restrict gy, grad_prec* restrict gz, real off, real* restrict trqx, real* restrict trqy,
    real* restrict trqz, const real (*restrict rpole)[10], const real (*restrict uind)[3],
-   const real (*restrict uinp)[3], real f, real aewald, const Spatial::SortedAtom* restrict sorted, int niak,
-   const int* restrict iak, const int* restrict lst)
+   const real (*restrict uinp)[3], real f, real aewald, const int* restrict grp, RdtMask live,
+   const Spatial::SortedAtom* restrict sorted, int niak, const int* restrict iak, const int* restrict lst)
 {
    using d::jpolar;
    using d::njpolar;
@@ -387,10 +396,10 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       diz[BLOCK_DIM], qixx[BLOCK_DIM], qixy[BLOCK_DIM], qixz[BLOCK_DIM], qiyy[BLOCK_DIM], qiyz[BLOCK_DIM],
       qizz[BLOCK_DIM], uidx[BLOCK_DIM], uidy[BLOCK_DIM], uidz[BLOCK_DIM], uipx[BLOCK_DIM], uipy[BLOCK_DIM],
       uipz[BLOCK_DIM], pdi[BLOCK_DIM];
-   __shared__ int jpi[BLOCK_DIM];
+   __shared__ int jpi[BLOCK_DIM], gi[BLOCK_DIM];
    __shared__ real xk[BLOCK_DIM], yk[BLOCK_DIM], zk[BLOCK_DIM], dkx[BLOCK_DIM], dky[BLOCK_DIM], dkz[BLOCK_DIM];
    real ck, qkxx, qkxy, qkxz, qkyy, qkyz, qkzz, ukdx, ukdy, ukdz, ukpx, ukpy, ukpz, pdk;
-   int jpk;
+   int jpk, gk;
    real frcxi, frcyi, frczi, trqxi, trqyi, trqzi;
    real frcxk, frcyk, frczk, trqxk, trqyk, trqzk;
 
@@ -436,6 +445,7 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       uipz[threadIdx.x] = uinp[i][2];
       pdi[threadIdx.x] = pdamp[i];
       jpi[threadIdx.x] = jpolar[i];
+      gi[threadIdx.x] = (grp ? grp[i] : 0);
       xk[threadIdx.x] = sorted[atomk].x;
       yk[threadIdx.x] = sorted[atomk].y;
       zk[threadIdx.x] = sorted[atomk].z;
@@ -457,6 +467,7 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
       ukpz = uinp[k][2];
       pdk = pdamp[k];
       jpk = jpolar[k];
+      gk = (grp ? grp[k] : 0);
       __syncwarp();
 
       for (int j = 0; j < WARP_SIZE; ++j) {
@@ -467,7 +478,9 @@ void emplar_cu1a(TINKER_IMAGE_PARAMS, EnergyBuffer restrict ebuf, VirialBuffer r
          real yr = yk[threadIdx.x] - yi[klane];
          real zr = zk[threadIdx.x] - zi[klane];
          real r2 = image2(xr, yr, zr);
-         if (r2 <= off * off and incl) {
+         // a pair with a dead group has no multipole or induced dipole;
+         // grp is null when every group is live
+         if (r2 <= off * off and incl and (not grp or grpPairLive(live, gi[klane], gk))) {
             real pga = thlval[njpolar * jpi[klane] + jpk];
             real e, vxx, vyx, vzx, vyy, vzy, vzz;
             pairMplar<Ver, ETYP>(r2, make_real3(xr, yr, zr), 1, 1, 1, 1, ci[klane],

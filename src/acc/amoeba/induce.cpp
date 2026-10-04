@@ -330,11 +330,15 @@ void sparsePrecondApply_acc(const real (*rsd)[3], const real (*rsdp)[3], real (*
 
    const int maxnlst = ulist_unit->maxnlst;
    const auto* ulst = ulist_unit.deviceptr();
+   // a pair with a dead group has no induced dipole;
+   // grp is null when every group is live
+   const int* grp = elecDeadGroups();
+   const RdtMask live = elecLiveMask();
 
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(APPLY_DPTRS,ulst)
+               deviceptr(APPLY_DPTRS,grp,ulst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -352,6 +356,8 @@ void sparsePrecondApply_acc(const real (*rsd)[3], const real (*rsdp)[3], real (*
       #pragma acc loop vector independent reduction(+:gxi,gyi,gzi,txi,tyi,tzi)
       for (int kk = 0; kk < nulsti; ++kk) {
          int k = ulst->lst[base + kk];
+         if (grp and not grpPairLive(live, grp[i], grp[k]))
+            continue;
          real xr = x[k] - xi;
          real yr = y[k] - yi;
          real zr = z[k] - zi;
@@ -403,11 +409,13 @@ void sparsePrecondApply_acc(const real (*rsd)[3], const real (*rsdp)[3], real (*
 
    #pragma acc parallel loop async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(APPLY_DPTRS,uexclude,uexclude_scale)
+               deviceptr(APPLY_DPTRS,grp,uexclude,uexclude_scale)
    for (int ii = 0; ii < nuexclude; ++ii) {
       int i = uexclude[ii][0];
       int k = uexclude[ii][1];
       real uscale = uexclude_scale[ii] - 1;
+      if (grp and not grpPairLive(live, grp[i], grp[k]))
+         continue;
 
       real xi = x[i];
       real yi = y[i];
