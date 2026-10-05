@@ -258,6 +258,8 @@ struct StagedScope
 {
    bool rel, mainl, useE, useP, useV;
    RelStage leg;
+   bool stg[3];
+   double stglo[3], stghi[3];
    Lmdamap em, pm, vm;
    double e0, e1, p0, p1, v0, v1, mainlmda;
    int dtexp;
@@ -280,7 +282,13 @@ struct StagedScope
       , v1(qntvlmda1)
       , mainlmda(lambda)
       , dtexp(epdtexp)
-   {}
+   {
+      for (int i = 0; i < 3; ++i) {
+         stg[i] = use_relstg[i];
+         stglo[i] = relstglo[i];
+         stghi[i] = relstghi[i];
+      }
+   }
 
    ~StagedScope()
    {
@@ -290,6 +298,11 @@ struct StagedScope
       use_plmdamap = useP;
       use_vlmdamap = useV;
       relstage = leg;
+      for (int i = 0; i < 3; ++i) {
+         use_relstg[i] = stg[i];
+         relstglo[i] = stglo[i];
+         relstghi[i] = stghi[i];
+      }
       elmdamap = em;
       plmdamap = pm;
       vlmdamap = vm;
@@ -304,15 +317,14 @@ struct StagedScope
    }
 };
 
-// The reference three-simulation staged protocol: one run per leg, each
-// declaring its leg and walking its own window over the full main lambda.
-// Polarization is given the same map and window as the multipoles, as the
-// staged fixtures do, so it tracks them exactly.
-void setStagedLeg(RelStage leg)
+// Declares the main lambda ranges of the LIG2, VDWM and LIG1 legs of the staged
+// relative schedule, where a leg given a zero width is left undeclared
+// (test_eostmap.f:test_eostmap_setstg). Every map is the quintic one, the only
+// map on which legs that share a main lambda meet with a flat slope.
+void setStages(double lo2, double hi2, double lov, double hiv, double lo1, double hi1)
 {
    use_rel = true;
-   relstage = leg;
-   // A staged leg drives every sub-lambda off the main lambda (mutate.f).
+   // A staged schedule drives every sub-lambda off the main lambda (mutate.f).
    use_mainlmda = true;
    use_elmdamap = true;
    use_plmdamap = true;
@@ -322,20 +334,33 @@ void setStagedLeg(RelStage leg)
    elmdamap = Lmdamap::QNT;
    plmdamap = Lmdamap::QNT;
    vlmdamap = Lmdamap::QNT;
-   qntelmda0 = (leg == RelStage::LIG1) ? 0.7 : 0.0;
-   qntelmda1 = (leg == RelStage::LIG1) ? 1.0 : 0.3;
-   qntplmda0 = qntelmda0;
-   qntplmda1 = qntelmda1;
-   qntvlmda0 = 0.3;
-   qntvlmda1 = 0.7;
+   const double lo[3] = {lo2, lov, lo1};
+   const double hi[3] = {hi2, hiv, hi1};
+   for (int i = 0; i < 3; ++i) {
+      relstglo[i] = lo[i];
+      relstghi[i] = hi[i];
+      use_relstg[i] = hi[i] > lo[i];
+   }
+}
+
+// The three-simulation staged protocol: one run per leg, each declaring its
+// leg alone over its range of the main lambda.
+void setStagedLeg(RelStage leg)
+{
+   const double lo[3] = {0.0, 0.3, 0.7};
+   const double hi[3] = {0.3, 0.7, 1.0};
+   setStages(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+   const int k = static_cast<int>(leg);
+   relstglo[k] = lo[k];
+   relstghi[k] = hi[k];
+   use_relstg[k] = true;
 }
 }
 
 TEST_CASE("DLMDA-relstage-schedule", "[ff][dlmda]")
 {
    StagedScope scope;
-   // Each leg is its own simulation now, so the leg is declared rather than
-   // derived from where the main lambda happens to sit.
+   // Each leg run as its own simulation, declared alone over its range.
 
    // Ligand 2 is discharged as the main lambda rises; van der Waals sits on it.
    setStagedLeg(RelStage::LIG2);
@@ -400,7 +425,7 @@ TEST_CASE("DLMDA-relstage-pinned-endpoints", "[ff][dlmda]")
 TEST_CASE("DLMDA-relstage-continuity", "[ff][dlmda]")
 {
    StagedScope scope;
-   // Polarization on the same map and window stages with the multipoles exactly.
+   // Polarization stages with the multipoles exactly, on the leg and off it.
    for (RelStage leg : {RelStage::LIG2, RelStage::VDWM, RelStage::LIG1}) {
       setStagedLeg(leg);
       for (double lambda : {0.05, 0.15, 0.3, 0.5, 0.7, 0.85, 0.95}) {
@@ -418,7 +443,7 @@ TEST_CASE("DLMDA-relstage-continuity", "[ff][dlmda]")
 
    // The three simulations hand over to each other continuously: the leg
    // boundaries agree in every sub-lambda, so a free energy assembled from the
-   // three legs has no step (test_eostmap.f:1005-1045).
+   // three legs has no step (test_eostmap.f).
    auto sampleAt = [](RelStage leg, double lmda, double& e, double& de, double& v, double& dv) {
       setStagedLeg(leg);
       mapAt(lmda);
@@ -443,7 +468,7 @@ TEST_CASE("DLMDA-relstage-continuity", "[ff][dlmda]")
    COMPARE_REALS(v0, v1, 1.0e-7);
    COMPARE_REALS(dv0, dv1, 1.0e-12);
 
-   // Each leg's electrostatic weight is the quintic taper of its own window,
+   // Each leg's electrostatic weight is the quintic taper of its own range,
    // complemented on the ligand 2 leg where the ligand is being discharged.
    auto legMatchesTaper = [](RelStage leg, double lambda, double lo, double hi, double sign) {
       CAPTURE(lambda);
@@ -462,38 +487,125 @@ TEST_CASE("DLMDA-relstage-continuity", "[ff][dlmda]")
       legMatchesTaper(RelStage::LIG2, lambda, 0.0, 0.3, -1.0);
 }
 
-TEST_CASE("DLMDA-relstage-own-pol-map", "[ff][dlmda]")
+TEST_CASE("DLMDA-relstage-active-leg", "[ff][dlmda]")
 {
-   // Polarization follows its own window on the charging legs, read the other
-   // way on the ligand 2 leg, and stays at zero on the middle leg
-   // (test_eostmap.f). At the middle of a window the quintic taper is one half
-   // with slope 15/8 over the window width.
+   // All three legs declared, so one main lambda walks them in turn: ligand 2
+   // discharging over the lower range, van der Waals morphing over the middle
+   // one and ligand 1 charging over the upper one. A junction belongs to the
+   // upper leg, at its flat end (test_eostmap.f).
+   StagedScope scope;
+   setStages(0.0, 0.3, 0.3, 0.7, 0.7, 1.0);
+
+   mapAt(1.0);
+   REQUIRE(relstage == RelStage::LIG1);
+   COMPARE_REALS(elam, 1.0, 1.0e-7);
+   COMPARE_REALS(vlam, 1.0, 1.0e-14);
+   mapAt(0.85);
+   REQUIRE(relstage == RelStage::LIG1);
+   COMPARE_REALS(elam, 0.5, 1.0e-6);
+   REQUIRE(deldlmda > 0.0);
+   COMPARE_REALS(dvldlmda, 0.0, 1.0e-14);
+   mapAt(0.7);
+   REQUIRE(relstage == RelStage::LIG1);
+   COMPARE_REALS(elam, 0.0, 1.0e-7);
+   COMPARE_REALS(deldlmda, 0.0, 1.0e-14);
+   COMPARE_REALS(vlam, 1.0, 1.0e-14);
+
+   mapAt(0.5);
+   REQUIRE(relstage == RelStage::VDWM);
+   COMPARE_REALS(vlam, 0.5, 1.0e-6);
+   REQUIRE(dvldlmda > 0.0);
+   REQUIRE(elam == 0.0);
+   REQUIRE(deldlmda == 0.0);
+   mapAt(0.3);
+   REQUIRE(relstage == RelStage::VDWM);
+   COMPARE_REALS(vlam, 0.0, 1.0e-7);
+   COMPARE_REALS(dvldlmda, 0.0, 1.0e-14);
+
+   mapAt(0.15);
+   REQUIRE(relstage == RelStage::LIG2);
+   COMPARE_REALS(elam, 0.5, 1.0e-6);
+   REQUIRE(deldlmda < 0.0);
+   COMPARE_REALS(vlam, 0.0, 1.0e-14);
+   mapAt(0.0);
+   REQUIRE(relstage == RelStage::LIG2);
+   COMPARE_REALS(elam, 1.0, 1.0e-7);
+}
+
+TEST_CASE("DLMDA-relstage-pol-carries-ele", "[ff][dlmda]")
+{
+   // Polarization carries the electrostatic weight on every leg, and neither a
+   // map of its own nor the sub-lambda windows of the unstaged maps can move a
+   // staged leg (test_eostmap.f).
+   StagedScope scope;
+   setStages(0.0, 0.3, 0.3, 0.7, 0.7, 1.0);
+   plmdamap = Lmdamap::EXP;
+   qntelmda0 = 0.9;
+   qntvlmda1 = 0.1;
+
+   for (double lambda : {0.1, 0.5, 0.85}) {
+      CAPTURE(lambda);
+      mapAt(lambda);
+      REQUIRE(plam == elam);
+      REQUIRE(dpldlmda == deldlmda);
+      REQUIRE(d2pldlmda2 == d2eldlmda2);
+      REQUIRE(polTracksEle());
+   }
+   COMPARE_REALS(elam, 0.5, 1.0e-6);
+   mapAt(0.5);
+   COMPARE_REALS(vlam, 0.5, 1.0e-6);
+}
+
+TEST_CASE("DLMDA-relstage-leg-width", "[ff][dlmda]")
+{
+   // Legs of unequal width carry the slope of their own local coordinate, here
+   // twice the quintic slope of 15/8 on a leg of half width (test_eostmap.f).
+   StagedScope scope;
+   setStages(0.0, 0.0, 0.0, 0.5, 0.5, 1.0);
+
+   mapAt(0.75);
+   REQUIRE(relstage == RelStage::LIG1);
+   COMPARE_REALS(elam, 0.5, 1.0e-6);
+   COMPARE_REALS(deldlmda, 3.75, 1.0e-12);
+   COMPARE_REALS(vlam, 1.0, 1.0e-14);
+
+   mapAt(0.25);
+   REQUIRE(relstage == RelStage::VDWM);
+   COMPARE_REALS(vlam, 0.5, 1.0e-6);
+   COMPARE_REALS(dvldlmda, 3.75, 1.0e-12);
+   REQUIRE(elam == 0.0);
+}
+
+TEST_CASE("DLMDA-relstage-gap-and-ends", "[ff][dlmda]")
+{
    StagedScope scope;
 
-   setStagedLeg(RelStage::LIG2);
-   qntplmda0 = 0.0;
-   qntplmda1 = 0.2;
+   // A main lambda in a gap between legs holds the end state of the leg below,
+   // with every slope an exact zero (test_eostmap.f).
+   setStages(0.0, 0.2, 0.3, 0.7, 0.7, 1.0);
+   mapAt(0.25);
+   REQUIRE(relstage == RelStage::LIG2);
+   REQUIRE(elam == 0.0);
+   REQUIRE(vlam == 0.0);
+   REQUIRE(deldlmda == 0.0);
+   REQUIRE(d2eldlmda2 == 0.0);
+   REQUIRE(dvldlmda == 0.0);
+
+   // A main lambda below or above every declared leg holds the end state of
+   // the nearest one.
+   use_relstg[0] = false;
    mapAt(0.1);
-   COMPARE_REALS(plam, 0.5, 1.0e-6);
-   COMPARE_REALS(dpldlmda, -9.375, 1.0e-12);
-   COMPARE_REALS(elam, 1.0 - 17.0 / 81.0, 1.0e-6);
-   REQUIRE_FALSE(polTracksEle());
+   REQUIRE(relstage == RelStage::VDWM);
+   REQUIRE(vlam == 0.0);
+   REQUIRE(dvldlmda == 0.0);
 
-   setStagedLeg(RelStage::LIG1);
-   qntplmda0 = 0.8;
-   qntplmda1 = 1.0;
-   mapAt(0.9);
-   COMPARE_REALS(plam, 0.5, 1.0e-6);
-   COMPARE_REALS(dpldlmda, 9.375, 1.0e-12);
-   REQUIRE_FALSE(polTracksEle());
-
-   setStagedLeg(RelStage::VDWM);
-   qntplmda0 = 0.8;
-   qntplmda1 = 1.0;
-   mapAt(0.5);
-   REQUIRE(plam == 0.0);
-   REQUIRE(dpldlmda == 0.0);
-   REQUIRE(d2pldlmda2 == 0.0);
+   use_relstg[0] = true;
+   use_relstg[1] = false;
+   use_relstg[2] = false;
+   mapAt(0.6);
+   REQUIRE(relstage == RelStage::LIG2);
+   REQUIRE(elam == 0.0);
+   REQUIRE(deldlmda == 0.0);
 }
 
 namespace {

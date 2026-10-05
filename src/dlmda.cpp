@@ -385,6 +385,11 @@ void dlmda_mech()
    qntvlmda1 = dlmda::qntvlmda1;
 
    relstage = relStageFrom(dlmda::relstage);
+   for (int i = 0; i < 3; ++i) {
+      use_relstg[i] = (dlmda::use_relstg[i] != 0);
+      relstglo[i] = dlmda::relstglo[i];
+      relstghi[i] = dlmda::relstghi[i];
+   }
 }
 
 void avgstd(const std::vector<double>& v, int begin, int count, double& avg, double& sd)
@@ -743,8 +748,41 @@ static void mapOne(double lmda, Lmdamap map, double qnt0, double qnt1, int expEx
    }
 }
 
-// Maps the main lambda onto the sub-lambdas of the one declared staged
-// relative leg (dlambda.f:maprelstage):
+// Finds the declared leg of the staged relative schedule that holds the main
+// lambda and makes it the active leg, returning the local coordinate s running
+// from zero to one across that leg and its derivative ds with respect to the
+// main lambda; a main lambda outside every declared range holds the end state
+// of the adjacent leg, where the derivative is zero (dlambda.f:relstgloc).
+static void relStgLoc(double lmda, double& s, double& ds)
+{
+   // Take the last declared leg starting at or below the main lambda, or the
+   // first declared leg when the main lambda lies below all.
+   int k = -1;
+   for (int i = 0; i < 3; ++i)
+      if (use_relstg[i] and (k < 0 or lmda >= relstglo[i]))
+         k = i;
+
+   // With no leg declared the active leg is left as it was set, and spans the
+   // whole main lambda.
+   s = lmda;
+   ds = 1.0;
+   if (k < 0)
+      return;
+
+   relstage = static_cast<RelStage>(k);
+   const double lo = relstglo[k];
+   const double hi = relstghi[k];
+   ds = 1.0 / (hi - lo);
+   s = std::min(1.0, std::max(0.0, (lmda - lo) * ds));
+   if (lmda >= hi)
+      s = 1.0;
+   if (lmda < lo or lmda > hi)
+      ds = 0.0;
+}
+
+// Maps the main lambda onto the sub-lambdas of the staged relative schedule,
+// where each declared leg spans its own range of the main lambda
+// (dlambda.f:maprelstage):
 //
 //    LIG2   charge ligand 2 with ligand 1 annihilated, its weight
 //             falling as the main lambda rises
@@ -753,26 +791,30 @@ static void mapOne(double lmda, Lmdamap map, double qnt0, double qnt1, int expEx
 //    LIG1   charge ligand 1 with ligand 2 annihilated, its weight
 //             rising with the main lambda
 //
-// As in the absolute free energy, the electrostatic and polarization weights
-// of a charging leg each follow their own map and window.
+// The leg holding the main lambda is walked on its local coordinate, the term
+// it drives following its own map across the whole leg, and polarization
+// always carries the electrostatic weight.
 static void mapRelStage(double lmda)
 {
+   double s, ds;
+   relStgLoc(lmda, s, ds);
+
    double eval, vval;
 
    if (relstage == RelStage::VDWM) {
-      // The middle leg holds both ligands uncharged, so electrostatics and
-      // polarization sit at the reference state and leave the chain rule
-      // while van der Waals morphs across its map.
+      // The middle leg holds both ligands uncharged, so electrostatics sits at
+      // the reference state and leaves the chain rule while van der Waals
+      // morphs across its map.
       eval = 0.0;
       deldlmda = 0.0;
       d2eldlmda2 = 0.0;
-      mapOne(lmda, vlmdamap, qntvlmda0, qntvlmda1, vlmdaexp, vlmdainvn, vlmdainveps, //
+      mapOne(s, vlmdamap, 0.0, 1.0, vlmdaexp, vlmdainvn, vlmdainveps, //
          vlmdaapmn, vlmdaapmrho, vval, dvldlmda, d2vldlmda2);
       vlam = vval;
    } else if (relstage == RelStage::LIG1) {
       // The ligand 1 leg charges ligand 1 with ligand 2 annihilated and van
       // der Waals already morphed onto ligand 1.
-      mapOne(lmda, elmdamap, qntelmda0, qntelmda1, elmdaexp, elmdainvn, elmdainveps, //
+      mapOne(s, elmdamap, 0.0, 1.0, elmdaexp, elmdainvn, elmdainveps, //
          elmdaapmn, elmdaapmrho, eval, deldlmda, d2eldlmda2);
       vlam = 1.0;
       dvldlmda = 0.0;
@@ -780,7 +822,7 @@ static void mapRelStage(double lmda)
    } else {
       // The ligand 2 leg discharges ligand 2 as the main lambda rises, so its
       // weight is the complement of the map, with van der Waals still on it.
-      mapOne(lmda, elmdamap, qntelmda0, qntelmda1, elmdaexp, elmdainvn, elmdainveps, //
+      mapOne(s, elmdamap, 0.0, 1.0, elmdaexp, elmdainvn, elmdainveps, //
          elmdaapmn, elmdaapmrho, eval, deldlmda, d2eldlmda2);
       eval = 1.0 - eval;
       deldlmda = -deldlmda;
@@ -793,24 +835,17 @@ static void mapRelStage(double lmda)
    // Numerical guard on the map complement.
    elam = std::min(1.0, std::max(0.0, eval));
 
-   // Polarization follows its own map on a charging leg, just as the
-   // multipoles do, as the complement of that map on the ligand 2 leg; the
-   // middle leg holds it at zero with the multipoles.
-   if (relstage == RelStage::VDWM) {
-      plam = 0.0;
-      dpldlmda = 0.0;
-      d2pldlmda2 = 0.0;
-   } else {
-      double pval;
-      mapOne(lmda, plmdamap, qntplmda0, qntplmda1, plmdaexp, plmdainvn, plmdainveps, //
-         plmdaapmn, plmdaapmrho, pval, dpldlmda, d2pldlmda2);
-      if (relstage == RelStage::LIG2) {
-         pval = 1.0 - pval;
-         dpldlmda = -dpldlmda;
-         d2pldlmda2 = -d2pldlmda2;
-      }
-      plam = std::min(1.0, std::max(0.0, pval));
-   }
+   // Carry the chain rule from the local coordinate of the leg back to the
+   // main lambda.
+   deldlmda *= ds;
+   d2eldlmda2 *= ds * ds;
+   dvldlmda *= ds;
+   d2vldlmda2 *= ds * ds;
+
+   // Polarization stages with the multipoles, same state same weight.
+   plam = elam;
+   dpldlmda = deldlmda;
+   d2pldlmda2 = d2eldlmda2;
 }
 
 bool lmdaSameValue(double a, double b)
@@ -821,8 +856,10 @@ bool lmdaSameValue(double a, double b)
 
 bool polTracksEle()
 {
-   // A staged leg drives both sub-lambdas (mutate.f), so it falls through to the
-   // same map and window comparison as any other run.
+   // On a staged leg polarization carries the electrostatic weight, whatever
+   // map and window it names (dlambda.f:maprelstage).
+   if (use_rel)
+      return true;
    // One sub-lambda driven and the other frozen: they part company as soon as
    // the main lambda moves off the value they happen to share now.
    if (use_elmdamap != use_plmdamap)

@@ -51,7 +51,7 @@ enum class LmdaThMap
    TRI  ///< smoothed triangle, sharpened by lmdathalpha
 };
 
-/// Declared leg of the staged relative schedule.
+/// Leg of the staged relative schedule, in the order of rising main lambda.
 enum class RelStage
 {
    LIG2, ///< charge ligand 2 with ligand 1 annihilated
@@ -400,8 +400,15 @@ TINKER_EXTERN double qntvlmda1;
 /// When off, the sub-lambdas move together under the ordinary maps above.
 TINKER_EXTERN bool use_rel;
 
-/// The declared leg, read from the REL-STAGE keyword. Constant for a run.
+/// The active leg, the declared one that holds the main lambda; set by
+/// mapSubLambda() (dlambda.f:relstgloc).
 TINKER_EXTERN RelStage relstage;
+
+// Whether each leg is declared by the REL-STAGE keyword, and the main lambda
+// range it spans, indexed by RelStage in the order of rising lambda.
+TINKER_EXTERN bool use_relstg[3];
+TINKER_EXTERN double relstglo[3];
+TINKER_EXTERN double relstghi[3];
 
 
 // first and second derivatives of each sub-lambda w.r.t. the main lambda.

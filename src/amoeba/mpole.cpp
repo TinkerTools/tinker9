@@ -35,9 +35,11 @@ constexpr unsigned long long NEVER = ~0ull;
 
 // Serial of the contents of pole, advanced by every write to it.
 unsigned long long pole_serial = 1;
-// The lambda mpoleScale() last scaled pole to, and the contents it produced.
-// chkpole inverts pole and poleorig together, so it keeps the relation.
+// The lambda mpoleScale() last scaled pole to, the ligand it charged there,
+// and the contents it produced. chkpole inverts pole and poleorig together, so
+// it keeps the relation.
 double pole_lmda = 0;
+RdtMask pole_lmda_mask = RdtMask::LIGA;
 unsigned long long pole_lmda_serial = 0;
 
 // The epoch and contents of the last charge flux applied to pole; chkpole
@@ -183,10 +185,13 @@ void chkpole()
 TINKER_FVOID2(acc1, cu1, mpoleScale, const int*, GrpScale);
 void mpoleScale(double lmda)
 {
-   if (lmda == pole_lmda and pole_serial == pole_lmda_serial)
+   // The active leg of a staged relative schedule picks the ligand that
+   // charges, so the same lambda on another leg is another state.
+   if (lmda == pole_lmda and chargeMask() == pole_lmda_mask and pole_serial == pole_lmda_serial)
       return;
    TINKER_FCALL2(acc1, cu1, mpoleScale, emGroup(), grpScale(lmda));
    pole_lmda = lmda;
+   pole_lmda_mask = chargeMask();
    pole_lmda_serial = ++pole_serial;
 }
 

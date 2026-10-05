@@ -76,6 +76,10 @@ struct Fixture
    bool checkm, checkp, checkv, dolmda;
    const char* ref = nullptr; ///< Reference borrowed from another fixture, if any.
    Tols tol = {};             ///< Tolerances that differ from the defaults.
+   /// Slope of this fixture's lambda against the borrowed reference's: the
+   /// reference's first lambda derivatives are scaled by it and the second by
+   /// its square, as are their tolerances.
+   double dlscale = 1;
 };
 
 const Fixture kFixtures[] = {
@@ -267,6 +271,19 @@ const Fixture kFixtures[] = {
    {"186_water2ovl_rels_ne_lig2_l015", "water2ovl", true, true, true, true},
    {"187_water2ovl_rels_ye_vdwm_exp_l050", "water2ovl", true, true, true, true},
    {"188_water2near_rels_ye_vdwm_exp_l050", "water2near", true, true, true, true},
+   {"189_water_rels3_l100", "water2", true, true, true, true, "082_water_rels_ye_l100"},
+   {"190_water_rels3_l085", "water2", true, true, true, true, "083_water_rels_ye_l085"},
+   {"191_water_rels3_l070", "water2", true, true, true, true, "084_water_rels_ye_l070"},
+   {"192_water_rels3_l050", "water2", true, true, true, true, "085_water_rels_ye_l050"},
+   {"193_water_rels3_l030", "water2", true, true, true, true, "086_water_rels_ye_l030"},
+   {"194_water_rels3_l015", "water2", true, true, true, true, "087_water_rels_ye_l015", Tols().grad(1.0e-3, 5.0e-4)},
+   {"195_water_rels3_l000", "water2", true, true, true, true, "088_water_rels_ye_l000"},
+   {"196_water_rels3_st_l085", "water2", true, true, true, true, "142_water_rels_st_l085"},
+   {"197_water_rels2_l085", "water2", true, true, true, true, "083_water_rels_ye_l085"},
+   {"198_water_rels2_l015", "water2", true, true, true, true, "111_water_rels_ye_vdwm_l030"},
+   {"199_water_rels3_gap_l025", "water2", true, true, true, true, "086_water_rels_ye_l030"},
+   {"200_water_rels1_flip_l050", "water2", true, true, true, true, "085_water_rels_ye_l050"},
+   {"201_water_rels1_lig2_exp_l015", "water2", true, true, true, true, "117_water_rels_ye_lig2_exp_l030", {}, 2.0},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -390,9 +407,10 @@ void runFixture(const Fixture& fx, Fuse fuse = Fuse::Off, LmdaMode lmdaMode = Lm
    // dV/dL is a difference of two endpoint virials of comparable size, so it
    // loses the leading digits the plain virial keeps, and the references print
    // it to three decimals. testlmda.cpp uses the same allowance.
-   const double eps_dv = std::max(eps_v, testGetEps(1.0e-2, 2.0e-3));
-   const double eps_l = Tols::pick(fx.tol.l, 1.0e-3, 1.0e-4);
-   const double eps_l2 = Tols::pick(fx.tol.l2, 1.0e-3, 1.0e-4);
+   const double eps_dv = fx.dlscale * std::max(eps_v, testGetEps(1.0e-2, 2.0e-3));
+   const double eps_l = fx.dlscale * Tols::pick(fx.tol.l, 1.0e-3, 1.0e-4);
+   const double eps_l2 = fx.dlscale * fx.dlscale * Tols::pick(fx.tol.l2, 1.0e-3, 1.0e-4);
+   const double eps_lg = fx.dlscale * eps_g;
 
    int rc = calc::xyz | calc::mass | calc::vmask;
    if (fuse != Fuse::Off)
@@ -459,9 +477,19 @@ void runFixture(const Fixture& fx, Fuse fuse = Fuse::Off, LmdaMode lmdaMode = Lm
 
    // The lambda-derivative sections are absent from the non-dolmda references,
    // in which case every field reads back as zero and goes unused.
-   const TestLmdaReference& lr = ref.getLmda();
+   TestLmdaReference lr = ref.getLmda();
    if (fx.dolmda)
       REQUIRE((int)lr.lgrad.size() >= n);
+   for (int k = 0; k < 4; ++k) {
+      lr.dedl[k] *= fx.dlscale;
+      lr.d2edl2[k] *= fx.dlscale * fx.dlscale;
+   }
+   for (auto& g : lr.lgrad)
+      for (double& c : g)
+         c *= fx.dlscale;
+   for (auto& row : lr.dvdl)
+      for (double& c : row)
+         c *= fx.dlscale;
 
    // The scalar lambda derivatives vs reference. The per-term split is an
    // analysis feature: only there does a term keep an energy derivative buffer
@@ -503,9 +531,9 @@ void runFixture(const Fixture& fx, Fuse fuse = Fuse::Off, LmdaMode lmdaMode = Lm
       std::vector<double> lx(n), ly(n), lz(n);
       copyGradient(calc::grad, lx.data(), ly.data(), lz.data(), dfdlx, dfdly, dfdlz);
       for (int i = 0; i < n; ++i) {
-         COMPARE_REALS(lx[i], lr.lgrad[i][0], eps_g);
-         COMPARE_REALS(ly[i], lr.lgrad[i][1], eps_g);
-         COMPARE_REALS(lz[i], lr.lgrad[i][2], eps_g);
+         COMPARE_REALS(lx[i], lr.lgrad[i][0], eps_lg);
+         COMPARE_REALS(ly[i], lr.lgrad[i][1], eps_lg);
+         COMPARE_REALS(lz[i], lr.lgrad[i][2], eps_lg);
       }
    };
 
@@ -1163,6 +1191,19 @@ TEST_CASE("MUTATE-185_water2ovl_rels_ye_lig1_ex3_l085", "[ff][mutate][overlap][r
 TEST_CASE("MUTATE-186_water2ovl_rels_ne_lig2_l015", "[ff][mutate][overlap][rels][noewald]") { runFixture(fx("186_water2ovl_rels_ne_lig2_l015")); }
 TEST_CASE("MUTATE-187_water2ovl_rels_ye_vdwm_exp_l050", "[ff][mutate][overlap][rels]") { runFixture(fx("187_water2ovl_rels_ye_vdwm_exp_l050")); }
 TEST_CASE("MUTATE-188_water2near_rels_ye_vdwm_exp_l050", "[ff][mutate][overlap][rels]") { runFixture(fx("188_water2near_rels_ye_vdwm_exp_l050")); }
+TEST_CASE("MUTATE-189_water_rels3_l100", "[ff][mutate][rels][relstg]") { runFixture(fx("189_water_rels3_l100")); }
+TEST_CASE("MUTATE-190_water_rels3_l085", "[ff][mutate][rels][relstg]") { runFixture(fx("190_water_rels3_l085")); }
+TEST_CASE("MUTATE-191_water_rels3_l070", "[ff][mutate][rels][relstg]") { runFixture(fx("191_water_rels3_l070")); }
+TEST_CASE("MUTATE-192_water_rels3_l050", "[ff][mutate][rels][relstg]") { runFixture(fx("192_water_rels3_l050")); }
+TEST_CASE("MUTATE-193_water_rels3_l030", "[ff][mutate][rels][relstg]") { runFixture(fx("193_water_rels3_l030")); }
+TEST_CASE("MUTATE-194_water_rels3_l015", "[ff][mutate][rels][relstg]") { runFixture(fx("194_water_rels3_l015")); }
+TEST_CASE("MUTATE-195_water_rels3_l000", "[ff][mutate][rels][relstg]") { runFixture(fx("195_water_rels3_l000")); }
+TEST_CASE("MUTATE-196_water_rels3_st_l085", "[ff][mutate][rels][relstg][astpol][emplar]") { runEmplarAstFixture(fx("196_water_rels3_st_l085")); }
+TEST_CASE("MUTATE-197_water_rels2_l085", "[ff][mutate][rels][relstg]") { runFixture(fx("197_water_rels2_l085")); }
+TEST_CASE("MUTATE-198_water_rels2_l015", "[ff][mutate][rels][relstg]") { runFixture(fx("198_water_rels2_l015")); }
+TEST_CASE("MUTATE-199_water_rels3_gap_l025", "[ff][mutate][rels][relstg]") { runFixture(fx("199_water_rels3_gap_l025")); }
+TEST_CASE("MUTATE-200_water_rels1_flip_l050", "[ff][mutate][rels][relstg]") { runFixture(fx("200_water_rels1_flip_l050")); }
+TEST_CASE("MUTATE-201_water_rels1_lig2_exp_l015", "[ff][mutate][rels][relstg]") { runFixture(fx("201_water_rels1_lig2_exp_l015")); }
 
 // The fused kernel on its own. The ordinary case of each fixture asks for
 // interaction counts and so goes through the separate empole and epolar
@@ -1304,6 +1345,18 @@ TEST_CASE("MUTATE-DYN-185_water2ovl_rels_ye_lig1_ex3_l085", "[ff][mutate][dyn][o
 TEST_CASE("MUTATE-DYN-186_water2ovl_rels_ne_lig2_l015", "[ff][mutate][dyn][overlap]") { runFixture(fx("186_water2ovl_rels_ne_lig2_l015"), Fuse::Auto); }
 TEST_CASE("MUTATE-DYN-187_water2ovl_rels_ye_vdwm_exp_l050", "[ff][mutate][dyn][overlap]") { runFixture(fx("187_water2ovl_rels_ye_vdwm_exp_l050"), Fuse::Auto); }
 TEST_CASE("MUTATE-DYN-188_water2near_rels_ye_vdwm_exp_l050", "[ff][mutate][dyn][overlap]") { runFixture(fx("188_water2near_rels_ye_vdwm_exp_l050"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-189_water_rels3_l100", "[ff][mutate][dyn][relstg]") { runFixture(fx("189_water_rels3_l100"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-190_water_rels3_l085", "[ff][mutate][dyn][relstg]") { runFixture(fx("190_water_rels3_l085"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-191_water_rels3_l070", "[ff][mutate][dyn][relstg]") { runFixture(fx("191_water_rels3_l070"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-192_water_rels3_l050", "[ff][mutate][dyn][relstg]") { runFixture(fx("192_water_rels3_l050"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-193_water_rels3_l030", "[ff][mutate][dyn][relstg]") { runFixture(fx("193_water_rels3_l030"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-194_water_rels3_l015", "[ff][mutate][dyn][relstg]") { runFixture(fx("194_water_rels3_l015"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-195_water_rels3_l000", "[ff][mutate][dyn][relstg]") { runFixture(fx("195_water_rels3_l000"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-197_water_rels2_l085", "[ff][mutate][dyn][relstg]") { runFixture(fx("197_water_rels2_l085"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-198_water_rels2_l015", "[ff][mutate][dyn][relstg]") { runFixture(fx("198_water_rels2_l015"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-199_water_rels3_gap_l025", "[ff][mutate][dyn][relstg]") { runFixture(fx("199_water_rels3_gap_l025"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-200_water_rels1_flip_l050", "[ff][mutate][dyn][relstg]") { runFixture(fx("200_water_rels1_flip_l050"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-201_water_rels1_lig2_exp_l015", "[ff][mutate][dyn][relstg]") { runFixture(fx("201_water_rels1_lig2_exp_l015"), Fuse::Auto); }
 TEST_CASE("MUTATE-DYN-TI-050_water_qnt_ast_l05", "[ff][mutate][dyn][ti]") { runFixture(fx("050_water_qnt_ast_l05"), Fuse::Auto, LmdaMode::ThermIntg); }
 TEST_CASE("MUTATE-DYN-TI-053_water_qnt_adt_l05", "[ff][mutate][dyn][ti]") { runFixture(fx("053_water_qnt_adt_l05"), Fuse::Auto, LmdaMode::ThermIntg); }
 TEST_CASE("MUTATE-DYN-TI-116_water_rels_ye_vdwm_exp_l050", "[ff][mutate][dyn][ti]") { runFixture(fx("116_water_rels_ye_vdwm_exp_l050"), Fuse::Auto, LmdaMode::ThermIntg); }

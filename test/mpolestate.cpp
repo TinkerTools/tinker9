@@ -1,4 +1,3 @@
-#include "ff/amoeba/emplar.h"
 #include "ff/amoeba/empole.h"
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/induce.h"
@@ -54,9 +53,9 @@ const char* kWater03 = "commit_6fe8e913/water03.prm";
 
 const Fixture kFixtures[] = {
    // single topology polarization at plambda != elambda, no lambda derivative
-   {"rels-prng-nodl", "mutate/water2.xyz", "mpolestate/rels_prng_nodl.key", kWater03},
+   {"abs-prng-nodl", "mutate/water2.xyz", "mpolestate/abs_prng_nodl.key", kWater03},
    // the same with the lambda derivative, whose last pass masks rpole
-   {"rels-prng-dl", "testlmda/water2.xyz", "testlmda/21_water_rels_lig1_st_prng_l088.key", kWater03},
+   {"abs-prng-dl", "mutate/water2.xyz", "mpolestate/abs_prng_dl.key", kWater03},
    // the fused multipole and polarization single topology
    {"emplarast", "mutate/water2.xyz", "mutate/142_water_rels_st_l085.key", kWater03},
    // dual topology polarization, whose passes rotate poleorig
@@ -67,9 +66,11 @@ const Fixture kFixtures[] = {
    {"polpinned", "mutate/water2.xyz", "mpolestate/polpinned.key", kWater03},
    // charge flux rewrites the monopoles of pole
    {"hippo-cflux", "water10/h2o10.xyz", "mpolestate/hippo_cflux.key", "hippo/water19.prm"},
-   // staged at lambda 1, where plambda equals elambda but the maps keep
-   // empole and epolar apart, so that they share cmp
-   {"rels-prng-l100", "mutate/water2.xyz", "mpolestate/rels_prng_l100.key", kWater03},
+   // staged at lambda 1, where single topology polarization at plambda equal
+   // to elambda lets empole and epolar, run apart, share cmp
+   {"rels-l100", "mutate/water2.xyz", "mpolestate/rels_l100.key", kWater03},
+   // all three staged legs under one main lambda, single topology
+   {"rels3-st", "mutate/water2.xyz", "mutate/196_water_rels3_st_l085.key", kWater03},
 };
 
 // The fixture of a given name, so that editing the list shifts no case.
@@ -163,7 +164,7 @@ void runFixture(const Fixture& fx, int vers)
 // which the fused kernels assume, rather than land on the private one.
 TEST_CASE("MPOLESTATE-pme-units", "[ff][mpolestate]")
 {
-   const Fixture& f = fx("rels-prng-dl");
+   const Fixture& f = fx("abs-prng-dl");
    std::string xyzname = "mpolestate.xyz";
    std::string keyname = "mpolestate.key";
    TestFile fxyz(kDir + f.xyz, xyzname);
@@ -244,7 +245,7 @@ const double kSolveEps = 1.0e-6;
 // one epolar() leaves behind.
 TEST_CASE("MPOLESTATE-induced-prst", "[ff][mpolestate]")
 {
-   Setup s(fx("rels-prng-dl"), kEnergyGrad);
+   Setup s(fx("abs-prng-dl"), kEnergyGrad);
    REQUIRE(use_prst);
    REQUIRE_FALSE(lmdaSameValue(elam, plam));
 
@@ -253,6 +254,48 @@ TEST_CASE("MPOLESTATE-induced-prst", "[ff][mpolestate]")
    epolarPhysicalInduced();
    const auto got = grab(uind);
    COMPARE_REALS(maxDiff(got, std::vector<double>(ref.begin(), ref.end())), 0, kSolveEps);
+}
+
+// The active leg of a staged relative schedule picks the ligand that charges,
+// so a sub-lambda reached again on another leg is another state of pole even
+// though the number is the same.
+TEST_CASE("MPOLESTATE-leg-jump", "[ff][mpolestate]")
+{
+   const double eps = testGetEps(1.0e-4, 1.0e-6);
+
+   Setup s(fx("rels3-st"), kEnergyGrad);
+   REQUIRE(use_prst);
+
+   struct State
+   {
+      real weight; // the polarization lambda
+      double e;
+      std::vector<real> u;
+   };
+   auto evalAt = [](double lmda, RelStage leg) {
+      lambda = lmda;
+      energy(calc::v4);
+      REQUIRE(relstage == leg);
+      return State{plam, esum, grab(uind)};
+   };
+   auto same = [&](const State& got, const State& ref) {
+      COMPARE_REALS(got.e, ref.e, eps);
+      COMPARE_REALS(maxDiff(got.u, std::vector<double>(ref.u.begin(), ref.u.end())), 0, kSolveEps);
+   };
+
+   // Reference states, each reached through the middle leg, whose zero weight
+   // neither charging leg shares.
+   const State lig1 = evalAt(0.85, RelStage::LIG1);
+   evalAt(0.5, RelStage::VDWM);
+   const State lig2 = evalAt(0.15, RelStage::LIG2);
+   // The mirror image of the main lambda carries the same weight on the other
+   // ligand, or the jumps below would test nothing.
+   REQUIRE(lig2.weight == lig1.weight);
+   REQUIRE(std::fabs(lig2.e - lig1.e) > 100 * eps);
+
+   // Straight from one charging leg to the other, both ways.
+   same(evalAt(0.85, RelStage::LIG1), lig1);
+   same(evalAt(0.15, RelStage::LIG2), lig2);
 }
 
 // Dual topology leaves only its last endpoint pass in uind and udir, so it has
@@ -344,12 +387,11 @@ TEST_CASE("MPOLESTATE-recip-reuse", "[ff][mpolestate]")
    // Grid spreading adds floats atomically, so a rebuild is not bit identical.
    const double eps = testGetEps(1.0e-4, 1.0e-6);
 
-   for (const char* name : {"rels-prng-l100", "hippo-cflux"}) {
+   for (const char* name : {"rels-l100", "hippo-cflux"}) {
       for (int vers : {calc::v4, calc::v1, calc::v6}) {
          CAPTURE(name, vers);
          Setup s(fx(name), kEnergyGrad | calc::virial);
          REQUIRE(vir_m != nullptr);
-         REQUIRE_FALSE(useEmplar());
          REQUIRE(ppme_unit == epme_unit);
          REQUIRE(elam == plam);
          const bool do_e = vers & calc::energy;
