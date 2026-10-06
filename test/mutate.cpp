@@ -419,7 +419,7 @@ void runFixture(const Fixture& fx, Fuse fuse = Fuse::Off, LmdaMode lmdaMode = Lm
    // TI owns the main lambda and starts at the first schedule window. The TI
    // fixtures all reference lambda 0.5, so keep that operating point instead of
    // accepting TI's default first window at lambda 1.
-   const char* keyextra = lmdaMode == LmdaMode::ThermIntg ? "\nlambda-mode ti\nti-window 0.5\n" : "";
+   const char* keyextra = lmdaMode == LmdaMode::ThermIntg ? "\nlambda-mode ti\nlambda-window 0.5\n" : "";
    // These key files enable the lambda-derivative machinery through the
    // "lambda-deriv" keyword, so the Fortran-side use_dlmda needs no nudging here.
    Setup s(fx, rc, keyextra);
@@ -447,6 +447,10 @@ void runFixture(const Fixture& fx, Fuse fuse = Fuse::Off, LmdaMode lmdaMode = Lm
       // The absolute dual topology fixture runs without van der Waals.
       REQUIRE(use_vdlmda == fx.checkv);
       COMPARE_REALS(lambda, 0.5, eps_l);
+      // the one explicit window is adopted from the key file parser
+      REQUIRE(nlmdawin == 1);
+      REQUIRE((int)lmdawinlist.size() == 1);
+      COMPARE_REALS(lmdawinlist[0], 0.5, eps_l);
    }
 
    if (fuse == Fuse::Require)
@@ -731,7 +735,7 @@ void runScexpTiFixture(const Fixture& fx)
    const double eps_v = testGetEps(2.0e-3, 1.0e-3);
 
    // TI would start at its default first window, lambda 1.
-   Setup s(fx, calc::xyz | calc::mass | calc::vmask, "\nti-window 0.0\n");
+   Setup s(fx, calc::xyz | calc::mass | calc::vmask, "\nlambda-window 0.0\n");
    REQUIRE(use_ti);
    REQUIRE_FALSE(use_d2lmda);
    REQUIRE(lambda == 0);

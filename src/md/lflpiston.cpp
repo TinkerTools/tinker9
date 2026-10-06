@@ -1,7 +1,6 @@
 #include "md/lflpiston.h"
 #include "ff/dlmda.h"
 #include "ff/energy.h"
-#include "ff/ethrmint.h"
 #include "math/random.h"
 #include "md/misc.h"
 #include "md/pq.h"
@@ -365,11 +364,11 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
    copyPosToXyz(true);
    energy(vers1);
 
-   // propagate the lambda particle.
+   // propagate the lambda particle, or sample the lambda window.
    if (use_ost or use_meta or use_abf)
       elmdaDyn(istep);
-   else if (use_ti)
-      etidyn(istep);
+   else
+      lmdaWinDyn(istep);
 
    darray::copy(g::q0, n, leapfrog_x, xpos);
    darray::copy(g::q0, n, leapfrog_y, ypos);

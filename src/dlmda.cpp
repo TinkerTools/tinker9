@@ -634,6 +634,104 @@ double efreeTot()
    return tot;
 }
 
+void lmdaWinData(RcOp op)
+{
+   if (op & RcOp::DEALLOC) {
+      lmdawinend.clear();
+      lmdawinfrac.clear();
+      lmdawinlist.clear();
+   }
+
+   if (op & RcOp::INIT) {
+      lmdawin = dlmda::lmdawin;
+      lmdawineq = dlmda::lmdawineq;
+      lmdawinlen = dlmda::lmdawinlen;
+      nlmdawin = dlmda::nlmdawin;
+      lmdawinratio = dlmda::lmdawinratio;
+
+      // The boundaries wait for the length of the run; lmdaWinFromFortran
+      // reads them once the windows are laid out.
+      lmdawinend.clear();
+
+      // Only a sequential lambda method has a schedule to adopt.
+      if (use_ti) {
+         lmdawinfrac.assign(dlmda::lmdawinfrac, dlmda::lmdawinfrac + nlmdawin);
+         lmdawinlist.assign(dlmda::lmdawinlist, dlmda::lmdawinlist + nlmdawin);
+      } else {
+         lmdawinfrac.clear();
+         lmdawinlist.clear();
+      }
+   }
+}
+
+void lmdaWinFromFortran()
+{
+   nlmdawin = dlmda::nlmdawin;
+   lmdawin = dlmda::lmdawin;
+   lmdawineq = dlmda::lmdawineq;
+   lmdawinlen = dlmda::lmdawinlen;
+   lmdawinend.assign(dlmda::lmdawinend, dlmda::lmdawinend + nlmdawin);
+   lambda = mutant::lambda;
+}
+
+// Measures the current window against the preceding boundary
+// (dlambda.f:setlmdawin).
+void setLmdaWin()
+{
+   lmdawinlen = lmdawinend[lmdawin - 1];
+   if (lmdawin > 1)
+      lmdawinlen = lmdawinend[lmdawin - 1] - lmdawinend[lmdawin - 2];
+   lmdawineq = (int)((double)lmdawinlen * lmdawinratio);
+}
+
+void lmdaWinPhase(int istep, int& iprod)
+{
+   // No step is in production outside of the window schedule.
+   iprod = 0;
+   if (lmdawinend.empty())
+      return;
+   if (lmdawin < 1 or lmdawin > nlmdawin)
+      return;
+
+   // Count the steps taken since the window finished equilibrating.
+   int istart = (lmdawin > 1) ? lmdawinend[lmdawin - 2] : 0;
+   iprod = std::max(0, istep - istart - lmdawineq);
+}
+
+void lmdaWinDyn(int istep)
+{
+   // collect dU/dlambda for thermodynamic integration
+   if (use_ti)
+      etidyn(istep);
+}
+
+// The gradients held by the integrator are not updated for the new lambda, so
+// the first half step of the velocities in a new window still uses forces from
+// the previous window (dlambda.f:nextlmdawin).
+void nextLmdaWin()
+{
+   if (lmdawin > nlmdawin)
+      return;
+   ++lmdawin;
+   if (lmdawin <= nlmdawin) {
+      lambda = lmdawinlist[lmdawin - 1];
+      setLmdaWin();
+   }
+}
+
+void lmdaWinStep(int istep)
+{
+   // Nothing is left to advance outside of the window schedule.
+   if (lmdawinend.empty())
+      return;
+   if (lmdawin < 1 or lmdawin > nlmdawin)
+      return;
+
+   // Move on to the next lambda window at the window boundary.
+   if (istep == lmdawinend[lmdawin - 1])
+      nextLmdaWin();
+}
+
 }
 
 namespace tinker {

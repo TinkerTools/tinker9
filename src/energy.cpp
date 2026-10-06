@@ -560,6 +560,7 @@ void energyData(RcOp op)
    RcMan dlmda42{dlmdaData, op};
    RcMan eost42{eostData, op};
    RcMan eabf42{eabfData, op};
+   RcMan lmdawin42{lmdaWinData, op};
    RcMan ti42{thermintData, op};
    RcMan vdwsSoftcore42{vdwSoftcoreData, op};
    RcMan evdw42{evdwData, op};

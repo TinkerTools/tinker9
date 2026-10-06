@@ -1,3 +1,4 @@
+#include "ff/dlmda.h"
 #include "math/pow2.h"
 #include "md/integrator.h"
 #include "md/misc.h"
@@ -187,6 +188,10 @@ void mdPropagate(int nsteps, time_prec dt_ps)
          mdsaveAsync(istep, dt_ps);
       }
       mdrest(istep);
+
+      // move to the next lambda window at the end of the current one
+      if (use_ti)
+         lmdaWinStep(istep);
    }
    mdsaveSynchronize();
    if (!output::dynsave)

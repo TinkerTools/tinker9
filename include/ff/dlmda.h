@@ -230,6 +230,29 @@ void efreeLmda(double& eflmda, double& dfdl);
 /// Total free energy change from the mean force (dlambda.f:efreetot).
 double efreeTot();
 
+/// Adopts the schedule of sequential lambda windows built by the Fortran
+/// keyword parser (mutate.f:mutate_window, dlambda.f:setlmdasched).
+void lmdaWinData(RcOp op);
+/// Reads the window boundaries, the current window and the main lambda after
+/// the Fortran layout of the windows over a run (dlambda.f:initlmdawin).
+void lmdaWinFromFortran();
+/// Sets the step count and equilibration length of the current lambda window
+/// (dlambda.f:setlmdawin).
+void setLmdaWin();
+/// Position of a dynamics step within the production portion of the current
+/// lambda window; zero while the window is equilibrating, once the schedule
+/// has run out, or when the windows were never laid out (dlambda.f:lmdawinphase).
+void lmdaWinPhase(int istep, int& iprod);
+/// Takes the sample that a sequential lambda method collects at each dynamics
+/// step (dlambda.f:lmdawindyn).
+void lmdaWinDyn(int istep);
+/// Moves the main lambda to the next window in the schedule; past the final
+/// window further calls have no effect (dlambda.f:nextlmdawin).
+void nextLmdaWin();
+/// Moves on to the next lambda window once the final dynamics step of the
+/// current window has been taken (dlambda.f:lmdawinstep).
+void lmdaWinStep(int istep);
+
 TINKER_EXTERN bool use_dlmda;
 /// Whether the second, force and virial lambda derivatives are needed beyond
 /// the first; set by the LAMBDA-DERIV2 keyword and by OST (mutate.f).
@@ -347,6 +370,22 @@ TINKER_EXTERN std::vector<double> lmdaflist; ///< dU/dlambda values saved within
 TINKER_EXTERN std::vector<double> lmdafmean; ///< mean force of each lambda bin.
 TINKER_EXTERN std::vector<double> lmdafsum;  ///< weighted dU/dlambda sum of each lambda bin.
 TINKER_EXTERN std::vector<double> lmdafwt;   ///< total weight of each lambda bin.
+
+//====================================================================//
+//      sequential lambda windows, shared by the window methods       //
+//====================================================================//
+
+TINKER_EXTERN int lmdawin;         ///< index of the current sequential lambda window, from 1.
+TINKER_EXTERN int lmdawineq;       ///< equilibration steps in the current lambda window.
+TINKER_EXTERN int lmdawinlen;      ///< total dynamics steps in the current lambda window.
+TINKER_EXTERN int nlmdawin;        ///< number of sequential lambda windows.
+TINKER_EXTERN double lmdawinratio; ///< fraction of each lambda window spent equilibrating.
+
+/// Last dynamics step belonging to each lambda window; empty until the windows
+/// are laid out over a run.
+TINKER_EXTERN std::vector<int> lmdawinend;
+TINKER_EXTERN std::vector<double> lmdawinfrac; ///< fraction of the run spent in each lambda window.
+TINKER_EXTERN std::vector<double> lmdawinlist; ///< main lambda of each window in schedule order.
 
 //====================================================================//
 //        main lambda -> sub-lambda mapping, shared by all methods    //
