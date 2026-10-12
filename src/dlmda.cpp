@@ -720,6 +720,11 @@ void lmdaWinPhase(int istep, int& iprod)
 
 void lmdaWinDyn(int istep)
 {
+   // advance the adaptive lambda bias and the lambda particle, now that the
+   // step and any Monte Carlo box change are complete
+   if (use_ost or use_meta or use_abf)
+      elmdaDyn(istep);
+
    // collect dU/dlambda for thermodynamic integration
    if (use_ti)
       etidyn(istep);

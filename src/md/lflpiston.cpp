@@ -364,10 +364,6 @@ void lf_lpiston_npt(int istep, time_prec dt_ps)
    copyPosToXyz(true);
    energy(vers1);
 
-   // propagate the lambda particle.
-   if (use_ost or use_meta or use_abf)
-      elmdaDyn(istep);
-
    darray::copy(g::q0, n, leapfrog_x, xpos);
    darray::copy(g::q0, n, leapfrog_y, ypos);
    darray::copy(g::q0, n, leapfrog_z, zpos);

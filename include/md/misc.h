@@ -38,6 +38,11 @@ void bussiThermostat(time_prec dt, T_prec temp);
 /// A trial that is rejected puts the induced dipoles and the predictor history
 /// back (InducedTrial), so neither the saved dipoles nor the next solves see
 /// the trial geometry.
+///
+/// The orthogonal space tempering bias follows dU/dlambda, which changes with
+/// the box, so its trial takes the lambda derivative from the gradient. The
+/// forces of the step are put back after the trial, and a rejected trial also
+/// puts back the lambda derivatives and the saved bias (pressure.f:pmonte).
 void monteCarloBarostat(energy_prec epot, T_prec temp, bool semiiso, bool aniso);
 
 /// \ingroup mdpt
@@ -109,6 +114,14 @@ TINKER_EXTERN energy_prec ekin[3][3];
 /// \var z_pmonte
 /// \brief \copybrief x_pmonte
 TINKER_EXTERN pos_prec *x_pmonte, *y_pmonte, *z_pmonte;
+/// \var gx_pmonte
+/// \brief Forces of the step, kept aside while a Monte Carlo barostat trial
+/// evaluates the gradient; allocated only for orthogonal space tempering.
+/// \var gy_pmonte
+/// \brief \copybrief gx_pmonte
+/// \var gz_pmonte
+/// \brief \copybrief gx_pmonte
+TINKER_EXTERN grad_prec *gx_pmonte, *gy_pmonte, *gz_pmonte;
 
 /// \brief Mass of the piston.
 TINKER_EXTERN double qbar;

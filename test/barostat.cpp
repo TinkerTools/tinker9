@@ -1,7 +1,10 @@
 #include "ff/amoeba/induce.h"
 #include "ff/atom.h"
+#include "ff/dlmda.h"
 #include "ff/energy.h"
+#include "ff/eost.h"
 #include "ff/modamoeba.h"
+#include "ff/ost.h"
 #include "ff/potent.h"
 #include "md/integrator.h"
 #include "md/misc.h"
@@ -14,7 +17,9 @@
 #include "test.h"
 #include "testrt.h"
 
+#include <cmath>
 #include <memory>
+#include <string>
 #include <vector>
 
 using namespace tinker;
@@ -948,3 +953,163 @@ TEST_CASE("NPT-Monte-Reject-After-Expol", "[ff][npt][Monte][reject]")
    checkRejectKeepsInduced();
    session->end();
 }
+
+#if TINKER_GPULANG_CUDA
+namespace {
+// The six atom ion and water box of the Fortran case (test_barostat.f:
+// test_barostat_ost): periodic, no polarization, with orthogonal space
+// tempering at a main lambda of one half. The caller ends the returned session.
+std::unique_ptr<TestSession> loadIonwatOst()
+{
+   const std::string files = TINKER9_DIRSTR "/test/file/";
+   const char* x = "ionwat.xyz";
+   const char* k = "24_ionwat_ewald_l05.key";
+   TestFile fx(files + "testlmda/ionwat.xyz", x);
+   TestFile fk(files + "testlmda/24_ionwat_ewald_l05.key", k);
+   TestFile fp(files + "commit_ebe3611e/amoeba09.prm");
+
+   const char* argv[] = {"dummy", x, "-k", k};
+   int argc = 4;
+   auto session = std::make_unique<TestSession>(argc, argv);
+   testMdInit(298., 1.);
+   rc_flag = usage_ & ~calc::md;
+   session->init();
+   REQUIRE(n == 6);
+   REQUIRE(use_ost);
+   REQUIRE(bath::kelvin == 298.);
+   return session;
+}
+
+template <class T>
+std::vector<T> grab1(const T* dev)
+{
+   std::vector<T> v(n);
+   darray::copyout(g::q0, n, v.data(), dev);
+   waitFor(g::q0);
+   return v;
+}
+}
+
+TEST_CASE("NPT-Monte-OST", "[ff][npt][Monte][ost]")
+{
+   // The bias of orthogonal space tempering follows dU/dlambda and so changes
+   // with the box: a rejected volume move leaves the lambda derivatives, the
+   // saved bias and the forces as they were, and an accepted move returns the
+   // energy, lambda derivative and bias of the new box while the forces of the
+   // step stay in place (test_barostat.f:test_barostat_ost).
+   TestLmdaFlagGuard guard;
+   auto session = loadIonwatOst();
+   const int voltrial0 = bath::voltrial;
+   const double volmove0 = bath::volmove;
+   FstrView volscale = bath::volscale;
+   const std::string volscale0 = volscale.trim();
+   bath::voltrial = 1;
+   bath::volmove = 200.;
+   volscale = "MOLECULAR";
+   const T_prec temp = 298.;
+
+   // deposit one gaussian off center in dU/dlambda, so the bias has a slope
+   // along dU/dlambda at the current configuration
+   energy(calc::v4);
+   lmdaavg = lambda;
+   dedlavg = dedl + 0.5 * wfhist;
+   ostDeposit(1);
+   energy(calc::v4);
+   const energy_prec e0 = esum;
+   REQUIRE(std::fabs(bdgdfl) > 1.0e-6);
+
+   const auto x0 = grab1(xpos), y0 = grab1(ypos), z0 = grab1(zpos);
+   const auto gx0 = grab1(gx), gy0 = grab1(gy), gz0 = grab1(gz);
+   Box box0;
+   boxGetCurrent(box0);
+   const energy_prec dedl0 = dedl, d2edl20 = d2edl2;
+   const double bgbias0 = bgbias, bdgdl0 = bdgdl, bdgdfl0 = bdgdfl;
+   const double bostlmda0 = bostlmda, lmdadfdl0 = lmdadfdl;
+
+   // the barostat owns device arrays, so it has to go before the session ends
+   {
+      MonteCarloBarostat mc;
+
+      // an old energy far below any trial energy rejects the move
+      constexpr energy_prec rejectEnergy = -1.0e30;
+      monteCarloBarostat(rejectEnergy, temp, false, false);
+      REQUIRE(esum == rejectEnergy);
+      Box box1;
+      boxGetCurrent(box1);
+      REQUIRE(box1.lvec1.x == box0.lvec1.x);
+      REQUIRE(grab1(xpos) == x0);
+      REQUIRE(grab1(ypos) == y0);
+      REQUIRE(grab1(zpos) == z0);
+      REQUIRE(grab1(gx) == gx0);
+      REQUIRE(grab1(gy) == gy0);
+      REQUIRE(grab1(gz) == gz0);
+      REQUIRE(dedl == dedl0);
+      REQUIRE(d2edl2 == d2edl20);
+      REQUIRE(bgbias == bgbias0);
+      REQUIRE(bdgdl == bdgdl0);
+      REQUIRE(bdgdfl == bdgdfl0);
+      REQUIRE(bostlmda == bostlmda0);
+      REQUIRE(lmdadfdl == lmdadfdl0);
+
+      // an old energy far above the trial energy accepts the move
+      monteCarloBarostat(e0 + 200., temp, false, false);
+      boxGetCurrent(box1);
+      REQUIRE(box1.lvec1.x != box0.lvec1.x);
+      REQUIRE(grab1(gx) == gx0);
+      REQUIRE(grab1(gy) == gy0);
+      REQUIRE(grab1(gz) == gz0);
+      const energy_prec eacc = esum, dedlacc = dedl;
+      const double biasacc = bgbias - bostlmda;
+      REQUIRE(std::fabs(dedlacc - dedl0) > 1.0e-6);
+      energy(calc::v4);
+      CAPTURE(eacc, esum, dedlacc, dedl, biasacc, bgbias - bostlmda);
+      REQUIRE(std::fabs(dedlacc - dedl) <= 1.0e-6);
+      REQUIRE(std::fabs(biasacc - (bgbias - bostlmda)) <= 1.0e-8);
+      REQUIRE(std::fabs(eacc - esum) <= 1.0e-6);
+   }
+
+   bath::voltrial = voltrial0;
+   bath::volmove = volmove0;
+   volscale = volscale0;
+   session->end();
+   bath::kelvin = 0.;
+   bath::atmsph = 0.;
+   bath::isothermal = 0;
+   bath::isobaric = 0;
+}
+
+TEST_CASE("OST-Update-At-Step-End", "[ff][npt][ost]")
+{
+   // The integrator leaves the adaptive bias and the lambda particle alone;
+   // they are advanced by lmdaWinDyn() once the step is complete, so a Monte
+   // Carlo box change in the step sees the lambda and bias of its force call.
+   TestLmdaFlagGuard guard;
+   auto session = loadIonwatOst();
+   int old = inform::iwrite;
+   inform::iwrite = 1;
+   rc_flag = usage_;
+   intg = new VerletIntegrator(ThermostatEnum::NONE, BarostatEnum::NONE);
+
+   const double sentinel = 12345.;
+   const double lmda0 = lambda;
+   deffdl = sentinel;
+   intg->dynamic(1, 0.001);
+   REQUIRE(deffdl == sentinel);
+   REQUIRE(lambda == lmda0);
+
+   const double eff = dedl + bdgdl + bdgdfl * d2edl2 - lmdadfdl;
+   lmdaWinDyn(1);
+   REQUIRE(std::fabs(deffdl - eff) <= 1.0e-10);
+   REQUIRE(deffdl != sentinel);
+
+   inform::iwrite = old;
+   delete intg;
+   intg = nullptr;
+   rc_flag = usage_ & ~calc::md;
+   session->end();
+   bath::kelvin = 0.;
+   bath::atmsph = 0.;
+   bath::isothermal = 0;
+   bath::isobaric = 0;
+}
+#endif

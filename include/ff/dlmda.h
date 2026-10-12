@@ -250,8 +250,10 @@ void lmdaWinSize(int iwin, int& nlen, int& neq);
 /// lambda window; zero while the window is equilibrating, once the schedule
 /// has run out, or when the windows were never laid out (dlambda.f:lmdawinphase).
 void lmdaWinPhase(int istep, int& iprod);
-/// Takes the sample that a sequential lambda method collects at each dynamics
-/// step (dlambda.f:lmdawindyn).
+/// Advances the adaptive lambda bias and the lambda particle by one dynamics
+/// step, and takes the sample that a sequential lambda method collects at each
+/// step; called once the step is complete and before the trajectory is saved
+/// (dlambda.f:lmdawindyn).
 void lmdaWinDyn(int istep);
 /// Moves the main lambda to the next window in the schedule; past the final
 /// window further calls have no effect (dlambda.f:nextlmdawin).

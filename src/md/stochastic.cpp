@@ -337,7 +337,6 @@ void sdVel2()
 }
 }
 
-#include "ff/dlmda.h"
 #include "ff/energy.h"
 #include "md/integrator.h"
 #include "md/misc.h"
@@ -384,9 +383,6 @@ void StochasticIntegrator::dynamic(int istep, time_prec dt)
    copyPosToXyz(true);
 
    energy(vers1);
-   // propagate the lambda particle
-   if (use_ost or use_meta or use_abf)
-      elmdaDyn(istep);
 
    sdVel2();
    // NVT only, so the virial is never needed here

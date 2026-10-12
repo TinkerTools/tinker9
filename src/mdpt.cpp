@@ -1,5 +1,7 @@
 #include "ff/amoeba/induce.h"
+#include "ff/dlmda.h"
 #include "ff/energy.h"
+#include "ff/eost.h"
 #include "ff/molecule.h"
 #include "ff/nblist.h"
 #include "math/matexp.h"
@@ -89,6 +91,24 @@ static void invert3(double dst[3][3], const double src[3][3])
    dst[2][2] = (src[0][0] * src[1][1] - src[0][1] * src[1][0]) * invdet;
 }
 
+namespace {
+// The lambda derivatives and the bias left by the energy call of the step,
+// which the gradient of an orthogonal space tempering trial overwrites.
+struct OstStepState
+{
+   energy_prec e1[4] = {dedl, demdl, depdl, devdl};
+   energy_prec e2[4] = {d2edl2, d2emdl2, d2epdl2, d2evdl2};
+   double bias[5] = {bgbias, bdgdl, bdgdfl, bostlmda, lmdadfdl};
+
+   void restore() const
+   {
+      dedl = e1[0], demdl = e1[1], depdl = e1[2], devdl = e1[3];
+      d2edl2 = e2[0], d2emdl2 = e2[1], d2epdl2 = e2[2], d2evdl2 = e2[3];
+      bgbias = bias[0], bdgdl = bias[1], bdgdfl = bias[2], bostlmda = bias[3], lmdadfdl = bias[4];
+   }
+};
+}
+
 TINKER_FVOID2(acc1, cu1, monteCarloMolMove, double);
 TINKER_FVOID2(acc1, cu1, monteCarloMolMoveAniso, const double (*)[3]);
 void monteCarloBarostat(energy_prec epot, T_prec temp, bool semiiso, bool aniso)
@@ -124,6 +144,16 @@ void monteCarloBarostat(energy_prec epot, T_prec temp, bool semiiso, bool aniso)
    // The trial energy solves the induced dipoles at the trial geometry and adds
    // them to the predictor history; a rejected trial puts both back.
    InducedTrial trial(InducedTrial::History::USE);
+   // The orthogonal space tempering bias follows dU/dlambda, which changes with
+   // the box, so its trial takes the lambda derivative from the gradient; keep
+   // the lambda state and the forces of the step to put back afterwards.
+   const bool ost_trial = use_ost;
+   const OstStepState lmda0;
+   if (ost_trial) {
+      darray::copy(g::q0, n, gx_pmonte, gx);
+      darray::copy(g::q0, n, gy_pmonte, gy);
+      darray::copy(g::q0, n, gz_pmonte, gz);
+   }
    double step = volmove * (2 * random<double>() - 1);
 
    if (isotropic) {
@@ -299,9 +329,14 @@ void monteCarloBarostat(energy_prec epot, T_prec temp, bool semiiso, bool aniso)
 
    // get the potential energy and PV work changes for trial move
    nblistRefresh();
-   energy(calc::energy);
+   energy(ost_trial ? calc::v4 : calc::energy);
    energy_prec enew;
    copyEnergy(calc::energy, &enew);
+   if (ost_trial) {
+      darray::copy(g::q0, n, gx, gx_pmonte);
+      darray::copy(g::q0, n, gy, gy_pmonte);
+      darray::copy(g::q0, n, gz, gz_pmonte);
+   }
    double dpot = enew - eold;
    double dpv = bath::atmsph * (volnew - volold) / units::prescon;
 
@@ -319,6 +354,8 @@ void monteCarloBarostat(energy_prec epot, T_prec temp, bool semiiso, bool aniso)
    double exp_rdm = random<double>();
    if (exp_rdm > expterm) {
       esum = eold;
+      if (ost_trial)
+         lmda0.restore();
       boxSetCurrent(boxold);
       darray::copy(g::q0, n, xpos, x_pmonte);
       darray::copy(g::q0, n, ypos, y_pmonte);
