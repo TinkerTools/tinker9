@@ -187,11 +187,13 @@ UPred polarPredictor()
    bool pred = uprior::use_pred;
    std::string name = FstrView(uprior::polpred).trim();
 
-   // The Fortran reader turns prediction off for free energy perturbation, so
-   // that its trial energies cannot enter the history. Here the trial solves
-   // bypass the predictor (InducedTrial), and the dynamics keeps it. Dual
-   // topology never predicts, so its history is not asked for.
-   if (use_fep and not use_epdt and (rc_flag & calc::md)) {
+   // The Fortran reader turns prediction off for free energy perturbation and
+   // for the adaptive lambda bias methods, so that their trial energies cannot
+   // enter the history. Here the trial solves bypass the predictor
+   // (InducedTrial), and the dynamics keeps it. Dual topology never predicts,
+   // so its history is not asked for.
+   const bool trials = use_fep or use_ost or use_abf or use_meta;
+   if (trials and not use_epdt and (rc_flag & calc::md)) {
       for (int i = 0; i < keys::nkey; ++i) {
          FstrView record = keys::keyline[i];
          auto vs = Text::split(record.trim());

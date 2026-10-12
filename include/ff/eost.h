@@ -24,8 +24,26 @@ extern std::vector<int> metaihist; // lmdastep stamp per deposited metadynamics 
 // metadynamics bias and its lambda derivative.
 extern std::vector<double> vmetagrid, dvmetagrid;
 
-// bias evaluated by eostBias.
+// bias evaluated by eostBias, and by eabfBias, which keeps its free energy in
+// bostlmda. The bias inside esum is bgbias for metadynamics, -bostlmda for
+// adaptive biasing force and bgbias - bostlmda for orthogonal space tempering.
 extern double bgbias, bdgdl, bdgdfl, bostlmda;
+
+// The lambda derivatives and the bias left by the energy call of the step,
+// which an energy call of a Monte Carlo trial overwrites.
+struct LmdaStepState
+{
+   energy_prec e1[4] = {dedl, demdl, depdl, devdl};
+   energy_prec e2[4] = {d2edl2, d2emdl2, d2epdl2, d2evdl2};
+   double bias[5] = {bgbias, bdgdl, bdgdfl, bostlmda, lmdadfdl};
+
+   void restore() const
+   {
+      dedl = e1[0], demdl = e1[1], depdl = e1[2], devdl = e1[3];
+      d2edl2 = e2[0], d2emdl2 = e2[1], d2epdl2 = e2[2], d2evdl2 = e2[3];
+      bgbias = bias[0], bdgdl = bias[1], bdgdfl = bias[2], bostlmda = bias[3], lmdadfdl = bias[4];
+   }
+};
 
 // column-major grid index for 1-based (i in 1..nlmda, j in 1..nflmda)
 inline int gidx(int i, int j)

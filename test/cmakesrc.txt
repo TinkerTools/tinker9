@@ -28,6 +28,7 @@ imptor.cpp
 induce.cpp
 info.cpp
 kinetic.cpp
+lmdamc.cpp
 localframe.cpp
 localframe2.cpp
 localframe3.cpp

@@ -163,6 +163,10 @@ void xDynamic(int, char**)
       }
    }
 
+   // Monte Carlo lambda moves are accepted at a set temperature
+
+   lmdaMonteCheck();
+
    // perform the setup functions needed to run dynamics
 
    inform::gpucard = 1;

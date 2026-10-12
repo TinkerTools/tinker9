@@ -251,10 +251,23 @@ void lmdaWinSize(int iwin, int& nlen, int& neq);
 /// has run out, or when the windows were never laid out (dlambda.f:lmdawinphase).
 void lmdaWinPhase(int istep, int& iprod);
 /// Advances the adaptive lambda bias and the lambda particle by one dynamics
-/// step, and takes the sample that a sequential lambda method collects at each
-/// step; called once the step is complete and before the trajectory is saved
+/// step, takes the sample that a sequential lambda method collects at each
+/// step, and attempts the Monte Carlo move of an adaptively biased lambda;
+/// called once the step is complete and before the trajectory is saved, so
+/// anything finished on a step is written out on that step
 /// (dlambda.f:lmdawindyn).
 void lmdaWinDyn(int istep);
+/// Attempts a Monte Carlo change of the main lambda at fixed coordinates, in
+/// place of propagating the lambda particle, once the step and its deposit are
+/// complete (dlambda.f:lmdamonte). The energy of the step is \ref esum, which
+/// an accepted move replaces with the energy at the new lambda; a rejected
+/// move leaves the step as it was. \c istep is the step elmdaDyn was given.
+void lmdaMonte(int istep);
+/// Stops a dynamics run that would move an adaptively biased lambda by Monte
+/// Carlo trials with no thermostat, as the moves are accepted at a set
+/// temperature. For the dynamic program, once the ensemble is known and before
+/// the system is set up, so it reads the Fortran flags (dynamic.f).
+void lmdaMonteCheck();
 /// Moves the main lambda to the next window in the schedule; past the final
 /// window further calls have no effect (dlambda.f:nextlmdawin).
 void nextLmdaWin();
@@ -357,6 +370,13 @@ TINKER_EXTERN double lmdafric;    ///< friction coefficient of the theta lambda 
 TINKER_EXTERN double lmdadt;      ///< time step of the theta lambda coordinate.
 TINKER_EXTERN double lmdathalpha;  ///< sharpness of the smoothed triangle theta map.
 TINKER_EXTERN LmdaThMap lmdathmap; ///< theta -> main lambda mapping type.
+
+// Monte Carlo trial moves of the main lambda, in place of the lambda particle.
+TINKER_EXTERN bool use_lmdamc;    ///< move the main lambda by Monte Carlo trials.
+TINKER_EXTERN int lmdamctrial;    ///< mean number of steps between lambda trial moves.
+TINKER_EXTERN double lmdamcmove;  ///< largest change of lambda in a trial move.
+TINKER_EXTERN int nlmdamctry;     ///< number of lambda trial moves attempted.
+TINKER_EXTERN int nlmdamcacc;     ///< number of lambda trial moves accepted.
 
 // current-step derived quantities and interval averages. The unbiased
 // dU/dlambda is \ref dedl itself.

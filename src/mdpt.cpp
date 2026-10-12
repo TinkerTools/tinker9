@@ -91,24 +91,6 @@ static void invert3(double dst[3][3], const double src[3][3])
    dst[2][2] = (src[0][0] * src[1][1] - src[0][1] * src[1][0]) * invdet;
 }
 
-namespace {
-// The lambda derivatives and the bias left by the energy call of the step,
-// which the gradient of an orthogonal space tempering trial overwrites.
-struct OstStepState
-{
-   energy_prec e1[4] = {dedl, demdl, depdl, devdl};
-   energy_prec e2[4] = {d2edl2, d2emdl2, d2epdl2, d2evdl2};
-   double bias[5] = {bgbias, bdgdl, bdgdfl, bostlmda, lmdadfdl};
-
-   void restore() const
-   {
-      dedl = e1[0], demdl = e1[1], depdl = e1[2], devdl = e1[3];
-      d2edl2 = e2[0], d2emdl2 = e2[1], d2epdl2 = e2[2], d2evdl2 = e2[3];
-      bgbias = bias[0], bdgdl = bias[1], bdgdfl = bias[2], bostlmda = bias[3], lmdadfdl = bias[4];
-   }
-};
-}
-
 TINKER_FVOID2(acc1, cu1, monteCarloMolMove, double);
 TINKER_FVOID2(acc1, cu1, monteCarloMolMoveAniso, const double (*)[3]);
 void monteCarloBarostat(energy_prec epot, T_prec temp, bool semiiso, bool aniso)
@@ -148,7 +130,7 @@ void monteCarloBarostat(energy_prec epot, T_prec temp, bool semiiso, bool aniso)
    // the box, so its trial takes the lambda derivative from the gradient; keep
    // the lambda state and the forces of the step to put back afterwards.
    const bool ost_trial = use_ost;
-   const OstStepState lmda0;
+   const LmdaStepState lmda0;
    if (ost_trial) {
       darray::copy(g::q0, n, gx_pmonte, gx);
       darray::copy(g::q0, n, gy_pmonte, gy);
@@ -362,6 +344,8 @@ void monteCarloBarostat(energy_prec epot, T_prec temp, bool semiiso, bool aniso)
       darray::copy(g::q0, n, zpos, z_pmonte);
       copyPosToXyz();
       nblistRefresh();
+      // the energy of the step is again that of the system
+      esum_epoch = xyz_epoch;
    } else {
       trial.accept();
    }

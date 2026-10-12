@@ -4,10 +4,13 @@
 #include "ff/eabf.h"
 #include "ff/ethrmint.h"
 #include "ff/efep.h"
+#include "ff/amoeba/induce.h"
 #include "ff/atom.h"
 #include "ff/egvop.h"
 #include "ff/elec.h"
+#include "ff/energy.h"
 #include "ff/evdw.h"
+#include "ff/nblist.h"
 #include "ff/potent.h"
 #include "math/const.h"
 #include "math/random.h"
@@ -27,8 +30,20 @@
 #include <vector>
 
 namespace tinker {
+// The forces of the step, which the gradient of an orthogonal space tempering
+// trial of lmdaMonte overwrites; allocated at the first such trial.
+static grad_prec *gx_lmdamc, *gy_lmdamc, *gz_lmdamc;
+
 void dlmdaData(RcOp op)
 {
+   // for whichever system is going away
+   if ((op & RcOp::DEALLOC) and gx_lmdamc) {
+      darray::deallocate(gx_lmdamc, gy_lmdamc, gz_lmdamc);
+      gx_lmdamc = nullptr;
+      gy_lmdamc = nullptr;
+      gz_lmdamc = nullptr;
+   }
+
    if (!use_rel)
       return;
 
@@ -338,6 +353,11 @@ void dlmda_mech()
    use_lmdacv = (dlmda::use_lmdacv != 0);
    lmdacvstd = dlmda::lmdacvstd;
    lmdacvrat = dlmda::lmdacvrat;
+   use_lmdamc = (dlmda::use_lmdamc != 0);
+   lmdamctrial = dlmda::lmdamctrial;
+   lmdamcmove = dlmda::lmdamcmove;
+   nlmdamctry = 0;
+   nlmdamcacc = 0;
 
    // dedl is owned by the energy routines and zeroed by zeroEGV each step.
    deffdl = 0;
@@ -558,7 +578,9 @@ void lmdaLangStep(double gauss)
 // orthogonal space tempering, metadynamics or adaptive biasing force; it builds
 // the effective lambda derivative, saves the interval samples, deposits the
 // interval average at the end of each interval and propagates the lambda
-// particle (dlambda.f:elmdadyn).
+// particle; when the lambda is moved by Monte Carlo trials the particle is left
+// alone and lmdaMonte changes the lambda once the step is complete
+// (dlambda.f:elmdadyn).
 void elmdaDyn(int istep)
 {
    int im = istep % lmdaintv;
@@ -601,6 +623,10 @@ void elmdaDyn(int istep)
          metaDeposit(istep);
       }
    }
+
+   // Monte Carlo trials move the lambda in place of the lambda particle
+   if (use_lmdamc)
+      return;
 
    // propagate the lambda particle; OST and ABF hold lambda fixed after the
    // propagation phase
@@ -718,6 +744,132 @@ void lmdaWinPhase(int istep, int& iprod)
    iprod = std::max(0, istep - istart - lmdawineq);
 }
 
+// The bias energy at the current lambda of the methods whose bias follows
+// lambda alone, adaptive biasing force and metadynamics, from the history as it
+// now stands. No saved value is changed (dlambda.f:elmdabias).
+static double elmdaBias()
+{
+   double vbias, slope;
+   if (use_abf) {
+      efreeLmda(vbias, slope);
+      return -vbias;
+   }
+   eMetaBias(lambda, vbias, slope);
+   return vbias;
+}
+
+void lmdaMonte(int istep)
+{
+   // OST and ABF move lambda only in the propagation phase of the sample
+   // interval, while metadynamics moves it at any step
+   const int isamp = (istep - 1) % lmdaintv;
+   if ((use_ost or use_abf) and isamp >= lmdanpa)
+      return;
+
+   // decide whether to attempt a lambda change at this step
+   if (random<double>() >= 1.0 / lmdamctrial)
+      return;
+
+   // draw the trial lambda and reflect it into the lambda range
+   const double kt = units::gasconst * bath::kelvin;
+   double ltrial = lambda + lmdamcmove * (2 * random<double>() - 1);
+   if (ltrial < 0)
+      ltrial = -ltrial;
+   if (ltrial > 1)
+      ltrial = 2 - ltrial;
+   ++nlmdamctry;
+
+   // The energy of the step no longer holds once the coordinates or the box
+   // have been set since it was found, as they are by a scaling barostat; nor
+   // does the OST energy hold once this step has added to the history.
+   const bool moved = esum_epoch != xyz_epoch;
+   const bool stale = moved or (use_ost and istep % lmdaintv == 0);
+
+   // Save the native state before any energy is found, so that a rejected move
+   // restores just what the step has left. The trial solves start from the
+   // direct guess and leave the predictor history to the dynamics.
+   const double lold = lambda;
+   const energy_prec estep = esum;
+   const auto epoch = esum_epoch;
+   const LmdaStepState step;
+   InducedTrial trial(InducedTrial::History::BYPASS);
+   if (use_ost) {
+      if (not gx_lmdamc)
+         darray::allocate(n, &gx_lmdamc, &gy_lmdamc, &gz_lmdamc);
+      darray::copy(g::q0, n, gx_lmdamc, gx);
+      darray::copy(g::q0, n, gy_lmdamc, gy);
+      darray::copy(g::q0, n, gz_lmdamc, gz);
+   }
+
+   // Get the old energy at the native lambda, using the energy of the step
+   // unless it is stale. A bias that follows lambda alone is taken from the
+   // history as it now stands, which may hold a deposit made after the forces
+   // of the step were found; an energy call does the same.
+   const int vers = use_ost ? calc::v4 : calc::energy;
+   double eold;
+   if (stale) {
+      // a rescaled structure has left the neighbor lists behind
+      nblistRefresh();
+      energy(vers);
+      eold = esum;
+   } else if (use_ost) {
+      eold = estep;
+   } else {
+      eold = estep - (use_abf ? -bostlmda : bgbias) + elmdaBias();
+   }
+
+   // Get the new energy at the trial lambda; the OST bias follows dU/dlambda,
+   // so it is found along with the lambda derivative.
+   lambda = ltrial;
+   energy(vers);
+   const double enew = esum;
+
+   // acceptance from the change in potential energy plus bias
+   const double de = enew - eold;
+   bool accept = de <= 0;
+   if (not accept and kt > 0)
+      accept = random<double>() < std::exp(-de / kt);
+
+   if (accept) {
+      // accept the step, and keep the lambda particle at the new lambda
+      ++nlmdamcacc;
+      if (use_ost)
+         ostdgdl = bdgdl + bdgdfl * d2edl2;
+      if (use_ost or use_abf)
+         lmdaddgdl = lmdadfdl;
+      lmdaThetaInv(lambda, lmdatheta);
+      lmdavtheta = 0;
+      trial.accept();
+   } else {
+      // Reject the step, and restore values prior to the trial change. The
+      // lambda dependent parameters are scaled again by whatever reads them
+      // next, the following energy call or the saved output.
+      lambda = lold;
+      if (use_mainlmda)
+         mapSubLambda();
+      step.restore();
+      esum = estep;
+      // The energy calls of the trial marked the energy as current, which the
+      // energy of a step that the system had already left behind is not.
+      if (moved)
+         esum_epoch = epoch;
+   }
+
+   // The integrator keeps the forces of the step for its next half kick.
+   if (use_ost) {
+      darray::copy(g::q0, n, gx, gx_lmdamc);
+      darray::copy(g::q0, n, gy, gy_lmdamc);
+      darray::copy(g::q0, n, gz, gz_lmdamc);
+   }
+}
+
+void lmdaMonteCheck()
+{
+   const bool bias = dlmda::use_ost or dlmda::use_meta or dlmda::use_abf;
+   if (dlmda::use_lmdamc and bias and not bath::isothermal)
+      TINKER_THROW("DYNAMIC  --  Monte Carlo Lambda Moves Require a Constant Temperature Ensemble");
+}
+
 void lmdaWinDyn(int istep)
 {
    // advance the adaptive lambda bias and the lambda particle, now that the
@@ -732,6 +884,10 @@ void lmdaWinDyn(int istep)
    // find trial lambda energies for free energy perturbation
    if (use_fep)
       efepDyn(istep);
+
+   // try a Monte Carlo move of an adaptively biased lambda
+   if (use_lmdamc and (use_ost or use_meta or use_abf))
+      lmdaMonte(istep);
 }
 
 // The gradients held by the integrator are not updated for the new lambda, so

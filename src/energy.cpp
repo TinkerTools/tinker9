@@ -453,6 +453,7 @@ void energy(int vers, unsigned tsflag, const TimeScaleConfig& tsconfig)
          d2edl2 += toFloatingPoint<energy_prec>(ev_hobj.d2edl2);
       }
       esum = energy_valence + energy_vdw + energy_elec + energy_nnintermol;
+      esum_epoch = xyz_epoch;
    }
    if (do_v) {
       if (!rc_a) {

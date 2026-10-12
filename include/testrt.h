@@ -66,13 +66,14 @@ private:
 /// that run after it.
 struct TestLmdaFlagGuard
 {
-   bool ost = use_ost, meta = use_meta, abf = use_abf, cv = use_lmdacv;
+   bool ost = use_ost, meta = use_meta, abf = use_abf, cv = use_lmdacv, mc = use_lmdamc;
    ~TestLmdaFlagGuard()
    {
       use_ost = ost;
       use_meta = meta;
       use_abf = abf;
       use_lmdacv = cv;
+      use_lmdamc = mc;
    }
 };
 

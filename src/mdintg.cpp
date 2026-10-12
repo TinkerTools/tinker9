@@ -178,8 +178,9 @@ void mdPropagate(int nsteps, time_prec dt_ps)
       }
       intg->dynamic(istep, dt_ps);
 
-      // sample the lambda window of a sequential lambda method, once the step
-      // is complete and before the trajectory is saved
+      // sample the lambda window of a sequential lambda method or try a Monte
+      // Carlo lambda move, once the step is complete and before the trajectory
+      // is saved
       lmdaWinDyn(istep);
 
       // mdstat

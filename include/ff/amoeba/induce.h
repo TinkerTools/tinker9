@@ -34,8 +34,9 @@ void sparsePrecondApply(const real (*rsd)[3],
 void ulspredSave(const real (*uind)[3], const real (*uinp)[3]);
 
 /// The induced dipole predictor a run uses: the choice the Fortran reader made
-/// (predict.f), except for free energy perturbation dynamics, where the reader
-/// turns prediction off and the POLAR-PREDICT keyword is read again here.
+/// (predict.f), except for the dynamics of free energy perturbation and of the
+/// adaptive lambda bias methods, where the reader turns prediction off and the
+/// POLAR-PREDICT keyword is read again here.
 UPred polarPredictor();
 void ulspredSum(real (*uind)[3], real (*uinp)[3]);
 
@@ -82,7 +83,7 @@ public:
       BYPASS ///< Neither read nor write it: they start from the direct guess,
              ///< their result is not saved, and one that fails to converge is
              ///< not retried by wiggling the atoms. For the trial lambdas of
-             ///< free energy perturbation.
+             ///< free energy perturbation and of a Monte Carlo lambda move.
    };
 
    explicit InducedTrial(History);

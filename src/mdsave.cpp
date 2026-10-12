@@ -93,6 +93,7 @@ static double s_lambda, s_dedl;
 static bool bias_snap_active;
 static double s_ostdgdl, s_lmdaddgdl, s_lmdadeltag;
 static double s_lmdatheta, s_lmdavtheta;
+static int s_nlmdamctry, s_nlmdamcacc;
 static int s_lmdastep, s_nflmda, s_fli0;
 static int s_nlmdahist, s_sizelmdahist, s_hist_first;
 static std::vector<int> s_khist, s_ihist;
@@ -139,6 +140,8 @@ static void mdsaveDupLmdaBias(int istep)
    s_lmdadeltag = lmdadeltag;
    s_lmdatheta = lmdatheta;
    s_lmdavtheta = lmdavtheta;
+   s_nlmdamctry = nlmdamctry;
+   s_nlmdamcacc = nlmdamcacc;
 
    s_khist.clear(), s_ihist.clear(), s_lhist.clear(), s_fhist.clear();
    s_hhist.clear(), s_wlhist.clear(), s_wfhist.clear();
@@ -190,6 +193,8 @@ static void mdsaveWriteLmdaBias()
    dlmda::lmdadeltag = s_lmdadeltag;
    dlmda::lmdatheta = s_lmdatheta;
    dlmda::lmdavtheta = s_lmdavtheta;
+   dlmda::nlmdamctry = s_nlmdamctry;
+   dlmda::nlmdamcacc = s_nlmdamcacc;
 
    if (use_ost) {
       // grow the Fortran arrays to match the engine, preserving existing entries

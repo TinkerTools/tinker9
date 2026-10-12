@@ -105,6 +105,10 @@ TINKER_EXTERN VirialBuffer vir_buf_elec;       ///< Virial buffer for the electr
 TINKER_EXTERN VirialBuffer vir_buf_nnintermol; ///< Virial buffer for the Intermolecular NN terms.
 
 TINKER_EXTERN energy_prec esum;              ///< Total potential energy.
+/// \ref xyz_epoch as the energy call that found \ref esum left it. While the two
+/// are equal neither the coordinates nor the box have been set since, and esum
+/// is still the energy of the system.
+TINKER_EXTERN unsigned long long esum_epoch;
 TINKER_EXTERN energy_prec energy_valence;    ///< Total valence energy.
 TINKER_EXTERN energy_prec energy_vdw;        ///< Total vdw energy.
 TINKER_EXTERN energy_prec energy_elec;       ///< Total electrostatic energy.

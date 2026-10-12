@@ -1,5 +1,6 @@
 #include "ff/eabf.h"
 #include "ff/energy.h"
+#include "ff/eost.h"
 #include <tinker/detail/dlmda.hh>
 #include <tinker/detail/mutant.hh>
 
@@ -42,11 +43,11 @@ void eabfData(RcOp op)
 void eabfBias(int vers)
 {
    // The bias depends on lambda alone, so it carries no Cartesian force/virial.
-   double eflmda, dfdl;
-   efreeLmda(eflmda, dfdl);
+   // Its value stays in bostlmda: a Monte Carlo lambda move takes it back out
+   // of the energy of the step.
+   efreeLmda(bostlmda, lmdadfdl);
    if (vers & calc::energy)
-      esum -= eflmda;
-   lmdadfdl = dfdl;
+      esum -= bostlmda;
 }
 
 // abfDeposit -- records the lambda and dU/dlambda average of one accepted
