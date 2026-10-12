@@ -622,9 +622,17 @@ void evdw(int vers)
    evdwKernel(vers);
    // The long-range correction is linear in vlambda, so the stored slope
    // carries it to the current vlam exactly and gives its lambda derivatives.
+   energy_prec elrc;
+   virial_prec vlrc;
+   evdwLrcVol(elrc, vlrc);
+   evdwFinish(vers, elrc, vlrc, delrc_vol * dvldlmda, delrc_vol * d2vldlmda2, dvlrc_vol * dvldlmda);
+}
+
+void evdwLrcVol(energy_prec& elrc, virial_prec& vlrc)
+{
    double dvl = vlam - vlam_lrc0;
-   evdwFinish(vers, elrc_vol + dvl * delrc_vol, vlrc_vol + dvl * dvlrc_vol, //
-      delrc_vol * dvldlmda, delrc_vol * d2vldlmda2, dvlrc_vol * dvldlmda);
+   elrc = elrc_vol + dvl * delrc_vol;
+   vlrc = vlrc_vol + dvl * dvlrc_vol;
 }
 }
 

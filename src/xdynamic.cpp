@@ -1,4 +1,5 @@
 #include "ff/atom.h"
+#include "ff/efep.h"
 #include "ff/ethrmint.h"
 #include "ff/eabf.h"
 #include "md/misc.h"
@@ -16,6 +17,7 @@
 #include "tinker9.h"
 
 #include <chrono>
+#include <algorithm>
 #include <cmath>
 
 namespace tinker {
@@ -82,7 +84,7 @@ void xDynamic(int, char**)
       "\n"
       " Enter Time between Saves in Picoseconds [0.1] :  ",
       0.1, [](double i) { return i <= 0; });
-   inform::iwrite = std::round(dtsave / dt);
+   inform::iwrite = std::max(1, (int)std::round(dtsave / dt));
 
    // get choice of statistical ensemble for periodic system
 
@@ -188,6 +190,10 @@ void xDynamic(int, char**)
    // lay out the thermodynamic integration lambda windows
    if (use_ti)
       init_tidyn(nstep);
+
+   // lay out the free energy perturbation lambda windows
+   if (use_fep)
+      init_fepdyn(nstep);
 
    auto t_start = std::chrono::steady_clock::now();
    mdPropagate(nstep, dt);

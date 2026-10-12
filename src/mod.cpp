@@ -19,6 +19,7 @@
 #include "ff/ost.h"
 #include "ff/pme.h"
 #include "ff/spatial.h"
+#include "ff/efep.h"
 #include "ff/ethrmint.h"
 
 #include "md/lflpiston.h"

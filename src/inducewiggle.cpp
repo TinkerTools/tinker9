@@ -1,14 +1,18 @@
 #include "ff/amoeba/induce.h"
 #include "ff/atom.h"
+#include "ff/dlmda.h"
+#include "ff/potent.h"
 #include "math/random.h"
 #include "md/rattle.h"
 #include "tool/argkey.h"
 #include "tool/darray.h"
 #include "tool/error.h"
 #include "tool/ioprint.h"
+#include <tinker/detail/polpcg.hh>
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/units.hh>
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <vector>
 
@@ -17,6 +21,12 @@ static bool s_on = false;       // keyword INDUCE-WIGGLE in MD
 static bool s_failed = false;   // a solver failed in this energy evaluation
 static bool s_retrying = false; // atoms were wiggled; disable the predictor
 static int s_ntry = 0;          // wiggles for the current energy evaluation
+static bool s_trial = false;    // an InducedTrial is alive
+static bool s_bypass = false;   // and its solves bypass the predictor history
+// What a trial puts back, created on the first trial of a polarizable system.
+// It is freed with the system and never at exit, where a run that ends on an
+// error would be releasing device memory after the device has shut down.
+static InducedSnapshot* s_snapshot = nullptr;
 
 void induceWiggleData(RcOp op)
 {
@@ -25,6 +35,9 @@ void induceWiggleData(RcOp op)
       s_failed = false;
       s_retrying = false;
       s_ntry = 0;
+      // the snapshot belongs to the system that is going away
+      delete s_snapshot;
+      s_snapshot = nullptr;
    }
 
    if (op & RcOp::INIT) {
@@ -34,14 +47,47 @@ void induceWiggleData(RcOp op)
    }
 }
 
-bool induceWiggleOn()
+InducedTrial::InducedTrial(History history)
+   : m_saved(false)
+   , m_accepted(false)
 {
-   return s_on;
+   assert(not s_trial);
+   s_trial = true;
+   s_bypass = (history == History::BYPASS);
+   if (use(Potent::POLAR)) {
+      if (not s_snapshot)
+         s_snapshot = new InducedSnapshot;
+      s_snapshot->save(not s_bypass);
+      m_saved = true;
+   }
 }
 
-bool induceNoPredict()
+InducedTrial::~InducedTrial()
 {
-   return s_retrying;
+   if (m_saved and not m_accepted)
+      s_snapshot->restore();
+   s_trial = false;
+   s_bypass = false;
+}
+
+void InducedTrial::accept()
+{
+   m_accepted = true;
+}
+
+bool induceHistoryBypassed()
+{
+   return s_bypass;
+}
+
+UGuess induceGuess()
+{
+   // dual topology solves each subsystem from scratch
+   const bool wanted = polpred != UPred::NONE and not use_epdt;
+   // After a wiggle the history belongs to the unwiggled coordinates.
+   if (wanted and nualt >= maxualt and not s_retrying and not s_bypass)
+      return UGuess::PREDICT;
+   return (wanted or polpcg::pcgguess) ? UGuess::DIRECT : UGuess::ZERO;
 }
 
 bool induceFailed()
@@ -49,7 +95,7 @@ bool induceFailed()
    return s_failed;
 }
 
-void induceReportFailure(const real (*rsd)[3], const real (*rsdp)[3])
+static void induceReportFailure(const real (*rsd)[3], const real (*rsdp)[3])
 {
    std::vector<real> r(3 * n), rp;
    darray::copyout(g::q0, n, r.data(), rsd);
@@ -106,6 +152,16 @@ void induceReportFailure(const real (*rsd)[3], const real (*rsdp)[3])
       print(stdout, "    Atom %8d     Residual %12.4e\n", idx[k] + 1, rsq[idx[k]]);
 
    s_failed = true;
+}
+
+void induceNotConverged(const real (*rsd)[3], const real (*rsdp)[3])
+{
+   if (s_on and not s_bypass) {
+      induceReportFailure(rsd, rsdp);
+      return;
+   }
+   printError();
+   TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
 }
 
 bool induceWiggleRetry()

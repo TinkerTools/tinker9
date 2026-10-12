@@ -880,9 +880,8 @@ void checkRejectKeepsInduced()
 
    {
       MonteCarloBarostat mc;
-      InducedSnapshot snapshot;
       // an old energy far below any trial energy rejects the move for certain
-      monteCarloBarostat(rejectEnergy, 298., false, false, &snapshot);
+      monteCarloBarostat(rejectEnergy, 298., false, false);
    }
 
    std::vector<pos_prec> xa(n), ya(n), za(n);

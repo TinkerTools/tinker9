@@ -46,7 +46,22 @@ struct Fixture
    const char* xyz;
    const char* key;
    const char* prm;
+   const char* extra = "";    // key lines the fixture adds to the file
+   void (*terms)() = nullptr; // checks that the setup is the one the fixture is about
 };
+
+// Free energy perturbation of a ligand with charge flux, whose polarization
+// is solved with every parameter scaled to the polarization lambda.
+const char* kCfluxFep = "\nligand -1 3\nvdw-lmda-map exp\nvdw-lmda-exp 1\nele-lmda-map exp\nele-lmda-exp 1\n"
+                        "pol-lmda-map exp\npol-lmda-exp 1\nlambda 0.5\n"
+                        "lambda-mode fep\nlambda-window 0.5\nlambda-window 0.4\n";
+
+void termsCfluxFep()
+{
+   REQUIRE(use_fep);
+   REQUIRE(use_prst);
+   REQUIRE(use(Potent::CHGFLX));
+}
 
 const std::string kDir = TINKER9_DIRSTR "/test/file/";
 const char* kWater03 = "commit_6fe8e913/water03.prm";
@@ -66,6 +81,9 @@ const Fixture kFixtures[] = {
    {"polpinned", "mutate/water2.xyz", "mpolestate/polpinned.key", kWater03},
    // charge flux rewrites the monopoles of pole
    {"hippo-cflux", "water10/h2o10.xyz", "mpolestate/hippo_cflux.key", "hippo/water19.prm"},
+   // the same under free energy perturbation, which scales pole between calls
+   {"hippo-cflux-fep", "water10/h2o10.xyz", "mpolestate/hippo_cflux.key", "hippo/water19.prm", kCfluxFep,
+      termsCfluxFep},
    // staged at lambda 1, where single topology polarization at plambda equal
    // to elambda lets empole and epolar, run apart, share cmp
    {"rels-l100", "mutate/water2.xyz", "mpolestate/rels_l100.key", kWater03},
@@ -115,12 +133,13 @@ double rpoleError()
 
 void runFixture(const Fixture& fx, int vers)
 {
+   TestLmdaFlagReset lmdaReset;
    std::string xyzname = "mpolestate.xyz";
    std::string keyname = "mpolestate.key";
    std::string prm = fx.prm;
    std::string prmname = prm.substr(prm.find('/') + 1);
    TestFile fxyz(kDir + fx.xyz, xyzname);
-   TestFile fkey(kDir + fx.key, keyname);
+   TestFile fkey(kDir + fx.key, keyname, fx.extra);
    TestFile fprm(kDir + prm, prmname);
    const char* argv[] = {"dummy", xyzname.c_str(), "-k", keyname.c_str()};
    int argc = 4;
@@ -130,6 +149,8 @@ void runFixture(const Fixture& fx, int vers)
    rc_flag = calc::xyz | calc::mass | calc::energy | calc::grad | calc::virial;
    TestSession session(argc, argv);
    session.init();
+   if (fx.terms)
+      fx.terms();
 
    energy(vers);
    mpoleEnsurePhysical();
@@ -203,17 +224,20 @@ const char* kSetupArgv[] = {"dummy", "mpolestate.xyz", "-k", "mpolestate.key"};
 
 struct Setup
 {
+   TestLmdaFlagReset lmdaReset;
    TestFile fxyz, fkey, fprm;
    TestSession session;
 
    Setup(const Fixture& f, int rc)
       : fxyz(kDir + f.xyz, "mpolestate.xyz")
-      , fkey(kDir + f.key, "mpolestate.key")
+      , fkey(kDir + f.key, "mpolestate.key", f.extra)
       , fprm(kDir + f.prm, std::string(f.prm).substr(std::string(f.prm).find('/') + 1))
       , session(4, kSetupArgv)
    {
       rc_flag = rc;
       session.init();
+      if (f.terms)
+         f.terms();
    }
 };
 
@@ -387,7 +411,7 @@ TEST_CASE("MPOLESTATE-recip-reuse", "[ff][mpolestate]")
    // Grid spreading adds floats atomically, so a rebuild is not bit identical.
    const double eps = testGetEps(1.0e-4, 1.0e-6);
 
-   for (const char* name : {"rels-l100", "hippo-cflux"}) {
+   for (const char* name : {"rels-l100", "hippo-cflux", "hippo-cflux-fep"}) {
       for (int vers : {calc::v4, calc::v1, calc::v6}) {
          CAPTURE(name, vers);
          Setup s(fx(name), kEnergyGrad | calc::virial);

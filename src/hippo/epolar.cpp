@@ -1,21 +1,32 @@
 #include "ff/amoeba/epolar.h"
 #include "ff/amoeba/empole.h"
+#include "ff/amoeba/mpolestate.h"
+#include "ff/dlmda.h"
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/hippo/cflux.h"
 #include "ff/hippo/expol.h"
+#include "ff/amoeba/induce.h"
 #include "ff/hippo/induce.h"
 #include "ff/modamoeba.h"
 #include "ff/potent.h"
 #include "math/zero.h"
 #include "tool/externfunc.h"
 #include "tool/iofortstr.h"
+#include <tinker/detail/dlmda.hh>
 #include <tinker/detail/mplpot.hh>
+#include <tinker/detail/mutant.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/uprior.hh>
 
 namespace tinker {
+// The lambda polarScale() last scaled the polarizabilities to, and the ligand
+// it charged there; unset while they are as the Fortran setup left them.
+static bool polar_lmda_set = false;
+static double polar_lmda = 0;
+static RdtMask polar_lmda_mask = RdtMask::LIGA;
+
 void epolarChgpenData(RcOp op)
 {
    if (not use(Potent::POLAR))
@@ -80,18 +91,7 @@ void epolarChgpenData(RcOp op)
       }
 
       darray::allocate(n, &work01_, &work02_, &work03_, &work04_, &work05_);
-      if (uprior::use_pred) {
-         FstrView predstr = uprior::polpred;
-         if (predstr == "ASPC") {
-            polpred = UPred::ASPC;
-         } else if (predstr == "GEAR") {
-            polpred = UPred::GEAR;
-         } else {
-            polpred = UPred::LSQR;
-         }
-      } else {
-         polpred = UPred::NONE;
-      }
+      polpred = polarPredictor();
       maxualt = 0;
       nualt = 0;
 
@@ -127,7 +127,32 @@ void epolarChgpenData(RcOp op)
       darray::copyin(g::q0, n, polarity, polar::polarity);
       darray::copyin(g::q0, n, polarity_inv, pinvbuf.data());
       waitFor(g::q0);
+      polar_lmda_set = false;
    }
+}
+
+// Scales the polarizabilities of each atom group from their unscaled values to
+// the polarization lambda (mutate.f:altpolr), unless they already hold that
+// state. Only free energy perturbation moves them after setup, a few times per
+// sample, so they are scaled on the host.
+static void polarScale(double lmda)
+{
+   if (polar_lmda_set and lmda == polar_lmda and chargeMask() == polar_lmda_mask)
+      return;
+
+   const double polmin = 1.0e-16;
+   const GrpScale sc = grpScale(lmda);
+   std::vector<double> polbuf(n), pinvbuf(n);
+   for (int i = 0; i < n; ++i) {
+      polbuf[i] = sc.s[mutant::mutg[i]] * dlmda::polarityorig[i];
+      pinvbuf[i] = 1.0 / std::max(polbuf[i], polmin);
+   }
+   darray::copyin(g::q0, n, polarity, polbuf.data());
+   darray::copyin(g::q0, n, polarity_inv, pinvbuf.data());
+   waitFor(g::q0);
+   polar_lmda = lmda;
+   polar_lmda_mask = chargeMask();
+   polar_lmda_set = true;
 }
 }
 
@@ -218,6 +243,13 @@ void epolarChgpen(int vers)
          darray::zero(g::q0, n, depx, depy, depz);
    }
 
+   // Free energy perturbation moves the polarization lambda between energy
+   // calls, and the solve is made with every parameter scaled to it; elsewhere
+   // they are the ones scaled at setup.
+   if (use_fep and use_prst) {
+      mpoleScale(plam, use_cf);
+      polarScale(plam);
+   }
    if (use_cf)
       alterchg();
    mpoleInit(vers, use_emast);

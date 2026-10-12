@@ -1,6 +1,7 @@
 #include "ff/energy.h"
 #include "ff/atom.h"
 #include "ff/eabf.h"
+#include "ff/efep.h"
 #include "ff/ethrmint.h"
 #include "ff/ost.h"
 #include "tool/error.h"
@@ -562,6 +563,7 @@ void energyData(RcOp op)
    RcMan eabf42{eabfData, op};
    RcMan lmdawin42{lmdaWinData, op};
    RcMan ti42{thermintData, op};
+   RcMan fep42{efepData, op};
    RcMan vdwsSoftcore42{vdwSoftcoreData, op};
    RcMan evdw42{evdwData, op};
 

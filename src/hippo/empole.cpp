@@ -103,6 +103,10 @@ void empoleChgpen(int vers)
          darray::zero(g::q0, n, demx, demy, demz);
    }
 
+   // Free energy perturbation moves the electrostatic lambda between energy
+   // calls; elsewhere the multipoles are the ones scaled at setup.
+   if (use_fep and not use_emast)
+      mpoleEnsureElec(use_cf);
    if (use_cf)
       alterchg();
    mpoleInit(vers, use_emast);

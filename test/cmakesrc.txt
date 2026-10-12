@@ -21,9 +21,11 @@ eost.cpp
 ephippo.cpp
 expol.cpp
 extfield.cpp
+fep.cpp
 geom.cpp
 improp.cpp
 imptor.cpp
+induce.cpp
 info.cpp
 kinetic.cpp
 localframe.cpp

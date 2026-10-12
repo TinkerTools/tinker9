@@ -1,8 +1,10 @@
 #include "ff/ethrmint.h"
 #include "ff/dlmda.h"
 #include "ff/elec.h"
+#include "ff/energy.h"
 #include "ff/evdw.h"
 #include "ff/ost.h"
+#include "md/integrator.h"
 #include "md/misc.h"
 #include "tool/iofortstr.h"
 
@@ -17,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include <tinker/detail/bath.hh>
 #include <tinker/detail/dlmda.hh>
 #include <tinker/detail/files.hh>
 #include <tinker/detail/mutant.hh>
@@ -31,6 +34,9 @@
 // directly rather than by evaluating any energy. Like the Fortran helpers, they
 // seed lmdawinend/lmdawinlist directly and bypass init_tidyn, so the
 // accumulation cases do not depend on how the step budget was divided.
+//
+// THERMINT-dedl-survives-trial sets a system up, to hold the energy calls to
+// what etidyn expects of them.
 //
 // THERMINT-save is the exception: it brings up the Fortran runtime, because the
 // schedule is precomputed by mutate.f/setlmdasched and the .ti file is written
@@ -87,12 +93,10 @@ void resettisched(const std::vector<double>& lam, const std::vector<int>& winend
    lmdawinend = winend;
 
    tinbtot = 0;
-   int istart = 0;
-   for (int i = 0; i < nlmdawin; ++i) {
-      int nw = winend[i] - istart;
-      int ne = (int)((double)nw * eqratio);
+   for (int i = 1; i <= nlmdawin; ++i) {
+      int nw, ne;
+      lmdaWinSize(i, nw, ne);
       tinbtot += (nw - ne) / nstepavg;
-      istart = winend[i];
    }
 
    int cap = std::max(1, tinbtot);
@@ -532,6 +536,15 @@ TEST_CASE("THERMINT-uneven", "[ff][thermint]")
    resettisched({1.0, 0.5, 0.0}, {500, 980, 1000}, 10, 0.5);
    REQUIRE(tinbtot == 50); // 25 + 24 + 1
 
+   // each window is measured against the boundary before it
+   const int lenref[] = {500, 480, 20}, eqref[] = {250, 240, 10};
+   for (int i = 1; i <= 3; ++i) {
+      int nlen = 0, neq = 0;
+      lmdaWinSize(i, nlen, neq);
+      REQUIRE(nlen == lenref[i - 1]);
+      REQUIRE(neq == eqref[i - 1]);
+   }
+
    for (int istep = 1; istep <= 1000; ++istep) {
       dedl = (energy_prec)istep;
       tidynstep(istep);
@@ -779,3 +792,56 @@ TEST_CASE("THERMINT-mapsublambda", "[ff][thermint]")
    // a half-configured state.
    clearti();
 }
+
+#if TINKER_GPULANG_CUDA
+// etidyn samples dU/dlambda once the step is complete, after whatever energy
+// calls a barostat trial made of its own. Those carry no lambda derivative, and
+// are to leave the one of the force call of the step in place.
+TEST_CASE("THERMINT-dedl-survives-trial", "[ff][thermint]")
+{
+   // Puts the bath back as the case leaves scope, however it leaves.
+   struct BathReset
+   {
+      ~BathReset()
+      {
+         bath::kelvin = 0.;
+         bath::atmsph = 0.;
+         bath::isothermal = 0;
+         bath::isobaric = 0;
+      }
+   } bathReset;
+   TestLmdaFlagReset lmdaReset;
+
+   const std::string dir = TINKER9_DIRSTR "/test/file/";
+   TestFile fxyz(dir + "mutate/water2.xyz", "water2.xyz");
+   TestFile fkey(dir + "mutate/128_water_ast_ye_l05.key", "tidedl.key", "\nintegrator verlet\n");
+   TestFile fprm(dir + "commit_6fe8e913/water03.prm");
+   const char* argv[] = {"dummy", "water2.xyz", "-k", "tidedl.key"};
+   TestSession session(4, argv);
+   testMdInit(298., 1.);
+   rc_flag = calc::xyz | calc::vel | calc::mass | calc::energy | calc::grad | calc::md | calc::virial;
+   session.init();
+   REQUIRE(use_dlmda);
+
+   energy(calc::v1);
+   const energy_prec dedl0 = dedl;
+   const energy_prec e0 = esum;
+   REQUIRE(dedl0 != 0);
+
+   // an energy call with no lambda derivative
+   energy(calc::energy);
+   REQUIRE(dedl == dedl0);
+
+   {
+      MonteCarloBarostat mc;
+      // an old energy far below any trial energy rejects the move for certain
+      monteCarloBarostat(-1.0e30, 298., false, false);
+      REQUIRE(dedl == dedl0);
+      // and a move that is accepted or not as it falls
+      monteCarloBarostat(e0, 298., false, false);
+      REQUIRE(dedl == dedl0);
+   }
+
+   session.end();
+}
+#endif

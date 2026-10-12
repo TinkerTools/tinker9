@@ -6,8 +6,10 @@
 #include "ff/energy.h"
 #include "ff/modamoeba.h"
 #include "ff/modhippo.h"
+#include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/potent.h"
+#include "ff/spatial.h"
 #include "math/const.h"
 #include "tool/externfunc.h"
 #include "tool/iofortstr.h"
@@ -32,6 +34,10 @@ namespace tinker {
 // The net charge of the partial charges, for the Ewald uniform background
 // charge correction, as pchg is copied in.
 static double pchg_net;
+// The lambda the partial charges were last scaled to, and the ligand they
+// charged there.
+static double pchg_lmda;
+static RdtMask pchg_lmda_mask;
 
 // The net multipole charge of each lambda group, for the same correction. When
 // the multipoles are rescaled from poleorig, these are the unscaled group sums
@@ -40,6 +46,7 @@ static double pchg_net;
 static double pole_net[3];
 static bool pole_net_orig;
 
+static void pchgBuild(double lmda);
 static void pchgData(RcOp op)
 {
    if (not use(Potent::CHARGE))
@@ -53,20 +60,42 @@ static void pchgData(RcOp op)
       darray::allocate(n, &pchg);
    }
 
-   if (op & RcOp::INIT) {
-      std::vector<real> pchgbuf(n);
-      const GrpScale esc = grpScale(elam);
-      for (int i = 0; i < n; ++i) {
-         int itype = atoms::type[i] - 1;
-         pchgbuf[i] = kchrge::chg[itype] * esc.s[mutant::mutg[i]];
-      }
-      // In double precision, so that a neutral cell sums to zero.
-      pchg_net = 0;
-      for (int i = 0; i < n; ++i)
-         pchg_net += kchrge::chg[atoms::type[i] - 1] * esc.s[mutant::mutg[i]];
-      darray::copyin(g::q0, n, pchg, pchgbuf.data());
-      waitFor(g::q0);
+   if (op & RcOp::INIT)
+      pchgBuild(elam);
+}
+
+// Scales the partial charges of each atom group from their unscaled values
+// (mutate.f:altelec).
+static void pchgBuild(double lmda)
+{
+   std::vector<real> pchgbuf(n);
+   const GrpScale esc = grpScale(lmda);
+   for (int i = 0; i < n; ++i) {
+      int itype = atoms::type[i] - 1;
+      pchgbuf[i] = kchrge::chg[itype] * esc.s[mutant::mutg[i]];
    }
+   // In double precision, so that a neutral cell sums to zero.
+   pchg_net = 0;
+   for (int i = 0; i < n; ++i)
+      pchg_net += kchrge::chg[atoms::type[i] - 1] * esc.s[mutant::mutg[i]];
+   darray::copyin(g::q0, n, pchg, pchgbuf.data());
+   waitFor(g::q0);
+   pchg_lmda = lmda;
+   pchg_lmda_mask = chargeMask();
+}
+
+void pchgEnsureElec()
+{
+   // Elsewhere the charges are scaled once, as they are copied in.
+   if (not use_fep or not use(Potent::CHARGE))
+      return;
+   if (elam == pchg_lmda and chargeMask() == pchg_lmda_mask)
+      return;
+
+   pchgBuild(elam);
+   // the fused charge and Lennard-Jones kernel keeps a sorted copy
+   if (clistVersion() & Nbl::SPATIAL)
+      cspatial_v2_unit->fresh |= cspatial_fresh_mask_echglj;
 }
 
 TINKER_FVOID2(cpp0, cu1, mpoleDataBinding, RcOp);

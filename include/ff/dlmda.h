@@ -239,6 +239,10 @@ void lmdaWinFromFortran();
 /// Sets the step count and equilibration length of the current lambda window
 /// (dlambda.f:setlmdawin).
 void setLmdaWin();
+/// Number of dynamics steps in lambda window \c iwin, counted from 1, and the
+/// number of those steps at its start that are discarded as equilibration
+/// (dlambda.f:lmdawinsize).
+void lmdaWinSize(int iwin, int& nlen, int& neq);
 /// Position of a dynamics step within the production portion of the current
 /// lambda window; zero while the window is equilibrating, once the schedule
 /// has run out, or when the windows were never laid out (dlambda.f:lmdawinphase).
@@ -273,6 +277,9 @@ TINKER_EXTERN bool use_epast;
 TINKER_EXTERN bool use_ost;
 TINKER_EXTERN bool use_meta;
 TINKER_EXTERN bool use_ti;
+/// Free energy perturbation over the lambda windows: the main lambda moves
+/// from window to window, without any use of the lambda derivative.
+TINKER_EXTERN bool use_fep;
 TINKER_EXTERN bool use_abf;
 
 // Only the first lambda derivative is built unless use_d2lmda asks for the

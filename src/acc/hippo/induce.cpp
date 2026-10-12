@@ -30,22 +30,15 @@ void induceMutualPcg2_acc(real (*uind)[3])
    auto pcg_ufield = polpot::use_tholed ? ufieldAplus : ufieldChgpen;
    auto pcg_sparse_apply = polpot::use_tholed ? sparsePrecondApply3 : sparsePrecondApply2;
 
-   bool dirguess = polpcg::pcgguess;
    // use sparse matrix preconditioner
    // or just use diagonal matrix preconditioner
    const bool sparse_prec = polpcg::pcgprec and (switchOff(Switch::USOLVE) > 0);
 
    // zero out the induced dipoles at each site
 
-   bool predict = polpred != UPred::NONE;
-   if (predict and nualt < maxualt) {
-      predict = false;
-      dirguess = true;
-   }
-   if (predict and induceNoPredict()) {
-      predict = false;
-      dirguess = true;
-   }
+   const UGuess guess = induceGuess();
+   const bool predict = guess == UGuess::PREDICT;
+   const bool dirguess = guess == UGuess::DIRECT;
    // get the electrostatic field due to permanent multipoles
    pcg_dfield(field);
    // direct induced dipoles
@@ -239,14 +232,8 @@ void induceMutualPcg2_acc(real (*uind)[3])
 
    // terminate the calculation if dipoles failed to converge
 
-   if (iter >= maxiter) {
-      if (induceWiggleOn()) {
-         induceReportFailure(rsd, nullptr);
-         return;
-      }
-      printError();
-      TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
-   }
+   if (iter >= maxiter)
+      induceNotConverged(rsd, nullptr);
 }
 }
 

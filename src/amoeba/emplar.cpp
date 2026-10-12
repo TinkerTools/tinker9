@@ -72,6 +72,11 @@ void emplar(int vers)
    zeroOnHost(energy_ep, virial_ep);
 
    mpoleEnsureElec();
+   // Free energy perturbation moves the polarization lambda between energy
+   // calls; elsewhere the polarizabilities are the ones scaled at setup. The
+   // fused kernel is in use only while the two lambdas are one number.
+   if (use_fep and use_prst)
+      polarState(coupledMask(), emGroup(), plam);
    mpoleInit(vers, use_emast);
    emplarKernel(vers);
    if (useEwald())

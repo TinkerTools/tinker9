@@ -2,6 +2,7 @@
 #include "ff/dlmda.h"
 #include "ff/energy.h"
 #include "ff/eost.h"
+#include "ff/efep.h"
 #include "ff/ethrmint.h"
 #include "ff/modamoeba.h"
 #include "ff/modhippo.h"
@@ -28,6 +29,7 @@
 #include <tinker/detail/output.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polpot.hh>
+#include <tinker/detail/fep.hh>
 #include <tinker/detail/thrmint.hh>
 #include <tinker/detail/titles.hh>
 #include <tinker/detail/units.hh>
@@ -263,6 +265,43 @@ static void mdsaveWriteTi()
    thrmint::tinbcount = s_tinbcount;
 }
 
+static bool fep_snap_active;
+static int s_nfep, s_fep_first;
+static std::vector<int> s_fepstep;
+static std::vector<double> s_fepene, s_feplmda, s_feptrial;
+
+static void mdsaveDupFep()
+{
+   fep_snap_active = use_fep and not fepene.empty();
+   if (not fep_snap_active)
+      return;
+
+   s_fepstep.clear(), s_fepene.clear(), s_feplmda.clear(), s_feptrial.clear();
+   s_nfep = nfep;
+   s_fep_first = fep::nfepsave; // saves are serialized, so this is stable
+   for (int i = s_fep_first; i < s_nfep; ++i) {
+      s_fepstep.push_back(fepstep[i]);
+      s_fepene.push_back(fepene[i]);
+      s_feplmda.push_back(feplmda[i]);
+      s_feptrial.push_back(feptrial[i]);
+   }
+}
+
+static void mdsaveWriteFep()
+{
+   if (not fep_snap_active)
+      return;
+
+   for (int i = 0; i < (int)s_fepene.size(); ++i) {
+      int j = s_fep_first + i;
+      fep::fepstep[j] = s_fepstep[i];
+      fep::fepene[j] = s_fepene[i];
+      fep::feplmda[j] = s_feplmda[i];
+      fep::feptrial[j] = s_feptrial[i];
+   }
+   fep::nfep = s_nfep;
+}
+
 static void mdsaveDupThenWrite(int istep, time_prec dt)
 {
 #if TINKER_CUDART
@@ -308,6 +347,7 @@ static void mdsaveDupThenWrite(int istep, time_prec dt)
    mdsaveDupLmda();
    mdsaveDupLmdaBias(istep);
    mdsaveDupTi();
+   mdsaveDupFep();
 
       // Record mdsave_begin_event when g::s0 is available.
       // g::s1 will wait until mdsave_begin_event is recorded.
@@ -422,6 +462,7 @@ static void mdsaveDupThenWrite(int istep, time_prec dt)
    mdsaveWriteLmda();
    mdsaveWriteLmdaBias();
    mdsaveWriteTi();
+   mdsaveWriteFep();
 
    double dt1 = dt;
    double epot1 = epot;
@@ -469,6 +510,8 @@ void mdsaveLmdaFinal(int istep)
    mdsaveWriteLmdaBias();
    mdsaveDupTi();
    mdsaveWriteTi();
+   mdsaveDupFep();
+   mdsaveWriteFep();
 
    if (dlmda::use_ostdyn)
       tinker_f_saveost();
@@ -478,6 +521,8 @@ void mdsaveLmdaFinal(int istep)
       tinker_f_saveabf();
    if (dlmda::use_ti)
       tinker_f_saveti();
+   if (dlmda::use_fep)
+      tinker_f_savefep();
 }
 
 void mdsaveData(RcOp op)

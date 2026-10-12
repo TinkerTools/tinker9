@@ -6,12 +6,18 @@
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "tool/externfunc.h"
+#include "tool/iofortstr.h"
 #include "tool/ioprint.h"
+#include "tool/iotext.h"
 #include <tinker/detail/inform.hh>
+#include <tinker/detail/keys.hh>
+#include <tinker/detail/mplpot.hh>
 #include <tinker/detail/polar.hh>
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/units.hh>
+#include <tinker/detail/uprior.hh>
 
+#include <string>
 #include <vector>
 
 namespace tinker {
@@ -35,6 +41,9 @@ TINKER_FVOID2(acc1, cu1, ulspredSaveP1, real (*)[3], real (*)[3], //
 void ulspredSave(const real (*uind)[3], const real (*uinp)[3])
 {
    if (polpred == UPred::NONE || use_epdt)
+      return;
+   // a trial that bypasses the history leaves no trace in it
+   if (induceHistoryBypassed())
       return;
 
    // clang-format off
@@ -84,6 +93,7 @@ static real (**upalt[])[3] = {&upalt_00, &upalt_01, &upalt_02, &upalt_03, &upalt
 InducedSnapshot::InducedSnapshot()
    : m_ud{nullptr, nullptr}
    , m_up{nullptr, nullptr}
+   , m_slot(false)
    , m_nualt(0)
 {
    // Every buffer is picked by the flags that allocate it, never by its pointer:
@@ -100,10 +110,11 @@ InducedSnapshot::InducedSnapshot()
 
    // A solve writes only slot nualt % maxualt of the predictor history and
    // advances nualt (ulspredSave), so that slot and nualt are all a trial leaves
-   // behind. The history is in use as epolarData allocates it.
+   // behind. The history is in use as epolarData allocates it: AMOEBA alone
+   // keeps the second set, and neither AMOEBA+ nor HIPPO does.
    if (maxualt > 0 and not use_epdt) {
       darray::allocate(n, &m_ud.copy);
-      if (not polpot::use_tholed)
+      if (not polpot::use_tholed and not mplpot::use_chgpen)
          darray::allocate(n, &m_up.copy);
    }
 
@@ -126,7 +137,7 @@ InducedSnapshot::~InducedSnapshot()
    darray::deallocate(m_ud.copy, m_up.copy);
 }
 
-void InducedSnapshot::save()
+void InducedSnapshot::save(bool history)
 {
    for (auto& c : m_vec)
       darray::copy(g::q0, n, c.copy, *c.src);
@@ -136,7 +147,8 @@ void InducedSnapshot::save()
    m_nualt = nualt;
 
    // the slot the trial solve will overwrite
-   if (m_ud.copy) {
+   m_slot = history and m_ud.copy;
+   if (m_slot) {
       int pos = nualt % maxualt;
       m_ud.src = udalt[pos];
       darray::copy(g::q0, n, m_ud.copy, *m_ud.src);
@@ -155,7 +167,7 @@ void InducedSnapshot::restore()
       darray::copy(g::q0, 9 * n, &(*c.src)[0][0][0], &c.copy[0][0][0]);
    nualt = m_nualt;
 
-   if (m_ud.copy) {
+   if (m_slot) {
       darray::copy(g::q0, n, *m_ud.src, m_ud.copy);
       if (m_up.copy)
          darray::copy(g::q0, n, *m_up.src, m_up.copy);
@@ -168,6 +180,40 @@ TINKER_FVOID2(acc1, cu1, induceMutualPcg1, real (*)[3], real (*)[3]);
 static void induceMutualPcg1(real (*uind)[3], real (*uinp)[3])
 {
    TINKER_FCALL2(acc1, cu1, induceMutualPcg1, uind, uinp);
+}
+
+UPred polarPredictor()
+{
+   bool pred = uprior::use_pred;
+   std::string name = FstrView(uprior::polpred).trim();
+
+   // The Fortran reader turns prediction off for free energy perturbation, so
+   // that its trial energies cannot enter the history. Here the trial solves
+   // bypass the predictor (InducedTrial), and the dynamics keeps it. Dual
+   // topology never predicts, so its history is not asked for.
+   if (use_fep and not use_epdt and (rc_flag & calc::md)) {
+      for (int i = 0; i < keys::nkey; ++i) {
+         FstrView record = keys::keyline[i];
+         auto vs = Text::split(record.trim());
+         if (vs.empty())
+            continue;
+         std::string keyword = vs[0];
+         Text::upcase(keyword);
+         if (keyword != "POLAR-PREDICT")
+            continue;
+         name = vs.size() > 1 ? vs[1] : "ASPC";
+         Text::upcase(name);
+         pred = (name != "IEL");
+      }
+   }
+
+   if (not pred)
+      return UPred::NONE;
+   if (name == "ASPC")
+      return UPred::ASPC;
+   if (name == "GEAR")
+      return UPred::GEAR;
+   return UPred::LSQR;
 }
 
 void inducePrint(const real (*ud)[3])

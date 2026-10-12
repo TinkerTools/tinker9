@@ -84,6 +84,10 @@ void empoleEwaldBackground(int vers,  ///< Energy version.
 );
 /// \copydoc empoleEwaldBackground
 void echargeEwaldBackground(int vers);
+/// Brings the partial charges to the electrostatic lambda. Free energy
+/// perturbation moves that lambda between energy calls; in every other run the
+/// charges are scaled once, as they are copied in.
+void pchgEnsureElec();
 
 //====================================================================//
 //                                                                    //

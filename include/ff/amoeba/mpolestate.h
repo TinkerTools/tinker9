@@ -33,13 +33,15 @@ void mpoleInit(int vers, bool do_dlmda);
 /// same scaled multipoles.
 void mpoleRotateScaled();
 /// Scales pole from poleorig to \c lmda, unless it already holds that state.
-void mpoleScale(double lmda);
+/// With \c flux_follows the caller applies the charge flux next (alterchg), and
+/// a pole scaled to \c lmda that already carries a flux counts as that state.
+void mpoleScale(double lmda, bool flux_follows = false);
 /// Inverts every copy of the multipoles in use at chiral sites whose
 /// handedness changed, once per #xyz_epoch.
 void chkpole();
 /// Brings pole to the electrostatic lambda state, for a term that reads pole
 /// itself rather than scaling poleorig on the fly.
-void mpoleEnsureElec();
+void mpoleEnsureElec(bool flux_follows = false);
 /// Leaves the physical multipoles in rpole: pole at the electrostatic lambda,
 /// with charge flux if it is used, rotated at the current coordinates. For
 /// readers outside the energy terms, such as the saved dipoles.

@@ -32,6 +32,7 @@ const Fixture kFixtures[] = {
    {"08_g3_nlist", "g3/g3.xyz", "g3/g3.prm", 2.0e-2, 5.0e-4},
    {"09_aplus_thole0", "aplus2022/tetramer.xyz", "aplus2022/AMOEBAplus_Org.prm"},
    {"10_aplus_polpair", "aplus2022/tetramer.xyz", "aplus2022/AMOEBAplus_Org.prm"},
+   {"11_hippo_ast_l05", "dmso/dmso.xyz", "hippo/hippo19.prm", 2.0e-2},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -103,6 +104,7 @@ TEST_CASE("TESTGRAD-07_g3", "[ff][testgrad]") { runFixture(fx("07_g3")); }
 TEST_CASE("TESTGRAD-08_g3_nlist", "[ff][testgrad]") { runFixture(fx("08_g3_nlist")); }
 TEST_CASE("TESTGRAD-09_aplus_thole0", "[ff][testgrad][aplus]") { runFixture(fx("09_aplus_thole0")); }
 TEST_CASE("TESTGRAD-10_aplus_polpair", "[ff][testgrad][aplus]") { runFixture(fx("10_aplus_polpair")); }
+TEST_CASE("TESTGRAD-11_hippo_ast_l05", "[ff][testgrad][hippo]") { runFixture(fx("11_hippo_ast_l05")); }
 
 #if TINKER_GPULANG_CUDA
 TEST_CASE("TESTGRAD-04_water_ast_ye_l10", "[ff][testgrad][ast]") { runFixture(fx("04_water_ast_ye_l10")); }

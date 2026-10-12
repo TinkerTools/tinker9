@@ -178,6 +178,10 @@ void mdPropagate(int nsteps, time_prec dt_ps)
       }
       intg->dynamic(istep, dt_ps);
 
+      // sample the lambda window of a sequential lambda method, once the step
+      // is complete and before the trajectory is saved
+      lmdaWinDyn(istep);
+
       // mdstat
       bool save = (istep % inform::iwrite == 0);
       if ((save || (istep % BOUNDS_EVERY_X_STEPS) == 0) and bound::use_wrap)
@@ -190,7 +194,7 @@ void mdPropagate(int nsteps, time_prec dt_ps)
       mdrest(istep);
 
       // move to the next lambda window at the end of the current one
-      if (use_ti)
+      if (use_ti or use_fep)
          lmdaWinStep(istep);
    }
    mdsaveSynchronize();

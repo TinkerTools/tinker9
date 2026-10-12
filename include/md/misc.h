@@ -4,10 +4,6 @@
 #include "tool/rcman.h"
 
 namespace tinker {
-class InducedSnapshot;
-}
-
-namespace tinker {
 enum class ScaleBaroEnum;
 
 /// \ingroup mdpt
@@ -40,8 +36,9 @@ void bussiThermostat(time_prec dt, T_prec temp);
 ///    </a>
 ///
 /// A trial that is rejected puts the induced dipoles and the predictor history
-/// back from \c induced, which is null for a system without polarization.
-void monteCarloBarostat(energy_prec epot, T_prec temp, bool semiiso, bool aniso, InducedSnapshot* induced);
+/// back (InducedTrial), so neither the saved dipoles nor the next solves see
+/// the trial geometry.
+void monteCarloBarostat(energy_prec epot, T_prec temp, bool semiiso, bool aniso);
 
 /// \ingroup mdpt
 /// \brief Berendsen barostat by scaling the coordinates and box dimensions via

@@ -136,6 +136,10 @@ TINKER_EXTERN Vdw epsrule;
 /// \brief Long-range energy correction (lrc), used as `e += lrc/volume`.
 /// \note Must be 0 if system is unbound.
 TINKER_EXTERN energy_prec elrc_vol;
+/// The long-range energy and virial corrections at the current vdw lambda,
+/// each times the volume of the box. \c elrc_vol and \c vlrc_vol hold them at
+/// the lambda of the setup.
+void evdwLrcVol(energy_prec& elrc, virial_prec& vlrc);
 
 /// \ingroup vdw
 /// \brief Long-range virial correction (lrc), used as `v(i,i) += lrc/volume`.

@@ -384,11 +384,9 @@ void StochasticIntegrator::dynamic(int istep, time_prec dt)
    copyPosToXyz(true);
 
    energy(vers1);
-   // propagate the lambda particle, or sample the lambda window
+   // propagate the lambda particle
    if (use_ost or use_meta or use_abf)
       elmdaDyn(istep);
-   else
-      lmdaWinDyn(istep);
 
    sdVel2();
    // NVT only, so the virial is never needed here

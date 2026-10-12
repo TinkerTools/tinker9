@@ -3,6 +3,7 @@
 #include "ff/eost.h"
 #include "ff/eabf.h"
 #include "ff/ethrmint.h"
+#include "ff/efep.h"
 #include "ff/atom.h"
 #include "ff/egvop.h"
 #include "ff/elec.h"
@@ -49,7 +50,7 @@ void dlmdaData(RcOp op)
 void dlmdaData2(RcOp op)
 {
    if (op & RcOp::INIT) {
-      bool lambda_dynamics = use_dlmda or use_ost or use_meta or use_ti or use_abf or use_epdt //
+      bool lambda_dynamics = use_dlmda or use_ost or use_meta or use_ti or use_abf or use_fep or use_epdt //
          or use_rel;
       if (lambda_dynamics and not(pltfm_config & Platform::CUDA))
          TINKER_THROW("LAMBDA  --  Lambda dynamics requires the CUDA platform");
@@ -308,6 +309,7 @@ void dlmda_mech()
    use_ost = dlmda::use_ost;
    use_meta = dlmda::use_meta;
    use_ti = dlmda::use_ti;
+   use_fep = dlmda::use_fep;
    use_abf = dlmda::use_abf;
    dlmda::use_ostdyn = use_ost;
    dlmda::use_metadyn = use_meta;
@@ -654,7 +656,7 @@ void lmdaWinData(RcOp op)
       lmdawinend.clear();
 
       // Only a sequential lambda method has a schedule to adopt.
-      if (use_ti) {
+      if (use_ti or use_fep) {
          lmdawinfrac.assign(dlmda::lmdawinfrac, dlmda::lmdawinfrac + nlmdawin);
          lmdawinlist.assign(dlmda::lmdawinlist, dlmda::lmdawinlist + nlmdawin);
       } else {
@@ -674,14 +676,18 @@ void lmdaWinFromFortran()
    lambda = mutant::lambda;
 }
 
-// Measures the current window against the preceding boundary
-// (dlambda.f:setlmdawin).
 void setLmdaWin()
 {
-   lmdawinlen = lmdawinend[lmdawin - 1];
-   if (lmdawin > 1)
-      lmdawinlen = lmdawinend[lmdawin - 1] - lmdawinend[lmdawin - 2];
-   lmdawineq = (int)((double)lmdawinlen * lmdawinratio);
+   lmdaWinSize(lmdawin, lmdawinlen, lmdawineq);
+}
+
+void lmdaWinSize(int iwin, int& nlen, int& neq)
+{
+   // Measure the window against the preceding boundary.
+   nlen = lmdawinend[iwin - 1];
+   if (iwin > 1)
+      nlen = lmdawinend[iwin - 1] - lmdawinend[iwin - 2];
+   neq = (int)((double)nlen * lmdawinratio);
 }
 
 void lmdaWinPhase(int istep, int& iprod)
@@ -703,6 +709,10 @@ void lmdaWinDyn(int istep)
    // collect dU/dlambda for thermodynamic integration
    if (use_ti)
       etidyn(istep);
+
+   // find trial lambda energies for free energy perturbation
+   if (use_fep)
+      efepDyn(istep);
 }
 
 // The gradients held by the integrator are not updated for the new lambda, so
@@ -983,7 +993,9 @@ bool polTracksEle()
 bool usePoleorig()
 {
    bool elec = use(Potent::MPOLE) or use(Potent::POLAR) or use(Potent::REPULS);
-   return elec and (use_dlmda or use_epdt or use_prst);
+   // Free energy perturbation moves the main lambda with no lambda derivative
+   // in use, so the multipoles are rescaled from the originals there too.
+   return elec and (use_dlmda or use_epdt or use_prst or use_fep);
 }
 
 void mapSubLambda()

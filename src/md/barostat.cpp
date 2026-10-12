@@ -1,6 +1,4 @@
-#include "ff/amoeba/induce.h"
 #include "ff/energy.h"
-#include "ff/potent.h"
 #include "math/ou.h"
 #include "math/random.h"
 #include "math/trimatexp.h"
@@ -125,15 +123,7 @@ void MonteCarloBarostat::control4(time_prec)
    T_prec temp = bath::kelvin;
    if (not bath::isothermal)
       kinetic(temp);
-   // A rejected trial puts back the induced dipoles and the predictor history,
-   // so neither the saved dipoles nor the next solves see the trial geometry.
-   InducedSnapshot* induced = nullptr;
-   if (use(Potent::POLAR)) {
-      if (not m_induced)
-         m_induced = std::make_unique<InducedSnapshot>();
-      induced = m_induced.get();
-   }
-   monteCarloBarostat(esum, temp, semiiso, aniso, induced);
+   monteCarloBarostat(esum, temp, semiiso, aniso);
 }
 
 bool MonteCarloBarostat::ifApply(int)

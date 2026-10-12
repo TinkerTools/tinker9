@@ -236,9 +236,9 @@ void pair_repel(real r2,
       pgrad.ttqk[1] += sizik * rr1 * trq0.y;
       pgrad.ttqk[2] += sizik * rr1 * trq0.z;
 
-      // force via soft core lambda scaling
+      // force via soft core lambda scaling; e already carries the factor
       if CONSTEXPR (SOFTCORE) {
-         real dsoft = e * soft * (rr2 - 1 / termsc);
+         real dsoft = e * (rr2 - 1 / termsc);
          pgrad.frcx = pgrad.frcx * soft - dsoft * xr;
          pgrad.frcy = pgrad.frcy * soft - dsoft * yr;
          pgrad.frcz = pgrad.frcz * soft - dsoft * zr;

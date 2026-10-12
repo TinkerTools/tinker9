@@ -53,16 +53,9 @@ void induceMutualPcg1_acc(real (*uind)[3], real (*uinp)[3])
    // use sparse matrix preconditioner
    // or just use diagonal matrix preconditioner
    const bool sparse_prec = polpcg::pcgprec and (switchOff(Switch::USOLVE) > 0);
-   bool dirguess = polpcg::pcgguess;
-   bool predict = !use_epdt && polpred != UPred::NONE;
-   if (predict and nualt < maxualt) {
-      predict = false;
-      dirguess = true;
-   }
-   if (predict and induceNoPredict()) {
-      predict = false;
-      dirguess = true;
-   }
+   const UGuess guess = induceGuess();
+   const bool predict = guess == UGuess::PREDICT;
+   const bool dirguess = guess == UGuess::DIRECT;
 
    // get the electrostatic field due to permanent multipoles
    dfield(field, fieldp);
@@ -288,14 +281,8 @@ void induceMutualPcg1_acc(real (*uind)[3], real (*uinp)[3])
 
    // terminate the calculation if dipoles failed to converge
 
-   if (iter >= maxiter) {
-      if (induceWiggleOn()) {
-         induceReportFailure(rsd, rsdp);
-         return;
-      }
-      printError();
-      TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
-   }
+   if (iter >= maxiter)
+      induceNotConverged(rsd, rsdp);
 }
 }
 
@@ -469,14 +456,24 @@ void sparsePrecondApply_acc(const real (*rsd)[3], const real (*rsdp)[3], real (*
 
 void ulspredSaveP1_acc(real (*ud)[3], real (*up)[3], const real (*uind)[3], const real (*uinp)[3])
 {
-   #pragma acc parallel loop independent async deviceptr(uind,uinp,ud,up)
-   for (int i = 0; i < n; ++i) {
-      ud[i][0] = uind[i][0];
-      ud[i][1] = uind[i][1];
-      ud[i][2] = uind[i][2];
-      up[i][0] = uinp[i][0];
-      up[i][1] = uinp[i][1];
-      up[i][2] = uinp[i][2];
+   if (uinp) {
+      #pragma acc parallel loop independent async deviceptr(uind,uinp,ud,up)
+      for (int i = 0; i < n; ++i) {
+         ud[i][0] = uind[i][0];
+         ud[i][1] = uind[i][1];
+         ud[i][2] = uind[i][2];
+         up[i][0] = uinp[i][0];
+         up[i][1] = uinp[i][1];
+         up[i][2] = uinp[i][2];
+      }
+   } else {
+      // HIPPO and AMOEBA+ keep the one set of induced dipoles
+      #pragma acc parallel loop independent async deviceptr(uind,ud)
+      for (int i = 0; i < n; ++i) {
+         ud[i][0] = uind[i][0];
+         ud[i][1] = uind[i][1];
+         ud[i][2] = uind[i][2];
+      }
    }
 }
 

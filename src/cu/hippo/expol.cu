@@ -207,16 +207,9 @@ void induceMutualPcg4_cu(real (*uind)[3])
    auto* vec = work05_;
 
    const bool sparse_prec = polpcg::pcgprec and (switchOff(Switch::USOLVE) > 0);
-   bool dirguess = polpcg::pcgguess;
-   bool predict = polpred != UPred::NONE;
-   if (predict and nualt < maxualt) {
-      predict = false;
-      dirguess = true;
-   }
-   if (predict and induceNoPredict()) {
-      predict = false;
-      dirguess = true;
-   }
+   const UGuess guess = induceGuess();
+   const bool predict = guess == UGuess::PREDICT;
+   const bool dirguess = guess == UGuess::DIRECT;
 
    // get the electrostatic field due to permanent multipoles
    dfieldChgpen(field);
@@ -346,13 +339,7 @@ void induceMutualPcg4_cu(real (*uind)[3])
    }
 
    // terminate the calculation if dipoles failed to converge
-   if (iter >= maxiter) {
-      if (induceWiggleOn()) {
-         induceReportFailure(rsd, nullptr);
-         return;
-      }
-      printError();
-      TINKER_THROW("INDUCE  --  Warning, Induced Dipoles are not Converged");
-   }
+   if (iter >= maxiter)
+      induceNotConverged(rsd, nullptr);
 }
 }

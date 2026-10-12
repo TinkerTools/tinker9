@@ -28,6 +28,7 @@ dlmda.cpp
 eabf.cpp
 echarge.cpp
 echglj.cpp
+efep.cpp
 egvop.cpp
 elec.cpp
 energy.cpp

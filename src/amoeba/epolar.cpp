@@ -437,26 +437,16 @@ void epolarData(RcOp op)
       if (not polpot::use_tholed) // AMOEBA
          darray::allocate(n, &work06_, &work07_, &work08_, &work09_, &work10_);
 
-      if (uprior::use_pred) {
-         FstrView predstr = uprior::polpred;
-         if (predstr == "ASPC") {
-            polpred = UPred::ASPC;
-         } else if (predstr == "GEAR") {
-            polpred = UPred::GEAR;
-         } else {
-            polpred = UPred::LSQR;
+      polpred = polarPredictor();
 #if TINKER_REAL_SIZE == 4
-            print(stdout,
-               "\n"
-               " Warning -- 32-bit floating-point induced dipoles.\n"
-               "            LSQR Predictor is numerically unstable.\n"
-               "            Use at your own risk.\n"
-               "\n");
+      if (polpred == UPred::LSQR)
+         print(stdout,
+            "\n"
+            " Warning -- 32-bit floating-point induced dipoles.\n"
+            "            LSQR Predictor is numerically unstable.\n"
+            "            Use at your own risk.\n"
+            "\n");
 #endif
-         }
-      } else {
-         polpred = UPred::NONE;
-      }
       maxualt = 0;
       nualt = 0;
 
