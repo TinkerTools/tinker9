@@ -7,8 +7,10 @@
 #include <cmath>
 #include <cstring>
 #include <limits>
+#include <tinker/detail/bath.hh>
 #include <tinker/detail/dlmda.hh>
 #include <tinker/detail/mutant.hh>
+#include <tinker/detail/units.hh>
 #include <tinker/routines.h>
 #include <utility>
 
@@ -772,7 +774,7 @@ namespace {
 struct ThetaScope
 {
    LmdaThMap map;
-   double alpha, theta, vtheta, mass, fric, dt, eff, mainlmda;
+   double alpha, theta, vtheta, mass, fric, dt, eff, mainlmda, kelvin;
 
    ThetaScope()
       : map(lmdathmap)
@@ -784,6 +786,7 @@ struct ThetaScope
       , dt(lmdadt)
       , eff(deffdl)
       , mainlmda(lambda)
+      , kelvin(bath::kelvin)
    {
       // the defaults mutate.f sets, which every case below overrides as it needs
       lmdathmap = LmdaThMap::TRI;
@@ -801,6 +804,7 @@ struct ThetaScope
       lmdadt = dt;
       deffdl = eff;
       lambda = mainlmda;
+      bath::kelvin = kelvin;
    }
 };
 
@@ -1004,6 +1008,44 @@ TEST_CASE("DLMDA-theta-langevin-tri", "[ff][dlmda]")
    COMPARE_REALS(lambda, 0.5 - std::asin(alpha * std::cos(2.0 * thref)) / (2.0 * asina), 1.0e-14);
 }
 
+TEST_CASE("DLMDA-theta-langevin-friction", "[ff][dlmda]")
+{
+   // a step with friction and a given random kick; the kick is sized by the
+   // thermal energy in kcal/mole, as is the force
+   ThetaScope scope;
+   const double alpha = 0.999999999;
+   lmdathmap = LmdaThMap::TRI;
+   lmdathalpha = alpha;
+   const double asina = std::asin(alpha);
+
+   bath::kelvin = 300.0;
+   lmdadt = 0.1;
+   lmdamass = 2.0;
+   lmdafric = 0.5;
+   deffdl = 1.5;
+   const double th0 = 0.7, v0 = 0.3, gauss = 0.8;
+   lmdatheta = th0;
+   lmdavtheta = v0;
+   lmdaLangStep(gauss);
+
+   double dldth =
+      alpha * std::sin(2.0 * th0) / (asina * std::sqrt(1.0 - std::pow(alpha * std::cos(2.0 * th0), 2)));
+   double decay = std::exp(-lmdafric * lmdadt);
+   double sigma = std::sqrt(units::gasconst * bath::kelvin * (1.0 - decay * decay) / lmdamass);
+   double vref = decay * v0 - (1.0 - decay) * deffdl * dldth / (lmdafric * lmdamass) + sigma * gauss;
+   double thref = th0 + lmdadt * vref;
+   COMPARE_REALS(lmdavtheta, vref, 1.0e-14);
+   COMPARE_REALS(lmdatheta, thref, 1.0e-14);
+
+   // a unit kick from rest with no force leaves the equipartition value, which
+   // is gasconst times 300 K in kcal/mole
+   deffdl = 0.0;
+   lmdatheta = th0;
+   lmdavtheta = 0.0;
+   lmdaLangStep(1.0);
+   COMPARE_REALS(lmdamass * lmdavtheta * lmdavtheta / (1.0 - decay * decay), 0.59616127758, 1.0e-12);
+}
+
 TEST_CASE("DLMDA-theta-langevin-wrap", "[ff][dlmda]")
 {
    // a step past the end of the period wraps theta into [0,pi), and the period
@@ -1087,6 +1129,24 @@ TEST_CASE("DLMDA-theta-matches-fortran", "[ff][dlmda]")
       for (int i = 1; i <= 50; ++i) {
          lmdaLangevin();
          tinker_f_lmdalangevin();
+         CAPTURE(j, i);
+         COMPARE_REALS(lmdatheta, dlmda::lmdatheta, 1.0e-13);
+         COMPARE_REALS(lmdavtheta, dlmda::lmdavtheta, 1.0e-13);
+         COMPARE_REALS(lambda, mutant::lambda, 1.0e-13);
+      }
+
+      // and a trajectory with friction, each engine given the same random kicks
+      bath::kelvin = 300.0;
+      lmdafric = 0.5;
+      lmdatheta = 0.7;
+      lmdavtheta = 3.0;
+      dlmda::lmdafric = lmdafric;
+      dlmda::lmdatheta = lmdatheta;
+      dlmda::lmdavtheta = lmdavtheta;
+      for (int i = 1; i <= 50; ++i) {
+         double gauss = 2.0 * std::sin(1.7 * (double)i);
+         lmdaLangStep(gauss);
+         tinker_f_lmdalangstep(&gauss);
          CAPTURE(j, i);
          COMPARE_REALS(lmdatheta, dlmda::lmdatheta, 1.0e-13);
          COMPARE_REALS(lmdavtheta, dlmda::lmdavtheta, 1.0e-13);

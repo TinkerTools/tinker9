@@ -504,7 +504,8 @@ void lmdaThetaInv(double lmda, double& theta)
 }
 
 // BAOAB Langevin propagation of the auxiliary lambda particle in theta space,
-// where lambda follows the theta map lmdathmap (dlambda.f:lmdalangevin).
+// where lambda follows the theta map lmdathmap; it draws the random kick and
+// has lmdaLangStep take the step (dlambda.f:lmdalangevin).
 void lmdaLangevin()
 {
    if (lmdadt <= 0.0)
@@ -512,6 +513,19 @@ void lmdaLangevin()
    if (lmdamass <= 0.0)
       return;
 
+   // draw the random kick only when the friction puts it to use
+   double gauss = 0.0;
+   if (lmdafric > 0.0)
+      gauss = normal<double>();
+   lmdaLangStep(gauss);
+}
+
+// One Langevin step of the lambda particle in theta space, with the standard
+// normal deviate gauss as its random kick. The force on theta is in kcal/mole,
+// so the mass is in kcal/mole*ps**2 and the size of the kick follows from the
+// thermal energy in kcal/mole (dlambda.f:lmdalangstep).
+void lmdaLangStep(double gauss)
+{
    // force on theta from dU/dlambda and the theta map derivative
    double lmda, dldth;
    lmdaThetaMap(lmdatheta, lmda, dldth);
@@ -519,9 +533,9 @@ void lmdaLangevin()
    double gamma = std::max(0.0, lmdafric);
    if (gamma > 0.0) {
       double c = std::exp(-gamma * lmdadt);
-      double ktm = units::boltzmann * bath::kelvin / lmdamass;
+      double ktm = units::gasconst * bath::kelvin / lmdamass;
       double sigma = std::sqrt(ktm * (1.0 - c * c));
-      lmdavtheta = c * lmdavtheta + (1.0 - c) * force / (gamma * lmdamass) + sigma * normal<double>();
+      lmdavtheta = c * lmdavtheta + (1.0 - c) * force / (gamma * lmdamass) + sigma * gauss;
    } else {
       lmdavtheta = lmdavtheta + lmdadt * force / lmdamass;
    }

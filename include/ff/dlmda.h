@@ -220,6 +220,9 @@ void lmdaThetaInv(double lmda, double& theta);
 /// Propagates the theta lambda particle under the selected theta map
 /// (dlambda.f:lmdalangevin).
 void lmdaLangevin();
+/// Takes one Langevin step of the theta lambda particle with the standard
+/// normal deviate \p gauss as its random kick (dlambda.f:lmdalangstep).
+void lmdaLangStep(double gauss);
 /// Advances the OST, metadynamics or ABF lambda bias by one dynamics step:
 /// builds the effective lambda derivative, saves the interval samples, deposits
 /// the interval average at the end of each interval and propagates the lambda
