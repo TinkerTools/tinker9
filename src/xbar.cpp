@@ -488,9 +488,8 @@ static void xBarCalc()
       std::getline(ibar, str);
       if (i >= starta and ((i - starta) % stepa) == 0 and i <= stopa) {
          double u0 = 0, u1 = 0, v = 0;
-         int cnt = std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
-         if (cnt == 2)
-            v = 1.0;
+         // the volume stays 0 if the row has none
+         std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
          ua0.push_back(u0);
          ua1.push_back(u1);
          vola.push_back(v);
@@ -518,9 +517,8 @@ static void xBarCalc()
       std::getline(ibar, str);
       if (i >= startb and ((i - startb) % stepb) == 0 and i <= stopb) {
          double u0 = 0, u1 = 0, v = 0;
-         int cnt = std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
-         if (cnt == 2)
-            v = 1.0;
+         // the volume stays 0 if the row has none
+         std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
          ub0.push_back(u0);
          ub1.push_back(u1);
          volb.push_back(v);
@@ -591,14 +589,16 @@ static void xBarCalc()
    double vstda = std::sqrt(ratio * (vasum2 / bst - vavea * vavea));
    vaveb = vbsum / bst;
    double vstdb = std::sqrt(ratio * (vbsum2 / bst - vaveb * vaveb));
+   vloga.assign(nfrma, 0.0);
+   vlogb.assign(nfrmb, 0.0);
    if (vavea != 0)
       for (int i = 0; i < nfrma; ++i)
          if (vola[i] != 0)
-            vloga.push_back(-rta * std::log(vola[i] / vavea));
+            vloga[i] = -rta * std::log(vola[i] / vavea);
    if (vaveb != 0)
       for (int i = 0; i < nfrmb; ++i)
          if (volb[i] != 0)
-            vlogb.push_back(-rtb * std::log(volb[i] / vaveb));
+            vlogb[i] = -rtb * std::log(volb[i] / vaveb);
 
    // get the free energy change via thermodynamic perturbation
    print(out,
@@ -680,8 +680,11 @@ static void xBarCalc()
       return;
    }
 
-   // use bootstrap analysis to estimate statistical error
+   // use bootstrap analysis to estimate statistical error,
+   // skipping the resampled trials that do not converge
    std::vector<int> bsta, bstb;
+   const double cbar = cnew;
+   int nfail = 0;
    sum = 0, sum2 = 0;
    for (int k = 0; k < nbst; ++k) {
       bstb.clear();
@@ -703,11 +706,11 @@ static void xBarCalc()
          top = 0, bot = 0;
          for (int i = 0; i < nfrmb; ++i) {
             int j = bstb[i];
-            top += 1.0 / (1.0 + std::exp((ub0[j] - ub1[j] + vlogb[i] + cold) / rtb));
+            top += 1.0 / (1.0 + std::exp((ub0[j] - ub1[j] + vlogb[j] + cold) / rtb));
          }
          for (int i = 0; i < nfrma; ++i) {
             int j = bsta[i];
-            bot += 1.0 / (1.0 + std::exp((ua1[j] - ua0[j] + vloga[i] - cold) / rta));
+            bot += 1.0 / (1.0 + std::exp((ua1[j] - ua0[j] + vloga[j] - cold) / rta));
          }
          cnew = rt * std::log(rfrm * top / bot) + cold;
          double delta = std::fabs(cnew - cold);
@@ -718,12 +721,22 @@ static void xBarCalc()
          } else {
             ++iter;
          }
-      } while (not done);
+      } while (not done and iter < maxiter);
+      if (not done)
+         ++nfail;
    }
-   cnew = sum / bst;
-   ratio = bst / (bst - 1.0);
-   stdev = std::sqrt(ratio * (sum2 / bst - cnew * cnew));
-   print(out, " Free Energy via BAR Bootstrap       %12.4lf +/-%9.4lf Kcal/mol\n", cnew, stdev);
+   if (nfail > 0)
+      print(out, " BAR Bootstrap:  %d of %d Trials did not Converge\n", nfail, nbst);
+   const int nok = nbst - nfail;
+   if (nok < 2) {
+      cnew = cbar;
+      print(out, " Free Energy via BAR Bootstrap       not Available\n");
+   } else {
+      const double bok = nok;
+      cnew = sum / bok;
+      stdev = std::sqrt(bok / (bok - 1.0) * (sum2 / bok - cnew * cnew));
+      print(out, " Free Energy via BAR Bootstrap       %12.4lf +/-%9.4lf Kcal/mol\n", cnew, stdev);
+   }
 
    // find the enthalpy directly via average potential energy
    print(out,

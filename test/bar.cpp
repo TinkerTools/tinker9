@@ -1,7 +1,9 @@
 #include "test.h"
 #include "testrt.h"
 #include "tinker9.h"
+#include "tool/ioprint.h"
 
+#include <tinker/detail/units.hh>
 #include <tinker/routines.h>
 
 #include <cmath>
@@ -9,9 +11,23 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <unistd.h>
 #include <vector>
 
 using namespace tinker;
+
+namespace {
+/// Ends the Fortran runtime however the case ends.
+struct FortranRuntimeScope
+{
+   FortranRuntimeScope(int argc, const char** argv)
+   {
+      tinkerFortranRuntimeBegin(argc, const_cast<char**>(argv));
+      tinker_f_command();
+   }
+   ~FortranRuntimeScope() { tinkerFortranRuntimeEnd(); }
+};
+}
 
 // CUDA builds only. The bar driver does not depend on the platform, and the
 // OpenACC build would either rerun the CUDA kernels, its default for a key with
@@ -56,17 +72,6 @@ std::vector<BarBlock> readBar(const std::string& path)
    }
    return blocks;
 }
-
-/// Ends the Fortran runtime however the case ends.
-struct FortranRuntimeScope
-{
-   FortranRuntimeScope(int argc, const char** argv)
-   {
-      tinkerFortranRuntimeBegin(argc, const_cast<char**>(argv));
-      tinker_f_command();
-   }
-   ~FortranRuntimeScope() { tinkerFortranRuntimeEnd(); }
-};
 
 // Runs "bar 1 <A>.arc 298 <B>.arc 298 N", which re-evaluates both trajectories
 // in both states and writes <A>.bar, and compares that file with the Tinker
@@ -131,3 +136,182 @@ TEST_CASE("BAR-water-00-0000-0950", "[ff][bar]") { runBar("water-00-0000-0950", 
 TEST_CASE("BAR-water-00-0950-1000", "[ff][bar]") { runBar("water-00-0950-1000", "water-00-0900-1000"); }
 
 #endif
+
+// "bar" mode 2 reads a BAR file and evaluates no energies, so the cases below
+// run on every platform. The bootstrap draws from a clock seed, so each case
+// checks a property that holds whatever the seed.
+namespace {
+/// Sends stdout to a file until destroyed.
+class StdoutToFile
+{
+   int m_saved;
+
+public:
+   StdoutToFile(const std::string& file)
+   {
+      std::fflush(stdout);
+      m_saved = dup(fileno(stdout));
+      REQUIRE(m_saved != -1);
+      REQUIRE(std::freopen(file.c_str(), "w", stdout));
+   }
+   ~StdoutToFile()
+   {
+      std::fflush(stdout);
+      dup2(m_saved, fileno(stdout));
+      close(m_saved);
+   }
+};
+
+/// Runs "bar 2 <file> 1 <na> 1 1 <nb> 1" over every frame and returns the
+/// output.
+std::string runBarCalc(const std::string& barfile, int nfrma, int nfrmb)
+{
+   const std::string logfile = "bar-mode2.log";
+   TestRemoveFileOnExit rmlog(logfile);
+   const std::string na = std::to_string(nfrma), nb = std::to_string(nfrmb);
+   const char* argv[] = {"dummy", "2", barfile.c_str(), "1", na.c_str(), "1", "1", nb.c_str(), "1"};
+   const int argc = 9;
+   {
+      StdoutToFile redirect(logfile);
+      FortranRuntimeScope scope(argc, argv);
+      xBar(argc, const_cast<char**>(argv));
+   }
+
+   std::ifstream fin(logfile);
+   std::stringstream ss;
+   ss << fin.rdbuf();
+   return ss.str();
+}
+
+/// Reads "<value> +/- <sd>" after the first occurrence of label.
+bool readEstimate(const std::string& out, const std::string& label, double& val, double& sd)
+{
+   auto pos = out.find(label);
+   if (pos == std::string::npos)
+      return false;
+   return std::sscanf(out.c_str() + pos + label.size(), "%lf +/-%lf", &val, &sd) == 2;
+}
+
+/// One trajectory block at 298 K, with more digits than mode 1 writes. Rows
+/// have no volume if vol is empty.
+std::string barBlock(const std::vector<double>& u0, const std::vector<double>& u1, const std::vector<double>& vol)
+{
+   std::string s = format("%8d%10.2lf  Synthetic\n", (int)u0.size(), 298.0);
+   for (size_t i = 0; i < u0.size(); ++i) {
+      s += format("%8d  %18.10lf%18.10lf", (int)i + 1, u0[i], u1[i]);
+      if (vol.size())
+         s += format("%18.10lf", vol[i]);
+      s += "\n";
+   }
+   return s;
+}
+
+const double rt298 = units::gasconst * 298.0;
+const char* const barIter = " Free Energy via BAR Iteration";
+const char* const barBoot = " Free Energy via BAR Bootstrap";
+}
+
+// The two BAR files "bar" mode 1 writes in the cases above. The BAR iteration
+// is deterministic; the values are Tinker's bar.x mode 2 output.
+TEST_CASE("BAR-mode2-ref", "[bar]")
+{
+   const struct
+   {
+      const char* base;
+      double val, sd;
+   } refs[] = {{"water-00-0000-0950", -0.2070, 0.4380}, {"water-00-0950-1000", 1.3773, 0.4279}};
+   for (const auto& r : refs) {
+      INFO(r.base);
+      const std::string barfile = std::string(r.base) + ".bar";
+      TestFile fbar(TINKER9_DIRSTR "/test/ref/bar/" + barfile);
+      auto out = runBarCalc(barfile, 2, 2);
+      double val, sd;
+      REQUIRE(readEstimate(out, barIter, val, sd));
+      REQUIRE(std::fabs(val - r.val) <= 1.0e-4);
+      REQUIRE(std::fabs(sd - r.sd) <= 1.0e-4);
+   }
+}
+
+// Every frame has dU = 0.5 in both directions, so BAR gives 0.5 exactly. Rows
+// with no volume and rows with an explicit zero volume must both mean NVT.
+TEST_CASE("BAR-mode2-zero-volume", "[bar]")
+{
+   const int n = 10;
+   std::vector<double> ua0, ua1, ub0, ub1;
+   for (int i = 0; i < n; ++i) {
+      ua0.push_back(-100.0 + 0.37 * i);
+      ua1.push_back(ua0[i] + 0.5);
+      ub0.push_back(-90.0 + 0.21 * i);
+      ub1.push_back(ub0[i] + 0.5);
+   }
+   const std::vector<double> none, zero(n, 0.0);
+   for (const auto* vol : {&none, &zero}) {
+      INFO((vol->size() ? "explicit zero volume" : "no volume column"));
+      const std::string barfile = "bar-mode2-nvt.bar";
+      TestFile fbar("", barfile, barBlock(ua0, ua1, *vol) + barBlock(ub0, ub1, *vol));
+      auto out = runBarCalc(barfile, n, n);
+      double val, sd;
+      REQUIRE(readEstimate(out, barIter, val, sd));
+      REQUIRE(std::fabs(val - 0.5) <= 1.0e-4);
+      REQUIRE(out.find("PdV") == std::string::npos);
+   }
+}
+
+// The volume correction is -RT ln(V/<V>). Making dU = c + RT ln(V) frame by
+// frame leaves every frame's corrected dU equal to c + RT ln(<V>), so every
+// bootstrap resample gives the same BAR value and the bootstrap deviation is
+// about zero. That holds only if each frame's energies are corrected with its
+// own volume; correcting with another frame's volume leaves a spread of up to
+// RT ln 3 and a deviation of a few tenths.
+TEST_CASE("BAR-mode2-bootstrap-volume-index", "[bar]")
+{
+   const int n = 10;
+   std::vector<double> ua0, ua1, vola, ub0, ub1, volb;
+   for (int i = 0; i < n; ++i) {
+      vola.push_back(1000.0 + 2000.0 * i / (n - 1));
+      ua0.push_back(-100.0 - 0.3 * i);
+      ua1.push_back(ua0[i] + 0.5 + rt298 * std::log(vola[i] / 2000.0));
+      volb.push_back(3000.0 - 1500.0 * i / (n - 1));
+      ub1.push_back(-95.0 + 0.2 * i);
+      ub0.push_back(ub1[i] - 0.5 + rt298 * std::log(volb[i] / 2000.0));
+   }
+   const std::string barfile = "bar-mode2-npt.bar";
+   TestFile fbar("", barfile, barBlock(ua0, ua1, vola) + barBlock(ub0, ub1, volb));
+   auto out = runBarCalc(barfile, n, n);
+   double val, sd, bval, bsd;
+   REQUIRE(readEstimate(out, barIter, val, sd));
+   REQUIRE(readEstimate(out, barBoot, bval, bsd));
+   REQUIRE(std::fabs(bval - val) <= 1.0e-3);
+   // Rounding can make the variance a tiny negative number and print nan.
+   REQUIRE_FALSE(bsd > 1.0e-3);
+}
+
+// Nine of the ten frames of A have no overlap with B, so a resample of A that
+// misses the remaining frame drives the BAR iteration to inf and then NaN.
+// About a third of the trials do, and they must be skipped, not loop forever.
+TEST_CASE("BAR-mode2-bootstrap-nonconverged", "[bar]")
+{
+   const int n = 10;
+   std::vector<double> ua0, ua1, ub0, ub1;
+   for (int i = 0; i < n; ++i) {
+      ua0.push_back(-100.0 - 0.1 * i);
+      ua1.push_back(ua0[i] + (i == 0 ? 0.0 : 1000.0));
+      ub1.push_back(-100.0 + 0.1 * i);
+      ub0.push_back(ub1[i] + 0.3 * (i % 3) - 0.3);
+   }
+   const std::string barfile = "bar-mode2-fail.bar";
+   TestFile fbar("", barfile, barBlock(ua0, ua1, {}) + barBlock(ub0, ub1, {}));
+   auto out = runBarCalc(barfile, n, n);
+   double val, sd, bval, bsd;
+   REQUIRE(readEstimate(out, barIter, val, sd));
+   const std::string warn = " BAR Bootstrap:  ";
+   auto pos = out.find(warn);
+   REQUIRE(pos != std::string::npos);
+   int nfail = 0, ntrial = 0;
+   REQUIRE(std::sscanf(out.c_str() + pos + warn.size(), "%d of %d", &nfail, &ntrial) == 2);
+   REQUIRE(nfail > 0);
+   REQUIRE(nfail < ntrial);
+   REQUIRE(readEstimate(out, barBoot, bval, bsd));
+   REQUIRE(std::isfinite(bval));
+   REQUIRE(std::isfinite(bsd));
+}
