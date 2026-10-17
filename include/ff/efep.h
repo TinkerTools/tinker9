@@ -19,6 +19,8 @@ TINKER_EXTERN std::vector<double> fepene;
 TINKER_EXTERN std::vector<double> feplmda;
 /// Trial main lambda at which each energy was found.
 TINKER_EXTERN std::vector<double> feptrial;
+/// Periodic box volume of the sample for each record, or 0 without a box.
+TINKER_EXTERN std::vector<double> fepvol;
 
 /// Adopts the sampling interval and rewinds the records.
 void efepData(RcOp op);
@@ -40,6 +42,7 @@ void efepTrial(int ntrial, const double* ltrial, double* etrial, double& enative
 bool efepSampleStep(int istep);
 /// Finds the potential energy at the main lambda of the current window and at
 /// those of its neighbors, at regular intervals over the production portion of
-/// the window, and records the values for output (efep.f:efepdyn).
+/// the window, and records the values for output along with the box volume
+/// (efep.f:efepdyn).
 void efepDyn(int istep);
 }

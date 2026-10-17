@@ -273,7 +273,7 @@ static void mdsaveWriteTi()
 static bool fep_snap_active;
 static int s_nfep, s_fep_first;
 static std::vector<int> s_fepstep;
-static std::vector<double> s_fepene, s_feplmda, s_feptrial;
+static std::vector<double> s_fepene, s_feplmda, s_feptrial, s_fepvol;
 
 static void mdsaveDupFep()
 {
@@ -281,7 +281,7 @@ static void mdsaveDupFep()
    if (not fep_snap_active)
       return;
 
-   s_fepstep.clear(), s_fepene.clear(), s_feplmda.clear(), s_feptrial.clear();
+   s_fepstep.clear(), s_fepene.clear(), s_feplmda.clear(), s_feptrial.clear(), s_fepvol.clear();
    s_nfep = nfep;
    s_fep_first = fep::nfepsave; // saves are serialized, so this is stable
    for (int i = s_fep_first; i < s_nfep; ++i) {
@@ -289,6 +289,7 @@ static void mdsaveDupFep()
       s_fepene.push_back(fepene[i]);
       s_feplmda.push_back(feplmda[i]);
       s_feptrial.push_back(feptrial[i]);
+      s_fepvol.push_back(fepvol[i]);
    }
 }
 
@@ -303,6 +304,7 @@ static void mdsaveWriteFep()
       fep::fepene[j] = s_fepene[i];
       fep::feplmda[j] = s_feplmda[i];
       fep::feptrial[j] = s_feptrial[i];
+      fep::fepvol[j] = s_fepvol[i];
    }
    fep::nfep = s_nfep;
 }

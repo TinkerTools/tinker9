@@ -1,8 +1,10 @@
+#include "ff/box.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/rwcrd.h"
 #include "math/random.h"
 #include "tool/argkey.h"
+#include "tool/error.h"
 #include "tool/iofortstr.h"
 #include "tool/ioprint.h"
 #include "tool/ioread.h"
@@ -16,7 +18,12 @@
 
 #include "tinker9.h"
 
+#include <algorithm>
 #include <array>
+#include <cmath>
+#include <limits>
+#include <sstream>
+#include <tuple>
 
 namespace tinker {
 static constexpr int MAX_NCHAR = 240;
@@ -116,6 +123,9 @@ static void xBarMake()
    int done;
    const char* log_fmt = " Current Potential %lf\n";
    const char* process_fmt = "       Completed%8d Coordinate Frames\n";
+   // the buffer must hold only the blank-padded base name, or suffix finds the
+   // extension of whatever it held before
+   std::memset(string, ' ', MAX_NCHAR);
    std::memcpy(string, filea, lenga);
    tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("bar"), 3}, {const_cast<char*>("new"), 3});
    std::string barfile = FstrView(string).trim();
@@ -123,6 +133,7 @@ static void xBarMake()
 
    // check for log with energies of trajectory A in state 0
    if (not recompute) {
+      std::memset(string, ' ', MAX_NCHAR);
       std::memcpy(string, filea, lenga);
       tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("log"), 3}, {const_cast<char*>("old"), 3});
       str = FstrView(string).trim();
@@ -212,10 +223,11 @@ static void xBarMake()
       done = a_ar2.readCurrent();
       nblistRefresh();
       energy(calc::energy);
-      double vol = boxVolume();
+      // a system without a periodic box has no volume
+      double vol = box_shape == BoxShape::UNBOUND ? 0 : boxVolume();
       ua1.push_back(esum);
       vola.push_back(vol);
-      if (inform::verbose) {
+      if (inform::verbose and ua1.size() <= ua0.size()) {
          int i = ua1.size() - 1;
          print(out, "%11d  %16.4lf%16.4lf%16.4lf\n", i + 1, ua0[i], ua1[i], ua1[i] - ua0[i]);
       }
@@ -240,6 +252,7 @@ static void xBarMake()
 
    // check for log with energies of trajectory B in state 1
    if (not recompute) {
+      std::memset(string, ' ', MAX_NCHAR);
       std::memcpy(string, fileb, lengb);
       tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("log"), 3}, {const_cast<char*>("old"), 3});
       str = FstrView(string).trim();
@@ -267,7 +280,6 @@ static void xBarMake()
       tinker_f_open(&iarc, str, "old");
    else if (output::binary)
       tinker_f_open(&iarc, str, "unformatted", "old");
-   std::ifstream b_arc;
 
    if (ub1.size() == 0) {
       // reset trajectory B using the parameters for state 1
@@ -330,10 +342,10 @@ static void xBarMake()
       done = b_ar2.readCurrent();
       nblistRefresh();
       energy(calc::energy);
-      double vol = boxVolume();
+      double vol = box_shape == BoxShape::UNBOUND ? 0 : boxVolume();
       ub0.push_back(esum);
       volb.push_back(vol);
-      if (inform::verbose) {
+      if (inform::verbose and ub0.size() <= ub1.size()) {
          int i = ub0.size() - 1;
          print(out, "%11d  %16.4lf%16.4lf%16.4lf\n", i + 1, ub0[i], ub1[i], ub0[i] - ub1[i]);
       }
@@ -358,174 +370,436 @@ static void xBarMake()
       barfile);
 }
 
+namespace {
+/// Potential energies and volumes of the frames selected from both trajectories.
+struct BarData
+{
+   std::vector<double> ua0, ua1; ///< Energies of trajectory A frames in states 0 and 1.
+   std::vector<double> ub0, ub1; ///< Energies of trajectory B frames in states 0 and 1.
+   std::vector<double> vola;     ///< Volumes of trajectory A frames, or 0 if not used.
+   std::vector<double> volb;     ///< Volumes of trajectory B frames, or 0 if not used.
+};
+
+/// Fills idx with n frame indices drawn with replacement.
+void barDraw(int n, std::vector<int>& idx)
+{
+   idx.resize(n);
+   for (int i = 0; i < n; ++i)
+      idx[i] = std::min((int)(n * random<double>()), n - 1);
+}
+
+/// Finds the free energy and enthalpy change from the sampled state to the
+/// other state via thermodynamic perturbation over a list of frames, which may
+/// repeat, along with the average energy and volume of those frames. The
+/// exponentials are shifted by their largest exponent so the sum cannot
+/// overflow, and the enthalpy includes the PV term.
+void barFep(const std::vector<int>& idx, const std::vector<double>& uo, const std::vector<double>& ut,
+   const std::vector<double>& vol, double rt, double pres, double& dg, double& dh, double& uave, double& vave)
+{
+   const int n = idx.size();
+   double xmax = 0;
+   for (int i = 0; i < n; ++i) {
+      int j = idx[i];
+      double x = (uo[j] - ut[j]) / rt;
+      if (i == 0 or x > xmax)
+         xmax = x;
+   }
+
+   double wsum = 0, hwsum = 0, usum = 0, vsum = 0;
+   for (int i = 0; i < n; ++i) {
+      int j = idx[i];
+      double w = std::exp((uo[j] - ut[j]) / rt - xmax);
+      wsum += w;
+      hwsum += (ut[j] + pres * vol[j]) * w;
+      usum += uo[j];
+      vsum += vol[j];
+   }
+   uave = usum / n;
+   vave = vsum / n;
+   dg = -rt * (xmax + std::log(wsum / n));
+   dh = hwsum / wsum - (uave + pres * vave);
+}
+
+/// Solves the Bennett acceptance ratio equation for the free energy change from
+/// state 0 to state 1 by iteration over lists of frames sampled in each state,
+/// starting from cinit; also finds the analytical error of Bennett. Records the
+/// value at each iteration in hist if it is not null, and returns false if the
+/// iteration does not converge.
+bool barIter(const std::vector<int>& ia, const std::vector<int>& ib, const BarData& d, double rta, double rtb,
+   double cinit, int maxiter, double& cnew, double& stdev, std::vector<double>* hist)
+{
+   const double eps = 0.0001;
+   const double rt = 0.5 * (rta + rtb);
+   const int na = ia.size(), nb = ib.size();
+   const double frma = na, frmb = nb;
+   const double rfrm = frma / frmb;
+
+   cnew = cinit;
+   stdev = 0;
+   if (hist)
+      hist->clear();
+   for (int iter = 0;; ++iter) {
+      double cold = cnew;
+      double top = 0, top2 = 0;
+      for (int i = 0; i < nb; ++i) {
+         int j = ib[i];
+         double fterm = 1.0 / (1.0 + std::exp((d.ub0[j] - d.ub1[j] + cold) / rtb));
+         top += fterm;
+         top2 += fterm * fterm;
+      }
+      double bot = 0, bot2 = 0;
+      for (int i = 0; i < na; ++i) {
+         int j = ia[i];
+         double fterm = 1.0 / (1.0 + std::exp((d.ua1[j] - d.ua0[j] - cold) / rta));
+         bot += fterm;
+         bot2 += fterm * fterm;
+      }
+      cnew = rt * std::log(rfrm * top / bot) + cold;
+      stdev = rt * std::sqrt(std::max(0.0, (bot2 - bot * bot / frma) / (bot * bot) + (top2 - top * top / frmb) / (top * top)));
+      if (hist)
+         hist->push_back(cnew);
+      if (std::fabs(cnew - cold) < eps)
+         return true;
+      else if (iter >= maxiter)
+         return false;
+      else if (not(std::fabs(cnew) < 1.0e100))
+         return false;
+   }
+}
+
+/// Finds the enthalpy change from state 0 to state 1 via the BAR estimator of
+/// Wyczalkowski et al. over lists of frames sampled in each state, given the BAR
+/// free energy change cbar for the same frames. The state energies include the
+/// PV term, which cancels in the energy differences.
+double barHbar(const std::vector<int>& ia, const std::vector<int>& ib, const BarData& d, double rta, double rtb,
+   double pres, double cbar)
+{
+   // find the terms from the state 0 frames
+   double fsum = 0, fvsum = 0, fbvsum = 0, vsum = 0, fbsum0 = 0;
+   for (int j : ia) {
+      double fore = 1.0 / (1.0 + std::exp((d.ua1[j] - d.ua0[j] - cbar) / rta));
+      double back = 1.0 / (1.0 + std::exp((d.ua0[j] - d.ua1[j] + cbar) / rta));
+      double h = d.ua0[j] + pres * d.vola[j];
+      fsum += fore;
+      fvsum += fore * h;
+      fbvsum += fore * back * (d.ua1[j] - d.ua0[j]);
+      vsum += h;
+      fbsum0 += fore * back;
+   }
+   double alpha0 = fvsum - fsum * (vsum / ia.size()) + fbvsum;
+
+   // find the terms from the state 1 frames
+   double bsum = 0, bvsum = 0, fbsum1 = 0;
+   fbvsum = 0, vsum = 0;
+   for (int j : ib) {
+      double fore = 1.0 / (1.0 + std::exp((d.ub1[j] - d.ub0[j] - cbar) / rtb));
+      double back = 1.0 / (1.0 + std::exp((d.ub0[j] - d.ub1[j] + cbar) / rtb));
+      double h = d.ub1[j] + pres * d.volb[j];
+      bsum += back;
+      bvsum += back * h;
+      fbvsum += fore * back * (d.ub1[j] - d.ub0[j]);
+      vsum += h;
+      fbsum1 += fore * back;
+   }
+   double alpha1 = bvsum - bsum * (vsum / ib.size()) - fbvsum;
+   return (alpha0 - alpha1) / (fbsum0 + fbsum1);
+}
+
+/// Computes and prints the free energy, enthalpy and entropy change from state 0
+/// to state 1 via the FEP and BAR methods, with the PV term at patm atmospheres.
+/// Each value is computed once from all of the frames, and the BAR enthalpy and
+/// entropy use the BAR iteration free energy. The BAR iteration error is the
+/// analytical estimate of Bennett; the other errors are standard deviations over
+/// nbst bootstrap trials that apply the same estimators to frames resampled with
+/// replacement. The BAR bootstrap value is the mean over converged trials only,
+/// and BAR errors are reported only if at least two trials converge. Throws if
+/// the BAR iteration over all of the frames does not converge.
+void barPair(const BarData& d, double tempa, double tempb, double patm, int nbst)
+{
+   auto out = stdout;
+   const int nfrma = d.ua0.size(), nfrmb = d.ub0.size();
+   const double rta = units::gasconst * tempa;
+   const double rtb = units::gasconst * tempb;
+   const double pres = patm / units::prescon;
+   const double bst = nbst;
+   const double ratio = bst / (bst - 1);
+   const int maxiter = 100;
+
+   // find the FEP free energies, enthalpies and averages from all of the
+   // frames, where the enthalpies include the PV term
+   std::vector<int> ia(nfrma), ib(nfrmb);
+   for (int i = 0; i < nfrma; ++i)
+      ia[i] = i;
+   for (int i = 0; i < nfrmb; ++i)
+      ib[i] = i;
+   double cfore, hfore, uave0, vavea;
+   double cback, hback, uave1, vaveb;
+   barFep(ia, d.ua0, d.ua1, d.vola, rta, pres, cfore, hfore, uave0, vavea);
+   barFep(ib, d.ub1, d.ub0, d.volb, rtb, pres, cback, hback, uave1, vaveb);
+   cback = -cback;
+   hback = -hback;
+   double epv = pres * (vaveb - vavea);
+   double hdir = uave1 - uave0 + epv;
+
+   // find the BAR free energy from all of the frames, starting from the mean
+   // of the FEP values, then the BAR enthalpy at that value
+   double cinit = 0.5 * (cfore + cback);
+   if (not(std::fabs(cinit) < 1.0e100))
+      cinit = 0;
+   double cbar, stdev;
+   std::vector<double> hist;
+   bool conv = barIter(ia, ib, d, rta, rtb, cinit, maxiter, cbar, stdev, &hist);
+   double hbr = 0;
+   if (conv)
+      hbr = barHbar(ia, ib, d, rta, rtb, pres, cbar);
+
+   // apply the same estimators to bootstrap resamples of the frames, with each
+   // BAR trial started from the converged BAR value and dropped if it fails to
+   // converge
+   double val[8], sd[8], vsum[8] = {0}, vsum2[8] = {0};
+   int nconv = 0;
+   double csum = 0, csum2 = 0, hsum = 0, hsum2 = 0;
+   for (int k = 0; k < nbst; ++k) {
+      barDraw(nfrma, ia);
+      barDraw(nfrmb, ib);
+      double vtrla, vtrlb;
+      barFep(ia, d.ua0, d.ua1, d.vola, rta, pres, val[0], val[6], val[2], vtrla);
+      barFep(ib, d.ub1, d.ub0, d.volb, rtb, pres, val[1], val[7], val[3], vtrlb);
+      val[1] = -val[1];
+      val[7] = -val[7];
+      val[4] = pres * (vtrlb - vtrla);
+      val[5] = val[3] - val[2] + val[4];
+      for (int m = 0; m < 8; ++m) {
+         vsum[m] += val[m];
+         vsum2[m] += val[m] * val[m];
+      }
+      if (conv) {
+         double ctrial, etrial;
+         if (barIter(ia, ib, d, rta, rtb, cbar, maxiter, ctrial, etrial, nullptr)) {
+            ++nconv;
+            csum += ctrial;
+            csum2 += ctrial * ctrial;
+            double htrial = barHbar(ia, ib, d, rta, rtb, pres, ctrial);
+            hsum += htrial;
+            hsum2 += htrial * htrial;
+         }
+      }
+   }
+   for (int m = 0; m < 8; ++m) {
+      double ave = vsum[m] / bst;
+      sd[m] = std::sqrt(std::max(0.0, ratio * (vsum2[m] / bst - ave * ave)));
+   }
+
+   // report the free energy change via thermodynamic perturbation
+   print(out,
+      "\n"
+      " Free Energy Difference via FEP Method :\n"
+      "\n");
+   print(out, " Free Energy via Forward FEP         %12.4lf +/-%9.4lf Kcal/mol\n", cfore, sd[0]);
+   print(out, " Free Energy via Backward FEP        %12.4lf +/-%9.4lf Kcal/mol\n", cback, sd[1]);
+
+   // report the free energy change via the BAR iteration
+   print(out,
+      "\n"
+      " Free Energy Difference via BAR Method :\n"
+      "\n");
+   const int niter = (int)hist.size() - 1;
+   for (int i = 0; i <= niter; ++i)
+      print(out, " BAR Iteration%4d%19s%12.4lf Kcal/mol\n", i, "", hist[i]);
+   if (conv and niter == 0)
+      print(out, " BAR Free Energy Estimate        %12.4lf +/-%9.4lf Kcal/mol\n", cbar, stdev);
+   else if (conv)
+      print(out,
+         "\n"
+         " Free Energy via BAR Estimate        %12.4lf +/-%9.4lf Kcal/mol\n",
+         cbar, stdev);
+
+   // stop if the BAR iteration fails
+   if (not conv) {
+      print(out,
+         "\n"
+         " BAR Free Energy Estimate not Converged after%4d Iterations\n",
+         niter);
+      std::fflush(out);
+      TINKER_THROW("BAR  --  Free Energy Estimate not Converged");
+   }
+
+   // report the mean and spread of the BAR bootstrap trials
+   const double rconv = nconv;
+   double stdhbr = 0;
+   if (nconv >= 2) {
+      double cave = csum / rconv;
+      double cstd = std::sqrt(std::max(0.0, rconv / (rconv - 1) * (csum2 / rconv - cave * cave)));
+      double have = hsum / rconv;
+      stdhbr = std::sqrt(std::max(0.0, rconv / (rconv - 1) * (hsum2 / rconv - have * have)));
+      print(out, " Free Energy via BAR Bootstrap       %12.4lf +/-%9.4lf Kcal/mol\n", cave, cstd);
+   } else {
+      print(out, " Free Energy via BAR Bootstrap             not Available\n");
+   }
+   if (nconv < nbst)
+      print(out, " BAR Bootstrap :%8d of%8d Trials did not Converge\n", nbst - nconv, nbst);
+
+   // report the enthalpy directly via average potential energy
+   print(out,
+      "\n"
+      " Enthalpy from Potential Energy Averages :\n"
+      "\n");
+   print(out, " Average Energy for State 0          %12.4lf +/-%9.4lf Kcal/mol\n", uave0, sd[2]);
+   print(out, " Average Energy for State 1          %12.4lf +/-%9.4lf Kcal/mol\n", uave1, sd[3]);
+   if (epv != 0)
+      print(out, " PdV Work Term at%9.2lf Atm       %12.4lf +/-%9.4lf Kcal/mol\n", patm, epv, sd[4]);
+   print(out, " Enthalpy via Direct Estimate        %12.4lf +/-%9.4lf Kcal/mol\n", hdir, sd[5]);
+
+   // report the enthalpy and entropy via thermodynamic perturbation
+   double sfore = (hfore - cfore) / tempa;
+   double sback = (hback - cback) / tempb;
+   print(out,
+      "\n"
+      " Enthalpy and Entropy via FEP Method :\n"
+      "\n");
+   print(out, " Enthalpy via Forward FEP            %12.4lf +/-%9.4lf Kcal/mol\n", hfore, sd[6]);
+   print(out, " Entropy via Forward FEP             %12.6lf Kcal/mol/K\n", sfore);
+   print(out, " Forward FEP -T*dS Value             %12.4lf Kcal/mol\n", -tempa * sfore);
+   print(out,
+      "\n"
+      " Enthalpy via Backward FEP           %12.4lf +/-%9.4lf Kcal/mol\n",
+      hback, sd[7]);
+   print(out, " Entropy via Backward FEP            %12.6lf Kcal/mol/K\n", sback);
+   print(out, " Backward FEP -T*dS Value            %12.4lf Kcal/mol\n", -tempb * sback);
+
+   // the BAR enthalpy and entropy need converged bootstrap trials
+   print(out,
+      "\n"
+      " Enthalpy and Entropy via BAR Method :\n"
+      "\n");
+   if (nconv == 0) {
+      print(out, " BAR Enthalpy and Entropy not Computed\n");
+      return;
+   }
+
+   // report the enthalpy and entropy via the BAR method
+   double tsbar = hbr - cbar;
+   double sbar = tsbar / (0.5 * (tempa + tempb));
+   print(out, " Enthalpy via BAR Estimate           %12.4lf +/-%9.4lf Kcal/mol\n", hbr, stdhbr);
+   print(out, " Entropy via BAR Estimate            %12.6lf Kcal/mol/K\n", sbar);
+   print(out, " BAR Estimate -T*dS Value            %12.4lf Kcal/mol\n", -tsbar);
+}
+}
+
+// Mode 2 finds thermodynamic values from a BAR file via barPair. Volumes in the
+// file enter only the PV terms of the enthalpies, at a pressure taken from the
+// command line or asked for, and both trajectories must be at one temperature.
 static void xBarCalc()
 {
    auto out = stdout;
    bool exist = false;
-   bool query;
    char string[MAX_NCHAR];
    std::string str;
-   auto invalid_barfile = [&](const std::string& s) {
-      std::memcpy(string, s.data(), s.length());
+   // the BAR file a name refers to, with the "bar" extension if it has none
+   auto bar_path = [&](const std::string& name) {
+      std::memset(string, ' ', MAX_NCHAR);
+      std::memcpy(string, name.data(), std::min(name.length(), (size_t)MAX_NCHAR));
       tinker_f_basefile({string, MAX_NCHAR});
       tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("bar"), 3}, {const_cast<char*>("old"), 3});
-      std::string str = FstrView(string).trim();
-      std::ifstream fr(str);
-      return not fr;
+      return std::string(FstrView(string).trim());
    };
+   auto invalid_barfile = [&](const std::string& name) { return not std::ifstream(bar_path(name)); };
 
    // ask the user for file with potential energies and volumes
    nextarg(string, exist);
-   if (exist) {
-      tinker_f_basefile({string, MAX_NCHAR});
-      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("bar"), 3}, {const_cast<char*>("old"), 3});
+   if (exist)
       str = FstrView(string).trim();
-   }
    ioReadStream(str,
       "\n"
       " Enter Potential Energy BAR File Name :  ",
       std::string(""), invalid_barfile);
-   std::string barfile = str;
+   std::string barfile = bar_path(str);
 
+   // a frame selection is invalid only if a value is negative; a zero or
+   // missing value selects the first frame, the last frame or a step of one
    auto invalid_frames = [](const std::string& s) {
+      int v[3] = {0, 0, 0};
       std::istringstream iss(s);
-      int start, stop, step;
+      for (int k = 0; k < 3 and (iss >> v[k]); ++k) {}
+      return v[0] < 0 or v[1] < 0 or v[2] < 0;
+   };
+   auto get_frames = [&](const char* prompt, int& start, int& stop, int& step) {
+      start = 0, stop = 0, step = 0;
+      bool query = true;
+      nextarg(string, exist);
+      if (exist and std::sscanf(string, "%d", &start) == 1) {
+         query = false;
+         nextarg(string, exist);
+         if (exist and std::sscanf(string, "%d", &stop) == 1) {
+            nextarg(string, exist);
+            if (exist)
+               std::sscanf(string, "%d", &step);
+         }
+      }
+      if (query)
+         str = "-1";
+      else
+         str = std::to_string(start) + " " + std::to_string(stop) + " " + std::to_string(step);
+      ioReadStream(str, prompt, std::string(""), invalid_frames);
+      start = 0, stop = 0, step = 0;
+      std::istringstream iss(str);
       iss >> start >> stop >> step;
-      return start <= 0 or stop <= start or step <= 0;
+      if (start == 0)
+         start = 1;
+      if (stop == 0)
+         stop = std::numeric_limits<int>::max();
+      if (step == 0)
+         step = 1;
    };
 
    // set beginning and ending frame for trajectory A
-   int starta = 0, stopa = 0, stepa = 0;
-   query = true;
-   if (query) {
-      nextarg(string, exist);
-      if (exist) {
-         int count = std::sscanf(string, "%d", &starta);
-         query = count == 1;
-      }
-   }
-   if (query) {
-      nextarg(string, exist);
-      if (exist) {
-         int count = std::sscanf(string, "%d", &stopa);
-         query = count == 1;
-      }
-   }
-   if (query) {
-      nextarg(string, exist);
-      if (exist) {
-         int count = std::sscanf(string, "%d", &stepa);
-         query = count == 1;
-      }
-   }
-   str = std::to_string(starta) + " " + std::to_string(stopa) + " " + std::to_string(stepa);
-   ioReadStream(str,
-      "\n"
-      " First & Last Frame and Step Increment for Trajectory A :  ",
-      std::string(""), invalid_frames);
-   {
-      std::istringstream iss(str);
-      iss >> starta >> stopa >> stepa;
-   }
+   int starta, stopa, stepa;
+   get_frames("\n"
+              " First & Last Frame and Step Increment for Trajectory A :  ",
+      starta, stopa, stepa);
 
    // set beginning and ending frame for trajectory B
-   int startb = 0, stopb = 0, stepb = 0;
-   query = true;
-   if (query) {
-      nextarg(string, exist);
-      if (exist) {
-         int count = std::sscanf(string, "%d", &startb);
-         query = count == 1;
-      }
-   }
-   if (query) {
-      nextarg(string, exist);
-      if (exist) {
-         int count = std::sscanf(string, "%d", &stopb);
-         query = count == 1;
-      }
-   }
-   if (query) {
-      nextarg(string, exist);
-      if (exist) {
-         int count = std::sscanf(string, "%d", &stepb);
-         query = count == 1;
-      }
-   }
-   str = std::to_string(startb) + " " + std::to_string(stopb) + " " + std::to_string(stepb);
-   str = std::to_string(startb) + " " + std::to_string(stopb) + " " + std::to_string(stepb);
-   ioReadStream(str,
-      "\n"
-      " First & Last Frame and Step Increment for Trajectory B :  ",
-      std::string(""), invalid_frames);
-   {
-      std::istringstream iss(str);
-      iss >> startb >> stopb >> stepb;
-   }
+   int startb, stopb, stepb;
+   get_frames("\n"
+              " First & Last Frame and Step Increment for Trajectory B :  ",
+      startb, stopb, stepb);
 
-   std::vector<double> ua0, ua1, ub0, ub1, vola, volb, vloga, vlogb;
+   // Reads one trajectory block of the BAR file, a header with the frame
+   // count, temperature and title, then one row per frame, keeping the
+   // selected frames. Reading stops at the end of the file; a row with no
+   // volume has a volume of 0.
    std::ifstream ibar(barfile);
-
-   //====================================================================//
-
-   // read potential energies and volumes for trajectory A
-   int nfrma = 0, nfrma1;
-   double tempa = 0;
-   std::getline(ibar, str);
-   std::sscanf(str.c_str(), "%d %lf\n", &nfrma, &tempa);
-   nfrma1 = nfrma;
-   std::string titlea = "";
-   str = str.substr(str.find_first_not_of(' '));
-   str = str.substr(str.find_first_of(' '));
-   str = str.substr(str.find_first_not_of(' '));
-   if (str.find_first_of(' ') != std::string::npos) {
-      str = str.substr(str.find_first_of(' '));
-      if (str.find_first_not_of(' ') != std::string::npos)
-         titlea = str.substr(str.find_first_not_of(' '));
-   }
-   nfrma = std::min(nfrma, stopa);
-   for (int i = 1; i <= nfrma1; ++i) {
-      std::getline(ibar, str);
-      if (i >= starta and ((i - starta) % stepa) == 0 and i <= stopa) {
-         double u0 = 0, u1 = 0, v = 0;
-         // the volume stays 0 if the row has none
-         std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
-         ua0.push_back(u0);
-         ua1.push_back(u1);
-         vola.push_back(v);
+   auto read_block = [&](int start, int stop, int step, double& temp, std::string& title, std::vector<double>& u0,
+                        std::vector<double>& u1, std::vector<double>& vol) {
+      int nrow = 0;
+      temp = 0;
+      title = "";
+      std::string line;
+      if (std::getline(ibar, line)) {
+         std::istringstream iss(line);
+         iss >> nrow >> temp;
+         std::getline(iss >> std::ws, title);
+         title.erase(title.find_last_not_of(" \t\r") + 1);
       }
-   }
-   nfrma = vola.size();
-
-   // read potential energies and volumes for trajectory B
-   int nfrmb = 0, nfrmb1;
-   double tempb = 0;
-   std::getline(ibar, str);
-   std::sscanf(str.c_str(), "%d %lf\n", &nfrmb, &tempb);
-   nfrmb1 = nfrmb;
-   std::string titleb = "";
-   str = str.substr(str.find_first_not_of(' '));
-   str = str.substr(str.find_first_of(' '));
-   str = str.substr(str.find_first_not_of(' '));
-   if (str.find_first_of(' ') != std::string::npos) {
-      str = str.substr(str.find_first_of(' '));
-      if (str.find_first_not_of(' ') != std::string::npos)
-         titleb = str.substr(str.find_first_not_of(' '));
-   }
-   nfrmb = std::min(nfrmb, stopb);
-   for (int i = 1; i <= nfrmb1; ++i) {
-      std::getline(ibar, str);
-      if (i >= startb and ((i - startb) % stepb) == 0 and i <= stopb) {
-         double u0 = 0, u1 = 0, v = 0;
-         // the volume stays 0 if the row has none
-         std::sscanf(str.c_str(), "%*d %lf %lf %lf\n", &u0, &u1, &v);
-         ub0.push_back(u0);
-         ub1.push_back(u1);
-         volb.push_back(v);
+      for (int i = 1; i <= nrow and std::getline(ibar, line); ++i) {
+         if (i >= start and (i - start) % step == 0 and i <= stop) {
+            double e0 = 0, e1 = 0, v = 0;
+            std::sscanf(line.c_str(), "%*d %lf %lf %lf", &e0, &e1, &v);
+            u0.push_back(e0);
+            u1.push_back(e1);
+            vol.push_back(v);
+         }
       }
-   }
-   nfrmb = volb.size();
+   };
+
+   // read potential energies and volumes for both trajectories
+   BarData d;
+   double tempa, tempb;
+   std::string titlea, titleb;
+   read_block(starta, stopa, stepa, tempa, titlea, d.ua0, d.ua1, d.vola);
+   read_block(startb, stopb, stepb, tempb, titleb, d.ub0, d.ub1, d.volb);
    ibar.close();
+   int nfrma = d.vola.size(), nfrmb = d.volb.size();
 
    // provide info about trajectories and number of frames
    print(out,
@@ -549,342 +823,95 @@ static void xBarCalc()
       " Temperature :       %10.2lf\n",
       nfrmb, tempb);
 
-   // set the frame ratio, temperature and Boltzmann factor
-   double frma = nfrma, frmb = nfrmb;
-   double rfrm = frma / frmb;
-   double rta = units::gasconst * tempa;
-   double rtb = units::gasconst * tempb;
-   double rt = 0.5 * (rta + rtb);
+   // stop if either trajectory has no frames selected
+   for (auto t : {std::make_pair('A', nfrma), std::make_pair('B', nfrmb)}) {
+      if (t.second == 0) {
+         print(out,
+            "\n"
+            " BAR  --  No Frames Selected from Trajectory %c\n",
+            t.first);
+         std::fflush(out);
+         TINKER_THROW(format("BAR  --  No Frames Selected from Trajectory %c", t.first));
+      }
+   }
+
+   // stop if a trajectory has no temperature
+   for (auto t : {std::make_pair('A', tempa), std::make_pair('B', tempb)}) {
+      if (not(t.second > 0)) {
+         print(out,
+            "\n"
+            " BAR  --  No Temperature Found for Trajectory %c\n",
+            t.first);
+         std::fflush(out);
+         TINKER_THROW(format("BAR  --  No Temperature Found for Trajectory %c", t.first));
+      }
+   }
+
+   // stop if the trajectories differ in temperature
+   if (std::fabs(tempa - tempb) > 0.01) {
+      print(out,
+         "\n"
+         " BAR  --  Trajectory Temperatures of%8.2lf and%8.2lf K Differ;\n"
+         " FEP and BAR Require a Single Temperature\n",
+         tempa, tempb);
+      std::fflush(out);
+      TINKER_THROW("BAR  --  FEP and BAR Require a Single Temperature");
+   }
+
+   // the PV terms need a volume for every frame of both trajectories, or
+   // for none; a missing volume would enter the averages as zero
+   auto count_vol = [](const std::vector<double>& vol) {
+      return (int)std::count_if(vol.begin(), vol.end(), [](double v) { return v != 0; });
+   };
+   const int nvola = count_vol(d.vola), nvolb = count_vol(d.volb);
+   const bool usevol = nvola + nvolb > 0;
+   if (usevol) {
+      for (auto t : {std::make_tuple('A', nvola, nfrma), std::make_tuple('B', nvolb, nfrmb)}) {
+         if (std::get<1>(t) < std::get<2>(t)) {
+            print(out,
+               "\n"
+               " BAR  --  Volumes Missing for%8d of%8d Frames of Trajectory %c;\n"
+               " PV Terms Need a Volume for Every Frame\n",
+               std::get<2>(t) - std::get<1>(t), std::get<2>(t), std::get<0>(t));
+            std::fflush(out);
+            TINKER_THROW(format("BAR  --  Volumes Missing for Trajectory %c", std::get<0>(t)));
+         }
+      }
+   }
+
+   // get the pressure for the PV terms if volumes are present
+   double patm = 1;
+   if (usevol) {
+      // only a missing or negative argument asks for the pressure, and any
+      // value entered is accepted
+      patm = -1;
+      nextarg(string, exist);
+      if (exist)
+         ioReadString(patm, string);
+      bool asked = false;
+      ioReadStream(patm,
+         "\n"
+         " Enter Pressure in Atmospheres [1.0] :  ",
+         1.0, [&](double p) {
+            if (asked)
+               return false;
+            asked = true;
+            return p < 0;
+         });
+      if (patm <= 0)
+         patm = 1;
+      print(out,
+         "\n"
+         " Pressure (Atm) :    %10.2lf\n",
+         patm);
+   }
 
    // set the number of bootstrap trials to be generated
    int nfrm = std::max(nfrma, nfrmb);
-   int nbst = std::min(100000, (int)std::round(1.e8 / nfrm));
-   double bst = nbst;
-   double ratio = bst / (bst - 1);
+   int nbst = std::max(2, std::min(100000, (int)std::round(1.e8 / nfrm)));
 
-   // find average volumes and corrections for both trajectories
-   double sum, sum2;
-   double vasum = 0, vasum2 = 0, vbsum = 0, vbsum2 = 0;
-   double vavea, vaveb;
-   for (int k = 0; k < nbst; ++k) {
-      sum = 0;
-      for (int i = 0; i < nfrma; ++i) {
-         int j = (int)(frma * random<double>());
-         sum += vola[j];
-      }
-      vavea = sum / frma;
-      vasum += vavea;
-      vasum2 += vavea * vavea;
-
-      sum = 0;
-      for (int i = 0; i < nfrmb; ++i) {
-         int j = (int)(frmb * random<double>());
-         sum += volb[j];
-      }
-      vaveb = sum / frmb;
-      vbsum += vaveb;
-      vbsum2 += vaveb * vaveb;
-   }
-   vavea = vasum / bst;
-   double vstda = std::sqrt(ratio * (vasum2 / bst - vavea * vavea));
-   vaveb = vbsum / bst;
-   double vstdb = std::sqrt(ratio * (vbsum2 / bst - vaveb * vaveb));
-   vloga.assign(nfrma, 0.0);
-   vlogb.assign(nfrmb, 0.0);
-   if (vavea != 0)
-      for (int i = 0; i < nfrma; ++i)
-         if (vola[i] != 0)
-            vloga[i] = -rta * std::log(vola[i] / vavea);
-   if (vaveb != 0)
-      for (int i = 0; i < nfrmb; ++i)
-         if (volb[i] != 0)
-            vlogb[i] = -rtb * std::log(volb[i] / vaveb);
-
-   // get the free energy change via thermodynamic perturbation
-   print(out,
-      "\n"
-      " Free Energy Difference via FEP Method :\n"
-      "\n");
-   double cfsum = 0, cfsum2 = 0, cbsum = 0, cbsum2 = 0;
-   double cfore, cback;
-   for (int k = 0; k < nbst; ++k) {
-      sum = 0;
-      for (int i = 0; i < nfrma; ++i) {
-         int j = (int)(frma * random<double>());
-         sum += std::exp((ua0[j] - ua1[j] + vloga[j]) / rta);
-      }
-      cfore = -rta * std::log(sum / frma);
-      cfsum += cfore;
-      cfsum2 += cfore * cfore;
-
-      sum = 0;
-      for (int i = 0; i < nfrmb; ++i) {
-         int j = (int)(frmb * random<double>());
-         sum += std::exp((ub1[j] - ub0[j] + vlogb[j]) / rtb);
-      }
-      cback = rtb * std::log(sum / frmb);
-      cbsum += cback;
-      cbsum2 += cback * cback;
-   }
-   cfore = cfsum / bst;
-   double stdcf = std::sqrt(ratio * (cfsum2 / bst - cfore * cfore));
-   cback = cbsum / bst;
-   double stdcb = std::sqrt(ratio * (cbsum2 / bst - cback * cback));
-   print(out, " Free Energy via Forward FEP         %12.4lf +/-%9.4lf Kcal/mol\n", cfore, stdcf);
-   print(out, " Free Energy via Backward FEP        %12.4lf +/-%9.4lf Kcal/mol\n", cback, stdcb);
-
-   // determine the initial free energy via the BAR method
-   print(out,
-      "\n"
-      " Free Energy Difference via BAR Method :\n"
-      "\n");
-   const int maxiter = 100;
-   const double eps = 0.0001;
-   bool done = false;
-   int iter = 0;
-   double cnew = 0, cold, stdev;
-   double top, top2, bot, bot2;
-   do {
-      cold = cnew;
-      top = 0, top2 = 0, bot = 0, bot2 = 0;
-      for (int i = 0; i < nfrmb; ++i) {
-         double fterm = 1.0 / (1.0 + std::exp((ub0[i] - ub1[i] + vlogb[i] + cold) / rtb));
-         top += fterm;
-         top2 += fterm * fterm;
-      }
-      for (int i = 0; i < nfrma; ++i) {
-         double fterm = 1.0 / (1.0 + std::exp((ua1[i] - ua0[i] + vloga[i] - cold) / rta));
-         bot += fterm;
-         bot2 += fterm * fterm;
-      }
-      cnew = rt * std::log(rfrm * top / bot) + cold;
-      stdev = std::sqrt((bot2 - bot * bot / frma) / (bot * bot) + (top2 - top * top / frmb) / (top * top));
-      double delta = std::fabs(cnew - cold);
-      print(out, " BAR Iteration%4d%19s%12.4lf Kcal/mol\n", iter, "", cnew);
-      if (delta < eps) {
-         done = true;
-         print(out,
-            "\n"
-            " Free Energy via BAR Iteration       %12.4lf +/-%9.4lf Kcal/mol\n",
-            cnew, stdev);
-      } else {
-         ++iter;
-      }
-   } while (not done and iter <= maxiter);
-   if (not done) {
-      done = true;
-      print(out,
-         "\n"
-         " BAR Free Energy Estimate not Converged after%4d Iterations\n",
-         maxiter);
-      return;
-   }
-
-   // use bootstrap analysis to estimate statistical error,
-   // skipping the resampled trials that do not converge
-   std::vector<int> bsta, bstb;
-   const double cbar = cnew;
-   int nfail = 0;
-   sum = 0, sum2 = 0;
-   for (int k = 0; k < nbst; ++k) {
-      bstb.clear();
-      for (int i = 0; i < nfrmb; ++i) {
-         int j = (int)(frmb * random<double>());
-         bstb.push_back(j);
-      }
-      bsta.clear();
-      for (int i = 0; i < nfrma; ++i) {
-         int j = (int)(frma * random<double>());
-         bsta.push_back(j);
-      }
-
-      done = false;
-      iter = 0;
-      cnew = 0;
-      do {
-         cold = cnew;
-         top = 0, bot = 0;
-         for (int i = 0; i < nfrmb; ++i) {
-            int j = bstb[i];
-            top += 1.0 / (1.0 + std::exp((ub0[j] - ub1[j] + vlogb[j] + cold) / rtb));
-         }
-         for (int i = 0; i < nfrma; ++i) {
-            int j = bsta[i];
-            bot += 1.0 / (1.0 + std::exp((ua1[j] - ua0[j] + vloga[j] - cold) / rta));
-         }
-         cnew = rt * std::log(rfrm * top / bot) + cold;
-         double delta = std::fabs(cnew - cold);
-         if (delta < eps) {
-            done = true;
-            sum += cnew;
-            sum2 += cnew * cnew;
-         } else {
-            ++iter;
-         }
-      } while (not done and iter < maxiter);
-      if (not done)
-         ++nfail;
-   }
-   if (nfail > 0)
-      print(out, " BAR Bootstrap:  %d of %d Trials did not Converge\n", nfail, nbst);
-   const int nok = nbst - nfail;
-   if (nok < 2) {
-      cnew = cbar;
-      print(out, " Free Energy via BAR Bootstrap       not Available\n");
-   } else {
-      const double bok = nok;
-      cnew = sum / bok;
-      stdev = std::sqrt(bok / (bok - 1.0) * (sum2 / bok - cnew * cnew));
-      print(out, " Free Energy via BAR Bootstrap       %12.4lf +/-%9.4lf Kcal/mol\n", cnew, stdev);
-   }
-
-   // find the enthalpy directly via average potential energy
-   print(out,
-      "\n"
-      " Enthalpy from Potential Energy Averages :\n"
-      "\n");
-   double patm = 1;
-   double epv = (vaveb - vavea) * patm / units::prescon;
-   double stdpv = (vstda + vstdb) * patm / units::prescon;
-   double u0sum = 0, u0sum2 = 0, u1sum = 0, u1sum2 = 0, hsum = 0, hsum2 = 0;
-   double uave0, uave1, hdir;
-   double stdev0, stdev1;
-   for (int k = 0; k < nbst; ++k) {
-      uave0 = 0;
-      uave1 = 0;
-      for (int i = 0; i < nfrma; ++i) {
-         int j = (int)(frma * random<double>());
-         uave0 += ua0[j];
-      }
-      for (int i = 0; i < nfrmb; ++i) {
-         int j = (int)(frmb * random<double>());
-         uave1 += ub1[j];
-      }
-      uave0 /= frma;
-      uave1 /= frmb;
-      u0sum += uave0;
-      u0sum2 += uave0 * uave0;
-      u1sum += uave1;
-      u1sum2 += uave1 * uave1;
-      hdir = uave1 - uave0 + epv;
-      hsum += hdir;
-      hsum2 += hdir * hdir;
-   }
-   uave0 = u0sum / bst;
-   stdev0 = std::sqrt(ratio * (u0sum2 / bst - uave0 * uave0));
-   uave1 = u1sum / bst;
-   stdev1 = std::sqrt(ratio * (u1sum2 / bst - uave1 * uave1));
-   hdir = hsum / bst;
-   stdev = std::sqrt(ratio * (hsum2 / bst - hdir * hdir));
-   print(out, " Average Energy for State 0          %12.4lf +/-%9.4lf kcal/mol\n", uave0, stdev0);
-   print(out, " Average Energy for State 1          %12.4lf +/-%9.4lf kcal/mol\n", uave1, stdev1);
-   if (epv != 0) {
-      print(out, " PdV Work Term for 1 Atm             %12.4lf +/-%9.4lf kcal/mol\n", epv, stdpv);
-   }
-   print(out, " Enthalpy via Direct Estimate        %12.4lf +/-%9.4lf Kcal/mol\n", hdir, stdev);
-
-   // calculate the enthalpy via thermodynamic perturbation
-   print(out,
-      "\n"
-      " Enthalpy and Entropy via FEP Method :\n"
-      "\n");
-   double hfsum = 0, hfsum2 = 0, hbsum = 0, hbsum2 = 0;
-   double hfore, hback, stdhf, stdhb;
-   double sfore, sback;
-   for (int k = 0; k < nbst; ++k) {
-      top = 0;
-      bot = 0;
-      for (int i = 0; i < nfrma; ++i) {
-         int j = (int)(frma * random<double>());
-         double term = std::exp((ua0[j] - ua1[j] + vloga[j]) / rta);
-         top += ua1[j] * term;
-         bot += term;
-      }
-      hfore = (top / bot) - uave0;
-      hfsum += hfore;
-      hfsum2 += hfore * hfore;
-
-      top = 0;
-      bot = 0;
-      for (int i = 0; i < nfrmb; ++i) {
-         int j = (int)(frmb * random<double>());
-         double term = std::exp((ub1[j] - ub0[j] + vlogb[j]) / rtb);
-         top += ub0[j] * term;
-         bot += term;
-      }
-      hback = -(top / bot) + uave1;
-      hbsum += hback;
-      hbsum2 += hback * hback;
-   }
-
-   hfore = hfsum / bst;
-   stdhf = std::sqrt(ratio * (hfsum2 / bst - hfore * hfore));
-   stdhf += stdev0;
-   sfore = (hfore - cfore) / tempa;
-
-   hback = hbsum / bst;
-   stdhb = std::sqrt(ratio * (hbsum2 / bst - hback * hback));
-   stdhb += stdev1;
-   sback = (hback - cback) / tempb;
-
-   print(out, " Enthalpy via Forward FEP            %12.4lf +/-%9.4lf Kcal/mol\n", hfore, stdhf);
-   print(out, " Entropy via Forward FEP             %12.6lf Kcal/mol/K\n", sfore);
-   print(out, " Forward FEP -T*dS Value             %12.4lf Kcal/mol\n", -tempa * sfore);
-
-   print(out,
-      "\n"
-      " Enthalpy via Backward FEP           %12.4lf +/-%9.4lf Kcal/mol\n",
-      hback, stdhb);
-   print(out, " Entropy via Backward FEP            %12.6lf Kcal/mol/K\n", sback);
-   print(out, " Backward FEP -T*dS Value            %12.4lf Kcal/mol\n", -tempb * sback);
-
-   // determine the enthalpy and entropy via the BAR method
-   print(out,
-      "\n"
-      " Enthalpy and Entropy via BAR Method :\n"
-      "\n");
-   double hbar, tsbar, sbar;
-   double fsum, fvsum, bsum, bvsum;
-   double fbvsum, vsum, fbsum0, fbsum1;
-   hsum = 0, hsum2 = 0;
-   for (int k = 0; k < nbst; ++k) {
-      fsum = 0, fvsum = 0, fbvsum = 0, vsum = 0, fbsum0 = 0;
-      for (int i = 0; i < nfrma; ++i) {
-         int j = (int)(frma * random<double>());
-         double fore = 1.0 / (1.0 + std::exp((ua1[j] - ua0[j] + vloga[j] - cnew) / rta));
-         double back = 1.0 / (1.0 + std::exp((ua0[j] - ua1[j] + vloga[j] + cnew) / rta));
-         fsum += fore;
-         fvsum += fore * ua0[j];
-         fbvsum += fore * back * (ua1[j] - ua0[j] + vloga[j]);
-         vsum += ua0[j];
-         fbsum0 += fore * back;
-      }
-      double alpha0 = fvsum - fsum * (vsum / frma) + fbvsum;
-
-      bsum = 0, bvsum = 0, fbvsum = 0, vsum = 0, fbsum1 = 0;
-      for (int i = 0; i < nfrmb; ++i) {
-         int j = (int)(frmb * random<double>());
-         double fore = 1.0 / (1.0 + std::exp((ub1[j] - ub0[j] + vlogb[j] - cnew) / rtb));
-         double back = 1.0 / (1.0 + std::exp((ub0[j] - ub1[j] + vlogb[j] + cnew) / rtb));
-         bsum += back;
-         bvsum += back * ub1[j];
-         fbvsum += fore * back * (ub1[j] - ub0[j] + vlogb[j]);
-         vsum += ub1[j];
-         fbsum1 += fore * back;
-      }
-      double alpha1 = bvsum - bsum * (vsum / frmb) - fbvsum;
-
-      hbar = (alpha0 - alpha1) / (fbsum0 + fbsum1);
-      hsum += hbar;
-      hsum2 += hbar * hbar;
-   }
-   hbar = hsum / bst;
-   stdev = std::sqrt(ratio * (hsum2 / bst - hbar * hbar));
-   tsbar = hbar - cnew;
-   sbar = tsbar / (0.5 * (tempa + tempb));
-   print(out, " Enthalpy via BAR Estimate           %12.4lf +/-%9.4lf Kcal/mol\n", hbar, stdev);
-   print(out, " Entropy via BAR Estimate            %12.6lf Kcal/mol/K\n", sbar);
-   print(out, " BAR Estimate of -T*dS               %12.4lf Kcal/mol\n", -tsbar);
+   // find the free energy, enthalpy and entropy via FEP and BAR
+   barPair(d, tempa, tempb, patm, nbst);
 }
 }
 

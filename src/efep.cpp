@@ -1,6 +1,7 @@
 #include "ff/efep.h"
 #include "ff/amoeba/induce.h"
 #include "ff/atom.h"
+#include "ff/box.h"
 #include "ff/dlmda.h"
 #include "ff/energy.h"
 #include "ff/nblist.h"
@@ -19,6 +20,7 @@ void efepData(RcOp op)
       fepene.clear();
       feplmda.clear();
       feptrial.clear();
+      fepvol.clear();
    }
 
    if (op & RcOp::INIT) {
@@ -30,6 +32,7 @@ void efepData(RcOp op)
       fepene.clear();
       feplmda.clear();
       feptrial.clear();
+      fepvol.clear();
       nfep = 0;
       nfeptot = 0;
    }
@@ -51,6 +54,7 @@ void init_fepdyn(int nstep)
    fepene.assign(cap, 0.0);
    feplmda.assign(cap, 0.0);
    feptrial.assign(cap, 0.0);
+   fepvol.assign(cap, 0.0);
    nfep = 0;
 }
 
@@ -109,17 +113,24 @@ void efepDyn(int istep)
    double enative;
    efepTrial(ntrial, ltrial, etrial, enative);
 
+   // all energies of the sample share the current box volume
+   double vol = 0;
+   if (box_shape != BoxShape::UNBOUND)
+      vol = boxVolume();
+
    // record the native energy, then that of each trial lambda
    fepstep[nfep] = istep;
    fepene[nfep] = enative;
    feplmda[nfep] = lambda;
    feptrial[nfep] = lambda;
+   fepvol[nfep] = vol;
    ++nfep;
    for (int i = 0; i < ntrial; ++i) {
       fepstep[nfep] = istep;
       fepene[nfep] = etrial[i];
       feplmda[nfep] = lambda;
       feptrial[nfep] = ltrial[i];
+      fepvol[nfep] = vol;
       ++nfep;
    }
 }

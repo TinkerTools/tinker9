@@ -15,6 +15,7 @@
 #include "md/pq.h"
 #include "tool/darray.h"
 #include "tool/iofortstr.h"
+#include "tool/ioprint.h"
 
 #include "test.h"
 #include "testrt.h"
@@ -409,6 +410,17 @@ bool fepColumns(const std::string& line)
    return line.find("Trial Lambda") != std::string::npos and line.find("Step") != std::string::npos;
 }
 
+// Whether a line of the file contains text.
+bool fepHasLine(const std::string& fname, const std::string& text)
+{
+   std::ifstream fs(fname);
+   std::string line;
+   while (std::getline(fs, line))
+      if (line.find(text) != std::string::npos)
+         return true;
+   return false;
+}
+
 // Counts the energy records of a trial energy file: the nonblank lines after
 // the one that labels the columns.
 int fepCountRows(const std::string& fname)
@@ -426,8 +438,10 @@ int fepCountRows(const std::string& fname)
    return nrow;
 }
 
-// The nth (1-based) energy record, counted the same way.
-bool fepRow(const std::string& fname, int nth, int& istep, double& simlmda, double& trial, double& ene)
+// The nth (1-based) energy record, counted the same way, and its box volume
+// if vol is not null.
+bool fepRow(const std::string& fname, int nth, int& istep, double& simlmda, double& trial, double& ene,
+   double* vol = nullptr)
 {
    std::ifstream fs(fname);
    std::string line;
@@ -443,6 +457,8 @@ bool fepRow(const std::string& fname, int nth, int& istep, double& simlmda, doub
       if (++nrow == nth) {
          std::istringstream ss(line);
          ss >> istep >> simlmda >> trial >> ene;
+         if (vol)
+            return bool(ss >> *vol);
          return true;
       }
    }
@@ -510,7 +526,7 @@ struct DynEnd
    Box box0, box;
    int nfep;
    std::vector<int> fepstep;
-   std::vector<double> feplmda, feptrial, fepene;
+   std::vector<double> feplmda, feptrial, fepene, fepvol;
    std::vector<RelStage> legs; // the active leg as each sample was taken
    int nmoved = 0;             // steps that changed the box
    int nmovedsample = 0;       // those sampled with steps of the run left to take
@@ -615,6 +631,10 @@ DynEnd runDyn(const DynOpts& o)
             nblistRefresh();
             energy(calc::energy);
             COMPARE_REALS(fepene[nfep0], esum, testGetEps(f.eps, 1.0e-6));
+            // every record of the sample has the volume of the box the step
+            // ended at
+            for (int i = nfep0; i < nfep; ++i)
+               REQUIRE(fepvol[i] == boxVolume());
          }
          lmdaWinStep(istep);
       }
@@ -624,6 +644,7 @@ DynEnd runDyn(const DynOpts& o)
    end.feplmda.assign(feplmda.begin(), feplmda.begin() + nfep);
    end.feptrial.assign(feptrial.begin(), feptrial.begin() + nfep);
    end.fepene.assign(fepene.begin(), fepene.begin() + nfep);
+   end.fepvol.assign(fepvol.begin(), fepvol.begin() + nfep);
    boxGetCurrent(end.box);
    end.x = grab1(xpos);
    end.y = grab1(ypos);
@@ -770,6 +791,7 @@ TEST_CASE("FEP-sample", "[ff][fep]")
    REQUIRE(fepfile.size() > 0);
    REQUIRE(nfeptot == 14);
    REQUIRE(fepCountRows(fepfile) == 0); // header only
+   REQUIRE_FALSE(fepHasLine(fepfile, "Simulation Pressure"));
    for (int istep = 1; istep <= 60; ++istep) {
       lmdaWinDyn(istep);
       lmdaWinStep(istep);
@@ -803,6 +825,11 @@ TEST_CASE("FEP-sample", "[ff][fep]")
    COMPARE_REALS(fepene[5], fepene[0], eps);
    COMPARE_REALS(fepene[6], fepene[10], eps);
 
+   // nor did the box, whose volume each record keeps
+   REQUIRE(boxVolume() > 0);
+   for (int i = 0; i < nfep; ++i)
+      REQUIRE(fepvol[i] == boxVolume());
+
    // Write the records in two parts, and check that a call with nothing new
    // adds no rows.
    nfep = 5;
@@ -814,12 +841,24 @@ TEST_CASE("FEP-sample", "[ff][fep]")
    REQUIRE(fepCountRows(fepfile) == 14);
    REQUIRE(fep::nfepsave == 14);
    int istep = 0;
-   double simlmda = -1, trial = -1, ene = 0;
-   REQUIRE(fepRow(fepfile, 6, istep, simlmda, trial, ene));
+   double simlmda = -1, trial = -1, ene = 0, vol = 0;
+   REQUIRE(fepRow(fepfile, 6, istep, simlmda, trial, ene, &vol));
    REQUIRE(istep == 34);
    COMPARE_REALS(simlmda, 0.5, 1.0e-8);
    COMPARE_REALS(trial, 1.0, 1.0e-8);
    COMPARE_REALS(ene, fepene[5], 1.0e-8);
+   REQUIRE(std::fabs(vol - fepvol[5]) <= 1.0e-4);
+
+   // an isobaric run gives its pressure in the header
+   const int oldisobaric = bath::isobaric;
+   const double oldatmsph = bath::atmsph;
+   bath::isobaric = 1;
+   bath::atmsph = 1.0;
+   init_fepdyn(60);
+   fepfile = files.claim();
+   bath::isobaric = oldisobaric;
+   bath::atmsph = oldatmsph;
+   REQUIRE(fepHasLine(fepfile, format(" Simulation Pressure%16s%8.2f", "", 1.0)));
 
    // An ascending schedule lists its neighbors the same way.
    dlmda::lmdawinlist[0] = 0.0;
@@ -884,6 +923,8 @@ TEST_CASE("FEP-dyn-rescaled", "[ff][fep]")
    REQUIRE(on.nfep > 0);
    REQUIRE_FALSE(sameBits(on.x, on.x0));
    REQUIRE(on.box.lvec1.x != on.box0.lvec1.x);
+   // and the volumes recorded follow the box
+   REQUIRE(on.fepvol.front() != on.fepvol.back());
 }
 
 TEST_CASE("FEP-dyn-propagate", "[ff][fep]")
