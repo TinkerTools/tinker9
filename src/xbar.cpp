@@ -2,8 +2,8 @@
 #include "ff/energy.h"
 #include "ff/nblist.h"
 #include "ff/rwcrd.h"
-#include "math/random.h"
 #include "tool/argkey.h"
+#include "tool/bar.h"
 #include "tool/error.h"
 #include "tool/iofortstr.h"
 #include "tool/ioprint.h"
@@ -44,10 +44,9 @@ static void xBarMake()
    char titlea[MAX_NCHAR], titleb[MAX_NCHAR];
    std::vector<std::array<char, MAX_NCHAR>> keys0, keys1;
    char string[MAX_NCHAR];
-   std::string str;
 
    // get trajectory A and setup mechanics calculation
-   int iarc, first;
+   int iarc;
    tinker_f_getarc(&iarc);
    tinker_f_close(&iarc);
    tinker_f_mechanic();
@@ -120,249 +119,183 @@ static void xBarMake()
 
    //====================================================================//
 
-   int done;
-   const char* log_fmt = " Current Potential %lf\n";
    const char* process_fmt = "       Completed%8d Coordinate Frames\n";
-   // the buffer must hold only the blank-padded base name, or suffix finds the
-   // extension of whatever it held before
-   std::memset(string, ' ', MAX_NCHAR);
-   std::memcpy(string, filea, lenga);
-   tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("bar"), 3}, {const_cast<char*>("new"), 3});
-   std::string barfile = FstrView(string).trim();
-   std::vector<double> ua0, ua1, ub0, ub1, vola, volb;
-
-   // check for log with energies of trajectory A in state 0
-   if (not recompute) {
-      std::memset(string, ' ', MAX_NCHAR);
-      std::memcpy(string, filea, lenga);
-      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("log"), 3}, {const_cast<char*>("old"), 3});
-      str = FstrView(string).trim();
-      std::ifstream a_log(str);
-      while (std::getline(a_log, str)) {
+   // the base name with an extension appended, then given the highest version
+   // for status "old" or the next new version for "new"; suffix would leave a
+   // base name that contains a dot unchanged
+   auto versioned = [](const char* base, int leng, const char* ext, const char* status) {
+      return tinker_f_version(std::string(base, leng) + ext, status);
+   };
+   // the "Current Potential" energies in a log file, if it exists
+   auto read_log = [](const std::string& file) {
+      std::vector<double> u;
+      std::ifstream log(file);
+      std::string line;
+      while (std::getline(log, line)) {
          double val;
-         int count = std::sscanf(str.c_str(), log_fmt, &val);
-         if (count == 1)
-            ua0.push_back(val);
+         if (std::sscanf(line.c_str(), " Current Potential %lf", &val) == 1)
+            u.push_back(val);
       }
-      a_log.close();
-   }
-
-   // reopen the file corresponding to trajectory A
-   print(out,
-      "\n"
-      " Initial Processing for Trajectory A :\n"
-      "\n");
-
-   std::memcpy(string, filea, MAX_NCHAR);
-   tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("arc"), 3}, {const_cast<char*>("old"), 3});
-   iarc = tinker_f_freeunit();
-   str = FstrView(string).trim();
-   if (output::archive)
-      tinker_f_open(&iarc, str, "old");
-   else if (output::binary)
-      tinker_f_open(&iarc, str, "unformatted", "old");
-
-   if (ua0.size() == 0) {
-      // reset trajectory A using the parameters for state 0
-      tinker_f_rewind(&iarc);
-      first = 1;
-      tinker_f_readcart(&iarc, &first);
-      keys::nkey = nkey0;
-      for (int i = 0; i < keys::nkey; ++i)
-         std::memcpy(keys::keyline[i], keys0[i].data(), MAX_NCHAR);
-      tinker_f_mechanic();
-      mechanic2();
-
-      // find potential energies for trajectory A in state 0
-      initialize();
-      done = 0;
-      auto a_arc = CrdReader(str);
-      do {
-         done = a_arc.readCurrent();
-         nblistRefresh();
-         energy(calc::energy);
-         ua0.push_back(esum);
-         int i = ua0.size();
-         if (i % 100 == 0) {
-            print(out, process_fmt, i);
-            std::fflush(out);
-         }
-      } while (not done);
-      finish();
-   } else {
-      int ii = ua0.size();
-      for (int i = 1; i <= ii; ++i) {
-         if (i % 100 == 0)
-            print(out, process_fmt, i);
-      }
-      std::fflush(out);
-   }
-
-   // reset trajectory A using the parameters for state 1
-   tinker_f_rewind(&iarc);
-   first = 1;
-   tinker_f_readcart(&iarc, &first);
-   keys::nkey = nkey1;
-   for (int i = 0; i < keys::nkey; ++i)
-      std::memcpy(keys::keyline[i], keys1[i].data(), MAX_NCHAR);
-   tinker_f_mechanic();
-   mechanic2();
-
-   // find potential energies for trajectory A in state 1
-   if (inform::verbose)
+      return u;
+   };
+   // stops if the energies of a log do not match the frames of its archive
+   auto check_log = [&](size_t nlog, size_t nfrm) {
+      if (nlog == nfrm)
+         return;
       print(out,
          "\n"
-         " Potential Energy Values for Trajectory A :"
-         "\n\n"
-         "       Frame         State 0         State 1            Delta\n"
-         "\n");
-   initialize();
-   done = 0;
-   auto a_ar2 = CrdReader(str);
-   do {
-      done = a_ar2.readCurrent();
-      nblistRefresh();
-      energy(calc::energy);
-      // a system without a periodic box has no volume
-      double vol = box_shape == BoxShape::UNBOUND ? 0 : boxVolume();
-      ua1.push_back(esum);
-      vola.push_back(vol);
-      if (inform::verbose and ua1.size() <= ua0.size()) {
-         int i = ua1.size() - 1;
-         print(out, "%11d  %16.4lf%16.4lf%16.4lf\n", i + 1, ua0[i], ua1[i], ua1[i] - ua0[i]);
+         " BAR  --  Log File has%8d Energies but Archive has%8d Frames;\n"
+         " Answer N to Recompute the Energies\n",
+         (int)nlog, (int)nfrm);
+      std::fflush(out);
+      TINKER_THROW("BAR  --  Log Energies do not Match the Archive Frames");
+   };
+   // prints the count of frames done every 100 frames and at the last one
+   auto progress = [&](int i, bool last) {
+      if (i % 100 == 0 or (last and i % 100 != 0)) {
+         print(out, process_fmt, i);
+         std::fflush(out);
       }
-   } while (not done);
-   finish();
+   };
+
+   // Energies of one trajectory in the state it was sampled in ("own") and in
+   // the other state, with the volume of each frame.
+   struct Trajectory
+   {
+      std::vector<double> own, other, vol;
+      bool use_log = false; ///< Whether the own state energies came from the log.
+   };
+   // Finds the energies of the trajectory in file, sampled in state own_state,
+   // from its log if one has energies, else from its archive, then in the
+   // other state with the frame volumes; label is A or B in the output.
+   auto process = [&](char label, const char* file, int leng, int own_state) {
+      Trajectory tr;
+      if (not recompute)
+         tr.own = read_log(versioned(file, leng, ".log", "old"));
+      tr.use_log = tr.own.size() > 0;
+
+      // reopen the file corresponding to the trajectory
+      print(out,
+         "\n"
+         " Initial Processing for Trajectory %c :\n"
+         "\n",
+         label);
+      std::memcpy(string, file, MAX_NCHAR);
+      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("arc"), 3}, {const_cast<char*>("old"), 3});
+      int iarc = tinker_f_freeunit();
+      std::string arcfile = FstrView(string).trim();
+      if (output::archive)
+         tinker_f_open(&iarc, arcfile, "old");
+      else if (output::binary)
+         tinker_f_open(&iarc, arcfile, "unformatted", "old");
+
+      // resets the trajectory using the parameters for a state
+      auto reset = [&](int state) {
+         const auto& keys = state == 0 ? keys0 : keys1;
+         int first = 1;
+         tinker_f_rewind(&iarc);
+         tinker_f_readcart(&iarc, &first);
+         keys::nkey = keys.size();
+         for (int i = 0; i < keys::nkey; ++i)
+            std::memcpy(keys::keyline[i], keys[i].data(), MAX_NCHAR);
+         tinker_f_mechanic();
+         mechanic2();
+      };
+      // finds the energies of every frame under the current parameters, and
+      // the volumes if vol is not null; a system without a periodic box has
+      // no volume
+      auto evaluate = [&](std::vector<double>& u, std::vector<double>* vol, bool report) {
+         initialize();
+         auto reader = CrdReader(arcfile);
+         int done = 0;
+         do {
+            done = reader.readCurrent();
+            nblistRefresh();
+            energy(calc::energy);
+            u.push_back(esum);
+            if (vol)
+               vol->push_back(box_shape == BoxShape::UNBOUND ? 0 : boxVolume());
+            if (report)
+               progress(u.size(), done);
+            if (vol and inform::verbose and u.size() <= tr.own.size()) {
+               // columns in the order of states 0 and 1, and the change on
+               // going to the other state
+               int i = u.size() - 1;
+               double u0 = own_state == 0 ? tr.own[i] : u[i];
+               double u1 = own_state == 0 ? u[i] : tr.own[i];
+               print(out, "%11d  %16.4lf%16.4lf%16.4lf\n", i + 1, u0, u1, u[i] - tr.own[i]);
+            }
+         } while (not done);
+         finish();
+      };
+
+      // find potential energies for the trajectory in its own state
+      if (tr.use_log) {
+         int nlog = tr.own.size();
+         for (int i = 1; i <= nlog; ++i)
+            progress(i, i == nlog);
+      } else {
+         reset(own_state);
+         evaluate(tr.own, nullptr, true);
+      }
+
+      // find potential energies for the trajectory in the other state
+      reset(1 - own_state);
+      if (inform::verbose)
+         print(out,
+            "\n"
+            " Potential Energy Values for Trajectory %c :"
+            "\n\n"
+            "       Frame         State 0         State 1            Delta\n"
+            "\n",
+            label);
+      evaluate(tr.other, &tr.vol, false);
+      tinker_f_close(&iarc);
+      return tr;
+   };
+   // writes the block of one trajectory to the BAR file, with a volume only
+   // for frames that have one
+   auto write_block = [](FILE* ibar, double temp, const std::string& title, const std::vector<double>& u0,
+                         const std::vector<double>& u1, const std::vector<double>& vol) {
+      int nfrm = vol.size();
+      if (title.size())
+         print(ibar, "%8d%10.2lf  %s\n", nfrm, temp, title);
+      else
+         print(ibar, "%8d%10.2lf\n", nfrm, temp);
+      for (int i = 0; i < nfrm; ++i) {
+         if (vol[i] == 0)
+            print(ibar, "%8d  %18.4lf%18.4lf\n", i + 1, u0[i], u1[i]);
+         else
+            print(ibar, "%8d  %18.4lf%18.4lf%18.4lf\n", i + 1, u0[i], u1[i], vol[i]);
+      }
+   };
 
    // save potential energies and volumes for trajectory A
-   tinker_f_close(&iarc);
+   std::string barfile = versioned(filea, lenga, ".bar", "new");
+   Trajectory a = process('A', filea, lenga, 0);
+   if (a.use_log)
+      check_log(a.own.size(), a.other.size());
    FILE* ibar = std::fopen(barfile.c_str(), "w");
-   int nfrma = std::min(ua0.size(), ua1.size());
-   str = FstrView(titlea)(1, ltitlea).trim();
-   print(ibar, "%8d%10.2lf  %s\n", nfrma, tempa, str);
-   for (int i = 0; i < nfrma; ++i) {
-      if (vola[i] == 0)
-         print(ibar, "%8d  %18.4lf%18.4lf\n", i + 1, ua0[i], ua1[i]);
-      else
-         print(ibar, "%8d  %18.4lf%18.4lf%18.4lf\n", i + 1, ua0[i], ua1[i], vola[i]);
-   }
-   std::fflush(ibar);
-
-   //====================================================================//
-
-   // check for log with energies of trajectory B in state 1
-   if (not recompute) {
-      std::memset(string, ' ', MAX_NCHAR);
-      std::memcpy(string, fileb, lengb);
-      tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("log"), 3}, {const_cast<char*>("old"), 3});
-      str = FstrView(string).trim();
-      std::ifstream b_log(str);
-      while (std::getline(b_log, str)) {
-         double val;
-         int count = std::sscanf(str.c_str(), log_fmt, &val);
-         if (count == 1)
-            ub1.push_back(val);
-      }
-      b_log.close();
-   }
-
-   // reopen the file corresponding to trajectory B
-   print(out,
-      "\n"
-      " Initial Processing for Trajectory B :\n"
-      "\n");
-
-   std::memcpy(string, fileb, MAX_NCHAR);
-   tinker_f_suffix({string, MAX_NCHAR}, {const_cast<char*>("arc"), 3}, {const_cast<char*>("old"), 3});
-   iarc = tinker_f_freeunit();
-   str = FstrView(string).trim();
-   if (output::archive)
-      tinker_f_open(&iarc, str, "old");
-   else if (output::binary)
-      tinker_f_open(&iarc, str, "unformatted", "old");
-
-   if (ub1.size() == 0) {
-      // reset trajectory B using the parameters for state 1
-      tinker_f_rewind(&iarc);
-      first = 1;
-      tinker_f_readcart(&iarc, &first);
-      keys::nkey = nkey1;
-      for (int i = 0; i < keys::nkey; ++i)
-         std::memcpy(keys::keyline[i], keys1[i].data(), MAX_NCHAR);
-      tinker_f_mechanic();
-      mechanic2();
-
-      // find potential energies for trajectory B in state 1
-      initialize();
-      done = 0;
-      auto b_arc = CrdReader(str);
-      do {
-         done = b_arc.readCurrent();
-         nblistRefresh();
-         energy(calc::energy);
-         ub1.push_back(esum);
-         int i = ub1.size();
-         if (i % 100 == 0) {
-            print(out, process_fmt, i);
-            std::fflush(out);
-         }
-      } while (not done);
-      finish();
-   } else {
-      int ii = ub1.size();
-      for (int i = 1; i <= ii; ++i) {
-         if (i % 100 == 0)
-            print(out, process_fmt, i);
-      }
-      std::fflush(out);
-   }
-
-   // reset trajectory B using the parameters for state 0
-   tinker_f_rewind(&iarc);
-   first = 1;
-   tinker_f_readcart(&iarc, &first);
-   keys::nkey = nkey0;
-   for (int i = 0; i < keys::nkey; ++i)
-      std::memcpy(keys::keyline[i], keys0[i].data(), MAX_NCHAR);
-   tinker_f_mechanic();
-   mechanic2();
-
-   // find potential energies for trajectory B in state 0
-   if (inform::verbose)
+   if (not ibar) {
       print(out,
          "\n"
-         " Potential Energy Values for Trajectory B :"
-         "\n\n"
-         "       Frame         State 0         State 1            Delta\n"
-         "\n");
-   initialize();
-   done = 0;
-   auto b_ar2 = CrdReader(str);
-   do {
-      done = b_ar2.readCurrent();
-      nblistRefresh();
-      energy(calc::energy);
-      double vol = box_shape == BoxShape::UNBOUND ? 0 : boxVolume();
-      ub0.push_back(esum);
-      volb.push_back(vol);
-      if (inform::verbose and ub0.size() <= ub1.size()) {
-         int i = ub0.size() - 1;
-         print(out, "%11d  %16.4lf%16.4lf%16.4lf\n", i + 1, ub0[i], ub1[i], ub0[i] - ub1[i]);
-      }
-   } while (not done);
-   finish();
-
-   // save potential energies and volumes for trajectory B
-   tinker_f_close(&iarc);
-   int nfrmb = std::min(ub0.size(), ub1.size());
-   str = FstrView(titleb)(1, ltitleb).trim();
-   print(ibar, "%8d%10.2lf  %s\n", nfrmb, tempb, str);
-   for (int i = 0; i < nfrmb; ++i) {
-      if (volb[i] == 0)
-         print(ibar, "%8d  %18.4lf%18.4lf\n", i + 1, ub0[i], ub1[i]);
-      else
-         print(ibar, "%8d  %18.4lf%18.4lf%18.4lf\n", i + 1, ub0[i], ub1[i], volb[i]);
+         " BAR  --  Cannot Open BAR File %s\n",
+         barfile);
+      std::fflush(out);
+      TINKER_THROW(format("BAR  --  Cannot Open BAR File %s", barfile));
    }
+   write_block(ibar, tempa, FstrView(titlea)(1, ltitlea).trim(), a.own, a.other, a.vol);
+   std::fflush(ibar);
+
+   // save potential energies and volumes for trajectory B, where a mismatch
+   // with its log also removes the BAR file begun for trajectory A
+   Trajectory b = process('B', fileb, lengb, 1);
+   if (b.use_log and b.own.size() != b.other.size()) {
+      std::fclose(ibar);
+      std::remove(barfile.c_str());
+      check_log(b.own.size(), b.other.size());
+   }
+   write_block(ibar, tempb, FstrView(titleb)(1, ltitleb).trim(), b.other, b.own, b.vol);
    std::fclose(ibar);
    print(out,
       "\n"
@@ -370,140 +303,9 @@ static void xBarMake()
       barfile);
 }
 
+using namespace bar;
+
 namespace {
-/// Potential energies and volumes of the frames selected from both trajectories.
-struct BarData
-{
-   std::vector<double> ua0, ua1; ///< Energies of trajectory A frames in states 0 and 1.
-   std::vector<double> ub0, ub1; ///< Energies of trajectory B frames in states 0 and 1.
-   std::vector<double> vola;     ///< Volumes of trajectory A frames, or 0 if not used.
-   std::vector<double> volb;     ///< Volumes of trajectory B frames, or 0 if not used.
-};
-
-/// Fills idx with n frame indices drawn with replacement.
-void barDraw(int n, std::vector<int>& idx)
-{
-   idx.resize(n);
-   for (int i = 0; i < n; ++i)
-      idx[i] = std::min((int)(n * random<double>()), n - 1);
-}
-
-/// Finds the free energy and enthalpy change from the sampled state to the
-/// other state via thermodynamic perturbation over a list of frames, which may
-/// repeat, along with the average energy and volume of those frames. The
-/// exponentials are shifted by their largest exponent so the sum cannot
-/// overflow, and the enthalpy includes the PV term.
-void barFep(const std::vector<int>& idx, const std::vector<double>& uo, const std::vector<double>& ut,
-   const std::vector<double>& vol, double rt, double pres, double& dg, double& dh, double& uave, double& vave)
-{
-   const int n = idx.size();
-   double xmax = 0;
-   for (int i = 0; i < n; ++i) {
-      int j = idx[i];
-      double x = (uo[j] - ut[j]) / rt;
-      if (i == 0 or x > xmax)
-         xmax = x;
-   }
-
-   double wsum = 0, hwsum = 0, usum = 0, vsum = 0;
-   for (int i = 0; i < n; ++i) {
-      int j = idx[i];
-      double w = std::exp((uo[j] - ut[j]) / rt - xmax);
-      wsum += w;
-      hwsum += (ut[j] + pres * vol[j]) * w;
-      usum += uo[j];
-      vsum += vol[j];
-   }
-   uave = usum / n;
-   vave = vsum / n;
-   dg = -rt * (xmax + std::log(wsum / n));
-   dh = hwsum / wsum - (uave + pres * vave);
-}
-
-/// Solves the Bennett acceptance ratio equation for the free energy change from
-/// state 0 to state 1 by iteration over lists of frames sampled in each state,
-/// starting from cinit; also finds the analytical error of Bennett. Records the
-/// value at each iteration in hist if it is not null, and returns false if the
-/// iteration does not converge.
-bool barIter(const std::vector<int>& ia, const std::vector<int>& ib, const BarData& d, double rta, double rtb,
-   double cinit, int maxiter, double& cnew, double& stdev, std::vector<double>* hist)
-{
-   const double eps = 0.0001;
-   const double rt = 0.5 * (rta + rtb);
-   const int na = ia.size(), nb = ib.size();
-   const double frma = na, frmb = nb;
-   const double rfrm = frma / frmb;
-
-   cnew = cinit;
-   stdev = 0;
-   if (hist)
-      hist->clear();
-   for (int iter = 0;; ++iter) {
-      double cold = cnew;
-      double top = 0, top2 = 0;
-      for (int i = 0; i < nb; ++i) {
-         int j = ib[i];
-         double fterm = 1.0 / (1.0 + std::exp((d.ub0[j] - d.ub1[j] + cold) / rtb));
-         top += fterm;
-         top2 += fterm * fterm;
-      }
-      double bot = 0, bot2 = 0;
-      for (int i = 0; i < na; ++i) {
-         int j = ia[i];
-         double fterm = 1.0 / (1.0 + std::exp((d.ua1[j] - d.ua0[j] - cold) / rta));
-         bot += fterm;
-         bot2 += fterm * fterm;
-      }
-      cnew = rt * std::log(rfrm * top / bot) + cold;
-      stdev = rt * std::sqrt(std::max(0.0, (bot2 - bot * bot / frma) / (bot * bot) + (top2 - top * top / frmb) / (top * top)));
-      if (hist)
-         hist->push_back(cnew);
-      if (std::fabs(cnew - cold) < eps)
-         return true;
-      else if (iter >= maxiter)
-         return false;
-      else if (not(std::fabs(cnew) < 1.0e100))
-         return false;
-   }
-}
-
-/// Finds the enthalpy change from state 0 to state 1 via the BAR estimator of
-/// Wyczalkowski et al. over lists of frames sampled in each state, given the BAR
-/// free energy change cbar for the same frames. The state energies include the
-/// PV term, which cancels in the energy differences.
-double barHbar(const std::vector<int>& ia, const std::vector<int>& ib, const BarData& d, double rta, double rtb,
-   double pres, double cbar)
-{
-   // find the terms from the state 0 frames
-   double fsum = 0, fvsum = 0, fbvsum = 0, vsum = 0, fbsum0 = 0;
-   for (int j : ia) {
-      double fore = 1.0 / (1.0 + std::exp((d.ua1[j] - d.ua0[j] - cbar) / rta));
-      double back = 1.0 / (1.0 + std::exp((d.ua0[j] - d.ua1[j] + cbar) / rta));
-      double h = d.ua0[j] + pres * d.vola[j];
-      fsum += fore;
-      fvsum += fore * h;
-      fbvsum += fore * back * (d.ua1[j] - d.ua0[j]);
-      vsum += h;
-      fbsum0 += fore * back;
-   }
-   double alpha0 = fvsum - fsum * (vsum / ia.size()) + fbvsum;
-
-   // find the terms from the state 1 frames
-   double bsum = 0, bvsum = 0, fbsum1 = 0;
-   fbvsum = 0, vsum = 0;
-   for (int j : ib) {
-      double fore = 1.0 / (1.0 + std::exp((d.ub1[j] - d.ub0[j] - cbar) / rtb));
-      double back = 1.0 / (1.0 + std::exp((d.ub0[j] - d.ub1[j] + cbar) / rtb));
-      double h = d.ub1[j] + pres * d.volb[j];
-      bsum += back;
-      bvsum += back * h;
-      fbvsum += fore * back * (d.ub1[j] - d.ub0[j]);
-      vsum += h;
-      fbsum1 += fore * back;
-   }
-   double alpha1 = bvsum - bsum * (vsum / ib.size()) - fbvsum;
-   return (alpha0 - alpha1) / (fbsum0 + fbsum1);
-}
 
 /// Computes and prints the free energy, enthalpy and entropy change from state 0
 /// to state 1 via the FEP and BAR methods, with the PV term at patm atmospheres.
@@ -512,8 +314,9 @@ double barHbar(const std::vector<int>& ia, const std::vector<int>& ib, const Bar
 /// analytical estimate of Bennett; the other errors are standard deviations over
 /// nbst bootstrap trials that apply the same estimators to frames resampled with
 /// replacement. The BAR bootstrap value is the mean over converged trials only,
-/// and BAR errors are reported only if at least two trials converge. Throws if
-/// the BAR iteration over all of the frames does not converge.
+/// and the BAR bootstrap and BAR enthalpy errors are reported only if at least
+/// two trials converge. Throws if the BAR iteration over all of the frames does
+/// not converge.
 void barPair(const BarData& d, double tempa, double tempb, double patm, int nbst)
 {
    auto out = stdout;
@@ -555,7 +358,9 @@ void barPair(const BarData& d, double tempa, double tempb, double patm, int nbst
 
    // apply the same estimators to bootstrap resamples of the frames, with each
    // BAR trial started from the converged BAR value and dropped if it fails to
-   // converge
+   // converge; the exponentials of each frame are found once, with the Fermi
+   // terms taken at the BAR value
+   const BootTerms t(d, rta, rtb, pres, conv ? cbar : 0.0);
    double val[8], sd[8], vsum[8] = {0}, vsum2[8] = {0};
    int nconv = 0;
    double csum = 0, csum2 = 0, hsum = 0, hsum2 = 0;
@@ -563,8 +368,8 @@ void barPair(const BarData& d, double tempa, double tempb, double patm, int nbst
       barDraw(nfrma, ia);
       barDraw(nfrmb, ib);
       double vtrla, vtrlb;
-      barFep(ia, d.ua0, d.ua1, d.vola, rta, pres, val[0], val[6], val[2], vtrla);
-      barFep(ib, d.ub1, d.ub0, d.volb, rtb, pres, val[1], val[7], val[3], vtrlb);
+      bootFep(ia, d.ua0, d.ua1, d.vola, t.wa, t.hwa, t.xmaxa, rta, pres, val[0], val[6], val[2], vtrla);
+      bootFep(ib, d.ub1, d.ub0, d.volb, t.wb, t.hwb, t.xmaxb, rtb, pres, val[1], val[7], val[3], vtrlb);
       val[1] = -val[1];
       val[7] = -val[7];
       val[4] = pres * (vtrlb - vtrla);
@@ -574,12 +379,12 @@ void barPair(const BarData& d, double tempa, double tempb, double patm, int nbst
          vsum2[m] += val[m] * val[m];
       }
       if (conv) {
-         double ctrial, etrial;
-         if (barIter(ia, ib, d, rta, rtb, cbar, maxiter, ctrial, etrial, nullptr)) {
+         double ctrial;
+         if (bootIter(ia, ib, t, rta, rtb, cbar, maxiter, ctrial)) {
             ++nconv;
             csum += ctrial;
             csum2 += ctrial * ctrial;
-            double htrial = barHbar(ia, ib, d, rta, rtb, pres, ctrial);
+            double htrial = bootHbar(ia, ib, d, t, rta, rtb, pres, ctrial);
             hsum += htrial;
             hsum2 += htrial * htrial;
          }
@@ -605,7 +410,8 @@ void barPair(const BarData& d, double tempa, double tempb, double patm, int nbst
       "\n");
    const int niter = (int)hist.size() - 1;
    for (int i = 0; i <= niter; ++i)
-      print(out, " BAR Iteration%4d%19s%12.4lf Kcal/mol\n", i, "", hist[i]);
+      if (std::fabs(hist[i]) < 1.0e100)
+         print(out, " BAR Iteration%4d%19s%12.4lf Kcal/mol\n", i, "", hist[i]);
    if (conv and niter == 0)
       print(out, " BAR Free Energy Estimate        %12.4lf +/-%9.4lf Kcal/mol\n", cbar, stdev);
    else if (conv)
@@ -614,8 +420,15 @@ void barPair(const BarData& d, double tempa, double tempb, double patm, int nbst
          " Free Energy via BAR Estimate        %12.4lf +/-%9.4lf Kcal/mol\n",
          cbar, stdev);
 
-   // stop if the BAR iteration fails
-   if (not conv) {
+   // stop if the BAR iteration fails, where a value that is not finite means
+   // the Fermi terms of one state all vanish, so the states have no overlap
+   if (not conv and not(std::fabs(cbar) < 1.0e100)) {
+      print(out,
+         "\n"
+         " BAR Free Energy not Found; the States have no Overlap\n");
+      std::fflush(out);
+      TINKER_THROW("BAR  --  the States have no Overlap");
+   } else if (not conv) {
       print(out,
          "\n"
          " BAR Free Energy Estimate not Converged after%4d Iterations\n",
@@ -667,20 +480,18 @@ void barPair(const BarData& d, double tempa, double tempb, double patm, int nbst
    print(out, " Entropy via Backward FEP            %12.6lf Kcal/mol/K\n", sback);
    print(out, " Backward FEP -T*dS Value            %12.4lf Kcal/mol\n", -tempb * sback);
 
-   // the BAR enthalpy and entropy need converged bootstrap trials
+   // report the enthalpy and entropy via the BAR method, where the enthalpy
+   // error needs at least two converged bootstrap trials
+   double tsbar = hbr - cbar;
+   double sbar = tsbar / (0.5 * (tempa + tempb));
    print(out,
       "\n"
       " Enthalpy and Entropy via BAR Method :\n"
       "\n");
-   if (nconv == 0) {
-      print(out, " BAR Enthalpy and Entropy not Computed\n");
-      return;
-   }
-
-   // report the enthalpy and entropy via the BAR method
-   double tsbar = hbr - cbar;
-   double sbar = tsbar / (0.5 * (tempa + tempb));
-   print(out, " Enthalpy via BAR Estimate           %12.4lf +/-%9.4lf Kcal/mol\n", hbr, stdhbr);
+   if (nconv >= 2)
+      print(out, " Enthalpy via BAR Estimate           %12.4lf +/-%9.4lf Kcal/mol\n", hbr, stdhbr);
+   else
+      print(out, " Enthalpy via BAR Estimate           %12.4lf Kcal/mol, Error not Available\n", hbr);
    print(out, " Entropy via BAR Estimate            %12.6lf Kcal/mol/K\n", sbar);
    print(out, " BAR Estimate -T*dS Value            %12.4lf Kcal/mol\n", -tsbar);
 }
@@ -715,14 +526,9 @@ static void xBarCalc()
       std::string(""), invalid_barfile);
    std::string barfile = bar_path(str);
 
-   // a frame selection is invalid only if a value is negative; a zero or
-   // missing value selects the first frame, the last frame or a step of one
-   auto invalid_frames = [](const std::string& s) {
-      int v[3] = {0, 0, 0};
-      std::istringstream iss(s);
-      for (int k = 0; k < 3 and (iss >> v[k]); ++k) {}
-      return v[0] < 0 or v[1] < 0 or v[2] < 0;
-   };
+   // a frame selection takes any integers: a first frame below 1 is the first
+   // frame, a last frame below 1 is the last frame, and a step below 1 is a
+   // step of one; the prompt is used only if no first frame is given
    auto get_frames = [&](const char* prompt, int& start, int& stop, int& step) {
       start = 0, stop = 0, step = 0;
       bool query = true;
@@ -737,18 +543,24 @@ static void xBarCalc()
          }
       }
       if (query)
-         str = "-1";
+         str = "";
       else
          str = std::to_string(start) + " " + std::to_string(stop) + " " + std::to_string(step);
-      ioReadStream(str, prompt, std::string(""), invalid_frames);
+      bool asked = false;
+      ioReadStream(str, prompt, std::string(""), [&](const std::string&) {
+         if (asked)
+            return false;
+         asked = true;
+         return query;
+      });
       start = 0, stop = 0, step = 0;
       std::istringstream iss(str);
       iss >> start >> stop >> step;
-      if (start == 0)
+      if (start < 1)
          start = 1;
-      if (stop == 0)
+      if (stop < 1)
          stop = std::numeric_limits<int>::max();
-      if (step == 0)
+      if (step < 1)
          step = 1;
    };
 
@@ -767,7 +579,8 @@ static void xBarCalc()
    // Reads one trajectory block of the BAR file, a header with the frame
    // count, temperature and title, then one row per frame, keeping the
    // selected frames. Reading stops at the end of the file; a row with no
-   // volume has a volume of 0.
+   // volume has a volume of 0, and a selected row that cannot be read
+   // stops mode 2.
    std::ifstream ibar(barfile);
    auto read_block = [&](int start, int stop, int step, double& temp, std::string& title, std::vector<double>& u0,
                         std::vector<double>& u1, std::vector<double>& vol) {
@@ -783,8 +596,22 @@ static void xBarCalc()
       }
       for (int i = 1; i <= nrow and std::getline(ibar, line); ++i) {
          if (i >= start and (i - start) % step == 0 and i <= stop) {
-            double e0 = 0, e1 = 0, v = 0;
-            std::sscanf(line.c_str(), "%*d %lf %lf %lf", &e0, &e1, &v);
+            std::istringstream row(line);
+            int idx;
+            double e0, e1, v = 0;
+            bool ok = static_cast<bool>(row >> idx >> e0 >> e1);
+            if (ok and not(row >> std::ws).eof())
+               ok = static_cast<bool>(row >> v);
+            if (not ok) {
+               print(out,
+                  "\n"
+                  " BAR  --  Unreadable Line in BAR File :\n"
+                  "\n"
+                  " %s\n",
+                  line);
+               std::fflush(out);
+               TINKER_THROW("BAR  --  Unreadable Line in BAR File");
+            }
             u0.push_back(e0);
             u1.push_back(e1);
             vol.push_back(v);
@@ -801,27 +628,23 @@ static void xBarCalc()
    ibar.close();
    int nfrma = d.vola.size(), nfrmb = d.volb.size();
 
-   // provide info about trajectories and number of frames
-   print(out,
-      "\n"
-      " Simulation Trajectory A and Thermodynamic State 0 :\n"
-      "\n"
-      " %s\n",
-      titlea);
-   print(out,
-      " Number of Frames :    %8d\n"
-      " Temperature :       %10.2lf\n",
-      nfrma, tempa);
-   print(out,
-      "\n"
-      " Simulation Trajectory B and Thermodynamic State 1 :\n"
-      "\n"
-      " %s\n",
-      titleb);
-   print(out,
-      " Number of Frames :    %8d\n"
-      " Temperature :       %10.2lf\n",
-      nfrmb, tempb);
+   // provide info about trajectories and number of frames, with a title line
+   // only if the file gives one
+   auto print_info = [&](char label, int state, const std::string& title, int nfrm, double temp) {
+      print(out,
+         "\n"
+         " Simulation Trajectory %c and Thermodynamic State %d :\n"
+         "\n",
+         label, state);
+      if (title.size())
+         print(out, " %s\n", title);
+      print(out,
+         " Number of Frames :    %8d\n"
+         " Temperature :       %10.2lf\n",
+         nfrm, temp);
+   };
+   print_info('A', 0, titlea, nfrma, tempa);
+   print_info('B', 1, titleb, nfrmb, tempb);
 
    // stop if either trajectory has no frames selected
    for (auto t : {std::make_pair('A', nfrma), std::make_pair('B', nfrmb)}) {
@@ -908,7 +731,7 @@ static void xBarCalc()
 
    // set the number of bootstrap trials to be generated
    int nfrm = std::max(nfrma, nfrmb);
-   int nbst = std::max(2, std::min(100000, (int)std::round(1.e8 / nfrm)));
+   int nbst = barTrials(nfrm);
 
    // find the free energy, enthalpy and entropy via FEP and BAR
    barPair(d, tempa, tempb, patm, nbst);
@@ -924,7 +747,7 @@ void xBar(int, char**)
    auto out = stdout;
    bool exist;
    int mode = 0;
-   auto invalid_mode = [](int m) { return m != 1 and m != 2; };
+   auto invalid_mode = [](int m) { return m < 1 or m > 3; };
    const char* mode_string1 = R"(
  The Tinker Thermodynamic Perturbation Utility Can :
 
@@ -946,6 +769,10 @@ void xBar(int, char**)
       xBarMake();
    if (mode == 2)
       xBarCalc();
+   if (mode == 3)
+      print(out,
+         "\n"
+         " BAR  --  Mode 3 for FEP Files is in Tinker's bar Program\n");
 
    tinker_f_final();
 }

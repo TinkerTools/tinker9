@@ -1,6 +1,7 @@
 #include "test.h"
 #include "testrt.h"
 #include "tinker9.h"
+#include "tool/bar.h"
 #include "tool/error.h"
 #include "tool/ioprint.h"
 
@@ -560,7 +561,8 @@ TEST_CASE("BAR-mode2-overlap", "[bar]")
    REQUIRE(std::fabs(val - 2000.0) <= 1.0e-4);
    REQUIRE(readEstimate(r.out, fepBack, val, sd));
    REQUIRE(std::fabs(val + 2000.0) <= 1.0e-4);
-   REQUIRE(r.out.find(" BAR Free Energy Estimate not Converged after") != std::string::npos);
+   REQUIRE(r.out.find(" BAR Free Energy not Found; the States have no Overlap") != std::string::npos);
+   REQUIRE(r.out.find("nan") == std::string::npos);
 }
 
 // Frames 1 to 10 by 3 and 2 to 10 by 4 of ten (Tinker's frames.bar) include the
@@ -582,8 +584,125 @@ TEST_CASE("BAR-mode2-frames", "[bar]")
    REQUIRE(nfrmb == 3);
 }
 
-// Mode 2 stops with a message when a frame selection is empty and when the two
-// trajectories are at different temperatures.
+// Negative frame values on the command line select the defaults, as zero does,
+// without a prompt: all ten frames of each trajectory.
+TEST_CASE("BAR-mode2-frames-negative", "[bar]")
+{
+   TestFile fbar(std::string(fileBar) + "frames.bar");
+   auto r = runBarCalc({"frames.bar", "-5", "-1", "-2", "0", "0", "0"}, "\n\n\n");
+   REQUIRE_FALSE(r.threw);
+   REQUIRE(r.out.find(" First & Last Frame") == std::string::npos);
+   const std::string label = " Number of Frames :          10";
+   auto pos = r.out.find(label);
+   REQUIRE(pos != std::string::npos);
+   REQUIRE(r.out.find(label, pos + label.size()) != std::string::npos);
+}
+
+// The frames are the exact Boltzmann populations of two configurations, with
+// weights 3:1 in state 0 over 4 frames and 1:5 in state 1 over 12 frames, so the
+// BAR free energy and enthalpy must equal the exact values (tinkerDev's
+// test_bar_hbar). Sums over frames that are not averaged per trajectory give an
+// enthalpy of -0.25 instead of 0.19 Kcal/mol.
+TEST_CASE("BAR-mode2-hbar-unequal", "[bar]")
+{
+   const double rt = units::gasconst * 298.0, c = 0.5;
+   const double u0[2] = {-rt * std::log(3.0), 0.0}, u1[2] = {c, -rt * std::log(5.0) + c};
+   std::vector<double> ua0, ua1, ub0, ub1;
+   for (int i = 0; i < 4; ++i) {
+      int k = i < 3 ? 0 : 1;
+      ua0.push_back(u0[k]);
+      ua1.push_back(u1[k]);
+   }
+   for (int i = 0; i < 12; ++i) {
+      int k = i < 2 ? 0 : 1;
+      ub0.push_back(u0[k]);
+      ub1.push_back(u1[k]);
+   }
+   const double dg = -rt * std::log(6.0 / 4.0) + c;
+   const double dh = (u1[0] + 5 * u1[1]) / 6 - (3 * u0[0] + u0[1]) / 4;
+   const std::string barfile = "bar-mode2-hbar.bar";
+   TestFile fbar("", barfile, barBlock(ua0, ua1, {}) + barBlock(ub0, ub1, {}));
+   auto out = runBarCalc(barfile, 4, 12);
+   double val, sd;
+   REQUIRE(readBar(out, val, sd));
+   REQUIRE(std::fabs(val - dg) <= 2.0e-4);
+   REQUIRE(readValue(out, hBar, val));
+   REQUIRE(std::fabs(val - dh) <= 2.0e-4);
+}
+
+// The BAR free energy solves the equation of Bennett with the optimal shift of
+// ln(nb/na) for trajectories of 5 and 15 frames (tinkerDev's test_bar_bennett).
+// The root is found here by bisection, and differs by 0.1 Kcal/mol from the
+// solution without the shift.
+TEST_CASE("BAR-mode2-bennett", "[bar]")
+{
+   const double rt = units::gasconst * 298.0, s = 1.2;
+   const double xa[5] = {-0.9, -0.4, 0.0, 0.3, 0.8};
+   std::vector<double> ua0, ua1, ub0, ub1;
+   for (double x : xa) {
+      ua0.push_back(0.5 * x * x);
+      ua1.push_back(0.5 * (x - s) * (x - s) + 0.5);
+   }
+   const int nb = 15;
+   for (int i = 0; i < nb; ++i) {
+      double x = s - 0.9 + 1.8 * i / (nb - 1);
+      ub0.push_back(0.5 * x * x);
+      ub1.push_back(0.5 * (x - s) * (x - s) + 0.5);
+   }
+   const double lnr = std::log((double)nb / ua0.size());
+   auto residual = [&](double g) {
+      double r = 0;
+      for (size_t i = 0; i < ua0.size(); ++i)
+         r += 1 / (1 + std::exp((ua1[i] - ua0[i] - g) / rt - lnr));
+      for (int i = 0; i < nb; ++i)
+         r -= 1 / (1 + std::exp((ub0[i] - ub1[i] + g) / rt + lnr));
+      return r;
+   };
+   double glo = -10, ghi = 10;
+   for (int k = 0; k < 200; ++k) {
+      double g = 0.5 * (glo + ghi);
+      if (residual(glo) * residual(g) <= 0)
+         ghi = g;
+      else
+         glo = g;
+   }
+   const std::string barfile = "bar-mode2-bennett.bar";
+   TestFile fbar("", barfile, barBlock(ua0, ua1, {}) + barBlock(ub0, ub1, {}));
+   auto out = runBarCalc(barfile, 5, nb);
+   double val, sd;
+   REQUIRE(readBar(out, val, sd));
+   REQUIRE(std::fabs(val - 0.5 * (glo + ghi)) <= 2.0e-4);
+}
+
+// Mode 3 reads FEP files in Tinker's bar program, and Tinker9 says so.
+TEST_CASE("BAR-mode3-message", "[bar]")
+{
+   const std::string logfile = "bar-mode3.log";
+   TestRemoveFileOnExit rmlog(logfile);
+   const char* argv[] = {"dummy", "3"};
+   const int argc = 2;
+   bool threw = false;
+   {
+      StdoutToFile redirect(logfile);
+      FortranRuntimeScope scope(argc, argv);
+      try {
+         xBar(argc, const_cast<char**>(argv));
+      } catch (const FatalError&) {
+         threw = true;
+      }
+   }
+   std::ifstream fin(logfile);
+   std::stringstream ss;
+   ss << fin.rdbuf();
+   REQUIRE_FALSE(threw);
+   REQUIRE(ss.str().find(" BAR  --  Mode 3 for FEP Files is in Tinker's bar Program") != std::string::npos);
+   REQUIRE(ss.str().find(" Enter the Number of the Desired Choice") == std::string::npos);
+}
+
+// Mode 2 stops with a message when a frame selection is empty, including a
+// first frame past the end of the file, when the two trajectories are at
+// different temperatures, when a header has no temperature, and when a row
+// cannot be read.
 TEST_CASE("BAR-mode2-input", "[bar]")
 {
    TestFile fframes(std::string(fileBar) + "frames.bar");
@@ -591,6 +710,14 @@ TEST_CASE("BAR-mode2-input", "[bar]")
    auto r = runBarCalc({"frames.bar", "11", "20", "1", "0", "0", "0"});
    REQUIRE(r.threw);
    REQUIRE(r.out.find(" BAR  --  No Frames Selected from Trajectory A") != std::string::npos);
+   // a first frame past the end of the file selects no frames, for either
+   // trajectory (tinkerDev's test_bar_input)
+   r = runBarCalc({"frames.bar", "1000", "0", "0", "1", "0", "0"});
+   REQUIRE(r.threw);
+   REQUIRE(r.out.find(" BAR  --  No Frames Selected from Trajectory A") != std::string::npos);
+   r = runBarCalc({"frames.bar", "1", "0", "0", "1000", "0", "0"});
+   REQUIRE(r.threw);
+   REQUIRE(r.out.find(" BAR  --  No Frames Selected from Trajectory B") != std::string::npos);
    r = runBarCalc({"temps.bar", "0", "0", "0", "0", "0", "0"});
    REQUIRE(r.threw);
    REQUIRE(r.out.find(" FEP and BAR Require a Single Temperature") != std::string::npos);
@@ -603,6 +730,23 @@ TEST_CASE("BAR-mode2-input", "[bar]")
    REQUIRE(r.threw);
    REQUIRE(r.out.find(" BAR  --  No Temperature Found for Trajectory A") != std::string::npos);
    REQUIRE(r.out.find("nan") == std::string::npos);
+
+   // a row that cannot be read stops mode 2, whether an energy is unreadable,
+   // the last row is cut short, or a volume is unreadable (tinkerDev's
+   // test_bar_input)
+   const char* bad[] = {"       2    298.00\n       1  -10.0  -9.5\n       2  ******  -9.6\n"
+                        "       2    298.00\n       1  -10.5  -10.0\n       2  -10.6  -10.1\n",
+      "       2    298.00\n       1  -10.0  -9.5\n       2  -10.1  -9.6\n"
+      "       2    298.00\n       1  -10.5  -10.0\n       2  -10.6\n",
+      "       2    298.00\n       1  -10.0  -9.5  1000.0\n       2  -10.1  -9.6  ******\n"
+      "       2    298.00\n       1  -10.5  -10.0  1000.0\n       2  -10.6  -10.1  1010.0\n"};
+   for (const char* text : bad) {
+      INFO(text);
+      TestFile fbad("", "bar-mode2-badrow.bar", text);
+      r = runBarCalc({"bar-mode2-badrow.bar", "0", "0", "0", "0", "0", "0", "1"});
+      REQUIRE(r.threw);
+      REQUIRE(r.out.find(" BAR  --  Unreadable Line in BAR File :") != std::string::npos);
+   }
 }
 
 // The BAR file name typed at the prompt takes the "bar" extension if it has
@@ -620,8 +764,8 @@ TEST_CASE("BAR-mode2-prompt-name", "[bar]")
    REQUIRE(std::fabs(val - 0.5) <= 1.0e-4);
 }
 
-// Headers with no title are read, and a file that ends before the frame count
-// of its last block keeps only the frames it has.
+// Headers with no title are read and print no title line, and a file that ends
+// before the frame count of its last block keeps only the frames it has.
 TEST_CASE("BAR-mode2-header", "[bar]")
 {
    const std::string text = "       3    298.00\n"
@@ -644,6 +788,7 @@ TEST_CASE("BAR-mode2-header", "[bar]")
    REQUIRE(std::sscanf(r.out.c_str() + pos + label.size(), "%d", &nfrmb) == 1);
    REQUIRE(nfrma == 3);
    REQUIRE(nfrmb == 2);
+   REQUIRE(r.out.find(":\n\n Number of Frames :") != std::string::npos);
    double val, sd;
    REQUIRE(readBar(r.out, val, sd));
    REQUIRE(std::fabs(val - 0.5) <= 1.0e-4);
@@ -703,4 +848,175 @@ TEST_CASE("BAR-mode2-bootstrap-nonconverged", "[bar]")
    REQUIRE(readEstimate(out, barBoot, bval, bsd));
    REQUIRE(std::isfinite(bval));
    REQUIRE(std::isfinite(bsd));
+}
+
+// Mode 1 evaluates energies, so these cases are CUDA only, as above.
+#if TINKER_GPULANG_CUDA
+namespace {
+/// Runs "bar 1" with logs on two-frame archives of water with no periodic box,
+/// whose base names "bar.np-a" and "bar.np-b" contain a dot, and returns the
+/// output (tinkerDev's test_bar_logs).
+BarCalcRun runBarMakeLogs(const std::string& loga, const std::string& logb, bool notitle = false)
+{
+   std::ifstream fxyz(TINKER9_DIRSTR "/test/file/mutate/water2.xyz");
+   std::stringstream xyz;
+   xyz << fxyz.rdbuf();
+   if (notitle) {
+      // keep only the atom count on the first line
+      std::string text = xyz.str();
+      auto eol = text.find('\n');
+      xyz.str(std::to_string(std::stoi(text.substr(0, eol))) + text.substr(eol));
+   }
+   TestFile fprm(TINKER9_DIRSTR "/test/file/commit_6fe8e913/water03.prm");
+   TestFile farca("", "bar.np-a.arc", xyz.str() + xyz.str());
+   TestFile farcb("", "bar.np-b.arc", xyz.str() + xyz.str());
+   TestFile fkeya("", "bar.np-a.key", "parameters water03\n");
+   TestFile fkeyb("", "bar.np-b.key", "parameters water03\n");
+   TestFile floga("", "bar.np-a.log", loga);
+   TestFile flogb("", "bar.np-b.log", logb);
+   std::remove("bar.np-a.bar");
+
+   const std::string logfile = "bar-mode1.log";
+   TestRemoveFileOnExit rmlog(logfile);
+   const char* argv[] = {"dummy", "1", "bar.np-a.arc", "298", "bar.np-b.arc", "298", "Y"};
+   const int argc = 7;
+   BarCalcRun r;
+   {
+      StdoutToFile redirect(logfile);
+      FortranRuntimeScope scope(argc, argv);
+      try {
+         xBar(argc, const_cast<char**>(argv));
+      } catch (const FatalError&) {
+         r.threw = true;
+      }
+   }
+
+   std::ifstream fin(logfile);
+   std::stringstream ss;
+   ss << fin.rdbuf();
+   r.out = ss.str();
+   return r;
+}
+}
+
+// The logs of archives whose base names contain a dot are found, and their
+// energies go to "<A>.bar".
+TEST_CASE("BAR-mode1-log-dotted", "[ff][bar]")
+{
+   TestLmdaFlagReset lmdaReset;
+   TestRemoveFileOnExit rmbar("bar.np-a.bar");
+   auto r = runBarMakeLogs(" Current Potential        123.0000\n Current Potential        124.0000\n",
+      " Current Potential        223.0000\n Current Potential        224.0000\n");
+   REQUIRE_FALSE(r.threw);
+   auto got = readBar("bar.np-a.bar");
+   REQUIRE(got.size() == 2);
+   REQUIRE(got[0].u0 == std::vector<double>{123.0, 124.0});
+   REQUIRE(got[1].u1 == std::vector<double>{223.0, 224.0});
+}
+
+// A log with no energies gives energies recomputed in state 0, the same as those
+// of the same frames in state 1.
+TEST_CASE("BAR-mode1-log-empty", "[ff][bar]")
+{
+   TestLmdaFlagReset lmdaReset;
+   TestRemoveFileOnExit rmbar("bar.np-a.bar");
+   auto r = runBarMakeLogs("no energies\n", " Current Potential        223.0000\n Current Potential        224.0000\n");
+   REQUIRE_FALSE(r.threw);
+   auto got = readBar("bar.np-a.bar");
+   REQUIRE(got.size() == 2);
+   REQUIRE(got[0].nfrm == 2);
+   REQUIRE(got[0].u0 == got[0].u1);
+   // a recomputed count that is not a multiple of 100 is still reported for
+   // trajectory A, where the first device setup may print in between
+   auto posa = r.out.find(" Initial Processing for Trajectory A :");
+   auto posb = r.out.find(" Initial Processing for Trajectory B :");
+   REQUIRE(posa != std::string::npos);
+   REQUIRE(posb != std::string::npos);
+   REQUIRE(r.out.substr(posa, posb - posa).find("       Completed       2 Coordinate Frames") != std::string::npos);
+}
+
+// An archive with no title gives BAR file headers with no title and no
+// trailing blanks, as in Tinker.
+TEST_CASE("BAR-mode1-no-title", "[ff][bar]")
+{
+   TestLmdaFlagReset lmdaReset;
+   TestRemoveFileOnExit rmbar("bar.np-a.bar");
+   auto r = runBarMakeLogs(" Current Potential        123.0000\n Current Potential        124.0000\n",
+      " Current Potential        223.0000\n Current Potential        224.0000\n", true);
+   REQUIRE_FALSE(r.threw);
+   std::ifstream fin("bar.np-a.bar");
+   std::string line;
+   REQUIRE(std::getline(fin, line));
+   REQUIRE(line == "       2    298.00");
+}
+
+// A log with fewer energies than the archive has frames stops mode 1, and the
+// BAR file begun for trajectory A is removed.
+TEST_CASE("BAR-mode1-log-mismatch", "[ff][bar]")
+{
+   TestLmdaFlagReset lmdaReset;
+   TestRemoveFileOnExit rmbar("bar.np-a.bar");
+   auto r = runBarMakeLogs("no energies\n", " Current Potential        223.0000\n");
+   REQUIRE(r.threw);
+   REQUIRE(r.out.find(" BAR  --  Log File has       1 Energies but Archive has       2 Frames;\n"
+                      " Answer N to Recompute the Energies") != std::string::npos);
+   REQUIRE_FALSE(std::ifstream("bar.np-a.bar"));
+}
+#endif
+
+// The bootstrap versions of the FEP, BAR and BAR enthalpy estimators, which use
+// the exponentials found once by BootTerms, match the direct ones on a selection
+// of frames with repeats, at a reference free energy away from the solution
+// (tinkerDev's test_bar_boot).
+TEST_CASE("BAR-boot-kernels", "[bar]")
+{
+   using namespace tinker::bar;
+   const double rt = units::gasconst * 298.0, pres = 1.0 / units::prescon, s = 1.2, eps = 1.0e-8;
+   const double xa[5] = {-0.9, -0.4, 0.0, 0.3, 0.8};
+   BarData d;
+   for (int i = 0; i < 5; ++i) {
+      d.ua0.push_back(0.5 * xa[i] * xa[i]);
+      d.ua1.push_back(0.5 * (xa[i] - s) * (xa[i] - s) + 0.5);
+      d.vola.push_back(1000.0 + 10.0 * (i + 1));
+   }
+   const int nb = 15;
+   std::vector<int> ib;
+   for (int i = 1; i <= nb; ++i) {
+      double x = s - 0.9 + 1.8 * (i - 1) / (nb - 1);
+      d.ub0.push_back(0.5 * x * x);
+      d.ub1.push_back(0.5 * (x - s) * (x - s) + 0.5);
+      d.volb.push_back(1000.0 - 5.0 * i);
+      ib.push_back((4 * i) % nb);
+   }
+   const std::vector<int> ia = {0, 0, 1, 3, 4};
+   const BootTerms t(d, rt, rt, pres, 0.3);
+
+   // the forward and backward FEP values
+   double dg1, dh1, u1, v1, dg2, dh2, u2, v2;
+   barFep(ia, d.ua0, d.ua1, d.vola, rt, pres, dg1, dh1, u1, v1);
+   bootFep(ia, d.ua0, d.ua1, d.vola, t.wa, t.hwa, t.xmaxa, rt, pres, dg2, dh2, u2, v2);
+   REQUIRE(std::fabs(dg2 - dg1) <= eps);
+   REQUIRE(std::fabs(dh2 - dh1) <= eps);
+   REQUIRE(std::fabs(u2 - u1) <= eps);
+   REQUIRE(std::fabs(v2 - v1) <= eps);
+   barFep(ib, d.ub1, d.ub0, d.volb, rt, pres, dg1, dh1, u1, v1);
+   bootFep(ib, d.ub1, d.ub0, d.volb, t.wb, t.hwb, t.xmaxb, rt, pres, dg2, dh2, u2, v2);
+   REQUIRE(std::fabs(dg2 - dg1) <= eps);
+   REQUIRE(std::fabs(dh2 - dh1) <= eps);
+
+   // the BAR free energy and enthalpy
+   double c1, c2, sd;
+   REQUIRE(barIter(ia, ib, d, rt, rt, 0.0, 100, c1, sd, nullptr));
+   REQUIRE(bootIter(ia, ib, t, rt, rt, 0.0, 100, c2));
+   REQUIRE(std::fabs(c2 - c1) <= eps);
+   REQUIRE(std::fabs(bootHbar(ia, ib, d, t, rt, rt, pres, c1) - barHbar(ia, ib, d, rt, rt, pres, c1)) <= eps);
+}
+
+// The default number of bootstrap trials is about 1e8 frame evaluations, but at
+// least 2000 trials for errors to about 1.5 percent (tinkerDev's test_bar_boot).
+TEST_CASE("BAR-trials", "[bar]")
+{
+   REQUIRE(tinker::bar::barTrials(1000) == 10000);
+   REQUIRE(tinker::bar::barTrials(40000) == 2500);
+   REQUIRE(tinker::bar::barTrials(1000000) == 2000);
 }
