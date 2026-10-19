@@ -89,6 +89,7 @@ static pos_prec *dup_buf_x, *dup_buf_y, *dup_buf_z;
 static vel_prec *dup_buf_vx, *dup_buf_vy, *dup_buf_vz;
 static grad_prec *dup_buf_gx, *dup_buf_gy, *dup_buf_gz;
 static int lmda_snap_mask;
+static bool lmda_snap_active;
 static double s_lambda, s_dedl;
 static bool bias_snap_active;
 static double s_ostdgdl, s_lmdaddgdl, s_lmdadeltag;
@@ -108,7 +109,10 @@ static std::vector<double> s_tihist, s_tidedl, s_tisd;
 static void mdsaveDupLmda()
 {
    lmda_snap_mask = lmdaDerivMask(rc_flag, use_dlmda);
-   if (not lmda_snap_mask)
+   // free energy perturbation has no lambda derivative, but each frame still
+   // prints the lambda of its window
+   lmda_snap_active = lmda_snap_mask or use_fep;
+   if (not lmda_snap_active)
       return;
 
    s_lambda = lambda;
@@ -118,7 +122,7 @@ static void mdsaveDupLmda()
 
 static void mdsaveWriteLmda()
 {
-   if (not lmda_snap_mask)
+   if (not lmda_snap_active)
       return;
 
    mutant::lambda = s_lambda;

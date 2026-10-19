@@ -26,6 +26,7 @@
 #include <tinker/detail/files.hh>
 #include <tinker/detail/inform.hh>
 #include <tinker/detail/mplpot.hh>
+#include <tinker/detail/mutant.hh>
 #include <tinker/detail/polpot.hh>
 #include <tinker/detail/uprior.hh>
 #include <tinker/routines.h>
@@ -513,6 +514,7 @@ struct DynOpts
    bool sample = true;                    // find the trial energies
    bool check = false;                    // hold each native energy to an energy call
    bool propagate = false;                // leave the steps to mdPropagate()
+   int iwrite = 1000;                     // steps between saved frames
    UPred pred = UPred::ASPC;              // the predictor the dynamics keeps
    void (*terms)() = nullptr;             // checks that the setup is the one the case is about
 };
@@ -530,6 +532,9 @@ struct DynEnd
    std::vector<RelStage> legs; // the active leg as each sample was taken
    int nmoved = 0;             // steps that changed the box
    int nmovedsample = 0;       // those sampled with steps of the run left to take
+   double lmdastart = 0;       // the Fortran main lambda as the steps begin
+   double lmdasaved = 0;       // and as the run ends, set by the frames saved
+   double lmdalast = 0;        // the lambda of the last window
 };
 
 bool sameBox(const Box& a, const Box& b)
@@ -582,8 +587,10 @@ DynEnd runDyn(const DynOpts& o)
    FepFiles files("fepdyn_tmp");
    // mdPropagate() saves the restart file of the run as it returns
    TestRemoveFileOnExit fdyn("fepdyn_tmp.dyn");
+   // and its saved frames go to the archive
+   TestRemoveFileOnExit farc("fepdyn_tmp.arc");
    int oldiwrite = inform::iwrite;
-   inform::iwrite = 1000;
+   inform::iwrite = o.iwrite;
 
    // the dynamics keeps the predictor the key file asks for
    REQUIRE(polpred == o.pred);
@@ -598,6 +605,8 @@ DynEnd runDyn(const DynOpts& o)
    REQUIRE(nfeptot > 0);
    end.x0 = grab1(xpos);
    boxGetCurrent(end.box0);
+   end.lmdastart = mutant::lambda;
+   end.lmdalast = lmdawinlist[nlmdawin - 1];
    if (o.propagate) {
       REQUIRE(o.sample);
       REQUIRE(o.baro == BarostatEnum::NONE);
@@ -606,6 +615,7 @@ DynEnd runDyn(const DynOpts& o)
       // adds a solve to the predictor history; make the same call here.
       VerletIntegrator::KickOff();
       mdPropagate(nstep, dt_ps);
+      end.lmdasaved = mutant::lambda;
    } else {
       std::unique_ptr<BasicIntegrator> intg(new VerletIntegrator(ThermostatEnum::NONE, o.baro));
       Box before = end.box0;
@@ -943,6 +953,20 @@ TEST_CASE("FEP-dyn-propagate", "[ff][fep]")
    REQUIRE(prop.feptrial == loop.feptrial);
    REQUIRE_FALSE(sameBits(prop.x, prop.x0));
    REQUIRE(sameEnd(prop, loop));
+}
+
+TEST_CASE("FEP-dyn-save-lambda", "[ff][fep]")
+{
+   // A saved frame prints the Fortran main lambda, which the save takes from
+   // the lambda of the window the frame is in. Saves on the last step of each
+   // window leave it at the lambda of the last window, where without them it
+   // keeps the lambda the setup gave it.
+   DynOpts o;
+   o.propagate = true;
+   o.iwrite = 8;
+   const DynEnd end = runDyn(o);
+   REQUIRE(end.lmdastart != end.lmdalast);
+   REQUIRE(end.lmdasaved == end.lmdalast);
 }
 
 TEST_CASE("FEP-dyn-dual", "[ff][fep]")
