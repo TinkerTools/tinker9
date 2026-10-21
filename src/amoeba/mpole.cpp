@@ -11,12 +11,7 @@
 #include "ff/potent.h"
 #include "tool/darray.h"
 #include "tool/externfunc.h"
-#include <tinker/detail/angbnd.hh>
-#include <tinker/detail/bndstr.hh>
-#include <tinker/detail/dlmda.hh>
 #include <tinker/detail/mplpot.hh>
-#include <tinker/detail/mpole.hh>
-#include <tinker/detail/mutant.hh>
 
 #include <cassert>
 #include <vector>
@@ -48,12 +43,6 @@ unsigned long long pole_serial = 1;
 // it keeps the relation.
 double pole_lmda = 0;
 RdtMask pole_lmda_mask = RdtMask::LIGA;
-// The lambda and the ligand the charge penetration and charge flux parameters
-// were last scaled to (mpoleScaleChgpenCflux); unset while they are as the
-// setup left them. Charge flux rewrites pole at every step, but never these.
-bool param_lmda_set = false;
-double param_lmda = 0;
-RdtMask param_lmda_mask = RdtMask::LIGA;
 unsigned long long pole_lmda_serial = 0;
 
 // The epoch and contents of the last charge flux applied to pole; chkpole
@@ -129,7 +118,6 @@ std::vector<SplineKey> spline_key;
 void mpoleStateReset()
 {
    ++pole_serial;
-   param_lmda_set = false;
    chk_epoch = NEVER;
    rpole_key = RpoleKey();
    cmp_key = CmpKey();
@@ -202,71 +190,8 @@ void chkpole()
    rpole_key = RpoleKey();
 }
 
-// The charge penetration and charge flux parameters, which altelec and altpolr
-// scale along with the multipoles (mutate.f). Only free energy perturbation
-// moves them after setup, a few times per sample, so they are scaled on the
-// host from the originals the Fortran setup saved.
-static void mpoleScaleChgpenCflux(double lmda)
-{
-   if (param_lmda_set and lmda == param_lmda and chargeMask() == param_lmda_mask)
-      return;
-   param_lmda = lmda;
-   param_lmda_mask = chargeMask();
-   param_lmda_set = true;
-
-   const GrpScale sc = grpScale(lmda);
-   bool wait = false;
-
-   if (mplpot::use_chgpen) {
-      std::vector<double> core(n), val(n);
-      for (int i = 0; i < n; ++i) {
-         double s = sc.s[mutant::mutg[i]];
-         core[i] = s * dlmda::pcoreorig[i];
-         val[i] = s * dlmda::pvalorig[i];
-      }
-      darray::copyin(g::q0, n, pcore, core.data());
-      darray::copyin(g::q0, n, pval0, val.data());
-      darray::copyin(g::q0, n, pval, val.data());
-      wait = true;
-   }
-
-   if (use(Potent::CHGFLX)) {
-      // the monopoles the flux is added to
-      std::vector<double> mono(n);
-      for (int i = 0; i < n; ++i)
-         mono[i] = sc.s[mutant::mutg[i]] * dlmda::poleorig[mpole::maxpole * i];
-      darray::copyin(g::q0, n, mono0, mono.data());
-
-      // a bond or an angle is scaled only when the ligand holds all of it
-      const int nb = bndstr::nbond, na = angbnd::nangle;
-      std::vector<double> bf(nb), af(2 * na), abf(2 * na);
-      for (int i = 0; i < nb; ++i) {
-         int ga = mutant::mutg[bndstr::ibnd[2 * i] - 1];
-         int gb = mutant::mutg[bndstr::ibnd[2 * i + 1] - 1];
-         double s = (ga != 0 and gb != 0) ? sc.s[ga] : 1.0;
-         bf[i] = s * dlmda::bflxorig[i];
-      }
-      for (int i = 0; i < na; ++i) {
-         int ga = mutant::mutg[angbnd::iang[4 * i] - 1];
-         int gb = mutant::mutg[angbnd::iang[4 * i + 1] - 1];
-         int gc = mutant::mutg[angbnd::iang[4 * i + 2] - 1];
-         double s = (ga != 0 and gb != 0 and gc != 0) ? sc.s[ga] : 1.0;
-         for (int j = 0; j < 2; ++j) {
-            af[2 * i + j] = s * dlmda::aflxorig[2 * i + j];
-            abf[2 * i + j] = s * dlmda::abflxorig[2 * i + j];
-         }
-      }
-      darray::copyin(g::q0, nb, bflx, bf.data());
-      darray::copyin(g::q0, na, aflx, af.data());
-      darray::copyin(g::q0, na, abflx, abf.data());
-      wait = true;
-   }
-
-   if (wait)
-      waitFor(g::q0);
-}
-
 TINKER_FVOID2(acc1, cu1, mpoleScale, const int*, GrpScale);
+TINKER_FVOID2(acc1, cu1, mpoleScaleChgpen, const int*, GrpScale, bool, bool);
 void mpoleScale(double lmda, bool flux_follows)
 {
    // For a caller that applies the charge flux next, a pole that was scaled
@@ -280,9 +205,16 @@ void mpoleScale(double lmda, bool flux_follows)
    // charges, so the same lambda on another leg is another state.
    if (lmda == pole_lmda and chargeMask() == pole_lmda_mask and scaled)
       return;
-   TINKER_FCALL2(acc1, cu1, mpoleScale, emGroup(), grpScale(lmda));
-   if (use_fep)
-      mpoleScaleChgpenCflux(lmda);
+   const GrpScale sc = grpScale(lmda);
+   TINKER_FCALL2(acc1, cu1, mpoleScale, emGroup(), sc);
+   // the charge penetration and flux parameters altelec and altpolr scale
+   // along with the multipoles; the flux parameters themselves stay unscaled
+   const bool chgpen = mplpot::use_chgpen, cflux = use(Potent::CHGFLX);
+   if (chgpen or cflux) {
+      TINKER_FCALL2(acc1, cu1, mpoleScaleChgpen, emGroup(), sc, chgpen, cflux);
+      if (cflux)
+         cfluxGroupScale(sc);
+   }
    pole_lmda = lmda;
    pole_lmda_mask = chargeMask();
    pole_lmda_serial = ++pole_serial;
@@ -302,6 +234,10 @@ static RpoleKey origKey()
    RpoleKey k;
    k.src = RpoleSrc::ORIG;
    k.epoch = xyz_epoch;
+   // rotpole(true) adds the flux change, so it is redone once the flux of
+   // these coordinates is.
+   if (use(Potent::CHGFLX))
+      k.pole = flux_epoch;
    return k;
 }
 
@@ -312,6 +248,9 @@ static RpoleKey stateKey(RdtMask mask, const int* group)
    k.mask = mask;
    k.group = group;
    k.epoch = xyz_epoch;
+   // as origKey(): the active sites carry the flux change
+   if (use(Potent::CHGFLX))
+      k.pole = flux_epoch;
    return k;
 }
 
@@ -425,6 +364,16 @@ void mpoleUseState(RdtMask mask, const int* group)
 {
    ensureRpole(stateKey(mask, group));
    ensurePme(false, false);
+}
+
+real* mpoleCore()
+{
+   return rpole_key.src == RpoleSrc::MASKED ? pcorest : pcore;
+}
+
+real* mpoleVal()
+{
+   return rpole_key.src == RpoleSrc::MASKED ? pvalst : pval;
 }
 
 void mpoleInit(int vers, bool do_dlmda)

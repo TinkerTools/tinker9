@@ -488,44 +488,21 @@ void epolarData(RcOp op)
    }
 
    if (op & RcOp::INIT) {
-      if (use_epdt) {
-         if (mplpot::use_chgpen)
-            TINKER_THROW("Polarization dual topology does not support charge penetration.");
-         if (polpot::use_tholed)
-            TINKER_THROW("Polarization dual topology does not support the AMOEBA+ (tholed) model.");
-         if (use(Potent::CHGFLX))
-            TINKER_THROW("Polarization dual topology does not support charge flux.");
-      }
-
-      if (use_prst and not polTracksEle()) {
-         if (mplpot::use_chgpen)
-            TINKER_THROW("A decoupled polarization lambda does not support charge penetration.");
-         if (polpot::use_tholed)
-            TINKER_THROW("A decoupled polarization lambda does not support the AMOEBA+ (tholed) model.");
-         if (use(Potent::CHGFLX))
-            TINKER_THROW("A decoupled polarization lambda does not support charge flux.");
-      }
-
       // The same ground mutate_check covers: the derivative differentiates the
-      // stationary mutual Thole functional, so anything that is not that model,
-      // or that adds a lambda dependence altpolr does not scale linearly, is out.
+      // stationary mutual functional with Thole or charge penetration damping,
+      // so anything that is not that model, or that adds a lambda dependence
+      // altpolr does not scale linearly, is out.
       if (use_epast) {
          FstrView poltypstr = polpot::poltyp;
          if (not(poltypstr == "MUTUAL"))
             TINKER_THROW("Single topology polarization dU/dLambda supports "
                          "MUTUAL polarization only.");
-         if (not polpot::use_thole or polpot::use_tholed)
+         if (not(polpot::use_thole or mplpot::use_chgpen))
             TINKER_THROW("Single topology polarization dU/dLambda supports "
-                         "Thole damping only.");
-         if (mplpot::use_chgpen)
-            TINKER_THROW("Single topology polarization dU/dLambda does not "
-                         "support charge penetration.");
+                         "Thole or charge penetration damping only.");
          if (polpot::use_expol)
             TINKER_THROW("Single topology polarization dU/dLambda does not "
                          "support exchange polarization.");
-         if (use(Potent::CHGFLX))
-            TINKER_THROW("Single topology polarization dU/dLambda does not "
-                         "support charge flux.");
          if (use(Potent::SOLV))
             TINKER_THROW("Single topology polarization dU/dLambda does not "
                          "support implicit solvent.");
@@ -562,26 +539,31 @@ void epolarData(RcOp op)
          darray::copyin(g::q0, n, polarityorig, dlmda::polarityorig);
       waitFor(g::q0);
 
-      polar_active_mask = 0;
-      if (use_epdt) {
-         for (int i = 0; i < n; ++i) {
-            if (dlmda::polarityorig[i] == 0)
-               continue;
-            auto atom_mask = RdtMask::ENV;
-            if (use_rel) {
-               if (mutant::mutg[i] == 1)
-                  atom_mask = RdtMask::LIGA;
-               else if (mutant::mutg[i] == 2)
-                  atom_mask = RdtMask::LIGB;
-            } else if (mutant::mutg[i] != 0) {
-               atom_mask = RdtMask::LIGA;
-            }
-            polar_active_mask |= static_cast<unsigned>(atom_mask);
-         }
-      }
+      epolarSetActiveMask();
    }
 
    TINKER_FCALL2(cpp0, cu1, epolarDataBinding, op);
+}
+
+void epolarSetActiveMask()
+{
+   polar_active_mask = 0;
+   if (not use_epdt)
+      return;
+   for (int i = 0; i < n; ++i) {
+      if (dlmda::polarityorig[i] == 0)
+         continue;
+      auto atom_mask = RdtMask::ENV;
+      if (use_rel) {
+         if (mutant::mutg[i] == 1)
+            atom_mask = RdtMask::LIGA;
+         else if (mutant::mutg[i] == 2)
+            atom_mask = RdtMask::LIGB;
+      } else if (mutant::mutg[i] != 0) {
+         atom_mask = RdtMask::LIGA;
+      }
+      polar_active_mask |= static_cast<unsigned>(atom_mask);
+   }
 }
 
 TINKER_FVOID2(acc1, cu1, polarState, RdtMask, const int*, real);
@@ -659,33 +641,65 @@ static void epolarBegin(int vers);
 static void epolarKernel(int vers, bool use_cfgrad);
 static void epolarFinish(int vers);
 
-TINKER_FVOID2(acc0, cu1, epolarAstDeriv, EnergyBuffer, const real (*)[3], const real (*)[3],
-   const real (*)[3], const real (*)[3], const real (*)[3], const real (*)[3]);
+TINKER_FVOID2(acc0, cu1, epolarAstDeriv, EnergyBuffer, const real (*)[3], const real (*)[3], const real (*)[3],
+   const real (*)[3], const real (*)[3], const real (*)[3], const real (*)[3], const real (*)[3]);
+
+// The permanent field of rpole and the field of uind, for the models with one
+// set of induced dipoles.
+static void epolarField1(real (*field)[3])
+{
+   if (polpot::use_tholed)
+      dfieldAplus(field);
+   else
+      dfieldChgpen(field);
+}
+
+static void epolarUfield1(const real (*u)[3], real (*field)[3])
+{
+   if (polpot::use_tholed)
+      ufieldAplus(u, field);
+   else
+      ufieldChgpen(u, field);
+}
 
 void epolarAstDeriv()
 {
+   // HIPPO and AMOEBA+ solve for one set of induced dipoles in one field, which
+   // stands in for both of AMOEBA's (epolar4.f).
+   const bool one = mplpot::use_chgpen;
+   const real(*up)[3] = one ? uind : uinp;
+
    // Scratch comes from the solver work arrays, idle now that induce() is done.
    real(*dfd)[3] = work01_;
-   real(*dfp)[3] = work02_;
+   real(*dfp)[3] = one ? work01_ : work02_;
    real(*f0d)[3] = nullptr;
    real(*f0p)[3] = nullptr;
    real(*ufd)[3] = nullptr;
    real(*ufp)[3] = nullptr;
 
    if (plam == 0) {
-      f0d = work03_, f0p = work04_, ufd = work05_, ufp = work06_;
+      f0d = work03_, ufd = work05_;
+      f0p = one ? work03_ : work04_;
+      ufp = one ? work05_ : work06_;
       mpoleUsePole();
-      dfield(f0d, f0p);
-      ufield(uind, uinp, ufd, ufp);
+      if (one) {
+         epolarField1(f0d);
+         epolarUfield1(uind, ufd);
+      } else {
+         dfield(f0d, f0p);
+         ufield(uind, uinp, ufd, ufp);
+      }
    }
 
    mpoleUseState(chargeMask(), emGroup());
-   if (useEwald())
+   if (one)
+      epolarField1(dfd);
+   else if (useEwald())
       dfieldEwald(dfd, dfp);
    else
       dfieldNonEwald(dfd, dfp);
 
-   TINKER_FCALL2(acc0, cu1, epolarAstDeriv, depdl_buf, dfd, dfp, f0d, f0p, ufd, ufp);
+   TINKER_FCALL2(acc0, cu1, epolarAstDeriv, depdl_buf, uind, up, dfd, dfp, f0d, f0p, ufd, ufp);
 }
 
 void epolar(int vers)
@@ -700,7 +714,7 @@ void epolar(int vers)
    epolarBegin(vers);
 
    if (use_prst) {
-      mpoleScale(plam);
+      mpoleScale(plam, use_cf);
       polarState(coupledMask(), emGroup(), plam);
    }
 
@@ -783,6 +797,11 @@ TINKER_FVOID2(acc0, cu1, epolarPairwiseExtfieldDt, const real (*)[3], EnergyBuff
 TINKER_FVOID2(acc0, cu1, epolarEwaldRecipSelfDt, int, const real (*)[3], const real (*)[3], EnergyBuffer,
    VirialBuffer, grad_prec*, grad_prec*, grad_prec*, const RecipDt&);
 
+TINKER_FVOID2(acc0, cu1, epolar1NonEwaldDt, int, int, const real (*)[3], real, real);
+TINKER_FVOID2(acc0, cu1, epolar1EwaldRealDt, int, int, const real (*)[3], real, real);
+TINKER_FVOID2(acc0, cu1, epolarChgpenEwaldRecipSelfDt, int, int, const real (*)[3], EnergyBuffer, VirialBuffer,
+   grad_prec*, grad_prec*, grad_prec*, const RecipDt&);
+
 void epolarEwaldRecipSelfDt(int vers, EnergyBuffer out_e, VirialBuffer out_v, grad_prec* out_gx,
    grad_prec* out_gy, grad_prec* out_gz, const RecipDt& dt)
 {
@@ -811,6 +830,43 @@ RecipDt dtRecipSinks(int vers, real wa, real wb)
    return dt;
 }
 
+// One pass of HIPPO or AMOEBA+, the models with one set of induced dipoles. An
+// active site carries its unscaled multipoles, charge penetration charges and
+// flux change, and an inactive one none, so the flux potential of the pass
+// weighs each active group's atoms by wa, and by wb for the lambda derivative.
+static void epolarState1(int vers, RdtMask mask, const int* group, bool edot, real wa, real wb, real wc)
+{
+   const int use_cfgrad = use(Potent::CHGFLX) and (vers & calc::grad);
+   induce2(uind);
+   if (edot)
+      TINKER_FCALL2(acc0, cu1, epolar0DotProdDt, vers, uind, udir, ep, wa, wb, wc);
+   if (use_cfgrad)
+      cfluxZeroPot();
+   if (vers != calc::v0) {
+      if (useEwald()) {
+         TINKER_FCALL2(acc0, cu1, epolar1EwaldRealDt, vers, use_cfgrad, uind, wa, wb);
+         TINKER_FCALL2(acc0, cu1, epolarChgpenEwaldRecipSelfDt, vers, use_cfgrad, uind, ep, vir_ep, depx, depy,
+            depz, dtRecipSinks(vers, wa, wb));
+      } else {
+         TINKER_FCALL2(acc0, cu1, epolar1NonEwaldDt, vers, use_cfgrad, uind, wa, wb);
+      }
+   }
+   if (use_cfgrad) {
+      const unsigned m = static_cast<unsigned>(mask);
+      const unsigned gmask[3] = {static_cast<unsigned>(RdtMask::ENV), static_cast<unsigned>(RdtMask::LIGA),
+         static_cast<unsigned>(RdtMask::LIGB)};
+      GrpScale w{};
+      for (int g = 0; g < 3; ++g)
+         w.s[g] = (m & gmask[g]) ? wa : 0;
+      dcfluxGroup(group, w, depx, depy, depz, (vers & calc::virial) ? vir_ep : nullptr);
+      if (vers & calc::grad_dlmda) {
+         for (int g = 0; g < 3; ++g)
+            w.s[g] = (m & gmask[g]) ? wb : 0;
+         dcfluxGroup(group, w, dfdlx, dfdly, dfdlz, (vers & calc::virial_dlmda) ? dvirdl_buf : nullptr);
+      }
+   }
+}
+
 // One dual topology subsystem, weighted straight into the global accumulators.
 // The pass masks rpole and polarity first, so every interaction it evaluates
 // carries the same three weights and the kernels need no per-atom bookkeeping.
@@ -833,15 +889,19 @@ static void epolarState(int vers, RdtMask mask, const int* group, bool first_sta
    // kernels below switch their own energy channel off for the same versions.
    const bool edot = epolarEnergyFromDotProd(vers);
 
-   induce(uind, uinp);
-   if (edot)
-      TINKER_FCALL2(acc0, cu1, epolar0DotProdDt, vers, uind, udirp, ep, wa, wb, wc);
-   if (vers != calc::v0) {
-      if (useEwald()) {
-         TINKER_FCALL2(acc0, cu1, epolarEwaldRealDt, vers, uind, uinp, wa, wb);
-         epolarEwaldRecipSelfDt(vers, ep, vir_ep, depx, depy, depz, dtRecipSinks(vers, wa, wb));
-      } else {
-         TINKER_FCALL2(acc0, cu1, epolarNonEwaldDt, vers, uind, uinp, wa, wb);
+   if (mplpot::use_chgpen) {
+      epolarState1(vers, mask, group, edot, wa, wb, wc);
+   } else {
+      induce(uind, uinp);
+      if (edot)
+         TINKER_FCALL2(acc0, cu1, epolar0DotProdDt, vers, uind, udirp, ep, wa, wb, wc);
+      if (vers != calc::v0) {
+         if (useEwald()) {
+            TINKER_FCALL2(acc0, cu1, epolarEwaldRealDt, vers, uind, uinp, wa, wb);
+            epolarEwaldRecipSelfDt(vers, ep, vir_ep, depx, depy, depz, dtRecipSinks(vers, wa, wb));
+         } else {
+            TINKER_FCALL2(acc0, cu1, epolarNonEwaldDt, vers, uind, uinp, wa, wb);
+         }
       }
    }
    if (extfld::use_exfld and (vers & calc::analyz))
@@ -859,7 +919,7 @@ static bool epolarCounts(const DtPass& p, double w)
    return w != 0 ? p.in1 : p.in0;
 }
 
-void epolar_dt(int vers)
+void epolarDtPasses(int vers)
 {
    const int dvers = lmdaDerivVers(vers, pdlmdaActive());
    const int* group = emGroup();
@@ -869,7 +929,9 @@ void epolar_dt(int vers)
    double w, dw, d2w;
    dtWeight(plam, epdtexp, w, dw, d2w);
 
-   epolarBegin(vers);
+   // the masked endpoints carry the flux change of these coordinates
+   if (use(Potent::CHGFLX))
+      alterchg();
 
    DtCoef c;
    dtWeightsToCoef(c, w, dw, d2w, dpldlmda, d2pldlmda2, pdlmdaActive());
@@ -895,11 +957,16 @@ void epolar_dt(int vers)
          torque(vers, dfdlx, dfdly, dfdlz, dltrqx, dltrqy, dltrqz, dvirdl_buf);
    }
 
-   epolarFinish(vers);
-
    // The last pass leaves polarity masked down to a subsystem. It leaves rpole
    // masked too, but every reader of rpole asks for the state it needs.
    polarState(RdtMask::ALL, group);
+}
+
+void epolar_dt(int vers)
+{
+   epolarBegin(vers);
+   epolarDtPasses(vers);
+   epolarFinish(vers);
 }
 
 // The dipoles a reported moment is made of are the ones the polarization energy
@@ -912,12 +979,15 @@ void epolarPhysicalInduced()
       TINKER_THROW("Induced dipoles cannot be reported with dual topology polarization");
 
    if (use_prst) {
-      mpoleScale(plam);
+      mpoleScale(plam, use(Potent::CHGFLX));
       polarState(coupledMask(), emGroup(), plam);
       if (use(Potent::CHGFLX))
          alterchg();
       mpoleInit(calc::energy, false);
-      induce(uind, uinp);
+      if (mplpot::use_chgpen)
+         induce2(uind);
+      else
+         induce(uind, uinp);
    } else {
       mpoleEnsurePhysical();
       mpoleInit(calc::energy, false);

@@ -39,6 +39,11 @@ TEST_CASE("EPOLAR-1-EWALD-HIPPO", "[ff][hippo][ephippo][ewald]")
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
+   // polarization is the only term, so its own virial, torque part included,
+   // is the total
+   for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+         COMPARE_REALS(virial_ep[i * 3 + j], ref_v[i][j], eps_v);
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -93,6 +98,11 @@ TEST_CASE("EPOLAR-2-NONEWALD-HIPPO", "[ff][hippo][ephippo][nonewald]")
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
+   // polarization is the only term, so its own virial, torque part included,
+   // is the total
+   for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+         COMPARE_REALS(virial_ep[i * 3 + j], ref_v[i][j], eps_v);
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);
@@ -155,6 +165,11 @@ TEST_CASE("EPOLAR-3-EWALD-HIPPO-ZEROPOL", "[ff][hippo][ephippo][ewald]")
    for (int i = 0; i < 3; ++i)
       for (int j = 0; j < 3; ++j)
          COMPARE_REALS(vir[i * 3 + j], ref_v[i][j], eps_v);
+   // polarization is the only term, so its own virial, torque part included,
+   // is the total
+   for (int i = 0; i < 3; ++i)
+      for (int j = 0; j < 3; ++j)
+         COMPARE_REALS(virial_ep[i * 3 + j], ref_v[i][j], eps_v);
 
    energy(calc::v3);
    COMPARE_REALS(esum, ref_e, eps_e);

@@ -18,7 +18,9 @@ TINKER_EXTERN int (*balist)[2];
 
 TINKER_EXTERN real* mono0;
 TINKER_EXTERN real* pdelta;
+TINKER_EXTERN real* fluxsc;
 TINKER_EXTERN real* pot;
+TINKER_EXTERN real* dlpot;
 TINKER_EXTERN real* decfx;
 TINKER_EXTERN real* decfy;
 TINKER_EXTERN real* decfz;
@@ -30,6 +32,10 @@ TINKER_EXTERN real* pcore;
 TINKER_EXTERN real* pval;
 TINKER_EXTERN real* pval0;
 TINKER_EXTERN real* palpha;
+TINKER_EXTERN real* pcoreorig;
+TINKER_EXTERN real* pvalorig;
+TINKER_EXTERN real* pcorest;
+TINKER_EXTERN real* pvalst;
 
 TINKER_EXTERN real w2scale;
 TINKER_EXTERN real w3scale;

@@ -78,9 +78,11 @@ void extfieldModifyDField(real (*field)[3], ///< Permanent field.
 /// the coordinates, and scales as 1/V, so it adds -e to the virial diagonal.
 /// Under single topology the charges follow the electrostatic lambda, and so do
 /// Q and its derivatives, including the virial's (empole4.f). A neutral cell with
-/// no lambda derivative adds nothing.
-void empoleEwaldBackground(int vers,  ///< Energy version.
-                           int dlvers ///< Lambda-derivative version, as from lmdaDerivVers().
+/// no lambda derivative adds nothing. When charge flux moves Q with the geometry,
+/// Q is summed from the monopoles and its gradient goes into the flux potential.
+void empoleEwaldBackground(int vers,          ///< Energy version.
+                           int dlvers,        ///< Lambda-derivative version, as from lmdaDerivVers().
+                           bool cflux = false ///< Whether pole carries the charge flux.
 );
 /// \copydoc empoleEwaldBackground
 void echargeEwaldBackground(int vers);

@@ -4,6 +4,7 @@
 #include "ff/dlmda.h"
 #include "ff/echarge.h"
 #include "ff/energy.h"
+#include "ff/hippo/cflux.h"
 #include "ff/modamoeba.h"
 #include "ff/modhippo.h"
 #include "ff/nblist.h"
@@ -11,6 +12,7 @@
 #include "ff/potent.h"
 #include "ff/spatial.h"
 #include "math/const.h"
+#include "tool/error.h"
 #include "tool/externfunc.h"
 #include "tool/iofortstr.h"
 #include <tinker/detail/atoms.hh>
@@ -20,6 +22,7 @@
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/dlmda.hh>
 #include <tinker/detail/extfld.hh>
+#include <tinker/detail/group.hh>
 #include <tinker/detail/kchrge.hh>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/mplpot.hh>
@@ -27,6 +30,7 @@
 #include <tinker/detail/mutant.hh>
 #include <tinker/detail/polgrp.hh>
 #include <tinker/detail/polpot.hh>
+#include <tinker/detail/sizes.hh>
 
 #include <cmath>
 
@@ -45,6 +49,9 @@ static RdtMask pchg_lmda_mask;
 // pole as it is copied in, already scaled.
 static double pole_net[3];
 static bool pole_net_orig;
+// The net charge, and its lambda derivative, that charge flux moves with the
+// geometry, summed on the device in fixed point.
+static fixed* pole_net_flux;
 
 static void pchgBuild(double lmda);
 static void pchgData(RcOp op)
@@ -98,6 +105,19 @@ void pchgEnsureElec()
       cspatial_v2_unit->fresh |= cspatial_fresh_mask_echglj;
 }
 
+// Whether any pair of atom groups interacts with a weight other than one
+// (group.f), which the multipole, polarization and repulsion kernels never apply.
+static bool groupsWeighted()
+{
+   if (not group::use_group)
+      return false;
+   for (int i = 0; i <= group::ngrp; ++i)
+      for (int j = 0; j <= group::ngrp; ++j)
+         if (group::wgrp[j + i * (1 + sizes::maxgrp)] != 1)
+            return true;
+   return false;
+}
+
 TINKER_FVOID2(cpp0, cu1, mpoleDataBinding, RcOp);
 static void mpoleData(RcOp op)
 {
@@ -109,10 +129,15 @@ static void mpoleData(RcOp op)
       darray::deallocate(trqx, trqy, trqz, vir_trq);
       darray::deallocate(poleorig);
       darray::deallocate(dltrqx, dltrqy, dltrqz);
+      darray::deallocate(pole_net_flux);
    }
 
    if (op & RcOp::ALLOC) {
       darray::allocate(n, &zaxis, &pole, &rpole);
+      if (use(Potent::CHGFLX))
+         darray::allocate(2, &pole_net_flux);
+      else
+         pole_net_flux = nullptr;
 
       if (usePoleorig()) {
          darray::allocate(n, &poleorig);
@@ -156,6 +181,36 @@ static void mpoleData(RcOp op)
    }
 
    if (op & RcOp::INIT) {
+      // These refuse what Fortran mutate_check accepts and tinker9 does not
+      // compute yet. They come before pmeData, which a throw would leave open.
+      if (groupsWeighted())
+         TINKER_THROW("Group weights are not supported for multipoles, polarization or repulsion.");
+      // Only the charge penetration multipoles carry the flux change in charge
+      // of each atom, and the polarization that goes with them has yet to
+      // follow the multipoles scaled on the fly.
+      if (use(Potent::MPOLE) and use_edlmda and use(Potent::CHGFLX) and not mplpot::use_chgpen)
+         TINKER_THROW("Multipole lambda derivatives support charge flux only with charge penetration.");
+      // The AMOEBA endpoint passes of polarization dual topology leave out the
+      // charge flux chain rule.
+      if (use(Potent::POLAR) and use_epdt and use(Potent::CHGFLX) and not mplpot::use_chgpen)
+         TINKER_THROW("Polarization dual topology supports charge flux only with charge penetration.");
+      // HIPPO polarization returns from epolarData() before its own checks, so
+      // they are made here (mutate.f:mutate_check).
+      if (use(Potent::POLAR) and mplpot::use_chgpen and not polpot::use_tholed) {
+         // the endpoint passes leave out the exchange polarization gradient
+         if (use_epdt and polpot::use_expol)
+            TINKER_THROW("Polarization dual topology does not support exchange polarization.");
+         if (use_epast) {
+            FstrView poltypstr = polpot::poltyp;
+            if (not(poltypstr == "MUTUAL"))
+               TINKER_THROW("Single topology polarization dU/dLambda supports MUTUAL polarization only.");
+            if (polpot::use_expol)
+               TINKER_THROW("Single topology polarization dU/dLambda does not support exchange polarization.");
+            if (use(Potent::SOLV))
+               TINKER_THROW("Single topology polarization dU/dLambda does not support implicit solvent.");
+         }
+      }
+
       // Regarding chkpole routine:
       // 1. The chiralities of the atoms are unlikely to change in MD; but
       // still possible in Monte Carlo;
@@ -611,6 +666,7 @@ static void chgpenData(RcOp op)
       nwexclude = 0;
       darray::deallocate(wexclude, wexclude_scale);
       darray::deallocate(pval0, pval, palpha, pcore);
+      darray::deallocate(pcoreorig, pvalorig, pcorest, pvalst);
    }
 
    if (op & RcOp::ALLOC) {
@@ -877,6 +933,15 @@ static void chgpenData(RcOp op)
       darray::copyin(g::q0, nmdwexclude, mdwexclude_scale, scal_vec.data());
       waitFor(g::q0);
       darray::allocate(n, &pcore, &pval0, &pval, &palpha);
+      // the multipoles are rescaled from poleorig, and so are these
+      if (usePoleorig() and mplpot::use_chgpen) {
+         darray::allocate(n, &pcoreorig, &pvalorig, &pcorest, &pvalst);
+      } else {
+         pcoreorig = nullptr;
+         pvalorig = nullptr;
+         pcorest = nullptr;
+         pvalst = nullptr;
+      }
    }
 
    if (op & RcOp::INIT) {
@@ -891,6 +956,10 @@ static void chgpenData(RcOp op)
       darray::copyin(g::q0, n, pval0, chgpen::pval0);
       darray::copyin(g::q0, n, pval, chgpen::pval);
       darray::copyin(g::q0, n, palpha, chgpen::palpha);
+      if (pcoreorig) {
+         darray::copyin(g::q0, n, pcoreorig, dlmda::pcoreorig);
+         darray::copyin(g::q0, n, pvalorig, dlmda::pvalorig);
+      }
       waitFor(g::q0);
    }
 }
@@ -920,6 +989,13 @@ void elecData(RcOp op)
 TINKER_FVOID2(acc1, cu1, ewaldBackgroundAdd, CountBuffer, EnergyBuffer, EnergyBuffer, EnergyBuffer, VirialBuffer,
    VirialBuffer, int, real, real, real);
 
+// The coefficient of Q^2 in the Ewald uniform background charge correction.
+static double ewaldBackgroundCoef(real aewald)
+{
+   const double f = electric / dielec;
+   return -0.5 * f * pi / (boxVolume() * aewald * aewald);
+}
+
 // Adds -f pi Q^2 / (2 V aewald^2) and its lambda derivatives, given Q and dQ/dl,
 // into one thread's slot of the term's buffers. Tinker counts the correction as
 // an interaction whenever the cell is charged (empole3.f, echarge3.f). The term
@@ -938,8 +1014,7 @@ static void ewaldBackground(int vers, int dlvers, double q, double dq, double de
    if (not(do_e and charged) and not do_v and not do_dl1 and not do_dl2 and not do_dv)
       return;
 
-   const double f = electric / dielec;
-   const double fterm = -0.5 * f * pi / (boxVolume() * aewald * aewald);
+   const double fterm = ewaldBackgroundCoef(aewald);
    const double e = fterm * q * q;
    const double dl1 = 2 * fterm * q * dq * deldl;
    const double dl2 = 2 * fterm * (dq * dq * deldl * deldl + q * dq * d2eldl2);
@@ -949,8 +1024,39 @@ static void ewaldBackground(int vers, int dlvers, double q, double dq, double de
       do_dl2 ? dl2b : nullptr, do_v ? vb : nullptr, do_dv ? dvb : nullptr, count, e, dl1, dl2);
 }
 
-void empoleEwaldBackground(int vers, int dlvers)
+TINKER_FVOID2(acc1, cu1, ewaldBackgroundFlux, fixed*, const int*, GrpScale, real, real, real, CountBuffer,
+   EnergyBuffer, EnergyBuffer, EnergyBuffer, VirialBuffer, VirialBuffer, real*, real*);
+
+// The background correction when a flux bond or angle joining atoms of different
+// scales moves the net charge with the geometry. Q is summed on the device from
+// the monopoles the flux was just added to: scaled on the fly, each by its
+// group's scale, with dQ/dl alongside; otherwise, free energy perturbation
+// included, as they stand.
+static void empoleEwaldBackgroundFlux(int vers, int dlvers, real aewald)
 {
+   const bool do_e = vers & calc::energy;
+   const int* grp = use_emast ? emGroup() : nullptr;
+   const real fterm = ewaldBackgroundCoef(aewald);
+   CountBuffer nc = (vers & calc::analyz) ? nem : nullptr;
+   EnergyBuffer eb = do_e ? em : nullptr;
+   EnergyBuffer dl1b = (do_e and grp and (dlvers & calc::energy_dlmda1)) ? demdl_buf : nullptr;
+   EnergyBuffer dl2b = (do_e and grp and (dlvers & calc::energy_dlmda2)) ? d2emdl2_buf : nullptr;
+   VirialBuffer vb = (vers & calc::virial) ? vir_em : nullptr;
+   VirialBuffer dvb = (grp and (dlvers & calc::virial_dlmda)) ? dvirdl_buf : nullptr;
+   real* p = (vers & calc::grad) ? pot : nullptr;
+   real* dlp = (grp and (dlvers & calc::grad_dlmda)) ? dlpot : nullptr;
+   TINKER_FCALL2(acc1, cu1, ewaldBackgroundFlux, pole_net_flux, grp, grpScale(elam), fterm, deldlmda, d2eldlmda2,
+      nc, eb, dl1b, dl2b, vb, dvb, p, dlp);
+}
+
+void empoleEwaldBackground(int vers, int dlvers, bool cflux)
+{
+   const real aewald = epme_unit->aewald;
+   if (cflux and (use_emast ? cfluxCrossesGroups() : cfluxMovesNetCharge())) {
+      empoleEwaldBackgroundFlux(vers, dlvers, aewald);
+      return;
+   }
+
    double q = pole_net[0], dq = 0;
    if (pole_net_orig) {
       const GrpScale esc = grpScale(elam);
@@ -961,7 +1067,7 @@ void empoleEwaldBackground(int vers, int dlvers)
       }
    }
    ewaldBackground(
-      vers, dlvers, q, dq, deldlmda, d2eldlmda2, epme_unit->aewald, nem, em, demdl_buf, d2emdl2_buf, vir_em, dvirdl_buf);
+      vers, dlvers, q, dq, deldlmda, d2eldlmda2, aewald, nem, em, demdl_buf, d2emdl2_buf, vir_em, dvirdl_buf);
 }
 
 void echargeEwaldBackground(int vers)

@@ -1,12 +1,16 @@
 #include "ff/atom.h"
+#include "ff/dlmda.h"
 #include "ff/echarge.h"
 #include "ff/image.h"
+#include "ff/modamoeba.h"
 #include "ff/nblist.h"
 #include "ff/pme.h"
 #include "ff/switch.h"
+#include "math/libfunc.h"
 #include "math/switch.h"
 #include "seq/bsplgen.h"
 #include "seq/pair_charge.h"
+#include "tool/darray.h"
 #include "tool/gpucard.h"
 #include <tinker/detail/extfld.hh>
 
@@ -451,6 +455,36 @@ void ewaldBackgroundAdd_acc(CountBuffer nc, EnergyBuffer eb, EnergyBuffer dl1b, 
          atomic_add(-e, (real)0, (real)0, -e, (real)0, -e, vb, 0);
       if (dvb)
          atomic_add(-dl1, (real)0, (real)0, -dl1, (real)0, -dl1, dvb, 0);
+   }
+}
+
+// The background correction of a net charge that charge flux moves with the
+// geometry, as ewaldBackgroundFlux_cu adds it; only the multipole lambda
+// derivative, which is CUDA only, passes lambda groups.
+void ewaldBackgroundFlux_acc(fixed* qnet, const int* grp, GrpScale esc, real fterm, real deldl, real d2eldl2,
+   CountBuffer nc, EnergyBuffer eb, EnergyBuffer dl1b, EnergyBuffer dl2b, VirialBuffer vb, VirialBuffer dvb,
+   real* pot, real* dlpot)
+{
+   darray::zero(g::q0, 2, qnet);
+   #pragma acc parallel loop independent async deviceptr(qnet,rpole)
+   for (int i = 0; i < n; ++i)
+      atomic_add(rpole[i][MPL_PME_0], qnet, 0);
+   #pragma acc serial async deviceptr(qnet,nc,eb,vb)
+   {
+      real q = fixedTo<real>(qnet[0]);
+      real e = fterm * q * q;
+      bool charged = REAL_ABS(q) > (real)1.0e-10;
+      if (nc and charged)
+         atomic_add(1, nc, 0);
+      if (eb)
+         atomic_add(e, eb, 0);
+      if (vb)
+         atomic_add(-e, (real)0, (real)0, -e, (real)0, -e, vb, 0);
+   }
+   if (pot) {
+      #pragma acc parallel loop independent async deviceptr(qnet,pot)
+      for (int i = 0; i < n; ++i)
+         pot[i] += 2 * fterm * fixedTo<real>(qnet[0]);
    }
 }
 }

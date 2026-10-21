@@ -22,6 +22,10 @@ struct Fixture
    double dtol = 1.0e-4; ///< Tolerance of the analytical derivatives in double precision.
    const char* xyz = "testlmda/water2.xyz";         ///< Coordinates, under test/file.
    const char* prm = "commit_6fe8e913/water03.prm"; ///< Parameters, under test/file.
+   /// Tolerance of the analytical second derivative in mixed precision. A
+   /// steep staged map squares its slope into d2E/dL2, and large terms that
+   /// cancel leave it 1e-3 to 2e-3 off there; a double build reproduces it.
+   double d2tol = 1.0e-3;
 };
 
 const Fixture kFixtures[] = {
@@ -52,6 +56,54 @@ const Fixture kFixtures[] = {
    {"25_ionwat_ewald_nlist_l05", 1.0e-2, 1.0, 1.0e-4, "testlmda/ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
    {"26_ionwat_pol_ewald_l05", 1.0e-2, 1.0, 1.0e-4, "testlmda/ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
    {"27_water_rels_2stg_l075", 4.0e-3, 3.0},
+   // charge penetration multipoles, with charge flux but for 40 (test_testlmda.f)
+   {"28_hipwat_flux_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"29_hipwat_flux_ewald_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"30_hipwat_flux_ewald_nlist_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"31_hipwat_flux_ewald_lin_l00", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"32_aptetra_flux_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/aptetra.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"33_aptetra_flux_ewald_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/aptetra.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"34_aptetra_flux_ewald_nlist_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/aptetra.xyz",
+      "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"35_aptetra_flux_ewald_lin_l00", 1.0e-2, 1.0, 1.0e-4, "testlmda/aptetra.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"36_apgas_flux_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"37_apgas_cross_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"38_apgas_cross_lin_l00", 1.0e-2, 1.0, 1.0e-4, "testlmda/apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"39_apgas_cross_ewald_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"40_hipmix_ewald_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"58_hipwat_flux_mlist_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   // polarization with charge penetration, in single topology
+   {"41_hipwat_pol_st_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"42_hipwat_pol_ewald_st_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"43_hipwat_pol_ewald_nlist_st_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"44_hipwat_pol_ewald_lin_st_l00", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"46_aptetra_pol_st_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/aptetra.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"47_aptetra_pol_ewald_st_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/aptetra.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"48_aptetra_pol_ewald_nlist_st_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/aptetra.xyz",
+      "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"49_aptetra_pol_ewald_lin_st_l00", 1.0e-2, 1.0, 1.0e-4, "testlmda/aptetra.xyz",
+      "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"51_apgas_pol_st_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"53_hipmix_pol_ewald_st_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"57_hipwat_pol_split_st_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   // in dual topology, and relative legs; the AMOEBA+ legs take their
+   // derivatives across a 0.3 wide stage, whose slope carries the polar-eps
+   // convergence of each endpoint's dipoles into dF/dL at about 4e-4
+   {"45_hipwat_pol_ewald_dt_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"50_aptetra_pol_ewald_dt_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/aptetra.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"52_apgas_pol_ewald_dt_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"54_hipmix_pol_ewald_dt_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"56_hipwat_pol_split_dt_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm", 4.0e-3},
+   {"59_aptetra_pol_mlist_dt_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/aptetra.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"60_aptetra_rel_lig1_l085", 4.0e-3, 3.0, 6.0e-4, "testlmda/aptetra.xyz", "commit_152ecec0/AMOEBAplus_Org.prm",
+      4.0e-3},
+   {"61_aptetra_rel_lig2_l015", 4.0e-3, 3.0, 6.0e-4, "testlmda/aptetra.xyz", "commit_152ecec0/AMOEBAplus_Org.prm",
+      4.0e-3},
+   {"62_aptetra_rel_cross_l085", 4.0e-3, 3.0, 6.0e-4, "testlmda/aptetra.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"63_hipwat_rel_lig1_ewald_l085", 4.0e-3, 3.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm", 4.0e-3},
+   // HIPPO polarization driven alone
+   {"64_hipwat_pol_only_st_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"65_hipwat_pol_only_dt_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm"},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -117,13 +169,14 @@ void runFixture(const Fixture& fx, bool analyz = true)
    REQUIRE((int)ref.lgrad.size() >= n);
 
    const double eps_d = testGetEps(1.0e-3, fx.dtol);
+   const double eps_d2 = testGetEps(fx.d2tol, fx.dtol);
    // dV/dL is printed with 3 decimals in the references.
    const double eps_v = 1.0e-2;
 
    // ---- Analytical values against the reference ----------------------------
    for (int k = 0; k < nterm; ++k) {
       COMPARE_REALS(r.dedl[k], ref.dedl[k], eps_d);
-      COMPARE_REALS(r.d2edl2[k], ref.d2edl2[k], eps_d);
+      COMPARE_REALS(r.d2edl2[k], ref.d2edl2[k], eps_d2);
    }
    COMPARE_GRADIENT_FLAT(r.dfdl, ref.lgrad, eps_d);
    COMPARE_VIR9(r.dvirdl, ref.dvdl, eps_v);
@@ -172,6 +225,44 @@ TEST_CASE("TESTLMDA-24_ionwat_ewald_l05", "[ff][testlmda]") { runFixture(fx("24_
 TEST_CASE("TESTLMDA-25_ionwat_ewald_nlist_l05", "[ff][testlmda]") { runFixture(fx("25_ionwat_ewald_nlist_l05")); }
 TEST_CASE("TESTLMDA-26_ionwat_pol_ewald_l05", "[ff][testlmda]") { runFixture(fx("26_ionwat_pol_ewald_l05")); }
 TEST_CASE("TESTLMDA-27_water_rels_2stg_l075", "[ff][testlmda][rdt]") { runFixture(fx("27_water_rels_2stg_l075")); }
+TEST_CASE("TESTLMDA-28_hipwat_flux_l04", "[ff][testlmda][cflux]") { runFixture(fx("28_hipwat_flux_l04")); }
+TEST_CASE("TESTLMDA-29_hipwat_flux_ewald_l04", "[ff][testlmda][cflux]") { runFixture(fx("29_hipwat_flux_ewald_l04")); }
+TEST_CASE("TESTLMDA-30_hipwat_flux_ewald_nlist_l04", "[ff][testlmda][cflux]") { runFixture(fx("30_hipwat_flux_ewald_nlist_l04")); }
+TEST_CASE("TESTLMDA-31_hipwat_flux_ewald_lin_l00", "[ff][testlmda][cflux]") { runFixture(fx("31_hipwat_flux_ewald_lin_l00")); }
+TEST_CASE("TESTLMDA-32_aptetra_flux_l04", "[ff][testlmda][cflux]") { runFixture(fx("32_aptetra_flux_l04")); }
+TEST_CASE("TESTLMDA-33_aptetra_flux_ewald_l04", "[ff][testlmda][cflux]") { runFixture(fx("33_aptetra_flux_ewald_l04")); }
+TEST_CASE("TESTLMDA-34_aptetra_flux_ewald_nlist_l04", "[ff][testlmda][cflux]") { runFixture(fx("34_aptetra_flux_ewald_nlist_l04")); }
+TEST_CASE("TESTLMDA-35_aptetra_flux_ewald_lin_l00", "[ff][testlmda][cflux]") { runFixture(fx("35_aptetra_flux_ewald_lin_l00")); }
+TEST_CASE("TESTLMDA-36_apgas_flux_l04", "[ff][testlmda][cflux]") { runFixture(fx("36_apgas_flux_l04")); }
+TEST_CASE("TESTLMDA-37_apgas_cross_l04", "[ff][testlmda][cflux]") { runFixture(fx("37_apgas_cross_l04")); }
+TEST_CASE("TESTLMDA-38_apgas_cross_lin_l00", "[ff][testlmda][cflux]") { runFixture(fx("38_apgas_cross_lin_l00")); }
+TEST_CASE("TESTLMDA-39_apgas_cross_ewald_l04", "[ff][testlmda][cflux]") { runFixture(fx("39_apgas_cross_ewald_l04")); }
+TEST_CASE("TESTLMDA-40_hipmix_ewald_l04", "[ff][testlmda][cflux]") { runFixture(fx("40_hipmix_ewald_l04")); }
+TEST_CASE("TESTLMDA-58_hipwat_flux_mlist_l04", "[ff][testlmda][cflux]") { runFixture(fx("58_hipwat_flux_mlist_l04")); }
+TEST_CASE("TESTLMDA-41_hipwat_pol_st_l04", "[ff][testlmda][cflux][astpol]") { runFixture(fx("41_hipwat_pol_st_l04")); }
+TEST_CASE("TESTLMDA-42_hipwat_pol_ewald_st_l04", "[ff][testlmda][cflux][astpol]") { runFixture(fx("42_hipwat_pol_ewald_st_l04")); }
+TEST_CASE("TESTLMDA-43_hipwat_pol_ewald_nlist_st_l04", "[ff][testlmda][cflux][astpol]") { runFixture(fx("43_hipwat_pol_ewald_nlist_st_l04")); }
+TEST_CASE("TESTLMDA-44_hipwat_pol_ewald_lin_st_l00", "[ff][testlmda][cflux][astpol]") { runFixture(fx("44_hipwat_pol_ewald_lin_st_l00")); }
+TEST_CASE("TESTLMDA-46_aptetra_pol_st_l04", "[ff][testlmda][cflux][astpol]") { runFixture(fx("46_aptetra_pol_st_l04")); }
+TEST_CASE("TESTLMDA-47_aptetra_pol_ewald_st_l04", "[ff][testlmda][cflux][astpol]") { runFixture(fx("47_aptetra_pol_ewald_st_l04")); }
+TEST_CASE("TESTLMDA-48_aptetra_pol_ewald_nlist_st_l04", "[ff][testlmda][cflux][astpol]") { runFixture(fx("48_aptetra_pol_ewald_nlist_st_l04")); }
+TEST_CASE("TESTLMDA-49_aptetra_pol_ewald_lin_st_l00", "[ff][testlmda][cflux][astpol]") { runFixture(fx("49_aptetra_pol_ewald_lin_st_l00")); }
+TEST_CASE("TESTLMDA-51_apgas_pol_st_l04", "[ff][testlmda][cflux][astpol]") { runFixture(fx("51_apgas_pol_st_l04")); }
+TEST_CASE("TESTLMDA-53_hipmix_pol_ewald_st_l04", "[ff][testlmda][cflux][astpol]") { runFixture(fx("53_hipmix_pol_ewald_st_l04")); }
+TEST_CASE("TESTLMDA-57_hipwat_pol_split_st_l04", "[ff][testlmda][cflux][astpol]") { runFixture(fx("57_hipwat_pol_split_st_l04")); }
+TEST_CASE("TESTLMDA-45_hipwat_pol_ewald_dt_l04", "[ff][testlmda][cflux][adtpol]") { runFixture(fx("45_hipwat_pol_ewald_dt_l04")); }
+TEST_CASE("TESTLMDA-50_aptetra_pol_ewald_dt_l04", "[ff][testlmda][cflux][adtpol]") { runFixture(fx("50_aptetra_pol_ewald_dt_l04")); }
+TEST_CASE("TESTLMDA-52_apgas_pol_ewald_dt_l04", "[ff][testlmda][cflux][adtpol]") { runFixture(fx("52_apgas_pol_ewald_dt_l04")); }
+TEST_CASE("TESTLMDA-54_hipmix_pol_ewald_dt_l04", "[ff][testlmda][cflux][adtpol]") { runFixture(fx("54_hipmix_pol_ewald_dt_l04")); }
+TEST_CASE("TESTLMDA-56_hipwat_pol_split_dt_l04", "[ff][testlmda][cflux][adtpol]") { runFixture(fx("56_hipwat_pol_split_dt_l04")); }
+TEST_CASE("TESTLMDA-59_aptetra_pol_mlist_dt_l04", "[ff][testlmda][cflux][adtpol]") { runFixture(fx("59_aptetra_pol_mlist_dt_l04")); }
+TEST_CASE("TESTLMDA-60_aptetra_rel_lig1_l085", "[ff][testlmda][cflux][rdt]") { runFixture(fx("60_aptetra_rel_lig1_l085")); }
+TEST_CASE("TESTLMDA-61_aptetra_rel_lig2_l015", "[ff][testlmda][cflux][rdt]") { runFixture(fx("61_aptetra_rel_lig2_l015")); }
+TEST_CASE("TESTLMDA-62_aptetra_rel_cross_l085", "[ff][testlmda][cflux][rdt]") { runFixture(fx("62_aptetra_rel_cross_l085")); }
+TEST_CASE("TESTLMDA-63_hipwat_rel_lig1_ewald_l085", "[ff][testlmda][cflux][rdt]") { runFixture(fx("63_hipwat_rel_lig1_ewald_l085")); }
+// HIPPO water polarization driven alone (test_testlmda.f cases 64, 65).
+TEST_CASE("TESTLMDA-64_hipwat_pol_only_st_l04", "[ff][testlmda][cflux][astpol]") { runFixture(fx("64_hipwat_pol_only_st_l04")); }
+TEST_CASE("TESTLMDA-65_hipwat_pol_only_dt_l04", "[ff][testlmda][cflux][adtpol]") { runFixture(fx("65_hipwat_pol_only_dt_l04")); }
 
 // Every fixture once more without analysis, as dynamics runs it.
 TEST_CASE("TESTLMDA-DYN-01_water_adt_l05", "[ff][testlmda][dyn]") { runFixture(fx("01_water_adt_l05"), false); }
@@ -201,4 +292,41 @@ TEST_CASE("TESTLMDA-DYN-24_ionwat_ewald_l05", "[ff][testlmda][dyn]") { runFixtur
 TEST_CASE("TESTLMDA-DYN-25_ionwat_ewald_nlist_l05", "[ff][testlmda][dyn]") { runFixture(fx("25_ionwat_ewald_nlist_l05"), false); }
 TEST_CASE("TESTLMDA-DYN-26_ionwat_pol_ewald_l05", "[ff][testlmda][dyn]") { runFixture(fx("26_ionwat_pol_ewald_l05"), false); }
 TEST_CASE("TESTLMDA-DYN-27_water_rels_2stg_l075", "[ff][testlmda][dyn][rdt]") { runFixture(fx("27_water_rels_2stg_l075"), false); }
+TEST_CASE("TESTLMDA-DYN-28_hipwat_flux_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("28_hipwat_flux_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-29_hipwat_flux_ewald_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("29_hipwat_flux_ewald_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-30_hipwat_flux_ewald_nlist_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("30_hipwat_flux_ewald_nlist_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-31_hipwat_flux_ewald_lin_l00", "[ff][testlmda][dyn][cflux]") { runFixture(fx("31_hipwat_flux_ewald_lin_l00"), false); }
+TEST_CASE("TESTLMDA-DYN-32_aptetra_flux_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("32_aptetra_flux_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-33_aptetra_flux_ewald_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("33_aptetra_flux_ewald_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-34_aptetra_flux_ewald_nlist_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("34_aptetra_flux_ewald_nlist_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-35_aptetra_flux_ewald_lin_l00", "[ff][testlmda][dyn][cflux]") { runFixture(fx("35_aptetra_flux_ewald_lin_l00"), false); }
+TEST_CASE("TESTLMDA-DYN-36_apgas_flux_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("36_apgas_flux_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-37_apgas_cross_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("37_apgas_cross_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-38_apgas_cross_lin_l00", "[ff][testlmda][dyn][cflux]") { runFixture(fx("38_apgas_cross_lin_l00"), false); }
+TEST_CASE("TESTLMDA-DYN-39_apgas_cross_ewald_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("39_apgas_cross_ewald_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-40_hipmix_ewald_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("40_hipmix_ewald_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-58_hipwat_flux_mlist_l04", "[ff][testlmda][dyn][cflux]") { runFixture(fx("58_hipwat_flux_mlist_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-41_hipwat_pol_st_l04", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("41_hipwat_pol_st_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-42_hipwat_pol_ewald_st_l04", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("42_hipwat_pol_ewald_st_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-43_hipwat_pol_ewald_nlist_st_l04", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("43_hipwat_pol_ewald_nlist_st_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-44_hipwat_pol_ewald_lin_st_l00", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("44_hipwat_pol_ewald_lin_st_l00"), false); }
+TEST_CASE("TESTLMDA-DYN-46_aptetra_pol_st_l04", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("46_aptetra_pol_st_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-47_aptetra_pol_ewald_st_l04", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("47_aptetra_pol_ewald_st_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-48_aptetra_pol_ewald_nlist_st_l04", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("48_aptetra_pol_ewald_nlist_st_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-49_aptetra_pol_ewald_lin_st_l00", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("49_aptetra_pol_ewald_lin_st_l00"), false); }
+TEST_CASE("TESTLMDA-DYN-51_apgas_pol_st_l04", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("51_apgas_pol_st_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-53_hipmix_pol_ewald_st_l04", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("53_hipmix_pol_ewald_st_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-57_hipwat_pol_split_st_l04", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("57_hipwat_pol_split_st_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-64_hipwat_pol_only_st_l04", "[ff][testlmda][dyn][cflux][astpol]") { runFixture(fx("64_hipwat_pol_only_st_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-65_hipwat_pol_only_dt_l04", "[ff][testlmda][dyn][cflux][adtpol]") { runFixture(fx("65_hipwat_pol_only_dt_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-45_hipwat_pol_ewald_dt_l04", "[ff][testlmda][dyn][cflux][adtpol]") { runFixture(fx("45_hipwat_pol_ewald_dt_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-50_aptetra_pol_ewald_dt_l04", "[ff][testlmda][dyn][cflux][adtpol]") { runFixture(fx("50_aptetra_pol_ewald_dt_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-52_apgas_pol_ewald_dt_l04", "[ff][testlmda][dyn][cflux][adtpol]") { runFixture(fx("52_apgas_pol_ewald_dt_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-54_hipmix_pol_ewald_dt_l04", "[ff][testlmda][dyn][cflux][adtpol]") { runFixture(fx("54_hipmix_pol_ewald_dt_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-56_hipwat_pol_split_dt_l04", "[ff][testlmda][dyn][cflux][adtpol]") { runFixture(fx("56_hipwat_pol_split_dt_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-59_aptetra_pol_mlist_dt_l04", "[ff][testlmda][dyn][cflux][adtpol]") { runFixture(fx("59_aptetra_pol_mlist_dt_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-60_aptetra_rel_lig1_l085", "[ff][testlmda][dyn][cflux][rdt]") { runFixture(fx("60_aptetra_rel_lig1_l085"), false); }
+TEST_CASE("TESTLMDA-DYN-61_aptetra_rel_lig2_l015", "[ff][testlmda][dyn][cflux][rdt]") { runFixture(fx("61_aptetra_rel_lig2_l015"), false); }
+TEST_CASE("TESTLMDA-DYN-62_aptetra_rel_cross_l085", "[ff][testlmda][dyn][cflux][rdt]") { runFixture(fx("62_aptetra_rel_cross_l085"), false); }
+TEST_CASE("TESTLMDA-DYN-63_hipwat_rel_lig1_ewald_l085", "[ff][testlmda][dyn][cflux][rdt]") { runFixture(fx("63_hipwat_rel_lig1_ewald_l085"), false); }
 #endif

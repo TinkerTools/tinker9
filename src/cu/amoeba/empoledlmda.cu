@@ -5,6 +5,7 @@
 #include "ff/elec.h"
 #include "ff/image.h"
 #include "ff/modamoeba.h"
+#include "ff/modhippo.h"
 #include "ff/pme.h"
 #include "seq/add.h"
 #include "seq/emrecip.h"
@@ -25,6 +26,7 @@ void empoleEwaldRecipDlmdaGeneric_cu1(int n, real f,                            
    const real (*restrict cphi)[10], const real (*restrict fphi)[20],                   //
    const real (*restrict dlcmp)[10], const real (*restrict dlfmp)[10],                 //
    const real (*restrict dlcphi)[10], const real (*restrict dlfphi)[20],               //
+   real* restrict pot, real* restrict dlpot,                                           //
    int nfft1, int nfft2, int nfft3, TINKER_IMAGE_PARAMS, real deldl, real d2eldl2)
 {
    constexpr bool do_e = Ver::e;
@@ -100,6 +102,14 @@ void empoleEwaldRecipDlmdaGeneric_cu1(int n, real f,                            
             atomic_add((t1[2] + t2[2]) * f * deldl, dltrqz, i);
          }
 
+         // the charge flux potentials of the scaled multipoles and of their
+         // lambda derivative (empole4.f:emrecip4)
+         if (pot)
+            atomic_add(f * cphi[i][0], pot, i);
+         if CONSTEXPR (do_gdl)
+            if (dlpot)
+               atomic_add(f * dlcphi[i][0], dlpot, i);
+
          if CONSTEXPR (do_v) {
             real v[6], v1[6], v2[6];
             emrecipVirialAtomI(i, cmp, cphi, v);
@@ -121,7 +131,7 @@ void empoleEwaldRecipDlmdaGeneric_cu1(int n, real f,                            
 // direct field from this same cmp, and the convolution virial is already in
 // vir_m, so only dlfmp and the per-atom work are left.
 template <class Ver>
-static void empoleEwaldRecipDlmdaGeneric_cu(bool reuse_pot)
+static void empoleEwaldRecipDlmdaGeneric_cu(bool reuse_pot, real* p, real* dlp)
 {
    constexpr bool do_v = Ver::v;
    // dE/dL = dlfmp . fphi needs only the ordinary grid; the lambda derivative
@@ -199,31 +209,41 @@ static void empoleEwaldRecipDlmdaGeneric_cu(bool reuse_pot)
       n, f, em, demdl_buf, d2emdl2_buf, vir_em, dvirdl_buf,           //
       demx, demy, demz, dfdlx, dfdly, dfdlz,                 //
       trqx, trqy, trqz, dltrqx, dltrqy, dltrqz,                       //
-      cmp, fmp, cphi, fphi, dlcmp, dlfmp, dlcphi, dlfphi,             //
+      cmp, fmp, cphi, fphi, dlcmp, dlfmp, dlcphi, dlfphi, p, dlp,     //
       nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS, deldlmda, d2eldlmda2);
+}
+
+static void empoleEwaldRecipDlmda_cu2(int vers, bool reuse_pot, real* p, real* dlp)
+{
+   if (vers == calc::v0)
+      empoleEwaldRecipDlmdaGeneric_cu<calc::V0>(reuse_pot, p, dlp);
+   else if (vers == calc::v1)
+      empoleEwaldRecipDlmdaGeneric_cu<calc::V1>(reuse_pot, p, dlp);
+   else if (vers == calc::v3)
+      empoleEwaldRecipDlmdaGeneric_cu<calc::V3>(reuse_pot, p, dlp);
+   else if (vers == calc::v4)
+      empoleEwaldRecipDlmdaGeneric_cu<calc::V4>(reuse_pot, p, dlp);
+   else if (vers == calc::v5)
+      empoleEwaldRecipDlmdaGeneric_cu<calc::V5>(reuse_pot, p, dlp);
+   else if (vers == calc::v6)
+      empoleEwaldRecipDlmdaGeneric_cu<calc::V6>(reuse_pot, p, dlp);
+   else if (vers == calc::v7)
+      empoleEwaldRecipDlmdaGeneric_cu<calc::V7>(reuse_pot, p, dlp);
+   else if (vers == calc::v8)
+      empoleEwaldRecipDlmdaGeneric_cu<calc::V8>(reuse_pot, p, dlp);
+   else if (vers == calc::v9)
+      empoleEwaldRecipDlmdaGeneric_cu<calc::V9>(reuse_pot, p, dlp);
+   else if (vers == calc::v10)
+      empoleEwaldRecipDlmdaGeneric_cu<calc::V10>(reuse_pot, p, dlp);
 }
 
 void empoleEwaldRecipDlmda_cu(int vers, bool reuse_pot)
 {
-   if (vers == calc::v0)
-      empoleEwaldRecipDlmdaGeneric_cu<calc::V0>(reuse_pot);
-   else if (vers == calc::v1)
-      empoleEwaldRecipDlmdaGeneric_cu<calc::V1>(reuse_pot);
-   else if (vers == calc::v3)
-      empoleEwaldRecipDlmdaGeneric_cu<calc::V3>(reuse_pot);
-   else if (vers == calc::v4)
-      empoleEwaldRecipDlmdaGeneric_cu<calc::V4>(reuse_pot);
-   else if (vers == calc::v5)
-      empoleEwaldRecipDlmdaGeneric_cu<calc::V5>(reuse_pot);
-   else if (vers == calc::v6)
-      empoleEwaldRecipDlmdaGeneric_cu<calc::V6>(reuse_pot);
-   else if (vers == calc::v7)
-      empoleEwaldRecipDlmdaGeneric_cu<calc::V7>(reuse_pot);
-   else if (vers == calc::v8)
-      empoleEwaldRecipDlmdaGeneric_cu<calc::V8>(reuse_pot);
-   else if (vers == calc::v9)
-      empoleEwaldRecipDlmdaGeneric_cu<calc::V9>(reuse_pot);
-   else if (vers == calc::v10)
-      empoleEwaldRecipDlmdaGeneric_cu<calc::V10>(reuse_pot);
+   empoleEwaldRecipDlmda_cu2(vers, reuse_pot, nullptr, nullptr);
+}
+
+void empoleChgpenEwaldRecipDlmda_cu(int vers, int use_cf)
+{
+   empoleEwaldRecipDlmda_cu2(vers, false, use_cf ? pot : nullptr, use_cf ? dlpot : nullptr);
 }
 }

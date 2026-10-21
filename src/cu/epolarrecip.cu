@@ -599,7 +599,8 @@ void epolarEwaldRecipSelfDt_cu(int vers, const real (*uind)[3], const real (*uin
 
 namespace tinker {
 template <class Ver>
-static void epolarChgpenEwaldRecipSelf_cu1(const real (*gpu_uind)[3], bool use_cf)
+static void epolarChgpenEwaldRecipSelf_cu1(const real (*gpu_uind)[3], bool use_cf, EnergyBuffer out_e,
+   VirialBuffer out_v, grad_prec* out_gx, grad_prec* out_gy, grad_prec* out_gz, const RecipDt& dt)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -619,7 +620,7 @@ static void epolarChgpenEwaldRecipSelf_cu1(const real (*gpu_uind)[3], bool use_c
 
    cuindToFuind(pu, gpu_uind, gpu_uind, fuind, fuind);
    if CONSTEXPR (do_e) {
-      launch_k1b(g::s0, n, epolarEwaldRecipSelfEp_cu, n, ep, f, fuind, fphi, RecipDt{});
+      launch_k1b(g::s0, n, epolarEwaldRecipSelfEp_cu, n, out_e, f, fuind, fphi, dt);
    }
    gridUind(pu, fuind, fuind);
    fftfront(pu);
@@ -632,9 +633,9 @@ static void epolarChgpenEwaldRecipSelf_cu1(const real (*gpu_uind)[3], bool use_c
 
    if CONSTEXPR (do_g) {
       launch_k1s(g::s0, n, epolarEwaldRecipSelfDep_cu,      //
-         n, f, depx, depy, depz,                            //
+         n, f, out_gx, out_gy, out_gz,                      //
          fmp, fphi, fuind, nullptr, fphid, nullptr, fphidp, //
-         nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS, RecipDt{});
+         nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS, dt);
    }
 
    // set the potential to be the induced dipole average
@@ -653,22 +654,22 @@ static void epolarChgpenEwaldRecipSelf_cu1(const real (*gpu_uind)[3], bool use_c
 
    real term = f * aewald * aewald * aewald * 4 / 3 / sqrtpi;
    real fterm = -2 * f * aewald * aewald * aewald / 3 / sqrtpi;
-   launch_k1b(g::s0, n, epolarEwaldRecipSelfEptrq_cu<do_e, do_g, do_a>,    //
-      n, term, fterm, nep, ep, trqx, trqy, trqz, (use_cf ? pot : nullptr), //
-      rpole, cmp, gpu_uind, nullptr, cphidp, RecipDt{});
+   launch_k1b(g::s0, n, epolarEwaldRecipSelfEptrq_cu<do_e, do_g, do_a>,       //
+      n, term, fterm, nep, out_e, trqx, trqy, trqz, (use_cf ? pot : nullptr), //
+      rpole, cmp, gpu_uind, nullptr, cphidp, dt);
 
    // recip virial
 
    if CONSTEXPR (do_v) {
       auto size = bufferSize() * VirialBufferTraits::value;
-      launch_k1s(g::s0, size, epolarEwaldRecipSelfVirial_cu1, size, vir_ep, vir_m, RecipDt{});
+      launch_k1s(g::s0, size, epolarEwaldRecipSelfVirial_cu1, size, out_v, vir_m, dt);
 
       darray::scale(g::q0, n, f, cphi, fphid);
 
       launch_k1b(g::s0, n, epolarEwaldRecipSelfVirial_cu2,     //
-         n, vir_ep,                                            //
+         n, out_v,                                             //
          cmp, gpu_uind, nullptr, fphid, nullptr, cphi, cphidp, //
-         nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS, RecipDt{});
+         nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS, dt);
 
       // qgrip: pvu_qgrid
       const PMEUnit pvu = pvpme_unit;
@@ -692,31 +693,51 @@ static void epolarChgpenEwaldRecipSelf_cu1(const real (*gpu_uind)[3], bool use_c
       real box_volume = boxVolume();
       real volterm = pi * box_volume;
       launch_k1b(g::s0, ntot, epolarEwaldRecipSelfVirial_cu5, //
-         ntot, nff, vir_ep, f, volterm, pterm, d, p,          //
-         nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS, RecipDt{});
+         ntot, nff, out_v, f, volterm, pterm, d, p,           //
+         nfft1, nfft2, nfft3, TINKER_IMAGE_ARGS, dt);
    }
 }
 
-void epolarChgpenEwaldRecipSelf_cu(int vers, int use_cf, const real (*uind)[3])
+static void epolarChgpenEwaldRecipSelfVers_cu(int vers, int use_cf, const real (*uind)[3], EnergyBuffer out_e,
+   VirialBuffer out_v, grad_prec* out_gx, grad_prec* out_gy, grad_prec* out_gz, const RecipDt& dt)
 {
    if (vers == calc::v0) {
       if (use_cf)
          assert(false && "CFLX must compute gradient.");
       else
-         epolarChgpenEwaldRecipSelf_cu1<calc::V0>(uind, false);
+         epolarChgpenEwaldRecipSelf_cu1<calc::V0>(uind, false, out_e, out_v, out_gx, out_gy, out_gz, dt);
    } else if (vers == calc::v1) {
-      epolarChgpenEwaldRecipSelf_cu1<calc::V1>(uind, use_cf);
+      epolarChgpenEwaldRecipSelf_cu1<calc::V1>(uind, use_cf, out_e, out_v, out_gx, out_gy, out_gz, dt);
    } else if (vers == calc::v3) {
       if (use_cf)
          assert(false && "CFLX must compute gradient.");
       else
-         epolarChgpenEwaldRecipSelf_cu1<calc::V3>(uind, false);
+         epolarChgpenEwaldRecipSelf_cu1<calc::V3>(uind, false, out_e, out_v, out_gx, out_gy, out_gz, dt);
    } else if (vers == calc::v4) {
-      epolarChgpenEwaldRecipSelf_cu1<calc::V4>(uind, use_cf);
+      epolarChgpenEwaldRecipSelf_cu1<calc::V4>(uind, use_cf, out_e, out_v, out_gx, out_gy, out_gz, dt);
    } else if (vers == calc::v5) {
-      epolarChgpenEwaldRecipSelf_cu1<calc::V5>(uind, use_cf);
+      epolarChgpenEwaldRecipSelf_cu1<calc::V5>(uind, use_cf, out_e, out_v, out_gx, out_gy, out_gz, dt);
    } else if (vers == calc::v6) {
-      epolarChgpenEwaldRecipSelf_cu1<calc::V6>(uind, use_cf);
+      epolarChgpenEwaldRecipSelf_cu1<calc::V6>(uind, use_cf, out_e, out_v, out_gx, out_gy, out_gz, dt);
    }
+}
+
+// One dual topology pass of the models with one set of induced dipoles, as
+// epolarEwaldRecipSelfDt_cu maps it onto the plain versions.
+void epolarChgpenEwaldRecipSelfDt_cu(int vers, int use_cf, const real (*uind)[3], EnergyBuffer out_e,
+   VirialBuffer out_v, grad_prec* out_gx, grad_prec* out_gy, grad_prec* out_gz, const RecipDt& dt)
+{
+   int base = vers & ~calc::dlmda;
+   if (epolarEnergyFromDotProd(vers)) {
+      if (not(vers & calc::grad))
+         return;
+      base = (vers & calc::virial) ? calc::v6 : calc::v5;
+   }
+   epolarChgpenEwaldRecipSelfVers_cu(base, use_cf, uind, out_e, out_v, out_gx, out_gy, out_gz, dt);
+}
+
+void epolarChgpenEwaldRecipSelf_cu(int vers, int use_cf, const real (*uind)[3])
+{
+   epolarChgpenEwaldRecipSelfVers_cu(vers, use_cf, uind, ep, vir_ep, depx, depy, depz, RecipDt{});
 }
 }

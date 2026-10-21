@@ -7,6 +7,7 @@
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/evdw.h"
+#include "ff/hippo/cflux.h"
 #include "ff/modamoeba.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
@@ -229,6 +230,17 @@ void termsAplus()
    REQUIRE(use(Potent::CHGFLX));
 }
 
+// A single AMOEBA+ water hydrogen whose flux bond reaches into the environment:
+// the flux moves the net charge, and the background term with it.
+void termsAplusCross()
+{
+   termsFep();
+   REQUIRE(mplpot::use_chgpen);
+   REQUIRE(use(Potent::CHGFLX));
+   REQUIRE_FALSE(use(Potent::POLAR));
+   REQUIRE(cfluxMovesNetCharge());
+}
+
 #define WATER "mutate/water2.xyz", "commit_6fe8e913/water03.prm"
 const std::vector<double> kAbs{0.0, 0.4, 0.6, 1.0};
 const std::vector<double> kDual{0.0, 0.5, 0.7, 1.0};
@@ -264,6 +276,8 @@ const Fixture kFixtures[] = {
    {"hippo", "fep/hippo.key", "dmso/dmso.xyz", "hippo/hippo19.prm", kFepHalf, "", kAbs, 2.0e-4, termsHippo},
    {"aplus", "fep/aplus.key", "aplus2022/tetramer.xyz", "aplus2022/AMOEBAplus_Org.prm", kFepHalf, "", kAbs,
       1.0e-5, termsAplus},
+   {"aplus-cross", "mutate/209_apgas_cross_ewald_nold_l04.key", "mutate/apgas.xyz",
+      "commit_152ecec0/AMOEBAplus_Org.prm", kFepHalf, "", kAbs, 1.0e-5, termsAplusCross},
 };
 
 const Fixture& fx(const char* tag)
@@ -683,6 +697,7 @@ TEST_CASE("FEP-trial-window-mpole", "[ff][fep]") { runTrial(fx("window-mpole"));
 TEST_CASE("FEP-trial-charge", "[ff][fep]") { runTrial(fx("charge")); }
 TEST_CASE("FEP-trial-hippo", "[ff][fep]") { runTrial(fx("hippo")); }
 TEST_CASE("FEP-trial-aplus", "[ff][fep]") { runTrial(fx("aplus")); }
+TEST_CASE("FEP-trial-aplus-cross", "[ff][fep][cflux]") { runTrial(fx("aplus-cross")); }
 
 TEST_CASE("FEP-trial-dyn-ast", "[ff][fep]") { runTrial(fx("ast"), kRcDyn); }
 TEST_CASE("FEP-trial-dyn-ast-ewald-ion", "[ff][fep]") { runTrial(fx("ast-ewald-ion"), kRcDyn); }
@@ -697,6 +712,7 @@ TEST_CASE("FEP-trial-dyn-window-mpole", "[ff][fep]") { runTrial(fx("window-mpole
 TEST_CASE("FEP-trial-dyn-charge", "[ff][fep]") { runTrial(fx("charge"), kRcDyn); }
 TEST_CASE("FEP-trial-dyn-hippo", "[ff][fep]") { runTrial(fx("hippo"), kRcDyn); }
 TEST_CASE("FEP-trial-dyn-aplus", "[ff][fep]") { runTrial(fx("aplus"), kRcDyn); }
+TEST_CASE("FEP-trial-dyn-aplus-cross", "[ff][fep][cflux]") { runTrial(fx("aplus-cross"), kRcDyn); }
 
 TEST_CASE("FEP-state-ast-ewald-ion", "[ff][fep]") { runState(fx("ast-ewald-ion")); }
 TEST_CASE("FEP-state-adt-ewald", "[ff][fep]") { runState(fx("adt-ewald")); }

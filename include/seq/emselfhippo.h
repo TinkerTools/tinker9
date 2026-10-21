@@ -2,6 +2,7 @@
 #include "ff/amoeba/mpole.h"
 #include "ff/energybuffer.h"
 #include "seq/add.h"
+#include "seq/emselfamoeba.h"
 #include <cmath>
 
 namespace tinker {
@@ -38,6 +39,45 @@ void empoleChgpenSelf_cu(CountBuffer restrict nem, EnergyBuffer restrict em, con
       if CONSTEXPR (CFLX) {
          real cfl_term = 2 * fterm * ci;
          atomic_add(cfl_term, pot, i);
+      }
+   }
+}
+
+template <class Ver, int CFLX>
+__global__
+void empoleChgpenSelfDlmda_cu(CountBuffer restrict nem, EnergyBuffer restrict em, EnergyBuffer restrict demdl,
+   EnergyBuffer restrict d2emdl2, const real (*restrict rpole)[10], const int* restrict grp, GrpScale esc,
+   real* restrict pot, real* restrict dlpot, int n, real f, real aewald, real deldl, real d2eldl2)
+{
+   constexpr bool do_a = Ver::a;
+   constexpr bool do_e = Ver::e;
+   constexpr bool do_dl1 = Ver::e_dlmda1;
+   constexpr bool do_dl2 = Ver::e_dlmda2;
+   constexpr bool do_gdl = Ver::g_dlmda;
+
+   real aewald_sq_2 = 2 * aewald * aewald;
+   real fterm = -f * aewald * 0.5f * (real)(M_2_SQRTPI);
+
+   for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
+      int offset = threadIdx.x + blockIdx.x * blockDim.x;
+      real s = esc.s[grp[i]], ds = esc.ds[grp[i]];
+      if CONSTEXPR (do_e) {
+         real e = empoleSelfEnergyAtomI(i, rpole, fterm, aewald_sq_2);
+         if (ds != 0) {
+            if CONSTEXPR (do_dl1)
+               atomic_add(2 * s * ds * deldl * e, demdl, offset);
+            if CONSTEXPR (do_dl2)
+               atomic_add((2 * ds * ds * deldl * deldl + 2 * s * ds * d2eldl2) * e, d2emdl2, offset);
+         }
+         atomic_add(s * s * e, em, offset);
+         if CONSTEXPR (do_a)
+            atomic_add(1, nem, offset);
+      }
+      if CONSTEXPR (CFLX) {
+         real cfl_term = 2 * fterm * rpole[i][MPL_PME_0];
+         atomic_add(s * cfl_term, pot, i);
+         if CONSTEXPR (do_gdl)
+            atomic_add(ds * cfl_term, dlpot, i);
       }
    }
 }

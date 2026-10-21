@@ -32,8 +32,8 @@
 using namespace tinker;
 
 // The fixtures that need neither lambda derivatives nor dual topology (001-029,
-// most of 089-103, 180 and 182) run on the OpenACC build's own kernels too; the
-// rest of this file is CUDA only.
+// most of 089-103, 180, 182, 209 and 212) run on the OpenACC build's own kernels too;
+// the rest of this file is CUDA only.
 #if TINKER_GPULANG_CUDA || TINKER_GPULANG_OPENACC
 
 namespace {
@@ -284,6 +284,19 @@ const Fixture kFixtures[] = {
    {"199_water_rels3_gap_l025", "water2", true, true, true, true, "086_water_rels_ye_l030"},
    {"200_water_rels1_flip_l050", "water2", true, true, true, true, "085_water_rels_ye_l050"},
    {"201_water_rels1_lig2_exp_l015", "water2", true, true, true, true, "117_water_rels_ye_lig2_exp_l030", {}, 2.0},
+   {"202_hipwat_flux_ewald_l04", "hipwat", true, false, false, true},
+   {"203_apgas_cross_ewald_l04", "apgas", true, false, false, true},
+   {"204_aptetra_flux_l04", "aptetra", true, false, false, true},
+   {"205_hipwat_pol_ewald_st_l04", "hipwat", true, true, false, true},
+   {"206_hipwat_pol_ewald_dt_l04", "hipwat", true, true, false, true},
+   {"207_aptetra_pol_st_l04", "aptetra", true, true, false, true},
+   {"208_apgas_pol_ewald_dt_l04", "apgas", true, true, false, true},
+   // d2E/dL2 is 1.5e-3 off in mixed precision; a double build reproduces it
+   {"210_hipwat_rel_lig1_ewald_l085", "hipwat", true, true, false, true, nullptr, Tols().lmda2(3.0e-3, 1.0e-4)},
+   // the 0.3 wide stage carries polar-eps convergence into dF/dL at about 4e-4
+   {"211_aptetra_rel_lig2_l015", "aptetra", true, true, false, true, nullptr, Tols().grad(1.0e-3, 6.0e-4)},
+   {"209_apgas_cross_ewald_nold_l04", "apgas", true, false, false, false},
+   {"212_hipwat_pol_split_nold_l04", "hipwat", true, true, false, false},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -313,7 +326,8 @@ std::string systemDir(const std::string& base)
 // The water fixtures share water03; the SAMPL8 guest 3 carries its own force
 // field, plus the artificial vdw14 values fixture 148 loads as a second file.
 // The frames dimer and the ion cluster load amoeba09, chignolin and its mirror
-// amoebabio09, and trp-cage amoebapro13.
+// amoebabio09, trp-cage amoebapro13, the AMOEBA+ water dimer and alcohol
+// tetramer AMOEBAplus_Org, and the HIPPO water dimer water21.
 std::vector<std::unique_ptr<TestFile>> copyParams(const std::string& base)
 {
    std::vector<std::unique_ptr<TestFile>> files;
@@ -327,6 +341,10 @@ std::vector<std::unique_ptr<TestFile>> copyParams(const std::string& base)
       files.emplace_back(new TestFile(TINKER9_DIRSTR "/test/file/commit_ebe3611e/amoebabio09.prm"));
    } else if (base == "trpcage") {
       files.emplace_back(new TestFile(TINKER9_DIRSTR "/test/file/commit_291a85c1/amoebapro13.prm"));
+   } else if (base == "apgas" or base == "aptetra") {
+      files.emplace_back(new TestFile(TINKER9_DIRSTR "/test/file/commit_152ecec0/AMOEBAplus_Org.prm"));
+   } else if (base == "hipwat") {
+      files.emplace_back(new TestFile(TINKER9_DIRSTR "/test/file/commit_aad9340c/water21.prm"));
    } else {
       files.emplace_back(new TestFile(TINKER9_DIRSTR "/test/file/commit_6fe8e913/water03.prm"));
    }
@@ -1048,6 +1066,16 @@ TEST_CASE("MUTATE-101_water_lmda_ev_l06", "[ff][mutate][lmdadrv]") { runFixture(
 TEST_CASE("MUTATE-180_wat2ovl_m00v00", "[ff][mutate][overlap]") { runFixture(fx("180_wat2ovl_m00v00")); }
 TEST_CASE("MUTATE-182_wat2near_m00v00", "[ff][mutate][overlap]") { runFixture(fx("182_wat2near_m00v00")); }
 
+// A single AMOEBA+ water hydrogen whose charge flux bond reaches into the
+// environment (test_mutate.f: test_mutate_cflux). Only its own flux change is
+// scaled, so the net charge, and with it the Ewald background term, follows the
+// geometry.
+TEST_CASE("MUTATE-209_apgas_cross_ewald_nold_l04", "[ff][mutate][cflux]") { runFixture(fx("209_apgas_cross_ewald_nold_l04")); }
+// HIPPO water at different electrostatic and polarization lambdas with no
+// lambda derivative (test_mutate.f: test_mutate_cpol): polarization rescales
+// the multipoles, charge penetration and flux scale to the polarization lambda.
+TEST_CASE("MUTATE-212_hipwat_pol_split_nold_l04", "[ff][mutate][cflux]") { runFixture(fx("212_hipwat_pol_split_nold_l04")); }
+
 #if TINKER_GPULANG_CUDA
 TEST_CASE("MUTATE-030_water_ast_ye_m10", "[ff][mutate][ast]") { runFixture(fx("030_water_ast_ye_m10")); }
 TEST_CASE("MUTATE-031_water_ast_ne_m10", "[ff][mutate][ast]") { runFixture(fx("031_water_ast_ne_m10")); }
@@ -1209,6 +1237,64 @@ TEST_CASE("MUTATE-199_water_rels3_gap_l025", "[ff][mutate][rels][relstg]") { run
 TEST_CASE("MUTATE-200_water_rels1_flip_l050", "[ff][mutate][rels][relstg]") { runFixture(fx("200_water_rels1_flip_l050")); }
 TEST_CASE("MUTATE-201_water_rels1_lig2_exp_l015", "[ff][mutate][rels][relstg]") { runFixture(fx("201_water_rels1_lig2_exp_l015")); }
 
+// Multipole lambda derivatives with charge penetration and charge flux
+// (test_mutate.f: test_mutate_cflux): a HIPPO water pair under Ewald, a single
+// AMOEBA+ water hydrogen whose flux bond reaches into the environment, and an
+// AMOEBA+ ethanol in an alcohol tetramer without a cutoff.
+TEST_CASE("MUTATE-202_hipwat_flux_ewald_l04", "[ff][mutate][cflux]") { runFixture(fx("202_hipwat_flux_ewald_l04")); }
+TEST_CASE("MUTATE-203_apgas_cross_ewald_l04", "[ff][mutate][cflux]") { runFixture(fx("203_apgas_cross_ewald_l04")); }
+TEST_CASE("MUTATE-204_aptetra_flux_l04", "[ff][mutate][cflux]") { runFixture(fx("204_aptetra_flux_l04")); }
+// Single topology polarization lambda derivatives with charge penetration and
+// charge flux (test_mutate.f: test_mutate_cpol): a HIPPO water pair under Ewald
+// and an AMOEBA+ ethanol in an alcohol tetramer.
+TEST_CASE("MUTATE-205_hipwat_pol_ewald_st_l04", "[ff][mutate][cflux][astpol]") { runFixture(fx("205_hipwat_pol_ewald_st_l04")); }
+TEST_CASE("MUTATE-207_aptetra_pol_st_l04", "[ff][mutate][cflux][astpol]") { runFixture(fx("207_aptetra_pol_st_l04")); }
+// The same in dual topology: the HIPPO water pair, and a single AMOEBA+ water
+// hydrogen whose flux bond reaches into the environment.
+TEST_CASE("MUTATE-206_hipwat_pol_ewald_dt_l04", "[ff][mutate][cflux][adtpol]") { runFixture(fx("206_hipwat_pol_ewald_dt_l04")); }
+TEST_CASE("MUTATE-208_apgas_pol_ewald_dt_l04", "[ff][mutate][cflux][adtpol]") { runFixture(fx("208_apgas_pol_ewald_dt_l04")); }
+// Relative legs with charge penetration and charge flux (test_mutate.f:
+// test_mutate_crel): HIPPO water 1 charging into water 2 under Ewald on the
+// first ligand stage, and an AMOEBA+ methanol into ethanol on the second.
+TEST_CASE("MUTATE-210_hipwat_rel_lig1_ewald_l085", "[ff][mutate][cflux][rels]") { runFixture(fx("210_hipwat_rel_lig1_ewald_l085")); }
+TEST_CASE("MUTATE-211_aptetra_rel_lig2_l015", "[ff][mutate][cflux][rels]") { runFixture(fx("211_aptetra_rel_lig2_l015")); }
+
+// One state through both multipole paths: 203 scales the multipoles on the fly
+// for its lambda derivatives, 209 takes the ones scaled at setup. The flux of
+// the hydrogen's bond into the environment moves the net charge of each lambda
+// group, and with it the background term, by about 1e-4 kcal/mol here, which
+// is below what the references resolve; the two paths are held to each other.
+TEST_CASE("MUTATE-203-209-paths", "[ff][mutate][cflux]")
+{
+   struct Out
+   {
+      double e, v[9];
+      std::vector<double> g;
+   };
+   auto run = [](const char* name) {
+      Setup s(fx(name), calc::xyz | calc::mass | calc::vmask);
+      energy(calc::v1);
+      Out o;
+      o.e = esum;
+      for (int k = 0; k < 9; ++k)
+         o.v[k] = vir[k];
+      o.g.resize(3 * n);
+      copyGradient(calc::grad, o.g.data(), o.g.data() + n, o.g.data() + 2 * n);
+      s.session.end();
+      return o;
+   };
+   const Out a = run("203_apgas_cross_ewald_l04");
+   const Out b = run("209_apgas_cross_ewald_nold_l04");
+   double dg = 0, dv = 0;
+   for (size_t i = 0; i < a.g.size(); ++i)
+      dg = std::max(dg, std::fabs(a.g[i] - b.g[i]));
+   for (int k = 0; k < 9; ++k)
+      dv = std::max(dv, std::fabs(a.v[k] - b.v[k]));
+   REQUIRE(std::fabs(a.e - b.e) < testGetEps(2.0e-5, 1.0e-9));
+   REQUIRE(dg < testGetEps(1.0e-4, 1.0e-8));
+   REQUIRE(dv < testGetEps(1.0e-4, 1.0e-8));
+}
+
 // The fused kernel on its own. The ordinary case of each fixture asks for
 // interaction counts and so goes through the separate empole and epolar
 // kernels; these drop the counts, where emplar fuses the two. Both are checked
@@ -1364,6 +1450,15 @@ TEST_CASE("MUTATE-DYN-201_water_rels1_lig2_exp_l015", "[ff][mutate][dyn][relstg]
 TEST_CASE("MUTATE-DYN-TI-050_water_qnt_ast_l05", "[ff][mutate][dyn][ti]") { runFixture(fx("050_water_qnt_ast_l05"), Fuse::Auto, LmdaMode::ThermIntg); }
 TEST_CASE("MUTATE-DYN-TI-053_water_qnt_adt_l05", "[ff][mutate][dyn][ti]") { runFixture(fx("053_water_qnt_adt_l05"), Fuse::Auto, LmdaMode::ThermIntg); }
 TEST_CASE("MUTATE-DYN-TI-116_water_rels_ye_vdwm_exp_l050", "[ff][mutate][dyn][ti]") { runFixture(fx("116_water_rels_ye_vdwm_exp_l050"), Fuse::Auto, LmdaMode::ThermIntg); }
+TEST_CASE("MUTATE-DYN-202_hipwat_flux_ewald_l04", "[ff][mutate][dyn][cflux]") { runFixture(fx("202_hipwat_flux_ewald_l04"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-203_apgas_cross_ewald_l04", "[ff][mutate][dyn][cflux]") { runFixture(fx("203_apgas_cross_ewald_l04"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-204_aptetra_flux_l04", "[ff][mutate][dyn][cflux]") { runFixture(fx("204_aptetra_flux_l04"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-205_hipwat_pol_ewald_st_l04", "[ff][mutate][dyn][cflux][astpol]") { runFixture(fx("205_hipwat_pol_ewald_st_l04"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-207_aptetra_pol_st_l04", "[ff][mutate][dyn][cflux][astpol]") { runFixture(fx("207_aptetra_pol_st_l04"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-206_hipwat_pol_ewald_dt_l04", "[ff][mutate][dyn][cflux][adtpol]") { runFixture(fx("206_hipwat_pol_ewald_dt_l04"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-208_apgas_pol_ewald_dt_l04", "[ff][mutate][dyn][cflux][adtpol]") { runFixture(fx("208_apgas_pol_ewald_dt_l04"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-210_hipwat_rel_lig1_ewald_l085", "[ff][mutate][dyn][cflux][rels]") { runFixture(fx("210_hipwat_rel_lig1_ewald_l085"), Fuse::Auto); }
+TEST_CASE("MUTATE-DYN-211_aptetra_rel_lig2_l015", "[ff][mutate][dyn][cflux][rels]") { runFixture(fx("211_aptetra_rel_lig2_l015"), Fuse::Auto); }
 
 TEST_CASE("MUTATE-gate", "[ff][mutate][gate]") { runGateFixture(fx("083_water_rels_ye_l085")); }
 

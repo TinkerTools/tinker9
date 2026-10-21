@@ -1,3 +1,4 @@
+#include "ff/amoeba/mpolestate.h"
 #include "ff/cumodamoeba.h"
 #include "ff/image.h"
 #include "ff/modamoeba.h"
@@ -39,7 +40,7 @@ static void epolarChgpen_cu(const real (*uind)[3])
    int ngrid = gpuGridSize(BLOCK_DIM);
    epolarChgpen_cu1<Ver, ETYP, CFLX><<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nep, ep, vir_ep, depx,
       depy, depz, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl,
-      st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind, pot, rpole, pcore, pval, palpha, aewald, f);
+      st.iakpl, st.niak, st.iak, st.lst, ufld, dufld, uind, pot, rpole, mpoleCore(), mpoleVal(), palpha, aewald, f);
 
    // torque
    if CONSTEXPR (do_g) {

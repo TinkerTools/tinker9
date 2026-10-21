@@ -27,7 +27,9 @@ hippo/cflux.cu
 hippo/echgtrn.cu
 hippo/edisp.cu
 hippo/empole.cu
+hippo/empoledlmda.cu
 hippo/epolar.cu
+hippo/epolardt.cu
 hippo/erepel.cu
 hippo/expol.cu
 hippo/field.cu

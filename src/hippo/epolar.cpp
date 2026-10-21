@@ -21,11 +21,7 @@
 #include <tinker/detail/uprior.hh>
 
 namespace tinker {
-// The lambda polarScale() last scaled the polarizabilities to, and the ligand
-// it charged there; unset while they are as the Fortran setup left them.
-static bool polar_lmda_set = false;
-static double polar_lmda = 0;
-static RdtMask polar_lmda_mask = RdtMask::LIGA;
+static LmdaBuffer ep_dl;
 
 void epolarChgpenData(RcOp op)
 {
@@ -40,6 +36,8 @@ void epolarChgpenData(RcOp op)
 
    if (op & RcOp::DEALLOC) {
       darray::deallocate(polarity, polarity_inv);
+      darray::deallocate(polarityorig);
+      ep_dl.manage(op, rc_flag, use_pdlmda, &depdl_buf, &d2epdl2_buf, &depdl, &d2epdl2);
 
       if (rc_a) {
          bufferDeallocate(rc_flag, nep);
@@ -71,6 +69,12 @@ void epolarChgpenData(RcOp op)
 
    if (op & RcOp::ALLOC) {
       darray::allocate(n, &polarity, &polarity_inv);
+      // the polarization parameter state is built from the unscaled values
+      if (use_prst or use_epdt)
+         darray::allocate(n, &polarityorig);
+      else
+         polarityorig = nullptr;
+      ep_dl.manage(op, rc_flag, use_pdlmda, &depdl_buf, &d2epdl2_buf, &depdl, &d2epdl2);
 
       nep = nullptr;
       ep = eng_buf_elec;
@@ -126,33 +130,11 @@ void epolarChgpenData(RcOp op)
       }
       darray::copyin(g::q0, n, polarity, polar::polarity);
       darray::copyin(g::q0, n, polarity_inv, pinvbuf.data());
+      if (polarityorig)
+         darray::copyin(g::q0, n, polarityorig, dlmda::polarityorig);
       waitFor(g::q0);
-      polar_lmda_set = false;
+      epolarSetActiveMask();
    }
-}
-
-// Scales the polarizabilities of each atom group from their unscaled values to
-// the polarization lambda (mutate.f:altpolr), unless they already hold that
-// state. Only free energy perturbation moves them after setup, a few times per
-// sample, so they are scaled on the host.
-static void polarScale(double lmda)
-{
-   if (polar_lmda_set and lmda == polar_lmda and chargeMask() == polar_lmda_mask)
-      return;
-
-   const double polmin = 1.0e-16;
-   const GrpScale sc = grpScale(lmda);
-   std::vector<double> polbuf(n), pinvbuf(n);
-   for (int i = 0; i < n; ++i) {
-      polbuf[i] = sc.s[mutant::mutg[i]] * dlmda::polarityorig[i];
-      pinvbuf[i] = 1.0 / std::max(polbuf[i], polmin);
-   }
-   darray::copyin(g::q0, n, polarity, polbuf.data());
-   darray::copyin(g::q0, n, polarity_inv, pinvbuf.data());
-   waitFor(g::q0);
-   polar_lmda = lmda;
-   polar_lmda_mask = chargeMask();
-   polar_lmda_set = true;
 }
 }
 
@@ -242,37 +224,47 @@ void epolarChgpen(int vers)
       if (do_g)
          darray::zero(g::q0, n, depx, depy, depz);
    }
+   ep_dl.zero(vers);
 
-   // Free energy perturbation moves the polarization lambda between energy
-   // calls, and the solve is made with every parameter scaled to it; elsewhere
-   // they are the ones scaled at setup.
-   if (use_fep and use_prst) {
-      mpoleScale(plam, use_cf);
-      polarScale(plam);
-   }
-   if (use_cf)
-      alterchg();
-   mpoleInit(vers, use_emast);
-   if (use_cfgrad) {
-      cfluxZeroPot();
-   }
-   if (useEwald())
-      epolarChgpenEwald(vers, use_cfgrad);
-   else
-      epolarChgpenNonEwald(vers, use_cfgrad);
-   epolarPairwiseExtfield(vers, uind);
-   torque(vers, depx, depy, depz);
-   if (use_cfgrad)
-      dcflux(vers, depx, depy, depz, vir_ep);
-   if (polpot::use_expol and do_g)
-      dexpol(vers);
-   if (do_v) {
-      VirialBuffer u2 = vir_trq;
-      virial_prec v2[9];
-      virialReduce(v2, u2);
-      for (int iv = 0; iv < 9; ++iv) {
-         virial_ep[iv] += v2[iv];
-         virial_elec[iv] += v2[iv];
+   // Dual topology solves at each endpoint and weights them (epolar4.f:epolar4f).
+   if (use_epdt) {
+      epolarDtPasses(vers);
+   } else {
+      // Single topology solves with every parameter scaled to the polarization
+      // lambda, which the multipoles share only when the two lambdas agree
+      // (mutate.f:altepset), as epolar() does.
+      if (use_prst) {
+         mpoleScale(plam, use_cf);
+         polarState(coupledMask(), emGroup(), plam);
+      }
+      if (use_cf)
+         alterchg();
+      mpoleInit(vers, false);
+      if (use_cfgrad) {
+         cfluxZeroPot();
+      }
+      if (useEwald())
+         epolarChgpenEwald(vers, use_cfgrad);
+      else
+         epolarChgpenNonEwald(vers, use_cfgrad);
+      epolarPairwiseExtfield(vers, uind);
+      torque(vers, depx, depy, depz);
+      if (use_cfgrad)
+         dcflux(vers, depx, depy, depz, vir_ep);
+      if (polpot::use_expol and do_g)
+         dexpol(vers);
+      // the explicit plambda derivative of the stationary functional
+      // (epolar4.f:epolar4s), from the dipoles just solved
+      if (use_epast and (lmdaDerivVers(vers, pdlmdaActive()) & calc::energy_dlmda1))
+         epolarAstDeriv();
+      if (do_v) {
+         VirialBuffer u2 = vir_trq;
+         virial_prec v2[9];
+         virialReduce(v2, u2);
+         for (int iv = 0; iv < 9; ++iv) {
+            virial_ep[iv] += v2[iv];
+            virial_elec[iv] += v2[iv];
+         }
       }
    }
 
@@ -288,13 +280,14 @@ void epolarChgpen(int vers)
          virial_prec v1[9];
          virialReduce(v1, u1);
          for (int iv = 0; iv < 9; ++iv) {
-            virial_ep[iv] = v1[iv];
+            virial_ep[iv] += v1[iv];
             virial_elec[iv] += v1[iv];
          }
       }
       if (do_g)
          sumGradient(gx_elec, gy_elec, gz_elec, depx, depy, depz);
    }
+   ep_dl.flush(vers);
 }
 }
 

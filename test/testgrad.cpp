@@ -33,6 +33,7 @@ const Fixture kFixtures[] = {
    {"09_aplus_thole0", "aplus2022/tetramer.xyz", "aplus2022/AMOEBAplus_Org.prm"},
    {"10_aplus_polpair", "aplus2022/tetramer.xyz", "aplus2022/AMOEBAplus_Org.prm"},
    {"11_hippo_ast_l05", "dmso/dmso.xyz", "hippo/hippo19.prm", 2.0e-2},
+   {"12_hipwat_group_inter", "testgrad/hipwat.xyz", "commit_aad9340c/water21.prm"},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -95,6 +96,29 @@ void runFixture(const Fixture& fx)
 
    session.end();
 }
+
+// A fixture whose key tinker9 refuses as it sets up. The throw comes from
+// mpoleData(), before pmeData() opens anything a later case could trip on.
+void runRefusedFixture(const Fixture& fx)
+{
+   TestLmdaFlagReset lmdaReset;
+
+   const std::string files = TINKER9_DIRSTR "/test/file/";
+   const std::string xyzname = testBaseName(fx.xyz);
+   TestFile fxyz(files + fx.xyz, xyzname);
+   std::string keyname = std::string(fx.name) + ".key";
+   TestFile fkey(files + "testgrad/" + keyname, keyname);
+   TestFile fprm(files + fx.prm);
+
+   const char* argv[] = {"dummy", xyzname.c_str(), "-k", keyname.c_str()};
+   int argc = 4;
+   TestSession session(argc, argv);
+
+   FdTestOptions opts;
+   opts.analyt = true;
+   rc_flag = testgradFlags(opts);
+   REQUIRE_THROWS(session.init());
+}
 }
 
 TEST_CASE("TESTGRAD-01_water_ye_m10v10", "[ff][testgrad]") { runFixture(fx("01_water_ye_m10v10")); }
@@ -105,6 +129,9 @@ TEST_CASE("TESTGRAD-08_g3_nlist", "[ff][testgrad]") { runFixture(fx("08_g3_nlist
 TEST_CASE("TESTGRAD-09_aplus_thole0", "[ff][testgrad][aplus]") { runFixture(fx("09_aplus_thole0")); }
 TEST_CASE("TESTGRAD-10_aplus_polpair", "[ff][testgrad][aplus]") { runFixture(fx("10_aplus_polpair")); }
 TEST_CASE("TESTGRAD-11_hippo_ast_l05", "[ff][testgrad][hippo]") { runFixture(fx("11_hippo_ast_l05")); }
+// tinker9 applies no group weights to the multipoles, so it refuses the key
+// rather than compute the unweighted energy (test_testgrad.f cases 12 to 15).
+TEST_CASE("TESTGRAD-12_hipwat_group_inter", "[ff][testgrad][hippo]") { runRefusedFixture(fx("12_hipwat_group_inter")); }
 
 #if TINKER_GPULANG_CUDA
 TEST_CASE("TESTGRAD-04_water_ast_ye_l10", "[ff][testgrad][ast]") { runFixture(fx("04_water_ast_ye_l10")); }

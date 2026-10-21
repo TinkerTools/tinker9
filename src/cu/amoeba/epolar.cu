@@ -91,11 +91,12 @@ static void epolarAstDeriv_cu1(int n, real f, EnergyBuffer restrict depdl,
    }
 }
 
-void epolarAstDeriv_cu(EnergyBuffer depdl, const real (*dfd)[3], const real (*dfp)[3], //
-   const real (*f0d)[3], const real (*f0p)[3], const real (*ufd)[3], const real (*ufp)[3])
+void epolarAstDeriv_cu(EnergyBuffer depdl, const real (*ud)[3], const real (*up)[3], //
+   const real (*dfd)[3], const real (*dfp)[3], const real (*f0d)[3], const real (*f0p)[3],  //
+   const real (*ufd)[3], const real (*ufp)[3])
 {
    const real f = -0.5 * (electric / dielec) * dpldlmda;
-   launch_k1b(g::s0, n, epolarAstDeriv_cu1, n, f, depdl, uind, uinp, dfd, dfp, f0d, f0p, ufd, ufp,
+   launch_k1b(g::s0, n, epolarAstDeriv_cu1, n, f, depdl, ud, up, dfd, dfp, f0d, f0p, ufd, ufp,
       polarity_inv, polarityorig, emGroup(), grpScale(plam));
 }
 

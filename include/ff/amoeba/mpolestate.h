@@ -25,6 +25,10 @@ void mpoleUsePole();
 void mpoleUseOrig(bool build_dl);
 /// rpole from poleorig, with the sites outside \c mask zeroed, and cmp from it.
 void mpoleUseState(RdtMask mask, const int* group);
+/// The charge penetration core and valence charges that go with rpole: those
+/// of the masked endpoint after mpoleUseState(), the scaled ones otherwise.
+real* mpoleCore();
+real* mpoleVal();
 /// mpoleBegin(), then mpoleUseOrig() with \c do_dlmda or mpoleUsePole()
 /// without. dlcmp is built only if \c vers carries a lambda derivative and the
 /// electrostatic map has slope here (edlmdaActive()).

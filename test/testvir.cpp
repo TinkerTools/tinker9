@@ -27,6 +27,8 @@ const Fixture kFixtures[] = {
    {"05_mpole_ewald_nlist", "ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
    {"06_mpole_lambda_l05", "ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
    {"07_mpole_lambda_nlist_l05", "ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
+   {"08_mpole_cflux_lambda_l04", "apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"09_mpole_cflux_l04", "apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -87,10 +89,16 @@ TEST_CASE("TESTVIR-02_charge_ewald_lights", "[ff][testvir]") { runFixture(fx("02
 TEST_CASE("TESTVIR-03_charge_ewald_nlist", "[ff][testvir]") { runFixture(fx("03_charge_ewald_nlist")); }
 TEST_CASE("TESTVIR-04_mpole_ewald", "[ff][testvir]") { runFixture(fx("04_mpole_ewald")); }
 TEST_CASE("TESTVIR-05_mpole_ewald_nlist", "[ff][testvir]") { runFixture(fx("05_mpole_ewald_nlist")); }
+// The flux change of one AMOEBA+ water hydrogen is scaled, so the net charge
+// varies with geometry and the Ewald background term adds a charge flux virial.
+TEST_CASE("TESTVIR-09_mpole_cflux_l04", "[ff][testvir][cflux]") { runFixture(fx("09_mpole_cflux_l04")); }
 
 #if TINKER_GPULANG_CUDA
 TEST_CASE("TESTVIR-06_mpole_lambda_l05", "[ff][testvir][ast]") { runFixture(fx("06_mpole_lambda_l05")); }
 TEST_CASE("TESTVIR-07_mpole_lambda_nlist_l05", "[ff][testvir][ast]") { runFixture(fx("07_mpole_lambda_nlist_l05")); }
+// 09 through the multipole lambda derivative, where the background term's flux
+// virial comes from the net flux change of each lambda group.
+TEST_CASE("TESTVIR-08_mpole_cflux_lambda_l04", "[ff][testvir][ast][cflux]") { runFixture(fx("08_mpole_cflux_lambda_l04")); }
 #endif
 
 // tinker9 has no vacuum cell dipole term, so pmeData() refuses EWALD-BOUNDARY.
