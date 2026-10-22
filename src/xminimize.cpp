@@ -29,6 +29,8 @@ static void xMinimizeSetXx(int n, double* xx, const double* scale)
    TINKER_FCALL2(acc1, cu1, xMinimizeSetXxByPos, n, xx, scale);
 }
 
+TINKER_FVOID2(acc1, cu1, xMinimizeEnd);
+
 static double minimiz1(double* xx, double* g)
 {
    // convert optimization parameters to atomic coordinates
@@ -145,6 +147,7 @@ void xMinimize(int, char**)
    grx.clear();
    gry.clear();
    grz.clear();
+   TINKER_FCALL2(acc1, cu1, xMinimizeEnd);
 
    // write out the final function and gradient values
    auto o = stdout;
