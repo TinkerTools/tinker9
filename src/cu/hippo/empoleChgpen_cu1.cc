@@ -329,7 +329,8 @@ void empoleChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Ener
             txi = __shfl_sync(ALL_LANES, txi, ilane + 1);
             tyi = __shfl_sync(ALL_LANES, tyi, ilane + 1);
             tzi = __shfl_sync(ALL_LANES, tzi, ilane + 1);
-            poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
+            if CONSTEXPR (CFLX)
+               poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
          }
       }
 
@@ -485,7 +486,8 @@ void empoleChgpen_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Ener
             txi = __shfl_sync(ALL_LANES, txi, ilane + 1);
             tyi = __shfl_sync(ALL_LANES, tyi, ilane + 1);
             tzi = __shfl_sync(ALL_LANES, tzi, ilane + 1);
-            poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
+            if CONSTEXPR (CFLX)
+               poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
          }
       }
 

@@ -354,8 +354,6 @@ class Variable:
             v1 = '{}[threadIdx.x] = 0;'.format(self.name)
         else:
             v1 = '{} = 0;'.format(self.name)
-        if self.onlyif is not None:
-            v1 = 'if CONSTEXPR ({}) {}'.format(self.onlyif, v1)
         return v1
 
     def _add_to(self, dst, scale) -> str:
@@ -370,41 +368,40 @@ class Variable:
 
     def save(self) -> str:
         v1 = self._add_to(self.addto, self.scale)
-        braces = False
         if self.dlsink is not None:
             dst, scale, gate = self.dlsink
             v1 = v1 + 'if CONSTEXPR ({}) {}'.format(gate, self._add_to(dst, scale))
-            braces = True # two statements now
-        if self.onlyif is not None:
-            fmt = 'if CONSTEXPR ({}) {{{}}}' if braces else 'if CONSTEXPR ({}) {}'
-            v1 = fmt.format(self.onlyif, v1)
         return v1
+
+    def save_count(self) -> int:
+        # the dlsink adds a second statement
+        return 1 if self.dlsink is None else 2
 
     def init_exclude(self) -> str:
         rhs = self._load()
         if self.location == 'shared':
             if self.iork == 'i':
-                return '{}[klane] = {};'.format(self.name, rhs)
+                return ('{}[klane] = {};'.format(self.name, rhs))
             elif self.iork == 'k':
-                return '{}[threadIdx.x] = {};'.format(self.name, rhs)
+                return ('{}[threadIdx.x] = {};'.format(self.name, rhs))
         else:
-            return '{} = {};'.format(self.name, rhs)
+            return ('{} = {};'.format(self.name, rhs))
 
     def init_block(self) -> str:
         if self.readfrom in ['x', 'y', 'z']:
             if self.location == 'shared':
-                return '{}[threadIdx.x] = sorted[atom{}].{};'.format(self.name, self.iork, self.readfrom)
+                return ('{}[threadIdx.x] = sorted[atom{}].{};'.format(self.name, self.iork, self.readfrom))
             else:
-                return '{} = sorted[atom{}].{};'.format(self.name, self.iork, self.readfrom)
+                return ('{} = sorted[atom{}].{};'.format(self.name, self.iork, self.readfrom))
         else:
             if self.location == 'shared':
-                return '{}[threadIdx.x] = {};'.format(self.name, self._load())
+                return ('{}[threadIdx.x] = {};'.format(self.name, self._load()))
             else:
-                return '{} = {};'.format(self.name, self._load())
+                return ('{} = {};'.format(self.name, self._load()))
 
     def shuffle(self) -> str:
         if self.location == 'register':
-            return '{0:} = __shfl_sync(ALL_LANES, {0:}, ilane + 1);'.format(self.name)
+            return ('{0:} = __shfl_sync(ALL_LANES, {0:}, ilane + 1);'.format(self.name))
         else:
             raise ValueError('Cannot shuffle variables in the shared memory.')
 
@@ -457,52 +454,51 @@ class VariableDefinitions:
         s = s.replace(',;', ';')
         return s
 
-    def zero(self) -> str:
-        s = ''
-        for t in self.shared.keys():
-            for v in self.shared[t]:
-                s = s + v.zero()
+    def _all(self, shared=True):
+        vs = []
+        if shared:
+            for t in self.shared.keys():
+                vs = vs + self.shared[t]
         for t in self.register.keys():
-            for v in self.register[t]:
-                s = s + v.zero()
+            vs = vs + self.register[t]
+        return vs
+
+    @staticmethod
+    def _gated(items) -> str:
+        # items are (onlyif, statements, count). onlyif: elides the load and the
+        # shuffle along with zero and save; consecutive statements under the same
+        # condition share one block.
+        s = ''
+        i = 0
+        while i < len(items):
+            cond = items[i][0]
+            body, count = '', 0
+            while i < len(items) and items[i][0] == cond:
+                body = body + items[i][1]
+                count = count + items[i][2]
+                i = i + 1
+            if cond is None:
+                s = s + body
+            elif count > 1:
+                s = s + 'if CONSTEXPR ({}) {{{}}}'.format(cond, body)
+            else:
+                s = s + 'if CONSTEXPR ({}) {}'.format(cond, body)
         return s
+
+    def zero(self) -> str:
+        return self._gated([(v.onlyif, v.zero(), 1) for v in self._all()])
 
     def save(self) -> str:
-        s = ''
-        for t in self.shared.keys():
-            for v in self.shared[t]:
-                s = s + v.save()
-        for t in self.register.keys():
-            for v in self.register[t]:
-                s = s + v.save()
-        return s
+        return self._gated([(v.onlyif, v.save(), v.save_count()) for v in self._all()])
 
     def init_exclude(self) -> str:
-        s = ''
-        for t in self.shared.keys():
-            for v in self.shared[t]:
-                s = s + v.init_exclude()
-        for t in self.register.keys():
-            for v in self.register[t]:
-                s = s + v.init_exclude()
-        return s
+        return self._gated([(v.onlyif, v.init_exclude(), 1) for v in self._all()])
 
     def init_block(self) -> str:
-        s = ''
-        for t in self.shared.keys():
-            for v in self.shared[t]:
-                s = s + v.init_block()
-        for t in self.register.keys():
-            for v in self.register[t]:
-                s = s + v.init_block()
-        return s
+        return self._gated([(v.onlyif, v.init_block(), 1) for v in self._all()])
 
     def shuffle(self) -> str:
-        s = ''
-        for t in self.register.keys():
-            for v in self.register[t]:
-                s = s + v.shuffle()
-        return s
+        return self._gated([(v.onlyif, v.shuffle(), 1) for v in self._all(shared=False)])
 
     def ikreplace(self, code:str) -> str:
         for t in self.shared.keys():

@@ -87,12 +87,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          txi = 0;
          tyi = 0;
          tzi = 0;
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             dltxi = 0;
-         if CONSTEXPR (do_tdl)
             dltyi = 0;
-         if CONSTEXPR (do_tdl)
             dltzi = 0;
+         }
          if CONSTEXPR ((CFLX && do_g))
             poti = 0;
          if CONSTEXPR ((CFLX && do_gdl))
@@ -103,12 +102,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          txk = 0;
          tyk = 0;
          tzk = 0;
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             dltxk = 0;
-         if CONSTEXPR (do_tdl)
             dltyk = 0;
-         if CONSTEXPR (do_tdl)
             dltzk = 0;
+         }
          if CONSTEXPR ((CFLX && do_g))
             potk = 0;
          if CONSTEXPR ((CFLX && do_gdl))
@@ -296,12 +294,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          atomic_add(txi, trqx, i);
          atomic_add(tyi, trqy, i);
          atomic_add(tzi, trqz, i);
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             atomic_add(dltxi, dltrqx, i);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltyi, dltrqy, i);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltzi, dltrqz, i);
+         }
          if CONSTEXPR ((CFLX && do_g))
             atomic_add(poti, pot, i);
          if CONSTEXPR ((CFLX && do_gdl))
@@ -312,12 +309,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          atomic_add(txk, trqx, k);
          atomic_add(tyk, trqy, k);
          atomic_add(tzk, trqz, k);
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             atomic_add(dltxk, dltrqx, k);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltyk, dltrqy, k);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltzk, dltrqz, k);
+         }
          if CONSTEXPR ((CFLX && do_g))
             atomic_add(potk, pot, k);
          if CONSTEXPR ((CFLX && do_gdl))
@@ -342,12 +338,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          txi = 0;
          tyi = 0;
          tzi = 0;
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             dltxi = 0;
-         if CONSTEXPR (do_tdl)
             dltyi = 0;
-         if CONSTEXPR (do_tdl)
             dltzi = 0;
+         }
          if CONSTEXPR ((CFLX && do_g))
             poti = 0;
          if CONSTEXPR ((CFLX && do_gdl))
@@ -358,12 +353,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          txk = 0;
          tyk = 0;
          tzk = 0;
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             dltxk = 0;
-         if CONSTEXPR (do_tdl)
             dltyk = 0;
-         if CONSTEXPR (do_tdl)
             dltzk = 0;
+         }
          if CONSTEXPR ((CFLX && do_g))
             potk = 0;
          if CONSTEXPR ((CFLX && do_gdl))
@@ -565,11 +559,15 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
             txi = __shfl_sync(ALL_LANES, txi, ilane + 1);
             tyi = __shfl_sync(ALL_LANES, tyi, ilane + 1);
             tzi = __shfl_sync(ALL_LANES, tzi, ilane + 1);
-            dltxi = __shfl_sync(ALL_LANES, dltxi, ilane + 1);
-            dltyi = __shfl_sync(ALL_LANES, dltyi, ilane + 1);
-            dltzi = __shfl_sync(ALL_LANES, dltzi, ilane + 1);
-            poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
-            dlpoti = __shfl_sync(ALL_LANES, dlpoti, ilane + 1);
+            if CONSTEXPR (do_tdl) {
+               dltxi = __shfl_sync(ALL_LANES, dltxi, ilane + 1);
+               dltyi = __shfl_sync(ALL_LANES, dltyi, ilane + 1);
+               dltzi = __shfl_sync(ALL_LANES, dltzi, ilane + 1);
+            }
+            if CONSTEXPR ((CFLX && do_g))
+               poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
+            if CONSTEXPR ((CFLX && do_gdl))
+               dlpoti = __shfl_sync(ALL_LANES, dlpoti, ilane + 1);
          }
          if CONSTEXPR (do_gdl) {
             dgxi = __shfl_sync(ALL_LANES, dgxi, ilane + 1);
@@ -585,12 +583,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          atomic_add(txi, trqx, i);
          atomic_add(tyi, trqy, i);
          atomic_add(tzi, trqz, i);
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             atomic_add(dltxi, dltrqx, i);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltyi, dltrqy, i);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltzi, dltrqz, i);
+         }
          if CONSTEXPR ((CFLX && do_g))
             atomic_add(poti, pot, i);
          if CONSTEXPR ((CFLX && do_gdl))
@@ -601,12 +598,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          atomic_add(txk, trqx, k);
          atomic_add(tyk, trqy, k);
          atomic_add(tzk, trqz, k);
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             atomic_add(dltxk, dltrqx, k);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltyk, dltrqy, k);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltzk, dltrqz, k);
+         }
          if CONSTEXPR ((CFLX && do_g))
             atomic_add(potk, pot, k);
          if CONSTEXPR ((CFLX && do_gdl))
@@ -631,12 +627,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          txi = 0;
          tyi = 0;
          tzi = 0;
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             dltxi = 0;
-         if CONSTEXPR (do_tdl)
             dltyi = 0;
-         if CONSTEXPR (do_tdl)
             dltzi = 0;
+         }
          if CONSTEXPR ((CFLX && do_g))
             poti = 0;
          if CONSTEXPR ((CFLX && do_gdl))
@@ -647,12 +642,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          txk = 0;
          tyk = 0;
          tzk = 0;
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             dltxk = 0;
-         if CONSTEXPR (do_tdl)
             dltyk = 0;
-         if CONSTEXPR (do_tdl)
             dltzk = 0;
+         }
          if CONSTEXPR ((CFLX && do_g))
             potk = 0;
          if CONSTEXPR ((CFLX && do_gdl))
@@ -845,11 +839,15 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
             txi = __shfl_sync(ALL_LANES, txi, ilane + 1);
             tyi = __shfl_sync(ALL_LANES, tyi, ilane + 1);
             tzi = __shfl_sync(ALL_LANES, tzi, ilane + 1);
-            dltxi = __shfl_sync(ALL_LANES, dltxi, ilane + 1);
-            dltyi = __shfl_sync(ALL_LANES, dltyi, ilane + 1);
-            dltzi = __shfl_sync(ALL_LANES, dltzi, ilane + 1);
-            poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
-            dlpoti = __shfl_sync(ALL_LANES, dlpoti, ilane + 1);
+            if CONSTEXPR (do_tdl) {
+               dltxi = __shfl_sync(ALL_LANES, dltxi, ilane + 1);
+               dltyi = __shfl_sync(ALL_LANES, dltyi, ilane + 1);
+               dltzi = __shfl_sync(ALL_LANES, dltzi, ilane + 1);
+            }
+            if CONSTEXPR ((CFLX && do_g))
+               poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
+            if CONSTEXPR ((CFLX && do_gdl))
+               dlpoti = __shfl_sync(ALL_LANES, dlpoti, ilane + 1);
          }
          if CONSTEXPR (do_gdl) {
             dgxi = __shfl_sync(ALL_LANES, dgxi, ilane + 1);
@@ -865,12 +863,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          atomic_add(txi, trqx, i);
          atomic_add(tyi, trqy, i);
          atomic_add(tzi, trqz, i);
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             atomic_add(dltxi, dltrqx, i);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltyi, dltrqy, i);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltzi, dltrqz, i);
+         }
          if CONSTEXPR ((CFLX && do_g))
             atomic_add(poti, pot, i);
          if CONSTEXPR ((CFLX && do_gdl))
@@ -881,12 +878,11 @@ void empoleChgpenDlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem,
          atomic_add(txk, trqx, k);
          atomic_add(tyk, trqy, k);
          atomic_add(tzk, trqz, k);
-         if CONSTEXPR (do_tdl)
+         if CONSTEXPR (do_tdl) {
             atomic_add(dltxk, dltrqx, k);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltyk, dltrqy, k);
-         if CONSTEXPR (do_tdl)
             atomic_add(dltzk, dltrqz, k);
+         }
          if CONSTEXPR ((CFLX && do_g))
             atomic_add(potk, pot, k);
          if CONSTEXPR ((CFLX && do_gdl))

@@ -4,13 +4,20 @@
 #include "ff/potent.h"
 #include "math/zero.h"
 #include "tool/externfunc.h"
+#include <cassert>
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/disp.hh>
 #include <tinker/detail/dsppot.hh>
 #include <tinker/detail/limits.hh>
+#include <tinker/detail/mutant.hh>
 #include <tinker/routines.h>
 
 namespace tinker {
+// The C6 sums of the environment and of the mutated ligand, and the copy of the
+// forward transform that separates their two transforms (edisp1.f:edrecip1).
+static double dsp_sume, dsp_suml;
+static real* dsp_qfwd;
+
 bool useDEwald()
 {
    return use(Potent::DISP) and static_cast<bool>(limits::use_dewald);
@@ -26,6 +33,8 @@ void edispData(RcOp op)
    if (op & RcOp::DEALLOC) {
       darray::deallocate(csix, adisp);
       darray::deallocate(dspexclude, dspexclude_scale);
+      darray::deallocate(dsp_qfwd);
+      dsp_qfwd = nullptr;
 
       if (rc_a) {
          bufferDeallocate(rc_flag, ndisp);
@@ -44,6 +53,12 @@ void edispData(RcOp op)
 
    if (op & RcOp::ALLOC) {
       darray::allocate(n, &csix, &adisp);
+      // a mutated ligand may be weighted apart from the environment (dispSplit)
+      dsp_qfwd = nullptr;
+      if (useDEwald() and mutant::nmut > 0) {
+         const auto& st = *dpme_unit;
+         darray::allocate(2 * st.nfft1 * st.nfft2 * st.nfft3, &dsp_qfwd);
+      }
 
       ndisp = nullptr;
       edsp = eng_buf_vdw;
@@ -146,6 +161,17 @@ void edispData(RcOp op)
       darray::copyin(g::q0, n, csix, disp::csix);
       darray::copyin(g::q0, n, adisp, disp::adisp);
       waitFor(g::q0);
+
+      dsp_sume = 0;
+      dsp_suml = 0;
+      if (mutant::nmut > 0) {
+         for (int i = 0; i < n; ++i) {
+            if (mutant::mutg[i] == 0)
+               dsp_sume += disp::csix[i];
+            else
+               dsp_suml += disp::csix[i];
+         }
+      }
    }
 }
 }
@@ -157,9 +183,36 @@ static void edispNonEwald(int vers)
    TINKER_FCALL2(acc1, cu1, edispNonEwald, vers);
 }
 
+// The reciprocal and self terms weight the ligand by the soft-core weight v of
+// the real space pairs: v between the ligand and the environment, and within
+// the ligand v when it is annihilated or 1 when it is decoupled. The weighted
+// C6 sum product replaces csixpr (edisp.f:dspmutwt).
+static DispSplit dispSplit(real& cpr)
+{
+   DispSplit ds = {false, 1, 1, nullptr, nullptr};
+   cpr = csixpr;
+   if (mutant::nmut == 0)
+      return ds;
+   double vl = vlam;
+   double v = vl * vl * vl * vl / std::sqrt(1 + vl * vl - vl * vl * vl);
+   if (v == 1)
+      return ds;
+
+   double wel = v;
+   double wll = (vcouple == Vdw::ANNIHILATE ? v : 1);
+   assert(dsp_qfwd);
+   ds.split = true;
+   ds.wel = wel;
+   ds.wll = wll;
+   ds.part = mut;
+   ds.qfwd = reinterpret_cast<const real(*)[2]>(dsp_qfwd);
+   cpr = dsp_sume * dsp_sume + 2 * wel * dsp_sume * dsp_suml + wll * dsp_suml * dsp_suml;
+   return ds;
+}
+
 TINKER_FVOID2(acc1, cu1, edispEwaldReal, int);
-TINKER_FVOID2(acc1, cu1, edispEwaldRecipSelf, int);
-TINKER_FVOID2(acc1, cu1, pmeConvDisp, int);
+TINKER_FVOID2(acc1, cu1, edispEwaldRecipSelf, int, DispSplit);
+TINKER_FVOID2(acc1, cu1, pmeConvDisp, int, DispSplit);
 static void edispEwald(int vers)
 {
    TINKER_FCALL2(acc1, cu1, edispEwaldReal, vers);
@@ -170,19 +223,24 @@ static void edispEwald(int vers)
    auto do_g = vers & calc::grad;
    PMEUnit u = dpme_unit;
 
-   gridDisp(u, csix);
+   real cpr;
+   const DispSplit ds = dispSplit(cpr);
+   gridDisp(u, csix, ds.part);
    fftfront(u);
-   TINKER_FCALL2(acc1, cu1, pmeConvDisp, vers);
+   // each point of the convolution reads the opposite wavevector as well
+   if (ds.split)
+      darray::copy(g::q0, 2 * u->nfft1 * u->nfft2 * u->nfft3, dsp_qfwd, u->qgrid);
+   TINKER_FCALL2(acc1, cu1, pmeConvDisp, vers, ds);
    if (do_g) {
       fftback(u);
    }
-   TINKER_FCALL2(acc1, cu1, edispEwaldRecipSelf, vers);
+   TINKER_FCALL2(acc1, cu1, edispEwaldRecipSelf, vers, ds);
 
    // account for the total energy and virial correction term
    if CONSTEXPR (do_e || do_v) {
       const real aewald = u->aewald;
       const real denom0 = 6 * boxVolume() / std::pow(M_PI, 1.5);
-      energy_prec term = csixpr * aewald * aewald * aewald / denom0;
+      energy_prec term = cpr * aewald * aewald * aewald / denom0;
       if CONSTEXPR (do_e) {
          energy_edsp -= term;
          energy_vdw -= term;

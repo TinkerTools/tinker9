@@ -13,7 +13,8 @@ template <bool DO_E, bool DO_V>
 __global__
 static void pmeConvDisp_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgrid)[2], const real* restrict bsmod1,
    const real* restrict bsmod2, const real* restrict bsmod3, real aewald, TINKER_IMAGE_PARAMS, real vbox,
-   EnergyBuffer restrict gpu_e, VirialBuffer restrict gpu_vir)
+   EnergyBuffer restrict gpu_e, VirialBuffer restrict gpu_vir, const real (*restrict qfwd)[2], bool split, real wel,
+   real wll)
 {
    using ebuf_prec = EnergyBufferTraits::type;
    ebuf_prec ectl;
@@ -61,8 +62,24 @@ static void pmeConvDisp_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgr
       real h3 = recipa.z * r1 + recipb.z * r2 + recipc.z * r3;
       real hsq = h1 * h1 + h2 * h2 + h3 * h3;
 
-      real gridx = qgrid[i][0];
-      real gridy = qgrid[i][1];
+      // With the ligand in the imaginary part, the environment and ligand
+      // transforms at k come from the packed one at k and -k (edisp.f:dspsplit).
+      real gridx = 0, gridy = 0, ser = 0, sei = 0, slr = 0, sli = 0;
+      if (split) {
+         int j1 = (nfft1 - k1) % nfft1;
+         int j2 = (nfft2 - k2) % nfft2;
+         int j3 = (nfft3 - k3) % nfft3;
+         int jj = j1 + nfft1 * (j2 + nfft2 * j3);
+         real zr = qfwd[i][0], zi = qfwd[i][1];
+         real yr = qfwd[jj][0], yi = qfwd[jj][1];
+         ser = (zr + yr) / 2;
+         sei = (zi - yi) / 2;
+         slr = (zi + yi) / 2;
+         sli = (yr - zr) / 2;
+      } else {
+         gridx = qgrid[i][0];
+         gridy = qgrid[i][1];
+      }
       real h = REAL_SQRT(hsq);
       real b = h * bfac;
       real hhh = h * hsq;
@@ -85,7 +102,11 @@ static void pmeConvDisp_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgr
          eterm = (-fac1 * erfcterm * hhh - expterm * (fac2 + fac3 * hsq)) * REAL_RECIP(denom);
 
          if CONSTEXPR (DO_E or DO_V) {
-            real struc2 = gridx * gridx + gridy * gridy;
+            real struc2;
+            if (split)
+               struc2 = ser * ser + sei * sei + wll * (slr * slr + sli * sli) + 2 * wel * (ser * slr + sei * sli);
+            else
+               struc2 = gridx * gridx + gridy * gridy;
             real e = eterm * struc2;
             if CONSTEXPR (DO_E) {
                ectl += floatTo<ebuf_prec>(e);
@@ -108,8 +129,14 @@ static void pmeConvDisp_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgr
          } // end if (e or v)
       }
 
-      qgrid[i][0] = eterm * gridx;
-      qgrid[i][1] = eterm * gridy;
+      // the potentials of the environment and of the ligand, packed the same way
+      if (split) {
+         qgrid[i][0] = eterm * (ser - wel * sei + wel * slr - wll * sli);
+         qgrid[i][1] = eterm * (sei + wel * ser + wel * sli + wll * slr);
+      } else {
+         qgrid[i][0] = eterm * gridx;
+         qgrid[i][1] = eterm * gridy;
+      }
    }
 
    if CONSTEXPR (DO_E) {
@@ -121,7 +148,7 @@ static void pmeConvDisp_cu1(int nfft1, int nfft2, int nfft3, real (*restrict qgr
 }
 
 template <bool DO_E, bool DO_V>
-static void pmeConvDisp_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
+static void pmeConvDisp_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v, DispSplit ds)
 {
    real(*qgrid)[2] = reinterpret_cast<real(*)[2]>(pme_u->qgrid);
    real vbox = boxVolume();
@@ -130,23 +157,23 @@ static void pmeConvDisp_cu2(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_
    auto stream = g::s0;
    int ngrid = gpuGridSize(BLOCK_DIM);
    ker<<<ngrid, BLOCK_DIM, 0, stream>>>(pme_u->nfft1, pme_u->nfft2, pme_u->nfft3, qgrid, pme_u->bsmod1, pme_u->bsmod2,
-      pme_u->bsmod3, pme_u->aewald, TINKER_IMAGE_ARGS, vbox, gpu_e, gpu_v);
+      pme_u->bsmod3, pme_u->aewald, TINKER_IMAGE_ARGS, vbox, gpu_e, gpu_v, ds.qfwd, ds.split, ds.wel, ds.wll);
 }
 
-void pmeConvDisp_cu(int vers)
+void pmeConvDisp_cu(int vers, DispSplit ds)
 {
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    PMEUnit u = dpme_unit;
 
    if (do_e and do_v)
-      pmeConvDisp_cu2<true, true>(u, edsp, vir_edsp);
+      pmeConvDisp_cu2<true, true>(u, edsp, vir_edsp, ds);
    else if (do_e and not do_v)
-      pmeConvDisp_cu2<true, false>(u, edsp, nullptr);
+      pmeConvDisp_cu2<true, false>(u, edsp, nullptr, ds);
    else if (not do_e and do_v)
-      pmeConvDisp_cu2<false, true>(u, nullptr, vir_edsp);
+      pmeConvDisp_cu2<false, true>(u, nullptr, vir_edsp, ds);
    else if (not do_e and not do_v)
-      pmeConvDisp_cu2<false, false>(u, nullptr, nullptr);
+      pmeConvDisp_cu2<false, false>(u, nullptr, nullptr, ds);
 }
 }
 
@@ -199,7 +226,7 @@ __global__
 void edisp_cu3(CountBuffer restrict ndisp, EnergyBuffer restrict edsp, const real* restrict csix, real aewald, int n,
    int nfft1, int nfft2, int nfft3, const real* restrict x, const real* restrict y, const real* restrict z,
    const real* restrict qgrid, real3 reca, real3 recb, real3 recc, grad_prec* restrict gx, grad_prec* restrict gy,
-   grad_prec* restrict gz)
+   grad_prec* restrict gz, bool split, const int* restrict part, real wll)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -216,6 +243,8 @@ void edisp_cu3(CountBuffer restrict ndisp, EnergyBuffer restrict edsp, const rea
       real icsix = csix[ii];
       if (icsix == 0)
          continue;
+      // a site of the mutated ligand reads its own part of the grid
+      int ip = (split and part[ii]) ? 1 : 0;
 
       // self energy
       if CONSTEXPR (do_e) {
@@ -223,6 +252,8 @@ void edisp_cu3(CountBuffer restrict ndisp, EnergyBuffer restrict edsp, const rea
          fs *= fs * fs;
          fs /= 12;
          real e = fs * icsix * icsix;
+         if (ip)
+            e *= wll;
          atomic_add(e, edsp, ithread);
          if CONSTEXPR (do_a) {
             atomic_add(1, ndisp, ithread);
@@ -284,7 +315,7 @@ void edisp_cu3(CountBuffer restrict ndisp, EnergyBuffer restrict edsp, const rea
                   int index = xbase + ybase + zbase;
                   real t1 = thetai1[4 * ix];
                   real dt1 = nfft1 * thetai1[1 + 4 * ix];
-                  real term = qgrid[2 * index];
+                  real term = qgrid[2 * index + ip];
                   de1 += 2 * term * dt1 * t2 * t3;
                   de2 += 2 * term * dt2 * t1 * t3;
                   de3 += 2 * term * dt3 * t1 * t2;
@@ -303,7 +334,7 @@ void edisp_cu3(CountBuffer restrict ndisp, EnergyBuffer restrict edsp, const rea
 }
 
 template <class Ver>
-static void edisp_cu4()
+static void edisp_cu4(DispSplit ds)
 {
    const auto& st = *dpme_unit;
    real aewald = st.aewald;
@@ -315,23 +346,23 @@ static void edisp_cu4()
    auto ker = edisp_cu3<Ver, 4>;
    launch_k2b(g::s0, PME_BLOCKDIM, n, ker, //
       ndisp, edsp, csix, aewald, n, nfft1, nfft2, nfft3, x, y, z, st.qgrid, recipa, recipb, recipc, dedspx, dedspy,
-      dedspz);
+      dedspz, ds.split, ds.part, ds.wll);
 }
 
-void edispEwaldRecipSelf_cu(int vers)
+void edispEwaldRecipSelf_cu(int vers, DispSplit ds)
 {
    if (vers == calc::v0)
-      edisp_cu4<calc::V0>();
+      edisp_cu4<calc::V0>(ds);
    else if (vers == calc::v1)
-      edisp_cu4<calc::V1>();
+      edisp_cu4<calc::V1>(ds);
    else if (vers == calc::v3)
-      edisp_cu4<calc::V3>();
+      edisp_cu4<calc::V3>(ds);
    else if (vers == calc::v4)
-      edisp_cu4<calc::V4>();
+      edisp_cu4<calc::V4>(ds);
    else if (vers == calc::v5)
-      edisp_cu4<calc::V5>();
+      edisp_cu4<calc::V5>(ds);
    else if (vers == calc::v6)
-      edisp_cu4<calc::V6>();
+      edisp_cu4<calc::V6>(ds);
 }
 
 void edispNonEwald_cu(int vers)

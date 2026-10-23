@@ -7,8 +7,10 @@
 #include "ff/evdw.h"
 #include "ff/hippo/cflux.h"
 #include "ff/hippo/epolar.h"
+#include "ff/hippo/expol.h"
 #include "ff/hippo/induce.h"
 #include "ff/modamoeba.h"
+#include "ff/modhippo.h"
 #include "ff/nblist.h"
 #include "ff/ost.h"
 #include "ff/potent.h"
@@ -34,7 +36,6 @@
 
 namespace tinker {
 static unsigned polar_active_mask;
-static LmdaBuffer ep_dl;
 
 TINKER_FVOID2(cpp0, cu1, epolarDataBinding, RcOp);
 void epolarData(RcOp op)
@@ -64,7 +65,6 @@ void epolarData(RcOp op)
       if (rc_a)
          bufferDeallocate(rc_flag, nep);
       ep_buf.manage(op, rc_flag, {}, {}, false);
-      ep_dl.manage(op, rc_flag, use_pdlmda, &depdl_buf, &d2epdl2_buf, &depdl, &d2epdl2);
       nep = nullptr;
       polar_active_mask = 0;
 
@@ -422,7 +422,6 @@ void epolarData(RcOp op)
       ep_buf.manage(op, rc_flag, {&ep, &vir_ep, &depx, &depy, &depz},
          {eng_buf_elec, vir_buf_elec, gx_elec, gy_elec, gz_elec}, rc_a, //
          {&energy_ep, &virial_ep}, {&energy_elec, &virial_elec});
-      ep_dl.manage(op, rc_flag, use_pdlmda, &depdl_buf, &d2epdl2_buf, &depdl, &d2epdl2);
       if (rc_a)
          bufferAllocate(rc_flag, &nep);
 
@@ -566,10 +565,14 @@ void epolarSetActiveMask()
    }
 }
 
-TINKER_FVOID2(acc1, cu1, polarState, RdtMask, const int*, real);
+TINKER_FVOID2(acc1, cu1, polarState, RdtMask, const int*, real, bool, real*, const real*);
 void polarState(RdtMask mask, const int* group, real factor)
 {
-   TINKER_FCALL2(acc1, cu1, polarState, mask, group, factor);
+   // HIPPO exchange polarization scales its sizes with the polarizability
+   // (mutate.f:altpolr); every caller keeps them unscaled to scale from.
+   const bool expol = polpot::use_expol;
+   assert(not expol or prepeporig);
+   TINKER_FCALL2(acc1, cu1, polarState, mask, group, factor, expol, prepep, prepeporig);
 }
 }
 
@@ -642,7 +645,8 @@ static void epolarKernel(int vers, bool use_cfgrad);
 static void epolarFinish(int vers);
 
 TINKER_FVOID2(acc0, cu1, epolarAstDeriv, EnergyBuffer, const real (*)[3], const real (*)[3], const real (*)[3],
-   const real (*)[3], const real (*)[3], const real (*)[3], const real (*)[3], const real (*)[3]);
+   const real (*)[3], const real (*)[3], const real (*)[3], const real (*)[3], const real (*)[3], bool,
+   const real (*)[3][3], const real (*)[3][3]);
 
 // The permanent field of rpole and the field of uind, for the models with one
 // set of induced dipoles.
@@ -699,7 +703,11 @@ void epolarAstDeriv()
    else
       dfieldNonEwald(dfd, dfp);
 
-   TINKER_FCALL2(acc0, cu1, epolarAstDeriv, depdl_buf, uind, up, dfd, dfp, f0d, f0p, ufd, ufp);
+   // Exchange polarization passes the field through polinv, and its overlap
+   // with the charging ligand adds a term of its own (epolar4.f:epolar4s).
+   const bool expol = polpot::use_expol;
+   assert(not expol or dpscdl);
+   TINKER_FCALL2(acc0, cu1, epolarAstDeriv, depdl_buf, uind, up, dfd, dfp, f0d, f0p, ufd, ufp, expol, polinv, dpscdl);
 }
 
 void epolar(int vers)
@@ -761,13 +769,13 @@ static void epolarBegin(int vers)
 {
    zeroOnHost(energy_ep, virial_ep);
    epolarZeroWork(vers);
-   ep_dl.zero(vers);
+   polarLmdaZero(vers);
 }
 
 static void epolarFinish(int vers)
 {
    ep_buf.flush(vers);
-   ep_dl.flush(vers);
+   polarLmdaFlush(vers);
 }
 
 static bool epolarStateHasActiveSite(RdtMask mask)
@@ -865,6 +873,10 @@ static void epolarState1(int vers, RdtMask mask, const int* group, bool edot, re
          dcfluxGroup(group, w, dfdlx, dfdly, dfdlz, (vers & calc::virial_dlmda) ? dvirdl_buf : nullptr);
       }
    }
+   // the exchange polarization gradient of the pass, from the sizes polarState()
+   // masked with the polarizability (epolar1.f:epolar1calc)
+   if (polpot::use_expol and (vers & calc::grad))
+      dexpol(vers, uind, wa, wb);
 }
 
 // One dual topology subsystem, weighted straight into the global accumulators.

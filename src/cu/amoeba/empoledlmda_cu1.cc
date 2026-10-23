@@ -85,24 +85,22 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
          trqxi = 0;
          trqyi = 0;
          trqzi = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             dltrqxi = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqyi = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqzi = 0;
+         }
          frcxk = 0;
          frcyk = 0;
          frczk = 0;
          trqxk = 0;
          trqyk = 0;
          trqzk = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             dltrqxk = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqyk = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqzk = 0;
+         }
       }
       if CONSTEXPR (do_gdl) {
          dfrcxi = 0;
@@ -262,24 +260,22 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
          atomic_add(trqxi, trqx, i);
          atomic_add(trqyi, trqy, i);
          atomic_add(trqzi, trqz, i);
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             atomic_add(dltrqxi, dltrqx, i);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqyi, dltrqy, i);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqzi, dltrqz, i);
+         }
          atomic_add(frcxk, gx, k);
          atomic_add(frcyk, gy, k);
          atomic_add(frczk, gz, k);
          atomic_add(trqxk, trqx, k);
          atomic_add(trqyk, trqy, k);
          atomic_add(trqzk, trqz, k);
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             atomic_add(dltrqxk, dltrqx, k);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqyk, dltrqy, k);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqzk, dltrqz, k);
+         }
       }
       if CONSTEXPR (do_gdl) {
          atomic_add(dfrcxi, dfmdlx, i);
@@ -300,24 +296,22 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
          trqxi = 0;
          trqyi = 0;
          trqzi = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             dltrqxi = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqyi = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqzi = 0;
+         }
          frcxk = 0;
          frcyk = 0;
          frczk = 0;
          trqxk = 0;
          trqyk = 0;
          trqzk = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             dltrqxk = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqyk = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqzk = 0;
+         }
       }
       if CONSTEXPR (do_gdl) {
          dfrcxi = 0;
@@ -475,9 +469,11 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
             trqxi = __shfl_sync(ALL_LANES, trqxi, ilane + 1);
             trqyi = __shfl_sync(ALL_LANES, trqyi, ilane + 1);
             trqzi = __shfl_sync(ALL_LANES, trqzi, ilane + 1);
-            dltrqxi = __shfl_sync(ALL_LANES, dltrqxi, ilane + 1);
-            dltrqyi = __shfl_sync(ALL_LANES, dltrqyi, ilane + 1);
-            dltrqzi = __shfl_sync(ALL_LANES, dltrqzi, ilane + 1);
+            if CONSTEXPR ((do_gdl || do_vdl)) {
+               dltrqxi = __shfl_sync(ALL_LANES, dltrqxi, ilane + 1);
+               dltrqyi = __shfl_sync(ALL_LANES, dltrqyi, ilane + 1);
+               dltrqzi = __shfl_sync(ALL_LANES, dltrqzi, ilane + 1);
+            }
          }
          if CONSTEXPR (do_gdl) {
             dfrcxi = __shfl_sync(ALL_LANES, dfrcxi, ilane + 1);
@@ -493,24 +489,22 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
          atomic_add(trqxi, trqx, i);
          atomic_add(trqyi, trqy, i);
          atomic_add(trqzi, trqz, i);
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             atomic_add(dltrqxi, dltrqx, i);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqyi, dltrqy, i);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqzi, dltrqz, i);
+         }
          atomic_add(frcxk, gx, k);
          atomic_add(frcyk, gy, k);
          atomic_add(frczk, gz, k);
          atomic_add(trqxk, trqx, k);
          atomic_add(trqyk, trqy, k);
          atomic_add(trqzk, trqz, k);
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             atomic_add(dltrqxk, dltrqx, k);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqyk, dltrqy, k);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqzk, dltrqz, k);
+         }
       }
       if CONSTEXPR (do_gdl) {
          atomic_add(dfrcxi, dfmdlx, i);
@@ -531,24 +525,22 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
          trqxi = 0;
          trqyi = 0;
          trqzi = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             dltrqxi = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqyi = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqzi = 0;
+         }
          frcxk = 0;
          frcyk = 0;
          frczk = 0;
          trqxk = 0;
          trqyk = 0;
          trqzk = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             dltrqxk = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqyk = 0;
-         if CONSTEXPR ((do_gdl || do_vdl))
             dltrqzk = 0;
+         }
       }
       if CONSTEXPR (do_gdl) {
          dfrcxi = 0;
@@ -697,9 +689,11 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
             trqxi = __shfl_sync(ALL_LANES, trqxi, ilane + 1);
             trqyi = __shfl_sync(ALL_LANES, trqyi, ilane + 1);
             trqzi = __shfl_sync(ALL_LANES, trqzi, ilane + 1);
-            dltrqxi = __shfl_sync(ALL_LANES, dltrqxi, ilane + 1);
-            dltrqyi = __shfl_sync(ALL_LANES, dltrqyi, ilane + 1);
-            dltrqzi = __shfl_sync(ALL_LANES, dltrqzi, ilane + 1);
+            if CONSTEXPR ((do_gdl || do_vdl)) {
+               dltrqxi = __shfl_sync(ALL_LANES, dltrqxi, ilane + 1);
+               dltrqyi = __shfl_sync(ALL_LANES, dltrqyi, ilane + 1);
+               dltrqzi = __shfl_sync(ALL_LANES, dltrqzi, ilane + 1);
+            }
          }
          if CONSTEXPR (do_gdl) {
             dfrcxi = __shfl_sync(ALL_LANES, dfrcxi, ilane + 1);
@@ -715,24 +709,22 @@ void empoledlmda_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict nem, Energ
          atomic_add(trqxi, trqx, i);
          atomic_add(trqyi, trqy, i);
          atomic_add(trqzi, trqz, i);
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             atomic_add(dltrqxi, dltrqx, i);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqyi, dltrqy, i);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqzi, dltrqz, i);
+         }
          atomic_add(frcxk, gx, k);
          atomic_add(frcyk, gy, k);
          atomic_add(frczk, gz, k);
          atomic_add(trqxk, trqx, k);
          atomic_add(trqyk, trqy, k);
          atomic_add(trqzk, trqz, k);
-         if CONSTEXPR ((do_gdl || do_vdl))
+         if CONSTEXPR ((do_gdl || do_vdl)) {
             atomic_add(dltrqxk, dltrqx, k);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqyk, dltrqy, k);
-         if CONSTEXPR ((do_gdl || do_vdl))
             atomic_add(dltrqzk, dltrqz, k);
+         }
       }
       if CONSTEXPR (do_gdl) {
          atomic_add(dfrcxi, dfmdlx, i);

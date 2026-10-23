@@ -9,6 +9,7 @@
 #include "ff/amoeba/induce.h"
 #include "ff/hippo/induce.h"
 #include "ff/modamoeba.h"
+#include "ff/modhippo.h"
 #include "ff/potent.h"
 #include "math/zero.h"
 #include "tool/externfunc.h"
@@ -21,8 +22,6 @@
 #include <tinker/detail/uprior.hh>
 
 namespace tinker {
-static LmdaBuffer ep_dl;
-
 void epolarChgpenData(RcOp op)
 {
    if (not use(Potent::POLAR))
@@ -37,7 +36,6 @@ void epolarChgpenData(RcOp op)
    if (op & RcOp::DEALLOC) {
       darray::deallocate(polarity, polarity_inv);
       darray::deallocate(polarityorig);
-      ep_dl.manage(op, rc_flag, use_pdlmda, &depdl_buf, &d2epdl2_buf, &depdl, &d2epdl2);
 
       if (rc_a) {
          bufferDeallocate(rc_flag, nep);
@@ -74,7 +72,6 @@ void epolarChgpenData(RcOp op)
          darray::allocate(n, &polarityorig);
       else
          polarityorig = nullptr;
-      ep_dl.manage(op, rc_flag, use_pdlmda, &depdl_buf, &d2epdl2_buf, &depdl, &d2epdl2);
 
       nep = nullptr;
       ep = eng_buf_elec;
@@ -224,7 +221,7 @@ void epolarChgpen(int vers)
       if (do_g)
          darray::zero(g::q0, n, depx, depy, depz);
    }
-   ep_dl.zero(vers);
+   polarLmdaZero(vers);
 
    // Dual topology solves at each endpoint and weights them (epolar4.f:epolar4f).
    if (use_epdt) {
@@ -243,19 +240,24 @@ void epolarChgpen(int vers)
       if (use_cfgrad) {
          cfluxZeroPot();
       }
+      // the explicit plambda derivative of the stationary functional
+      // (epolar4.f:epolar4s), from the dipoles about to be solved; with
+      // exchange polarization their solve also gathers the overlap with the
+      // charging ligand
+      const bool do_astdl = use_epast and (lmdaDerivVers(vers, pdlmdaActive()) & calc::energy_dlmda1);
+      expol_mutpsc = do_astdl and polpot::use_expol;
       if (useEwald())
          epolarChgpenEwald(vers, use_cfgrad);
       else
          epolarChgpenNonEwald(vers, use_cfgrad);
+      expol_mutpsc = false;
       epolarPairwiseExtfield(vers, uind);
       torque(vers, depx, depy, depz);
       if (use_cfgrad)
          dcflux(vers, depx, depy, depz, vir_ep);
       if (polpot::use_expol and do_g)
          dexpol(vers);
-      // the explicit plambda derivative of the stationary functional
-      // (epolar4.f:epolar4s), from the dipoles just solved
-      if (use_epast and (lmdaDerivVers(vers, pdlmdaActive()) & calc::energy_dlmda1))
+      if (do_astdl)
          epolarAstDeriv();
       if (do_v) {
          VirialBuffer u2 = vir_trq;
@@ -287,7 +289,7 @@ void epolarChgpen(int vers)
       if (do_g)
          sumGradient(gx_elec, gy_elec, gz_elec, depx, depy, depz);
    }
-   ep_dl.flush(vers);
+   polarLmdaFlush(vers);
 }
 }
 

@@ -139,9 +139,12 @@ void alterpol_acc(real (*polscale)[3][3], real (*polinv)[3][3])
    }
 }
 
-void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz, VirialBuffer vir_ep)
+void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz, VirialBuffer vir_ep,
+   real wa, grad_prec* dgx, grad_prec* dgy, grad_prec* dgz, VirialBuffer dvir, real wb)
 {
    auto do_v = vers & calc::virial;
+   auto do_gdl = vers & calc::grad_dlmda;
+   auto do_vdl = vers & calc::virial_dlmda;
    real cut = switchCut(Switch::REPULS);
    real off = switchOff(Switch::REPULS);
 
@@ -155,7 +158,8 @@ void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* dep
 
    MAYBE_UNUSED int GRID_DIM = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async num_gangs(GRID_DIM) vector_length(BLOCK_DIM)\
-               deviceptr(x,y,z,polarity,kpep,prepep,dmppep,lpep,uind,depx,depy,depz,vir_ep,mlst)
+               deviceptr(x,y,z,polarity,kpep,prepep,dmppep,lpep,uind,depx,depy,depz,vir_ep,\
+                         dgx,dgy,dgz,dvir,mlst)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       real xi = x[i];
@@ -170,6 +174,7 @@ void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* dep
       real uiz = uind[i][2];
 
       MAYBE_UNUSED real gxi = 0., gyi = 0., gzi = 0.;
+      MAYBE_UNUSED real dgxi = 0., dgyi = 0., dgzi = 0.;
 
       int nmlsti = mlst->nlst[i];
       int base = i * maxnlst;
@@ -194,12 +199,20 @@ void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* dep
             real frc[3];
             pair_dexpol(scrtyp, r, 1, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz, springi, sizi, alphai,
                springk, sizk, alphak, f, frc);
-            gxi += frc[0];
-            gyi += frc[1];
-            gzi += frc[2];
-            atomic_add(-frc[0], depx, k);
-            atomic_add(-frc[1], depy, k);
-            atomic_add(-frc[2], depz, k);
+            gxi += wa * frc[0];
+            gyi += wa * frc[1];
+            gzi += wa * frc[2];
+            atomic_add(-wa * frc[0], depx, k);
+            atomic_add(-wa * frc[1], depy, k);
+            atomic_add(-wa * frc[2], depz, k);
+            if (do_gdl) {
+               dgxi += wb * frc[0];
+               dgyi += wb * frc[1];
+               dgzi += wb * frc[2];
+               atomic_add(-wb * frc[0], dgx, k);
+               atomic_add(-wb * frc[1], dgy, k);
+               atomic_add(-wb * frc[2], dgz, k);
+            }
 
             if (do_v) {
                real vxx = -xr * frc[0];
@@ -208,18 +221,25 @@ void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* dep
                real vyy = -yr * frc[1];
                real vyz = -0.5f * (zr * frc[1] + yr * frc[2]);
                real vzz = -zr * frc[2];
-               atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
+               atomic_add(wa * vxx, wa * vxy, wa * vxz, wa * vyy, wa * vyz, wa * vzz, vir_ep, offset);
+               if (do_vdl)
+                  atomic_add(wb * vxx, wb * vxy, wb * vxz, wb * vyy, wb * vyz, wb * vzz, dvir, offset);
             }
          }
       }
       atomic_add(gxi, depx, i);
       atomic_add(gyi, depy, i);
       atomic_add(gzi, depz, i);
+      if (do_gdl) {
+         atomic_add(dgxi, dgx, i);
+         atomic_add(dgyi, dgy, i);
+         atomic_add(dgzi, dgz, i);
+      }
    }
 
    #pragma acc parallel loop independent async\
                deviceptr(x,y,z,polarity,kpep,prepep,dmppep,lpep,uind,depx,depy,depz,\
-                         vir_ep,mlst,mdwexclude,mdwexclude_scale)
+                         vir_ep,dgx,dgy,dgz,dvir,mlst,mdwexclude,mdwexclude_scale)
    for (int ii = 0; ii < nmdwexclude; ++ii) {
       int offset = ii & (bufsize - 1);
 
@@ -255,12 +275,20 @@ void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* dep
          pair_dexpol(scrtyp, r, dscale, cut, off, xr, yr, zr, uix, uiy, uiz, ukx, uky, ukz, springi, sizi, alphai,
             springk, sizk, alphak, f, frc);
 
-         atomic_add(frc[0], depx, i);
-         atomic_add(frc[1], depy, i);
-         atomic_add(frc[2], depz, i);
-         atomic_add(-frc[0], depx, k);
-         atomic_add(-frc[1], depy, k);
-         atomic_add(-frc[2], depz, k);
+         atomic_add(wa * frc[0], depx, i);
+         atomic_add(wa * frc[1], depy, i);
+         atomic_add(wa * frc[2], depz, i);
+         atomic_add(-wa * frc[0], depx, k);
+         atomic_add(-wa * frc[1], depy, k);
+         atomic_add(-wa * frc[2], depz, k);
+         if (do_gdl) {
+            atomic_add(wb * frc[0], dgx, i);
+            atomic_add(wb * frc[1], dgy, i);
+            atomic_add(wb * frc[2], dgz, i);
+            atomic_add(-wb * frc[0], dgx, k);
+            atomic_add(-wb * frc[1], dgy, k);
+            atomic_add(-wb * frc[2], dgz, k);
+         }
 
          if (do_v) {
             real vxx = -xr * frc[0];
@@ -269,7 +297,9 @@ void dexpol_acc(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* dep
             real vyy = -yr * frc[1];
             real vyz = -0.5f * (zr * frc[1] + yr * frc[2]);
             real vzz = -zr * frc[2];
-            atomic_add(vxx, vxy, vxz, vyy, vyz, vzz, vir_ep, offset);
+            atomic_add(wa * vxx, wa * vxy, wa * vxz, wa * vyy, wa * vyz, wa * vzz, vir_ep, offset);
+            if (do_vdl)
+               atomic_add(wb * vxx, wb * vxy, wb * vxz, wb * vyy, wb * vyz, wb * vzz, dvir, offset);
          }
       }
    }

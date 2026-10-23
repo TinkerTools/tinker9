@@ -1,3 +1,4 @@
+#include "ff/dlmda.h"
 #include "ff/elec.h"
 #include "ff/image.h"
 #include "ff/modamoeba.h"
@@ -59,16 +60,27 @@ void alterpol_cu(real (*polscale)[3][3], real (*polinv)[3][3])
       n, polscale);
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   alterpol_cu1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(n, TINKER_IMAGE_ARGS, cut, off, st.si1.bit0, nmdwexclude, mdwexclude,
-      mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst,
-      reinterpret_cast<real(*)[9]>(polscale), kpep, prepep, dmppep, lpep, scrtyp);
+#define ALTERPOL_CU1_ARGS                                                                                             \
+   n, TINKER_IMAGE_ARGS, cut, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale, st.x, st.y, st.z,          \
+      st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, reinterpret_cast<real(*)[9]>(polscale), kpep, prepep,   \
+      dmppep, lpep, scrtyp, reinterpret_cast<real(*)[9]>(dpscdl), prepeporig, emGroup(), grpScale(plam)
+   if (expol_mutpsc) {
+      // the single topology lambda derivative also wants the overlap with the
+      // charging ligand (epolar4.f:epolar4s)
+      darray::zero(g::q0, n, dpscdl);
+      alterpol_cu1<1><<<ngrid, BLOCK_DIM, 0, g::s0>>>(ALTERPOL_CU1_ARGS);
+   } else {
+      alterpol_cu1<0><<<ngrid, BLOCK_DIM, 0, g::s0>>>(ALTERPOL_CU1_ARGS);
+   }
+#undef ALTERPOL_CU1_ARGS
 
    launch_k1s(g::s0, n, alterpolInvert_cu1, //
       n, polscale, polinv);
 }
 
 #include "dexpol_cu1.cc"
-void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz, VirialBuffer vir_ep)
+void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy, grad_prec* depz, VirialBuffer vir_ep,
+   real wa, grad_prec* dgx, grad_prec* dgy, grad_prec* dgz, VirialBuffer dvir, real wb)
 {
    const auto& st = *mspatial_v2_unit;
    real cut = switchCut(Switch::REPULS);
@@ -79,12 +91,20 @@ void dexpol_cu(int vers, const real (*uind)[3], grad_prec* depx, grad_prec* depy
    int ngrid = gpuGridSize(BLOCK_DIM);
 
 #define DEXPOL_CU1_ARGS                                                                                               \
-   n, TINKER_IMAGE_ARGS, vir_ep, depx, depy, depz, cut, off, st.si1.bit0, nmdwexclude, mdwexclude, mdwexclude_scale,  \
-      st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, polarity, uind, kpep, prepep, dmppep, \
-      lpep, scrtyp, f
+   n, TINKER_IMAGE_ARGS, vir_ep, dvir, depx, depy, depz, dgx, dgy, dgz, cut, off, st.si1.bit0, nmdwexclude,         \
+      mdwexclude, mdwexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst,        \
+      polarity, uind, kpep, prepep, dmppep, lpep, scrtyp, f, wa, wb
 
-   if (vers & calc::virial) {
+   // the lambda gradient comes with the lambda virial whenever the virial is
+   // on (lmdaDerivMask), so V9 and V10 cover both
+   const bool do_gdl = vers & calc::grad_dlmda;
+   assert(not do_gdl or (bool)(vers & calc::virial) == (bool)(vers & calc::virial_dlmda));
+   if ((vers & calc::virial) and do_gdl) {
+      dexpol_cu1<calc::V9><<<ngrid, BLOCK_DIM, 0, g::s0>>>(DEXPOL_CU1_ARGS);
+   } else if (vers & calc::virial) {
       dexpol_cu1<calc::V6><<<ngrid, BLOCK_DIM, 0, g::s0>>>(DEXPOL_CU1_ARGS);
+   } else if ((vers & calc::grad) and do_gdl) {
+      dexpol_cu1<calc::V10><<<ngrid, BLOCK_DIM, 0, g::s0>>>(DEXPOL_CU1_ARGS);
    } else if (vers & calc::grad) {
       dexpol_cu1<calc::V5><<<ngrid, BLOCK_DIM, 0, g::s0>>>(DEXPOL_CU1_ARGS);
    } else {

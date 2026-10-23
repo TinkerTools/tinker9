@@ -29,6 +29,7 @@ void gridPut_cu1(const real* restrict x, const real* restrict y, const real* res
    MAYBE_UNUSED const real(*fmp)[10] = (real(*)[10])ptr1;
    MAYBE_UNUSED const real(*fuind)[3] = (real(*)[3])ptr1;
    MAYBE_UNUSED const real(*fuinp)[3] = (real(*)[3])ptr2;
+   MAYBE_UNUSED const int* dpart = (const int*)ptr2;
 
    for (int i = threadIdx.x + blockIdx.x * blockDim.x; i < n; i += blockDim.x * gridDim.x) {
       real xi = x[i];
@@ -64,6 +65,8 @@ void gridPut_cu1(const real* restrict x, const real* restrict y, const real* res
          real chgi = pchg[i];
          if (chgi == 0)
             continue;
+         // the mutated ligand of Ewald dispersion fills the imaginary part
+         int ip = (eq<T, DISP>() and dpart and dpart[i]) ? 1 : 0;
 
          bsplgen<1, bsorder>(w1, thetai1, array);
          bsplgen<1, bsorder>(w2, thetai2, array);
@@ -84,7 +87,7 @@ void gridPut_cu1(const real* restrict x, const real* restrict y, const real* res
                   xbase -= (xbase >= nfft1 ? nfft1 : 0);
                   int index = xbase + ybase + zbase;
                   real term = thetai1[4 * ix] * u0;
-                  atomic_add(term, qgrid, 2 * index);
+                  atomic_add(term, qgrid, 2 * index + ip);
                }
             }
          }
@@ -282,7 +285,7 @@ void gridPchg_cu(PMEUnit pme_u, real* pchg)
    }
 }
 
-void gridDisp_cu(PMEUnit pme_u, real* csix)
+void gridDisp_cu(PMEUnit pme_u, real* csix, const int* part)
 {
    auto& st = *pme_u;
    int n1 = st.nfft1;
@@ -292,7 +295,8 @@ void gridDisp_cu(PMEUnit pme_u, real* csix)
 
    darray::zero(g::q0, 2 * nt, st.qgrid);
    auto ker = gridPut_cu1<DISP, 4>;
-   launch_k2s(g::s0, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, csix, nullptr, st.qgrid, recipa, recipb, recipc);
+   launch_k2s(g::s0, PME_BLOCKDIM, n, ker, x, y, z, n, n1, n2, n3, csix, (const real*)part, st.qgrid, recipa, recipb,
+      recipc);
 }
 
 void gridMpole_cu(PMEUnit pme_u, real (*fmp)[10])

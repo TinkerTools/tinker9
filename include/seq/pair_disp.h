@@ -147,12 +147,16 @@ void pair_disp(real r,
    if CONSTEXPR (SCALE == 1)
       dspscale = 1;
 
-   // set use of lambda scaling for decoupling or annihilation
+   // set use of lambda scaling for decoupling or annihilation; the real space
+   // of a scaled pair removes the same weighted share that the reciprocal space
+   // adds (edisp1.f)
+   MAYBE_UNUSED real wsc = 1;
    if CONSTEXPR (SOFTCORE) {
       real vlambda2 = vlambda * vlambda;
       real vlambda3 = vlambda2 * vlambda;
       real vterm = (vlambda2 * vlambda2) / REAL_SQRT(1.0 + vlambda2 - vlambda3);
       dspscale *= vterm;
+      wsc = vterm;
    }
 
    if CONSTEXPR (eq<DTYP, DEWALD>()) {
@@ -160,10 +164,10 @@ void pair_disp(real r,
       real term = 1 + ralpha2 + 0.5f * ralpha2 * ralpha2;
       real expterm = REAL_EXP(-ralpha2);
       real expa = expterm * term;
-      e = -ci * ck * rr6 * (dspscale * damp * damp + expa - 1);
+      e = -ci * ck * rr6 * (dspscale * damp * damp + wsc * expa - wsc);
       if CONSTEXPR (DO_G) {
          real rterm = -ralpha2 * ralpha2 * ralpha2 * rr1 * expterm;
-         de = -6 * e * rr1 - ci * ck * rr6 * (rterm + 2 * dspscale * damp * ddamp);
+         de = -6 * e * rr1 - ci * ck * rr6 * (wsc * rterm + 2 * dspscale * damp * ddamp);
       }
    } else if CONSTEXPR (eq<DTYP, NON_EWALD_TAPER>()) {
       e = -ci * ck * rr6;

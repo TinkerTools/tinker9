@@ -125,6 +125,50 @@ GrpScale grpScale(double lmda)
    return c;
 }
 
+CtScale ctScale()
+{
+   const bool driven = pdlmdaActive();
+   double w = 0, b = 0, d2 = 0;
+   GrpScale g0, g1, g;
+   if (use_epdt) {
+      double dw, d2w;
+      dtWeight(plam, epdtexp, w, dw, d2w);
+      b = driven ? dw * dpldlmda : 0;
+      d2 = driven ? d2w * dpldlmda * dpldlmda + dw * d2pldlmda2 : 0;
+      g0 = grpScale(0);
+      g1 = grpScale(1);
+   } else {
+      g = grpScale(plam);
+   }
+
+   CtScale c;
+   c.live = 0;
+   for (int i = 0; i < 3; ++i) {
+      for (int k = 0; k < 3; ++k) {
+         double sc, dl, d2l;
+         if (use_epdt) {
+            double s0 = g0.s[i] * g0.s[k];
+            double s1 = g1.s[i] * g1.s[k];
+            sc = s0 + w * (s1 - s0);
+            dl = b * (s1 - s0);
+            d2l = d2 * (s1 - s0);
+         } else {
+            double dsc = g.ds[i] * g.s[k] + g.s[i] * g.ds[k];
+            double d2sc = 2 * g.ds[i] * g.ds[k];
+            sc = g.s[i] * g.s[k];
+            dl = driven ? dsc * dpldlmda : 0;
+            d2l = driven ? d2sc * dpldlmda * dpldlmda + dsc * d2pldlmda2 : 0;
+         }
+         c.sc[i][k] = sc;
+         c.dl[i][k] = dl;
+         c.d2l[i][k] = d2l;
+         if (sc != 0 or dl != 0 or d2l != 0)
+            c.live |= 1u << (3 * i + k);
+      }
+   }
+   return c;
+}
+
 const int* emGroup()
 {
    return use_rel ? rdt_group : mut;
@@ -277,6 +321,25 @@ void LmdaBuffer::flush(int vers) const
       *mTerm2 += e;
       d2edl2 += e;
    }
+}
+
+static LmdaBuffer ep_dl;
+
+void polarLmdaData(RcOp op)
+{
+   if (not use(Potent::POLAR) and not use(Potent::CHGTRN))
+      return;
+   ep_dl.manage(op, rc_flag, use_pdlmda, &depdl_buf, &d2epdl2_buf, &depdl, &d2epdl2);
+}
+
+void polarLmdaZero(int vers)
+{
+   ep_dl.zero(vers);
+}
+
+void polarLmdaFlush(int vers)
+{
+   ep_dl.flush(vers);
 }
 
 int dtPassList(DtPass out[2])

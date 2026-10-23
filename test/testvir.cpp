@@ -15,20 +15,25 @@ namespace {
 struct Fixture
 {
    const char* name;
-   const char* xyz; ///< Coordinates, under test/file/testvir.
+   const char* xyz; ///< Coordinates, under test/file.
    const char* prm; ///< Parameters, under test/file.
+   double atol = 1.0e-3; ///< Tolerance of the analytical virial in mixed precision.
+   double ntol = 5.0e-2; ///< Tolerance of the numerical virial in mixed precision.
 };
 
 const Fixture kFixtures[] = {
-   {"01_charge_ewald", "ions.xyz", "commit_350df099/amber99sb.prm"},
-   {"02_charge_ewald_lights", "ions.xyz", "commit_350df099/amber99sb.prm"},
-   {"03_charge_ewald_nlist", "ions.xyz", "commit_350df099/amber99sb.prm"},
-   {"04_mpole_ewald", "ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
-   {"05_mpole_ewald_nlist", "ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
-   {"06_mpole_lambda_l05", "ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
-   {"07_mpole_lambda_nlist_l05", "ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
-   {"08_mpole_cflux_lambda_l04", "apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
-   {"09_mpole_cflux_l04", "apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"01_charge_ewald", "testvir/ions.xyz", "commit_350df099/amber99sb.prm"},
+   {"02_charge_ewald_lights", "testvir/ions.xyz", "commit_350df099/amber99sb.prm"},
+   {"03_charge_ewald_nlist", "testvir/ions.xyz", "commit_350df099/amber99sb.prm"},
+   {"04_mpole_ewald", "testvir/ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
+   {"05_mpole_ewald_nlist", "testvir/ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
+   {"06_mpole_lambda_l05", "testvir/ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
+   {"07_mpole_lambda_nlist_l05", "testvir/ionwat.xyz", "commit_ebe3611e/amoeba09.prm"},
+   {"08_mpole_cflux_lambda_l04", "testvir/apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   {"09_mpole_cflux_l04", "testvir/apgas.xyz", "commit_152ecec0/AMOEBAplus_Org.prm"},
+   // Ewald dispersion of the DMSO box: in mixed precision, with or without the
+   // mutation, the analytical diagonal is 8e-3 off and the numerical yz 0.12
+   {"10_disp_dewald_ann_l05", "dmso/dmso.xyz", "hippo/hippo19.prm", 1.5e-2, 0.15},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -49,14 +54,14 @@ void runFixture(const Fixture& fx)
    TestLmdaFlagReset lmdaReset;
 
    const std::string files = TINKER9_DIRSTR "/test/file/";
-   const std::string dir = files + "testvir/";
+   const std::string xyzname = testBaseName(fx.xyz);
 
-   TestFile fxyz(dir + fx.xyz, fx.xyz);
+   TestFile fxyz(files + fx.xyz, xyzname);
    std::string keyname = std::string(fx.name) + ".key";
-   TestFile fkey(dir + keyname, keyname);
+   TestFile fkey(files + "testvir/" + keyname, keyname);
    TestFile fprm(files + fx.prm);
 
-   const char* argv[] = {"dummy", fx.xyz, "-k", keyname.c_str()};
+   const char* argv[] = {"dummy", xyzname.c_str(), "-k", keyname.c_str()};
    int argc = 4;
    TestSession session(argc, argv);
 
@@ -68,11 +73,11 @@ void runFixture(const Fixture& fx)
    TestReference ref(std::string(TINKER9_DIRSTR "/test/ref/testvir/") + fx.name + ".txt");
 
    // The references, from testvir.x, carry 3 decimals.
-   const double eps_a = 1.0e-3;
+   const double eps_a = testGetEps(fx.atol, 1.0e-3);
    // Central differences over the lattice vectors. A double precision build
    // reproduces the references; in mixed precision the diagonal, where the steps
    // change the volume, lands up to 2e-2 off.
-   const double eps_n = testGetEps(5.0e-2, 1.0e-2);
+   const double eps_n = testGetEps(fx.ntol, 1.0e-2);
 
    COMPARE_VIR9(r.vanlyt, ref.getVirial(), eps_a);
    COMPARE_VIR9(r.vnumer, ref.getNumerVirial(), eps_n);
@@ -92,6 +97,9 @@ TEST_CASE("TESTVIR-05_mpole_ewald_nlist", "[ff][testvir]") { runFixture(fx("05_m
 // The flux change of one AMOEBA+ water hydrogen is scaled, so the net charge
 // varies with geometry and the Ewald background term adds a charge flux virial.
 TEST_CASE("TESTVIR-09_mpole_cflux_l04", "[ff][testvir][cflux]") { runFixture(fx("09_mpole_cflux_l04")); }
+// Ewald dispersion of an annihilated DMSO, whose reciprocal and self terms
+// follow the van der Waals lambda (test_testvir.f case 10).
+TEST_CASE("TESTVIR-10_disp_dewald_ann_l05", "[ff][testvir][hippo][disp]") { runFixture(fx("10_disp_dewald_ann_l05")); }
 
 #if TINKER_GPULANG_CUDA
 TEST_CASE("TESTVIR-06_mpole_lambda_l05", "[ff][testvir][ast]") { runFixture(fx("06_mpole_lambda_l05")); }

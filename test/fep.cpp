@@ -8,7 +8,9 @@
 #include "ff/energy.h"
 #include "ff/evdw.h"
 #include "ff/hippo/cflux.h"
+#include "ff/hippo/edisp.h"
 #include "ff/modamoeba.h"
+#include "ff/modhippo.h"
 #include "ff/nblist.h"
 #include "ff/potent.h"
 #include "md/integrator.h"
@@ -183,6 +185,49 @@ void runTrial(const Fixture& fx, int rc = kRc)
    }
 }
 
+// The energy of a system on its own, set up from a key file and coordinates
+// under test/file with \c keyextra added.
+double energyOf(const char* key, const char* xyz, const char* prm, const std::string& keyextra = "")
+{
+   const Fixture f = {"", key, xyz, prm, "", "", {}, 0, nullptr};
+   Setup s(f, kRc, keyextra);
+   energy(calc::energy);
+   double e = esum;
+   s.session.end();
+   return e;
+}
+
+// The trial energy of a fixture at lambda 0 against the same physics without the
+// mutation: the systems \c refs name, each set up on its own, sum to it
+// (test_fep.f: fepend).
+void runEnd(const Fixture& fx, std::vector<std::pair<const char*, const char*>> refs, double eps)
+{
+   double l0 = 0, e0 = 0, en = 0;
+   {
+      Setup s(fx, kRc, fx.native);
+      efepTrial(1, &l0, &e0, en);
+      s.session.end();
+   }
+   double eref = 0;
+   for (const auto& r : refs)
+      eref += energyOf(r.first, r.second, fx.prm);
+   COMPARE_REALS(e0, eref, eps);
+}
+
+// Every dispersion pair and reciprocal share of the ligand scales with the one
+// soft-core weight v, so the energy is linear in v (test_fep.f: displinear).
+void runLinear(const char* key, double vl, double eps)
+{
+   auto e = [key](double l) {
+      char buf[64];
+      std::snprintf(buf, sizeof(buf), "\nvdw-lambda %.8f\n", l);
+      return energyOf(key, "dmso/dmso.xyz", "hippo/hippo19.prm", buf);
+   };
+   const double e0 = e(0), e1 = e(1), ev = e(vl);
+   const double v = vl * vl * vl * vl / std::sqrt(1 + vl * vl - vl * vl * vl);
+   COMPARE_REALS(ev, e0 + v * (e1 - e0), eps);
+}
+
 // Free energy perturbation moves the main lambda with no lambda derivative.
 void termsFep()
 {
@@ -241,6 +286,30 @@ void termsAplusCross()
    REQUIRE(cfluxMovesNetCharge());
 }
 
+// HIPPO polarization with exchange polarization, whose sizes follow the
+// polarizability.
+void termsExpol()
+{
+   REQUIRE(polpot::use_expol);
+   REQUIRE(use(Potent::POLAR));
+   REQUIRE_FALSE(use_epdt);
+}
+
+void termsExpolDt()
+{
+   REQUIRE(polpot::use_expol);
+   REQUIRE(use_epdt);
+}
+
+// Ewald dispersion alone, whose reciprocal and self terms follow the van der
+// Waals lambda.
+void termsDisp()
+{
+   REQUIRE(useDEwald());
+   REQUIRE_FALSE(use(Potent::MPOLE));
+   REQUIRE_FALSE(use(Potent::VDW));
+}
+
 #define WATER "mutate/water2.xyz", "commit_6fe8e913/water03.prm"
 const std::vector<double> kAbs{0.0, 0.4, 0.6, 1.0};
 const std::vector<double> kDual{0.0, 0.5, 0.7, 1.0};
@@ -278,6 +347,17 @@ const Fixture kFixtures[] = {
       1.0e-5, termsAplus},
    {"aplus-cross", "mutate/209_apgas_cross_ewald_nold_l04.key", "mutate/apgas.xyz",
       "commit_152ecec0/AMOEBAplus_Org.prm", kFepHalf, "", kAbs, 1.0e-5, termsAplusCross},
+   // exchange polarization of an Na+ water cluster, the ion mutated in single
+   // and dual topology, and of a box with ions, a water mutated under Ewald
+   {"expol", "fep/expol.key", "testlmda/expnaclus.xyz", "commit_dd1761ac/expol.prm", "", "", kAbs, 1.0e-4,
+      termsExpol},
+   {"expol-dt", "fep/expoldt.key", "testlmda/expnaclus.xyz", "commit_dd1761ac/expol.prm", "", "", kAbs, 1.0e-4,
+      termsExpolDt},
+   {"expol-box", "fep/expolbox.key", "testlmda/expbox.xyz", "commit_dd1761ac/expol.prm", "", "", kAbs, 1.0e-4,
+      termsExpol},
+   // Ewald dispersion of one DMSO of a DMSO box, annihilated or decoupled
+   {"dispann", "fep/dispann.key", "dmso/dmso.xyz", "hippo/hippo19.prm", "", "", kAbs, 1.0e-4, termsDisp},
+   {"dispdec", "fep/dispdec.key", "dmso/dmso.xyz", "hippo/hippo19.prm", "", "", kAbs, 1.0e-4, termsDisp},
 };
 
 const Fixture& fx(const char* tag)
@@ -296,7 +376,7 @@ struct State
    Box box;
    std::vector<pos_prec> x, y, z;
    std::vector<grad_prec> gx, gy, gz;
-   std::vector<real> uind, uinp, udir, udirp;
+   std::vector<real> uind, uinp, udir, udirp, prepep;
    int nualt;
    std::vector<std::vector<real>> slots, pslots;
 
@@ -314,6 +394,9 @@ struct State
       , nualt(tinker::nualt)
    {
       boxGetCurrent(box);
+      // the exchange polarization sizes follow the polarizability
+      if (polpot::use_expol)
+         prepep = grab1(tinker::prepep);
       if (use(Potent::POLAR)) {
          // HIPPO keeps the one set of induced dipoles
          const bool hippo = mplpot::use_chgpen and not polpot::use_tholed;
@@ -359,6 +442,7 @@ void requireSame(const State& a, const State& b)
    REQUIRE(sameBits(a.uinp, b.uinp));
    REQUIRE(sameBits(a.udir, b.udir));
    REQUIRE(sameBits(a.udirp, b.udirp));
+   REQUIRE(sameBits(a.prepep, b.prepep));
    REQUIRE(a.nualt == b.nualt);
    REQUIRE(a.slots.size() == b.slots.size());
    for (size_t i = 0; i < a.slots.size(); ++i)
@@ -698,6 +782,11 @@ TEST_CASE("FEP-trial-charge", "[ff][fep]") { runTrial(fx("charge")); }
 TEST_CASE("FEP-trial-hippo", "[ff][fep]") { runTrial(fx("hippo")); }
 TEST_CASE("FEP-trial-aplus", "[ff][fep]") { runTrial(fx("aplus")); }
 TEST_CASE("FEP-trial-aplus-cross", "[ff][fep][cflux]") { runTrial(fx("aplus-cross")); }
+TEST_CASE("FEP-trial-dispann", "[ff][fep][disp]") { runTrial(fx("dispann")); }
+TEST_CASE("FEP-trial-expol", "[ff][fep][expol]") { runTrial(fx("expol")); }
+TEST_CASE("FEP-trial-expol-dt", "[ff][fep][expol]") { runTrial(fx("expol-dt")); }
+TEST_CASE("FEP-trial-expol-box", "[ff][fep][expol]") { runTrial(fx("expol-box")); }
+TEST_CASE("FEP-trial-dispdec", "[ff][fep][disp]") { runTrial(fx("dispdec")); }
 
 TEST_CASE("FEP-trial-dyn-ast", "[ff][fep]") { runTrial(fx("ast"), kRcDyn); }
 TEST_CASE("FEP-trial-dyn-ast-ewald-ion", "[ff][fep]") { runTrial(fx("ast-ewald-ion"), kRcDyn); }
@@ -713,6 +802,36 @@ TEST_CASE("FEP-trial-dyn-charge", "[ff][fep]") { runTrial(fx("charge"), kRcDyn);
 TEST_CASE("FEP-trial-dyn-hippo", "[ff][fep]") { runTrial(fx("hippo"), kRcDyn); }
 TEST_CASE("FEP-trial-dyn-aplus", "[ff][fep]") { runTrial(fx("aplus"), kRcDyn); }
 TEST_CASE("FEP-trial-dyn-aplus-cross", "[ff][fep][cflux]") { runTrial(fx("aplus-cross"), kRcDyn); }
+TEST_CASE("FEP-trial-dyn-dispann", "[ff][fep][disp]") { runTrial(fx("dispann"), kRcDyn); }
+TEST_CASE("FEP-trial-dyn-expol", "[ff][fep][expol]") { runTrial(fx("expol"), kRcDyn); }
+TEST_CASE("FEP-trial-dyn-expol-dt", "[ff][fep][expol]") { runTrial(fx("expol-dt"), kRcDyn); }
+TEST_CASE("FEP-trial-dyn-expol-box", "[ff][fep][expol]") { runTrial(fx("expol-box"), kRcDyn); }
+
+// An annihilated ion leaves no exchange polarization behind, in single and dual
+// topology: the four waters alone.
+TEST_CASE("FEP-end-expol", "[ff][fep][expol]")
+{
+   runEnd(fx("expol"), {{"fep/expolenv.key", "fep/expwat4.xyz"}}, testGetEps(1.0e-4, 1.0e-6));
+}
+TEST_CASE("FEP-end-expol-dt", "[ff][fep][expol]")
+{
+   runEnd(fx("expol-dt"), {{"fep/expolenv.key", "fep/expwat4.xyz"}}, testGetEps(1.0e-4, 1.0e-6));
+}
+TEST_CASE("FEP-trial-dyn-dispdec", "[ff][fep][disp]") { runTrial(fx("dispdec"), kRcDyn); }
+
+// An annihilated ligand leaves the environment alone, and a decoupled one the
+// environment and the ligand each alone, Ewald dispersion included.
+TEST_CASE("FEP-end-dispann", "[ff][fep][disp]")
+{
+   runEnd(fx("dispann"), {{"fep/dispenv.key", "fep/dmso_env.xyz"}}, testGetEps(1.0e-4, 1.0e-6));
+}
+TEST_CASE("FEP-end-dispdec", "[ff][fep][disp]")
+{
+   runEnd(fx("dispdec"), {{"fep/dispenv.key", "fep/dmso_env.xyz"}, {"fep/dispenv.key", "fep/dmso_lig.xyz"}},
+      testGetEps(1.0e-4, 1.0e-6));
+}
+TEST_CASE("FEP-linear-dispann", "[ff][fep][disp]") { runLinear("fep/displin_ann.key", 0.5, testGetEps(1.0e-4, 1.0e-6)); }
+TEST_CASE("FEP-linear-dispdec", "[ff][fep][disp]") { runLinear("fep/displin_dec.key", 0.5, testGetEps(1.0e-4, 1.0e-6)); }
 
 TEST_CASE("FEP-state-ast-ewald-ion", "[ff][fep]") { runState(fx("ast-ewald-ion")); }
 TEST_CASE("FEP-state-adt-ewald", "[ff][fep]") { runState(fx("adt-ewald")); }
@@ -722,6 +841,9 @@ TEST_CASE("FEP-state-window", "[ff][fep]") { runState(fx("window")); }
 TEST_CASE("FEP-state-charge", "[ff][fep]") { runState(fx("charge")); }
 TEST_CASE("FEP-state-hippo", "[ff][fep]") { runState(fx("hippo")); }
 TEST_CASE("FEP-state-aplus", "[ff][fep]") { runState(fx("aplus")); }
+TEST_CASE("FEP-state-expol", "[ff][fep][expol]") { runState(fx("expol")); }
+TEST_CASE("FEP-state-expol-dt", "[ff][fep][expol]") { runState(fx("expol-dt")); }
+TEST_CASE("FEP-state-expol-box", "[ff][fep][expol]") { runState(fx("expol-box")); }
 
 TEST_CASE("FEP-predict", "[ff][fep]")
 {

@@ -77,4 +77,13 @@ TINKER_EXTERN int* lpep;
 TINKER_EXTERN real (*polscale)[3][3];
 TINKER_EXTERN real (*polinv)[3][3];
 TINKER_EXTERN ExpolScr scrtyp;
+
+/// The unscaled exchange polarization sizes, from which polarState() scales
+/// prepep together with the polarizability (mutate.f:altpolr).
+TINKER_EXTERN real* prepeporig;
+/// The overlap of each site with the charging ligand at the unscaled sizes, the
+/// lambda derivative of polscale (alterpol.f:dpscdl). alterpol() gathers it
+/// while expol_mutpsc is set.
+TINKER_EXTERN real (*dpscdl)[3][3];
+TINKER_EXTERN bool expol_mutpsc;
 }

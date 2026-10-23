@@ -69,7 +69,9 @@ namespace tinker {
 void bsplineFill(PMEUnit, int level);
 
 void gridPchg(PMEUnit, real* pchg);
-void gridDisp(PMEUnit, real* csix);
+/// \c part, when not null, flags the sites whose C6 goes to the imaginary part
+/// of the grid, the mutated ligand of Ewald dispersion (pmestuf.f:grid_disp).
+void gridDisp(PMEUnit, real* csix, const int* part);
 void gridMpole(PMEUnit, real (*fmp)[10]);
 void gridUind(PMEUnit, real (*find)[3], real (*finp)[3]);
 

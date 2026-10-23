@@ -9,6 +9,7 @@
 #include "ff/energy.h"
 #include "ff/evdw.h"
 #include "ff/modamoeba.h"
+#include "ff/modhippo.h"
 
 #include "test.h"
 #include "testrt.h"
@@ -297,6 +298,30 @@ const Fixture kFixtures[] = {
    {"211_aptetra_rel_lig2_l015", "aptetra", true, true, false, true, nullptr, Tols().grad(1.0e-3, 6.0e-4)},
    {"209_apgas_cross_ewald_nold_l04", "apgas", true, false, false, false},
    {"212_hipwat_pol_split_nold_l04", "hipwat", true, true, false, false},
+   {"213_hipwat_pol_ct_split_nold_l04", "hipwat", true, true, false, false},
+   {"214_hipwat_ct_dtexp_l04", "hipwat", false, false, false, true},
+   {"218_aptetra_ct_st_l00", "aptetra", false, false, false, false},
+   {"219_aptetra_ct_dt_l00", "aptetra", false, false, false, false, "218_aptetra_ct_st_l00"},
+   {"220_aptetra_ct_st_l10", "aptetra", false, false, false, false},
+   {"221_aptetra_ct_dt_l10", "aptetra", false, false, false, false, "220_aptetra_ct_st_l10"},
+   {"222_aptetra_ct_rel_lig1_dt_l085", "aptetra", false, false, false, true},
+   {"223_aptetra_ct_rel_l100", "aptetra", false, false, false, false, "224_aptetra_ct_abs2_l00"},
+   {"224_aptetra_ct_abs2_l00", "aptetra", false, false, false, false},
+   {"225_aptetra_ct_rel_l000", "aptetra", false, false, false, false, "226_aptetra_ct_abs1_l00"},
+   {"226_aptetra_ct_abs1_l00", "aptetra", false, false, false, false},
+   {"227_aptetra_ct_rel_l050", "aptetra", false, false, false, false, "228_aptetra_ct_abs12_l00"},
+   {"228_aptetra_ct_abs12_l00", "aptetra", false, false, false, false},
+   {"229_aptetra_ct_rel_lig2_l030", "aptetra", false, false, false, false, "228_aptetra_ct_abs12_l00"},
+   {"230_aptetra_ct_rel_vdwm_l030", "aptetra", false, false, false, false, "228_aptetra_ct_abs12_l00"},
+   {"231_aptetra_ct_rel_vdwm_l070", "aptetra", false, false, false, false, "228_aptetra_ct_abs12_l00"},
+   {"232_aptetra_ct_rel_lig1_l070", "aptetra", false, false, false, false, "228_aptetra_ct_abs12_l00"},
+   // energy only, held to one another rather than to a reference
+   {"215_apgas_ct_all_st_p10", "apgas", false, false, false, false},
+   {"216_apgas_ct_all_st_p05", "apgas", false, false, false, false},
+   {"217_apgas_ct_all_dt_p05", "apgas", false, false, false, false},
+   {"233_aptetra_ct_rel_lig1_st_l085", "aptetra", false, false, false, false},
+   {"234_aptno2_ct_abs1_st", "aptno2", false, false, false, false},
+   {"235_aptno2_ct_abs1_dt", "aptno2", false, false, false, false},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -326,8 +351,9 @@ std::string systemDir(const std::string& base)
 // The water fixtures share water03; the SAMPL8 guest 3 carries its own force
 // field, plus the artificial vdw14 values fixture 148 loads as a second file.
 // The frames dimer and the ion cluster load amoeba09, chignolin and its mirror
-// amoebabio09, trp-cage amoebapro13, the AMOEBA+ water dimer and alcohol
-// tetramer AMOEBAplus_Org, and the HIPPO water dimer water21.
+// amoebabio09, trp-cage amoebapro13, the AMOEBA+ water dimer, the alcohol
+// tetramer and the tetramer without its ethanol AMOEBAplus_Org, and the HIPPO
+// water dimer water21.
 std::vector<std::unique_ptr<TestFile>> copyParams(const std::string& base)
 {
    std::vector<std::unique_ptr<TestFile>> files;
@@ -341,7 +367,7 @@ std::vector<std::unique_ptr<TestFile>> copyParams(const std::string& base)
       files.emplace_back(new TestFile(TINKER9_DIRSTR "/test/file/commit_ebe3611e/amoebabio09.prm"));
    } else if (base == "trpcage") {
       files.emplace_back(new TestFile(TINKER9_DIRSTR "/test/file/commit_291a85c1/amoebapro13.prm"));
-   } else if (base == "apgas" or base == "aptetra") {
+   } else if (base == "apgas" or base == "aptetra" or base == "aptno2") {
       files.emplace_back(new TestFile(TINKER9_DIRSTR "/test/file/commit_152ecec0/AMOEBAplus_Org.prm"));
    } else if (base == "hipwat") {
       files.emplace_back(new TestFile(TINKER9_DIRSTR "/test/file/commit_aad9340c/water21.prm"));
@@ -1075,6 +1101,45 @@ TEST_CASE("MUTATE-209_apgas_cross_ewald_nold_l04", "[ff][mutate][cflux]") { runF
 // lambda derivative (test_mutate.f: test_mutate_cpol): polarization rescales
 // the multipoles, charge penetration and flux scale to the polarization lambda.
 TEST_CASE("MUTATE-212_hipwat_pol_split_nold_l04", "[ff][mutate][cflux]") { runFixture(fx("212_hipwat_pol_split_nold_l04")); }
+// The same with charge transfer, which follows the polarization lambda.
+TEST_CASE("MUTATE-213_hipwat_pol_ct_split_nold_l04", "[ff][mutate][cflux][ct]") { runFixture(fx("213_hipwat_pol_ct_split_nold_l04")); }
+
+// Charge transfer takes the scale of each group pair (test_mutate.f:
+// test_mutate_ctrel): annihilating the ethanol, the methanol or both of an
+// AMOEBA+ alcohol tetramer, whose environment keeps its own charge transfer.
+TEST_CASE("MUTATE-224_aptetra_ct_abs2_l00", "[ff][mutate][ct]") { runFixture(fx("224_aptetra_ct_abs2_l00")); }
+TEST_CASE("MUTATE-226_aptetra_ct_abs1_l00", "[ff][mutate][ct]") { runFixture(fx("226_aptetra_ct_abs1_l00")); }
+TEST_CASE("MUTATE-228_aptetra_ct_abs12_l00", "[ff][mutate][ct]") { runFixture(fx("228_aptetra_ct_abs12_l00")); }
+
+namespace {
+// The charge transfer energy of a fixture, at its own polarization lambda or,
+// when \c plmda is given, at that one. \c used takes the one it ran at.
+double ctEnergy(const char* name, double plmda = -1, double* used = nullptr)
+{
+   Setup s(fx(name), calc::xyz | calc::mass | calc::vmask);
+   if (plmda >= 0)
+      plam = plmda;
+   energy(calc::v0);
+   if (plmda >= 0)
+      REQUIRE(plam == plmda);
+   if (used)
+      *used = plam;
+   double e = energy_ect;
+   s.session.end();
+   return e;
+}
+}
+
+// The whole AMOEBA+ water and ethanol dimer is the ligand, so every pair lies
+// within it, and at half the polarization lambda single topology gives a quarter
+// of the coupled charge transfer energy (test_mutate.f: test_mutate_ctscale).
+TEST_CASE("MUTATE-215-216-ctscale", "[ff][mutate][ct]")
+{
+   const double e1 = ctEnergy("215_apgas_ct_all_st_p10");
+   const double e05 = ctEnergy("216_apgas_ct_all_st_p05");
+   REQUIRE(e1 != 0);
+   REQUIRE(std::fabs(e05 - 0.25 * e1) < testGetEps(1.0e-5, 1.0e-10));
+}
 
 #if TINKER_GPULANG_CUDA
 TEST_CASE("MUTATE-030_water_ast_ye_m10", "[ff][mutate][ast]") { runFixture(fx("030_water_ast_ye_m10")); }
@@ -1258,6 +1323,48 @@ TEST_CASE("MUTATE-208_apgas_pol_ewald_dt_l04", "[ff][mutate][cflux][adtpol]") { 
 // first ligand stage, and an AMOEBA+ methanol into ethanol on the second.
 TEST_CASE("MUTATE-210_hipwat_rel_lig1_ewald_l085", "[ff][mutate][cflux][rels]") { runFixture(fx("210_hipwat_rel_lig1_ewald_l085")); }
 TEST_CASE("MUTATE-211_aptetra_rel_lig2_l015", "[ff][mutate][cflux][rels]") { runFixture(fx("211_aptetra_rel_lig2_l015")); }
+
+// Charge transfer alone under OST, in dual topology with a squared endpoint weight.
+TEST_CASE("MUTATE-214_hipwat_ct_dtexp_l04", "[ff][mutate][ct]") { runFixture(fx("214_hipwat_ct_dtexp_l04")); }
+// Dual topology gives half of the coupled energy of a pair within the ligand,
+// from the linear endpoint weight (test_mutate.f: test_mutate_ctscale).
+TEST_CASE("MUTATE-215-217-ctscale-dt", "[ff][mutate][ct]")
+{
+   const double e1 = ctEnergy("215_apgas_ct_all_st_p10");
+   const double e05 = ctEnergy("217_apgas_ct_all_dt_p05");
+   REQUIRE(e1 != 0);
+   REQUIRE(std::fabs(e05 - 0.5 * e1) < testGetEps(1.0e-5, 1.0e-10));
+}
+// Single and dual topology share both end states of the annihilated ethanol.
+TEST_CASE("MUTATE-218_aptetra_ct_st_l00", "[ff][mutate][ct]") { runFixture(fx("218_aptetra_ct_st_l00")); }
+TEST_CASE("MUTATE-219_aptetra_ct_dt_l00", "[ff][mutate][ct]") { runFixture(fx("219_aptetra_ct_dt_l00")); }
+TEST_CASE("MUTATE-220_aptetra_ct_st_l10", "[ff][mutate][ct]") { runFixture(fx("220_aptetra_ct_st_l10")); }
+TEST_CASE("MUTATE-221_aptetra_ct_dt_l10", "[ff][mutate][ct]") { runFixture(fx("221_aptetra_ct_dt_l10")); }
+// The staged relative schedule of the tetramer with charge transfer alone: the
+// ligand 1 leg with its lambda derivatives, and each end state of the schedule
+// held to the absolute fixture of the same physics (test_mutate.f:
+// test_mutate_ctrel).
+TEST_CASE("MUTATE-222_aptetra_ct_rel_lig1_dt_l085", "[ff][mutate][ct][rels]") { runFixture(fx("222_aptetra_ct_rel_lig1_dt_l085")); }
+TEST_CASE("MUTATE-223_aptetra_ct_rel_l100", "[ff][mutate][ct][rels]") { runFixture(fx("223_aptetra_ct_rel_l100")); }
+TEST_CASE("MUTATE-225_aptetra_ct_rel_l000", "[ff][mutate][ct][rels]") { runFixture(fx("225_aptetra_ct_rel_l000")); }
+TEST_CASE("MUTATE-227_aptetra_ct_rel_l050", "[ff][mutate][ct][rels]") { runFixture(fx("227_aptetra_ct_rel_l050")); }
+TEST_CASE("MUTATE-229_aptetra_ct_rel_lig2_l030", "[ff][mutate][ct][rels]") { runFixture(fx("229_aptetra_ct_rel_lig2_l030")); }
+TEST_CASE("MUTATE-230_aptetra_ct_rel_vdwm_l030", "[ff][mutate][ct][rels]") { runFixture(fx("230_aptetra_ct_rel_vdwm_l030")); }
+TEST_CASE("MUTATE-231_aptetra_ct_rel_vdwm_l070", "[ff][mutate][ct][rels]") { runFixture(fx("231_aptetra_ct_rel_vdwm_l070")); }
+TEST_CASE("MUTATE-232_aptetra_ct_rel_lig1_l070", "[ff][mutate][ct][rels]") { runFixture(fx("232_aptetra_ct_rel_lig1_l070")); }
+// Inside the ligand 1 leg ligand 2 contributes nothing, so the tetramer matches
+// the one with its ethanol deleted at the same polarization lambda, in single
+// and dual topology.
+TEST_CASE("MUTATE-233-234-222-235-ctrel", "[ff][mutate][ct][rels]")
+{
+   double plmda;
+   const double est = ctEnergy("233_aptetra_ct_rel_lig1_st_l085", -1, &plmda);
+   REQUIRE(est != 0);
+   REQUIRE(std::fabs(ctEnergy("234_aptno2_ct_abs1_st", plmda) - est) < testGetEps(1.0e-5, 1.0e-10));
+   const double edt = ctEnergy("222_aptetra_ct_rel_lig1_dt_l085", -1, &plmda);
+   REQUIRE(edt != 0);
+   REQUIRE(std::fabs(ctEnergy("235_aptno2_ct_abs1_dt", plmda) - edt) < testGetEps(1.0e-5, 1.0e-10));
+}
 
 // One state through both multipole paths: 203 scales the multipoles on the fly
 // for its lambda derivatives, 209 takes the ones scaled at setup. The flux of

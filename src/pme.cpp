@@ -297,14 +297,14 @@ void gridUind(PMEUnit pme_u, real (*fuind)[3], real (*fuinp)[3])
    TINKER_FCALL2(acc1, cu1, gridUind, pme_u, fuind, fuinp);
 }
 
-TINKER_FVOID2(acc1, cu1, gridDisp, PMEUnit, real*);
-void gridDisp(PMEUnit pme_u, real* csix)
+TINKER_FVOID2(acc1, cu1, gridDisp, PMEUnit, real*, const int*);
+void gridDisp(PMEUnit pme_u, real* csix, const int* part)
 {
    int bso = pme_u->bsorder;
    if (bso != 4)
       TINKER_THROW(format("gridDisp(): bsorder is %d; must be 4.\n", bso));
 
-   TINKER_FCALL2(acc1, cu1, gridDisp, pme_u, csix);
+   TINKER_FCALL2(acc1, cu1, gridDisp, pme_u, csix, part);
 }
 }
 

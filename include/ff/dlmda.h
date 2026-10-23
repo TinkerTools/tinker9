@@ -131,6 +131,24 @@ RdtMask elecLiveMask();
 /// when every group is live and there is nothing to skip.
 const int* elecDeadGroups();
 
+/// \ingroup ff
+/// The charge transfer scale of each pair of atom groups at the polarization
+/// lambda (dlambda.f:ctlmdasc), indexed by the two mutg groups. Single topology
+/// takes the product of the two group scales, so a pair inside the ligand goes
+/// as lambda squared; dual topology interpolates between the endpoint pair
+/// scales. \c dl and \c d2l are already in main lambda units, and zero unless
+/// the polarization lambda derivatives are active. Bit 3*gi+gk of \c live is
+/// set for a group pair with a scale or a derivative.
+struct CtScale
+{
+   real sc[3][3];
+   real dl[3][3];
+   real d2l[3][3];
+   unsigned live;
+};
+
+CtScale ctScale();
+
 /// Fills the six mixing weights of \c DtCoef from the interpolation weight and
 /// its two derivatives. \c chain and \c d2chain are the sub-lambda derivatives
 /// of the term; \c driven is false when the main lambda does not drive the
@@ -569,6 +587,15 @@ private:
    int mMask = 0;
    bool mDriven = false;
 };
+
+/// \ingroup ff
+/// The polarization lambda channels, depdl_buf and d2epdl2_buf, which charge
+/// transfer shares with polarization (echgtrn1.f adds to depdl). One owner
+/// allocates them whenever either term is on, and each term zeroes them before
+/// its own kernels and flushes them after, so the two shares add up in depdl.
+void polarLmdaData(RcOp op);
+void polarLmdaZero(int vers);
+void polarLmdaFlush(int vers);
 
 TINKER_EXTERN VirialBuffer dvirdl_buf;
 

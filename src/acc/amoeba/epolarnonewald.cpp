@@ -9,14 +9,14 @@
 #include <tinker/detail/extfld.hh>
 
 namespace tinker {
-void polarState_acc(RdtMask mask, const int* group, real factor)
+void polarState_acc(RdtMask mask, const int* group, real factor, bool expol, real* prepep, const real* prepeporig)
 {
    constexpr real polmin = 1.0e-16;
    unsigned active_mask = static_cast<unsigned>(mask);
    unsigned env = static_cast<unsigned>(RdtMask::ENV);
    unsigned liga = static_cast<unsigned>(RdtMask::LIGA);
    unsigned ligb = static_cast<unsigned>(RdtMask::LIGB);
-   #pragma acc parallel loop independent async deviceptr(polarity,polarity_inv,polarityorig,group)
+   #pragma acc parallel loop independent async deviceptr(polarity,polarity_inv,polarityorig,group,prepep,prepeporig)
    for (int i = 0; i < n; ++i) {
       unsigned atom_mask = env;
       if (group[i] == 1)
@@ -30,6 +30,14 @@ void polarState_acc(RdtMask mask, const int* group, real factor)
          pol *= factor;
       polarity[i] = pol;
       polarity_inv[i] = real(1) / (pol > polmin ? pol : polmin);
+
+      // the exchange polarization size follows the polarizability
+      if (expol) {
+         real siz = (active_mask & atom_mask) ? prepeporig[i] : real(0);
+         if (atom_mask != env)
+            siz *= factor;
+         prepep[i] = siz;
+      }
    }
 }
 

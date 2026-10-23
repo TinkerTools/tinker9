@@ -9,6 +9,20 @@ namespace tinker {
 bool useDEwald();
 void edispData(RcOp);
 void edisp(int vers);
+
+/// How the reciprocal and self terms of Ewald dispersion weight a mutated
+/// ligand by its soft-core weight (edisp.f:dspmutwt). With \c split, the grid
+/// holds the environment C6 in its real part and the ligand C6, the sites
+/// \c part flags, in its imaginary part; the convolution separates the two
+/// transforms from the copy \c qfwd of the forward transform.
+struct DispSplit
+{
+   bool split;
+   real wel; ///< ligand-environment weight
+   real wll; ///< ligand-ligand weight
+   const int* part;
+   const real (*qfwd)[2];
+};
 /// \}
 }
 

@@ -17,6 +17,7 @@ static void gridPut_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
    MAYBE_UNUSED const real(*fmp)[10] = (real(*)[10])ptr1;
    MAYBE_UNUSED const real(*fuind)[3] = (real(*)[3])ptr1;
    MAYBE_UNUSED const real(*fuinp)[3] = (real(*)[3])ptr2;
+   MAYBE_UNUSED const int* dpart = (const int*)ptr2;
 
    const int nfft1 = st.nfft1;
    const int nfft2 = st.nfft2;
@@ -28,7 +29,7 @@ static void gridPut_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
 
    #pragma acc parallel loop independent async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(pchg,fmp,fuind,fuinp,x,y,z,qgrid)
+               deviceptr(pchg,fmp,fuind,fuinp,dpart,x,y,z,qgrid)
    for (int i = 0; i < n; ++i) {
       real thetai1[4 * 5];
       real thetai2[4 * 5];
@@ -71,6 +72,8 @@ static void gridPut_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
          real pchgi = pchg[i];
          if (pchgi == 0)
             continue;
+         // the mutated ligand of Ewald dispersion fills the imaginary part
+         int ip = (eq<T, DISP>() and dpart and dpart[i]) ? 1 : 0;
 
          bsplgen<1>(w1, thetai1, bsorder);
          bsplgen<1>(w2, thetai2, bsorder);
@@ -94,7 +97,7 @@ static void gridPut_acc(PMEUnit pme_u, real* ptr1, real* ptr2)
                   xbase -= (xbase >= nfft1 ? nfft1 : 0);
                   int index = xbase + ybase + zbase;
                   real term = thetai1[4 * ix] * u0;
-                  atomic_add(term, qgrid, 2 * index);
+                  atomic_add(term, qgrid, 2 * index + ip);
                }
             } // end for (int iy)
          }
@@ -201,9 +204,9 @@ void gridPchg_acc(PMEUnit pme_u, real* pchg)
    gridPut_acc<PCHG>(pme_u, pchg, nullptr);
 }
 
-void gridDisp_acc(PMEUnit pme_u, real* csix)
+void gridDisp_acc(PMEUnit pme_u, real* csix, const int* part)
 {
-   gridPut_acc<DISP>(pme_u, csix, nullptr);
+   gridPut_acc<DISP>(pme_u, csix, (real*)part);
 }
 
 void gridMpole_acc(PMEUnit pme_u, real (*fmp)[10])

@@ -454,7 +454,8 @@ void epolarChgpenDt_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict np, Ene
             dui3 = __shfl_sync(ALL_LANES, dui3, ilane + 1);
             dui4 = __shfl_sync(ALL_LANES, dui4, ilane + 1);
             dui5 = __shfl_sync(ALL_LANES, dui5, ilane + 1);
-            poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
+            if CONSTEXPR (CFLX)
+               poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
          }
       }
 
@@ -679,7 +680,8 @@ void epolarChgpenDt_cu1(int n, TINKER_IMAGE_PARAMS, CountBuffer restrict np, Ene
             dui3 = __shfl_sync(ALL_LANES, dui3, ilane + 1);
             dui4 = __shfl_sync(ALL_LANES, dui4, ilane + 1);
             dui5 = __shfl_sync(ALL_LANES, dui5, ilane + 1);
-            poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
+            if CONSTEXPR (CFLX)
+               poti = __shfl_sync(ALL_LANES, poti, ilane + 1);
          }
       }
 

@@ -577,6 +577,9 @@ void energyData(RcOp op)
    // Must follow evdw_data() and echarge_data().
    RcMan echglj42{echgljData, op};
 
+   // Shared by polarization and charge transfer.
+   RcMan polarLmda42{polarLmdaData, op};
+
    // Must precede empoleData() and epolarData(), which decide whether their
    // terms run at all from useEmplar().
    RcMan emplar42{emplarData, op};

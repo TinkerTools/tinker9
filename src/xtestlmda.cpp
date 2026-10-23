@@ -5,8 +5,10 @@
 #include "ff/energy.h"
 #include "ff/evdw.h"
 #include "ff/modamoeba.h"
+#include "ff/modhippo.h"
 #include "ff/nblist.h"
 #include "ff/ost.h"
+#include "ff/potent.h"
 #include "ff/rwcrd.h"
 #include "tool/argkey.h"
 #include "tool/darray.h"
@@ -149,7 +151,9 @@ static LambdaEvaluation evaluateAtOffset(const FdLambdaState& state, LambdaVaria
    copyEnergy(calc::energy, &eout.energy.total);
    eout.energy.vdw = energy_vdw;
    eout.energy.mpole = energy_em;
-   eout.energy.polar = energy_ep;
+   // Charge transfer follows the polarization lambda and counts with it
+   // (testlmda.f).
+   eout.energy.polar = energy_ep + (use(Potent::CHGTRN) ? energy_ect : 0);
    copyGradientFlat(calc::grad, eout.gradient);
    for (int k = 0; k < 9; ++k)
       eout.virial[k] = vir[k];

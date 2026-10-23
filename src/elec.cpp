@@ -106,7 +106,8 @@ void pchgEnsureElec()
 }
 
 // Whether any pair of atom groups interacts with a weight other than one
-// (group.f), which the multipole, polarization and repulsion kernels never apply.
+// (group.f), which the multipole, polarization, repulsion and charge transfer
+// kernels never apply.
 static bool groupsWeighted()
 {
    if (not group::use_group)
@@ -183,8 +184,6 @@ static void mpoleData(RcOp op)
    if (op & RcOp::INIT) {
       // These refuse what Fortran mutate_check accepts and tinker9 does not
       // compute yet. They come before pmeData, which a throw would leave open.
-      if (groupsWeighted())
-         TINKER_THROW("Group weights are not supported for multipoles, polarization or repulsion.");
       // Only the charge penetration multipoles carry the flux change in charge
       // of each atom, and the polarization that goes with them has yet to
       // follow the multipoles scaled on the fly.
@@ -197,15 +196,10 @@ static void mpoleData(RcOp op)
       // HIPPO polarization returns from epolarData() before its own checks, so
       // they are made here (mutate.f:mutate_check).
       if (use(Potent::POLAR) and mplpot::use_chgpen and not polpot::use_tholed) {
-         // the endpoint passes leave out the exchange polarization gradient
-         if (use_epdt and polpot::use_expol)
-            TINKER_THROW("Polarization dual topology does not support exchange polarization.");
          if (use_epast) {
             FstrView poltypstr = polpot::poltyp;
             if (not(poltypstr == "MUTUAL"))
                TINKER_THROW("Single topology polarization dU/dLambda supports MUTUAL polarization only.");
-            if (polpot::use_expol)
-               TINKER_THROW("Single topology polarization dU/dLambda does not support exchange polarization.");
             if (use(Potent::SOLV))
                TINKER_THROW("Single topology polarization dU/dLambda does not support implicit solvent.");
          }
@@ -975,6 +969,10 @@ bool useEwald()
 void elecData(RcOp op)
 {
    if (op & RcOp::INIT) {
+      // Charge transfer never reaches mpoleData, so the refusal comes here,
+      // before pmeData, which a throw would leave open.
+      if ((use(Potent::MPOLE) or use(Potent::POLAR) or use(Potent::REPULS) or use(Potent::CHGTRN)) and groupsWeighted())
+         TINKER_THROW("Group weights are not supported for multipoles, polarization, repulsion or charge transfer.");
       electric = chgpot::electric;
       dielec = chgpot::dielec;
       elam = mutant::elambda;

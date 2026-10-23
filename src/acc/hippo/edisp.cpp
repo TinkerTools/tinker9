@@ -10,10 +10,13 @@
 
 namespace tinker {
 template <bool DO_E, bool DO_V>
-static void pmeConvDisp_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v)
+static void pmeConvDisp_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu_v, DispSplit ds)
 {
    auto& st = *pme_u;
    real(*restrict qgrid)[2] = reinterpret_cast<real(*)[2]>(st.qgrid);
+   const real(*qfwd)[2] = ds.qfwd;
+   const bool split = ds.split;
+   const real wel = ds.wel, wll = ds.wll;
    const real* bsmod1 = st.bsmod1;
    const real* bsmod2 = st.bsmod2;
    const real* bsmod3 = st.bsmod3;
@@ -35,7 +38,7 @@ static void pmeConvDisp_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu
    size_t bufsize = bufferSize();
    #pragma acc parallel loop independent async\
                present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-               deviceptr(gpu_e,gpu_v,qgrid,bsmod1,bsmod2,bsmod3)
+               deviceptr(gpu_e,gpu_v,qgrid,qfwd,bsmod1,bsmod2,bsmod3)
    for (int i = 0; i < ntot; ++i) {
       if (i == 0) {
          qgrid[0][0] = 0;
@@ -57,8 +60,24 @@ static void pmeConvDisp_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu
       real h3 = recipa.z * r1 + recipb.z * r2 + recipc.z * r3;
       real hsq = h1 * h1 + h2 * h2 + h3 * h3;
 
-      real gridx = qgrid[i][0];
-      real gridy = qgrid[i][1];
+      // With the ligand in the imaginary part, the environment and ligand
+      // transforms at k come from the packed one at k and -k (edisp.f:dspsplit).
+      real gridx = 0, gridy = 0, ser = 0, sei = 0, slr = 0, sli = 0;
+      if (split) {
+         int j1 = (nfft1 - k1) % nfft1;
+         int j2 = (nfft2 - k2) % nfft2;
+         int j3 = (nfft3 - k3) % nfft3;
+         int jj = j1 + nfft1 * (j2 + nfft2 * j3);
+         real zr = qfwd[i][0], zi = qfwd[i][1];
+         real yr = qfwd[jj][0], yi = qfwd[jj][1];
+         ser = (zr + yr) / 2;
+         sei = (zi - yi) / 2;
+         slr = (zi + yi) / 2;
+         sli = (yr - zr) / 2;
+      } else {
+         gridx = qgrid[i][0];
+         gridy = qgrid[i][1];
+      }
       real h = REAL_SQRT(hsq);
       real b = h * bfac;
       real hhh = h * hsq;
@@ -79,7 +98,11 @@ static void pmeConvDisp_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu
             } // end if ((k1 + k2 + k3) % 2 != 0)
          }
 
-         real struc2 = gridx * gridx + gridy * gridy;
+         real struc2;
+         if (split)
+            struc2 = ser * ser + sei * sei + wll * (slr * slr + sli * sli) + 2 * wel * (ser * slr + sei * sli);
+         else
+            struc2 = gridx * gridx + gridy * gridy;
          eterm = (-fac1 * erfcterm * hhh - expterm * (fac2 + fac3 * hsq)) * REAL_RECIP(denom);
          real e = eterm * struc2;
          if CONSTEXPR (DO_E) {
@@ -97,25 +120,31 @@ static void pmeConvDisp_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu
          }
       }
 
-      qgrid[i][0] = eterm * gridx;
-      qgrid[i][1] = eterm * gridy;
+      // the potentials of the environment and of the ligand, packed the same way
+      if (split) {
+         qgrid[i][0] = eterm * (ser - wel * sei + wel * slr - wll * sli);
+         qgrid[i][1] = eterm * (sei + wel * ser + wel * sli + wll * slr);
+      } else {
+         qgrid[i][0] = eterm * gridx;
+         qgrid[i][1] = eterm * gridy;
+      }
    }
 }
 
-void pmeConvDisp_acc(int vers)
+void pmeConvDisp_acc(int vers, DispSplit ds)
 {
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    PMEUnit u = dpme_unit;
 
    if (do_e and do_v)
-      pmeConvDisp_acc1<true, true>(u, edsp, vir_edsp);
+      pmeConvDisp_acc1<true, true>(u, edsp, vir_edsp, ds);
    else if (do_e and not do_v)
-      pmeConvDisp_acc1<true, false>(u, edsp, nullptr);
+      pmeConvDisp_acc1<true, false>(u, edsp, nullptr, ds);
    else if (not do_e and do_v)
-      pmeConvDisp_acc1<false, true>(u, nullptr, vir_edsp);
+      pmeConvDisp_acc1<false, true>(u, nullptr, vir_edsp, ds);
    else if (not do_e and not do_v)
-      pmeConvDisp_acc1<false, false>(u, nullptr, nullptr);
+      pmeConvDisp_acc1<false, false>(u, nullptr, nullptr, ds);
 }
 
 template <class Ver, class DTYP>
@@ -328,7 +357,7 @@ void edispEwaldReal_acc(int vers)
 }
 
 template <class Ver, int bsorder>
-static void edisp_acc2()
+static void edisp_acc2(DispSplit ds)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -340,15 +369,20 @@ static void edisp_acc2()
    int nfft2 = dpme_unit->nfft2;
    int nfft3 = dpme_unit->nfft3;
    const auto* qgrid = dpme_unit->qgrid;
+   const bool split = ds.split;
+   const int* part = ds.part;
+   const real wll = ds.wll;
 
    #pragma acc parallel async\
            present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
-           deviceptr(csix,adisp,ndisp,edsp,dedspx,dedspy,dedspz,x,y,z,qgrid)
+           deviceptr(csix,adisp,ndisp,edsp,dedspx,dedspy,dedspz,x,y,z,qgrid,part)
    #pragma acc loop independent
    for (int ii = 0; ii < n; ++ii) {
       real icsix = csix[ii];
       if (icsix == 0)
          continue;
+      // a site of the mutated ligand reads its own part of the grid
+      int ip = (split and part[ii]) ? 1 : 0;
 
       // self energy
       if CONSTEXPR (do_e) {
@@ -357,6 +391,8 @@ static void edisp_acc2()
          fs *= fs * fs;
          fs /= 12;
          real e = fs * icsix * icsix;
+         if (ip)
+            e *= wll;
          atomic_add(e, edsp, offset);
          if CONSTEXPR (do_a) {
             atomic_add(1, ndisp, offset);
@@ -421,7 +457,7 @@ static void edisp_acc2()
                   int index = xbase + ybase + zbase;
                   real t1 = thetai1[4 * ix];
                   real dt1 = nfft1 * thetai1[1 + 4 * ix];
-                  real term = qgrid[2 * index];
+                  real term = qgrid[2 * index + ip];
                   de1 += 2 * term * dt1 * t2 * t3;
                   de2 += 2 * term * dt2 * t1 * t3;
                   de3 += 2 * term * dt3 * t1 * t2;
@@ -439,21 +475,21 @@ static void edisp_acc2()
    }
 }
 
-void edispEwaldRecipSelf_acc(int vers)
+void edispEwaldRecipSelf_acc(int vers, DispSplit ds)
 {
    constexpr int order = 4;
    assert(dpme_unit->bsorder == order);
    if (vers == calc::v0)
-      edisp_acc2<calc::V0, order>();
+      edisp_acc2<calc::V0, order>(ds);
    else if (vers == calc::v1)
-      edisp_acc2<calc::V1, order>();
+      edisp_acc2<calc::V1, order>(ds);
    else if (vers == calc::v3)
-      edisp_acc2<calc::V3, order>();
+      edisp_acc2<calc::V3, order>(ds);
    else if (vers == calc::v4)
-      edisp_acc2<calc::V4, order>();
+      edisp_acc2<calc::V4, order>(ds);
    else if (vers == calc::v5)
-      edisp_acc2<calc::V5, order>();
+      edisp_acc2<calc::V5, order>(ds);
    else if (vers == calc::v6)
-      edisp_acc2<calc::V6, order>();
+      edisp_acc2<calc::V6, order>(ds);
 }
 }
