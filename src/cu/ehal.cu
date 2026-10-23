@@ -107,7 +107,6 @@ namespace tinker {
 #define DHAL    dhal
 #endif
 #include "ehal_cu1.cc"
-#include "ehaldlmda_cu1.cc"
 
 // The soft core powers of lambda v, taken here once instead of per pair.
 static PairHalLambdaPow ehalLambdaPow(double v)
@@ -123,35 +122,6 @@ static PairHalLambdaPow ehalLambdaPow(double v)
 
 template <class Ver>
 static void ehal_cu3()
-{
-   constexpr bool do_g = Ver::g;
-
-   const auto& st = *vspatial_v2_unit;
-   const real cut = switchCut(Switch::VDW);
-   const real off = switchOff(Switch::VDW);
-
-   // A relative calculation labels atoms by ligand group; ligand 2 couples as
-   // the complement of vlambda.
-   const int* grp = use_rel ? rdt_group : mut;
-   const auto lp1 = ehalLambdaPow(vlam);
-   const auto lp2 = ehalLambdaPow(1 - vlam);
-
-   if CONSTEXPR (do_g)
-      darray::zero(g::q0, n, gxred, gyred, gzred);
-
-   int ngrid = gpuGridSize(BLOCK_DIM);
-   auto ker1 = ehal_cu1<Ver>;
-   ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nev, ev, vir_ev, gxred, gyred, gzred, cut, off,
-      st.si1.bit0, nvexclude_scaled, vexclude, vexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak,
-      st.iak, st.lst, njvdw, vlam, vcouple, radmin, epsilon, vexclude14, radmin4, epsilon4, jvdw, grp, scexp,
-      scalphav, lp1, lp2);
-
-   if CONSTEXPR (do_g)
-      ehalResolveGradient(gxred, gyred, gzred, devx, devy, devz);
-}
-
-template <class Ver>
-static void ehaldlmda_cu3()
 {
    constexpr bool do_g = Ver::g;
    constexpr bool do_gdl = Ver::g_dlmda;
@@ -173,7 +143,7 @@ static void ehaldlmda_cu3()
    }
 
    int ngrid = gpuGridSize(BLOCK_DIM);
-   auto ker1 = ehaldlmda_cu1<Ver>;
+   auto ker1 = ehal_cu1<Ver>;
    ker1<<<ngrid, BLOCK_DIM, 0, g::s0>>>(st.n, TINKER_IMAGE_ARGS, nev, ev, devdl_buf, d2evdl2_buf, vir_ev,
       dvirdl_buf, gxred, gyred, gzred, gxred_dlmda, gyred_dlmda, gzred_dlmda, cut, off, st.si1.bit0, nvexclude_scaled,
       vexclude, vexclude_scale, st.x, st.y, st.z, st.sorted, st.nakpl, st.iakpl, st.niak, st.iak, st.lst, njvdw,
@@ -187,32 +157,10 @@ static void ehaldlmda_cu3()
    }
 }
 
+// One kernel takes both the plain versions and the lambda derivative ones, so a
+// run whose van der Waals map is flat takes the plain path (ehal1.f).
 void ehal_cu(int vers)
 {
-   if (use_vdlmda) {
-      if (vers == calc::v0)
-         ehaldlmda_cu3<calc::V0>();
-      else if (vers == calc::v1)
-         ehaldlmda_cu3<calc::V1>();
-      else if (vers == calc::v3)
-         ehaldlmda_cu3<calc::V3>();
-      else if (vers == calc::v4)
-         ehaldlmda_cu3<calc::V4>();
-      else if (vers == calc::v5)
-         ehaldlmda_cu3<calc::V5>();
-      else if (vers == calc::v6)
-         ehaldlmda_cu3<calc::V6>();
-      else if (vers == calc::v7)
-         ehaldlmda_cu3<calc::V7>();
-      else if (vers == calc::v8)
-         ehaldlmda_cu3<calc::V8>();
-      else if (vers == calc::v9)
-         ehaldlmda_cu3<calc::V9>();
-      else if (vers == calc::v10)
-         ehaldlmda_cu3<calc::V10>();
-      return;
-   }
-
    if (vers == calc::v0)
       ehal_cu3<calc::V0>();
    else if (vers == calc::v1)
@@ -225,5 +173,13 @@ void ehal_cu(int vers)
       ehal_cu3<calc::V5>();
    else if (vers == calc::v6)
       ehal_cu3<calc::V6>();
+   else if (vers == calc::v7)
+      ehal_cu3<calc::V7>();
+   else if (vers == calc::v8)
+      ehal_cu3<calc::V8>();
+   else if (vers == calc::v9)
+      ehal_cu3<calc::V9>();
+   else if (vers == calc::v10)
+      ehal_cu3<calc::V10>();
 }
 }

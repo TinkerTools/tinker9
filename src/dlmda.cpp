@@ -342,6 +342,25 @@ void polarLmdaFlush(int vers)
    ep_dl.flush(vers);
 }
 
+static LmdaBuffer ev_dl;
+
+void vdwLmdaData(RcOp op)
+{
+   if (not use(Potent::VDW) and not use(Potent::REPULS))
+      return;
+   ev_dl.manage(op, rc_flag, use_vdlmda, &devdl_buf, &d2evdl2_buf, &devdl, &d2evdl2);
+}
+
+void vdwLmdaZero(int vers)
+{
+   ev_dl.zero(vers);
+}
+
+void vdwLmdaFlush(int vers)
+{
+   ev_dl.flush(vers);
+}
+
 int dtPassList(DtPass out[2])
 {
    // Endpoint 0 zeroes both ligands and endpoint 1 keeps the charging one, with

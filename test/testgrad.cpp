@@ -39,6 +39,7 @@ const Fixture kFixtures[] = {
    // without the mutation; a double build reproduces it
    {"16_hippo_dewald_dec_l05", "dmso/dmso.xyz", "hippo/hippo19.prm", 2.0e-2, 1.0e-4, 6.0e-3},
    {"17_hipwat_group_ct_replica", "testgrad/hipwat.xyz", "commit_aad9340c/water21.prm"},
+   {"18_hippo_rep_sc_real_l04", "dmso/dmso.xyz", "hippo/hippo19.prm", 2.0e-2},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -137,6 +138,9 @@ TEST_CASE("TESTGRAD-11_hippo_ast_l05", "[ff][testgrad][hippo]") { runFixture(fx(
 // Ewald dispersion of a decoupled DMSO, whose reciprocal and self terms follow
 // the van der Waals lambda (test_testgrad.f case 16).
 TEST_CASE("TESTGRAD-16_hippo_dewald_dec_l05", "[ff][testgrad][hippo][disp]") { runFixture(fx("16_hippo_dewald_dec_l05")); }
+// Pauli repulsion of a decoupled DMSO with a non-integer REPEL-SOFTCORE
+// exponent and shift shape, by neighbor list (test_testgrad.f case 18).
+TEST_CASE("TESTGRAD-18_hippo_rep_sc_real_l04", "[ff][testgrad][hippo][repel]") { runFixture(fx("18_hippo_rep_sc_real_l04")); }
 // tinker9 applies no group weights to the multipoles, so it refuses the key
 // rather than compute the unweighted energy (test_testgrad.f cases 12 to 15).
 TEST_CASE("TESTGRAD-12_hipwat_group_inter", "[ff][testgrad][hippo]") { runRefusedFixture(fx("12_hipwat_group_inter")); }

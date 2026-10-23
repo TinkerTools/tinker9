@@ -6,6 +6,26 @@
 
 namespace tinker {
 /// \ingroup repel
+/// Soft core scaling of a mutated Pauli repulsion pair,
+/// \f$ s = \lambda^n r / \sqrt{\alpha \lambda^m (1-\lambda)^p + r^2} \f$,
+/// as the scale \c rlsc and shift \c rshf, with the lambda derivative factors
+/// of erepsc.f:repsc4 (\c rshf1 and \c rshf2 carry lambda and lambda squared
+/// times the shift derivatives) and the van der Waals lambda chain rule.
+struct RepelSoft
+{
+   real rlsc, rshf, n;
+   real rlsc1, rlsc2;
+   real rshf1, rshf2;
+   real dvl, d2vl;
+};
+
+/// \ingroup repel
+/// The soft core terms at the current vlam (erepsc.f:repsc). The lambda
+/// derivative factors are set only if \c dodl, and the second derivative ones
+/// only with use_d2lmda (erepsc.f:repsc4).
+RepelSoft repelSoft(bool dodl);
+
+/// \ingroup repel
 void erepelData(RcOp);
 /// \ingroup repel
 void erepel(int vers);
@@ -43,4 +63,9 @@ TINKER_EXTERN real r2scale;
 TINKER_EXTERN real r3scale;
 TINKER_EXTERN real r4scale;
 TINKER_EXTERN real r5scale;
+
+TINKER_EXTERN double scalphar;
+TINKER_EXTERN double scexpr;
+TINKER_EXTERN double scexprm;
+TINKER_EXTERN double scexprp;
 }

@@ -157,7 +157,9 @@ static void mpoleData(RcOp op)
 
       if (rc_flag & calc::grad) {
          darray::allocate(n, &trqx, &trqy, &trqz);
-         if (lmdaDerivMask(rc_flag, use_edlmda or use_pdlmda) & (calc::grad_dlmda | calc::virial_dlmda)) {
+         // Pauli repulsion resolves its lambda torques here too (erepel1.f).
+         bool dltrq = use_edlmda or use_pdlmda or (use_vdlmda and use(Potent::REPULS));
+         if (lmdaDerivMask(rc_flag, dltrq) & (calc::grad_dlmda | calc::virial_dlmda)) {
             darray::allocate(n, &dltrqx, &dltrqy, &dltrqz);
          } else {
             dltrqx = nullptr;

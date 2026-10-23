@@ -8,8 +8,10 @@
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/evdw.h"
+#include "ff/hippo/erepel.h"
 #include "ff/modamoeba.h"
 #include "ff/modhippo.h"
+#include "ff/potent.h"
 
 #include "test.h"
 #include "testrt.h"
@@ -809,6 +811,42 @@ void runScexpTiFixture(const Fixture& fx)
    s.session.end();
 }
 
+// A soft core Pauli repulsion parameter outside its allowed range is reset to
+// its default (mutate.f), n and m together if n is not above m/2, so each of
+// these keys must run, lambda derivatives included (test_mutate_repsc). The
+// dispersion case there stops in Fortran setup and cannot run in process.
+struct RepscCase
+{
+   const char* key;
+   double alpha, n, m, p;
+};
+
+void runRepscCase(const RepscCase& c)
+{
+   INFO(c.key);
+   Fixture fx = {c.key, "hipwat", false, false, false, true};
+   Setup s(fx, calc::xyz | calc::mass | calc::vmask);
+   REQUIRE(use(Potent::REPULS));
+   REQUIRE(use_vdlmda);
+   REQUIRE(mutant::scalphar == c.alpha);
+   REQUIRE(mutant::scexpr == c.n);
+   REQUIRE(mutant::scexprm == c.m);
+   REQUIRE(mutant::scexprp == c.p);
+   REQUIRE(scalphar == c.alpha);
+   REQUIRE(scexpr == c.n);
+   REQUIRE(scexprm == c.m);
+   REQUIRE(scexprp == c.p);
+
+   energy(calc::v1);
+   REQUIRE(std::isfinite(esum));
+   REQUIRE(std::isfinite(dedl));
+   REQUIRE(std::isfinite(d2edl2));
+   REQUIRE(dedl != 0);
+   REQUIRE(devdl == dedl);
+
+   s.session.end();
+}
+
 // One multipole or polarization result of runFlatFixture.
 struct FlatTerm
 {
@@ -1568,6 +1606,24 @@ TEST_CASE("MUTATE-DYN-210_hipwat_rel_lig1_ewald_l085", "[ff][mutate][dyn][cflux]
 TEST_CASE("MUTATE-DYN-211_aptetra_rel_lig2_l015", "[ff][mutate][dyn][cflux][rels]") { runFixture(fx("211_aptetra_rel_lig2_l015"), Fuse::Auto); }
 
 TEST_CASE("MUTATE-gate", "[ff][mutate][gate]") { runGateFixture(fx("083_water_rels_ye_l085")); }
+
+TEST_CASE("MUTATE-repsc", "[ff][mutate][repsc]")
+{
+   const RepscCase cases[] = {
+      {"rsoft_a_neg_d1", 1, 5, 3, 1},
+      {"rsoft_n05_d1", 1, 5, 0, 2},
+      {"rsoft_n15_m3_d1", 1, 5, 3, 1},
+      {"rsoft_m_neg_d1", 1, 5, 3, 1},
+      {"rsoft_p05_d1", 1, 5, 3, 1},
+      {"rsoft_n18_d2", 1, 5, 0, 2},
+      {"rsoft_p15_d2", 1, 5, 3, 1},
+      {"rsoft_n18_d1", 1, 1.8, 0, 2},
+      {"rsoft_p15_d1", 1, 5, 3, 1.5},
+      {"rsoft_default_d2", 1, 5, 3, 1},
+   };
+   for (const auto& c : cases)
+      runRepscCase(c);
+}
 
 TEST_CASE("MUTATE-flags", "[ff][mutate][flags]")
 {

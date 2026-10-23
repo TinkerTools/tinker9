@@ -25,8 +25,6 @@
 #include <cassert>
 
 namespace tinker {
-static LmdaBuffer ev_dl;
-
 inline namespace v1 {
 using new_type = int; // new vdw class/type
 using old_type = int; // old vdw class/type
@@ -108,7 +106,6 @@ void evdwData(RcOp op)
       if (rc_a)
          bufferDeallocate(rc_flag, nev);
       ev_buf.manage(op, rc_flag, {}, {}, false);
-      ev_dl.manage(op, rc_flag, use_vdlmda, &devdl_buf, &d2evdl2_buf, &devdl, &d2evdl2);
       nev = nullptr;
       gxred_dlmda = nullptr;
       gyred_dlmda = nullptr;
@@ -453,7 +450,6 @@ void evdwData(RcOp op)
       ev_buf.manage(op, rc_flag, {&ev, &vir_ev, &devx, &devy, &devz},
          {eng_buf_vdw, vir_buf_vdw, gx_vdw, gy_vdw, gz_vdw}, rc_a, //
          {&energy_ev, &virial_ev}, {&energy_vdw, &virial_vdw});
-      ev_dl.manage(op, rc_flag, use_vdlmda, &devdl_buf, &d2evdl2_buf, &devdl, &d2evdl2);
       if (rc_a)
          bufferAllocate(rc_flag, &nev);
    }
@@ -545,7 +541,7 @@ static void evdwZeroBuffers(int vers)
    if (rc_a and do_a)
       darray::zero(g::q0, bufferSize(), nev);
    ev_buf.zero(vers);
-   ev_dl.zero(vers);
+   vdwLmdaZero(vers);
 }
 
 static void evdwBegin(int vers)
@@ -573,7 +569,6 @@ static void evdwKernel(int vers)
 static void evdwFinish(int vers, energy_prec elrcv, virial_prec vlrcv, energy_prec delrcv = 0, energy_prec d2elrcv = 0,
    virial_prec dvlrcv = 0)
 {
-   auto rc_a = rc_flag & calc::analyz;
    auto do_e = vers & calc::energy;
    auto do_v = vers & calc::virial;
    const int vdl = lmdaDerivVers(vers, vdlmdaActive());
@@ -613,7 +608,7 @@ static void evdwFinish(int vers, energy_prec elrcv, virial_prec vlrcv, energy_pr
       }
    }
    ev_buf.flush(vers);
-   ev_dl.flush(vers);
+   vdwLmdaFlush(vers);
 }
 
 void evdw(int vers)

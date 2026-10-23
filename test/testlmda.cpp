@@ -141,6 +141,16 @@ const Fixture kFixtures[] = {
    // d2E/dL2 is 1.4e-3 off in mixed precision; a double build reproduces it
    {"90_hipwat_pol_ct_rel_lig1_ewald_l080", 4.0e-3, 3.0, 1.0e-4, "testlmda/hipwat.xyz", "commit_aad9340c/water21.prm",
       4.0e-3},
+   {"91_hipmix_rep_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"92_hipmix_rep_nlist_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"93_hipmix_rep_annih_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"94_hipmix_rep_taper_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"95_hipmix_rep_sc_m0p2_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"96_hipmix_rep_sc_real_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"97_hipmix_rep_l00", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"98_hipmix_rep_l10", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"99_hipmix_rep_sc_m0p2_l10", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
+   {"100_hipmix_rep_d1_n12_l04", 1.0e-2, 1.0, 1.0e-4, "testlmda/hipmix.xyz", "commit_4a558d00/hippo19.prm"},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -386,6 +396,18 @@ TEST_CASE("TESTLMDA-87_aptetra_ct_rel_lig2_dt_l020", "[ff][testlmda][ct][rdt]") 
 TEST_CASE("TESTLMDA-88_aptetra_ct_rel_vdwm_l050", "[ff][testlmda][ct][rdt]") { runFixture(fx("88_aptetra_ct_rel_vdwm_l050")); }
 TEST_CASE("TESTLMDA-89_aptetra_pol_ct_rel_lig1_ewald_l080", "[ff][testlmda][ct][rdt]") { runFixture(fx("89_aptetra_pol_ct_rel_lig1_ewald_l080")); }
 TEST_CASE("TESTLMDA-90_hipwat_pol_ct_rel_lig1_ewald_l080", "[ff][testlmda][ct][rdt]") { runFixture(fx("90_hipwat_pol_ct_rel_lig1_ewald_l080")); }
+// HIPPO Pauli repulsion follows the van der Waals lambda (test_testlmda.f cases 91 to 100).
+TEST_CASE("TESTLMDA-91_hipmix_rep_l04", "[ff][testlmda][repel]") { runFixture(fx("91_hipmix_rep_l04")); }
+TEST_CASE("TESTLMDA-92_hipmix_rep_nlist_l04", "[ff][testlmda][repel]") { runFixture(fx("92_hipmix_rep_nlist_l04")); }
+TEST_CASE("TESTLMDA-93_hipmix_rep_annih_l04", "[ff][testlmda][repel]") { runFixture(fx("93_hipmix_rep_annih_l04")); }
+TEST_CASE("TESTLMDA-94_hipmix_rep_taper_l04", "[ff][testlmda][repel]") { runFixture(fx("94_hipmix_rep_taper_l04")); }
+TEST_CASE("TESTLMDA-95_hipmix_rep_sc_m0p2_l04", "[ff][testlmda][repel]") { runFixture(fx("95_hipmix_rep_sc_m0p2_l04")); }
+TEST_CASE("TESTLMDA-96_hipmix_rep_sc_real_l04", "[ff][testlmda][repel]") { runFixture(fx("96_hipmix_rep_sc_real_l04")); }
+TEST_CASE("TESTLMDA-97_hipmix_rep_l00", "[ff][testlmda][repel]") { runFixture(fx("97_hipmix_rep_l00")); }
+TEST_CASE("TESTLMDA-98_hipmix_rep_l10", "[ff][testlmda][repel]") { runFixture(fx("98_hipmix_rep_l10")); }
+TEST_CASE("TESTLMDA-99_hipmix_rep_sc_m0p2_l10", "[ff][testlmda][repel]") { runFixture(fx("99_hipmix_rep_sc_m0p2_l10")); }
+TEST_CASE("TESTLMDA-100_hipmix_rep_d1_n12_l04", "[ff][testlmda][repel]") { runFixture(fx("100_hipmix_rep_d1_n12_l04")); }
+TEST_CASE("TESTLMDA-repeat-94_hipmix_rep_taper_l04", "[ff][testlmda][repel]") { runRepeatedFixture(fx("94_hipmix_rep_taper_l04")); }
 
 // Every fixture once more without analysis, as dynamics runs it.
 TEST_CASE("TESTLMDA-DYN-01_water_adt_l05", "[ff][testlmda][dyn]") { runFixture(fx("01_water_adt_l05"), false); }
@@ -475,4 +497,14 @@ TEST_CASE("TESTLMDA-DYN-87_aptetra_ct_rel_lig2_dt_l020", "[ff][testlmda][dyn][ct
 TEST_CASE("TESTLMDA-DYN-88_aptetra_ct_rel_vdwm_l050", "[ff][testlmda][dyn][ct][rdt]") { runFixture(fx("88_aptetra_ct_rel_vdwm_l050"), false); }
 TEST_CASE("TESTLMDA-DYN-89_aptetra_pol_ct_rel_lig1_ewald_l080", "[ff][testlmda][dyn][ct][rdt]") { runFixture(fx("89_aptetra_pol_ct_rel_lig1_ewald_l080"), false); }
 TEST_CASE("TESTLMDA-DYN-90_hipwat_pol_ct_rel_lig1_ewald_l080", "[ff][testlmda][dyn][ct][rdt]") { runFixture(fx("90_hipwat_pol_ct_rel_lig1_ewald_l080"), false); }
+TEST_CASE("TESTLMDA-DYN-91_hipmix_rep_l04", "[ff][testlmda][dyn][repel]") { runFixture(fx("91_hipmix_rep_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-92_hipmix_rep_nlist_l04", "[ff][testlmda][dyn][repel]") { runFixture(fx("92_hipmix_rep_nlist_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-93_hipmix_rep_annih_l04", "[ff][testlmda][dyn][repel]") { runFixture(fx("93_hipmix_rep_annih_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-94_hipmix_rep_taper_l04", "[ff][testlmda][dyn][repel]") { runFixture(fx("94_hipmix_rep_taper_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-95_hipmix_rep_sc_m0p2_l04", "[ff][testlmda][dyn][repel]") { runFixture(fx("95_hipmix_rep_sc_m0p2_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-96_hipmix_rep_sc_real_l04", "[ff][testlmda][dyn][repel]") { runFixture(fx("96_hipmix_rep_sc_real_l04"), false); }
+TEST_CASE("TESTLMDA-DYN-97_hipmix_rep_l00", "[ff][testlmda][dyn][repel]") { runFixture(fx("97_hipmix_rep_l00"), false); }
+TEST_CASE("TESTLMDA-DYN-98_hipmix_rep_l10", "[ff][testlmda][dyn][repel]") { runFixture(fx("98_hipmix_rep_l10"), false); }
+TEST_CASE("TESTLMDA-DYN-99_hipmix_rep_sc_m0p2_l10", "[ff][testlmda][dyn][repel]") { runFixture(fx("99_hipmix_rep_sc_m0p2_l10"), false); }
+TEST_CASE("TESTLMDA-DYN-100_hipmix_rep_d1_n12_l04", "[ff][testlmda][dyn][repel]") { runFixture(fx("100_hipmix_rep_d1_n12_l04"), false); }
 #endif

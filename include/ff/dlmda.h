@@ -597,6 +597,14 @@ void polarLmdaData(RcOp op);
 void polarLmdaZero(int vers);
 void polarLmdaFlush(int vers);
 
+/// \ingroup ff
+/// The van der Waals lambda channels, devdl_buf and d2evdl2_buf, which Pauli
+/// repulsion shares with van der Waals (erepel1.f adds to devdl), managed as
+/// polarLmdaData() manages the polarization ones.
+void vdwLmdaData(RcOp op);
+void vdwLmdaZero(int vers);
+void vdwLmdaFlush(int vers);
+
 TINKER_EXTERN VirialBuffer dvirdl_buf;
 
 TINKER_EXTERN virial_prec dvirdl[9];
