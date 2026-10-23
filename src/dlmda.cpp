@@ -346,7 +346,7 @@ static LmdaBuffer ev_dl;
 
 void vdwLmdaData(RcOp op)
 {
-   if (not use(Potent::VDW) and not use(Potent::REPULS))
+   if (not use(Potent::VDW) and not use(Potent::REPULS) and not use(Potent::DISP))
       return;
    ev_dl.manage(op, rc_flag, use_vdlmda, &devdl_buf, &d2evdl2_buf, &devdl, &d2evdl2);
 }

@@ -214,8 +214,9 @@ void runEnd(const Fixture& fx, std::vector<std::pair<const char*, const char*>> 
    COMPARE_REALS(e0, eref, eps);
 }
 
-// Every dispersion pair and reciprocal share of the ligand scales with the one
-// soft-core weight v, so the energy is linear in v (test_fep.f: displinear).
+// With the soft core switch turned off, every dispersion pair and reciprocal
+// share of the ligand scales with the one lambda power v, so the energy is
+// linear in v (test_fep.f: displinear).
 void runLinear(const char* key, double vl, double eps)
 {
    auto e = [key](double l) {
@@ -224,7 +225,7 @@ void runLinear(const char* key, double vl, double eps)
       return energyOf(key, "dmso/dmso.xyz", "hippo/hippo19.prm", buf);
    };
    const double e0 = e(0), e1 = e(1), ev = e(vl);
-   const double v = vl * vl * vl * vl / std::sqrt(1 + vl * vl - vl * vl * vl);
+   const double v = vl * vl * vl * vl;
    COMPARE_REALS(ev, e0 + v * (e1 - e0), eps);
 }
 

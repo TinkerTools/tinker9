@@ -40,6 +40,9 @@ const Fixture kFixtures[] = {
    {"16_hippo_dewald_dec_l05", "dmso/dmso.xyz", "hippo/hippo19.prm", 2.0e-2, 1.0e-4, 6.0e-3},
    {"17_hipwat_group_ct_replica", "testgrad/hipwat.xyz", "commit_aad9340c/water21.prm"},
    {"18_hippo_rep_sc_real_l04", "dmso/dmso.xyz", "hippo/hippo19.prm", 2.0e-2},
+   // 7e-3 off in mixed precision for the same reason, mutated or not
+   {"19_hippo_disp_sc_l04", "dmso/dmso.xyz", "hippo/hippo19.prm", 2.0e-2, 1.0e-4, 1.0e-2},
+   {"21_hippo_dewald_group_l04", "dmso/dmso.xyz", "hippo/hippo19.prm"},
 };
 
 // The fixture of a given name. Cases look their fixture up by name so that
@@ -138,14 +141,20 @@ TEST_CASE("TESTGRAD-11_hippo_ast_l05", "[ff][testgrad][hippo]") { runFixture(fx(
 // Ewald dispersion of a decoupled DMSO, whose reciprocal and self terms follow
 // the van der Waals lambda (test_testgrad.f case 16).
 TEST_CASE("TESTGRAD-16_hippo_dewald_dec_l05", "[ff][testgrad][hippo][disp]") { runFixture(fx("16_hippo_dewald_dec_l05")); }
+// Damped dispersion of a decoupled DMSO with a DISP-SOFTCORE switch radius that
+// reaches the closest mutated pairs and non-integer exponents, under Ewald
+// summation by neighbor list (test_testgrad.f case 19). Case 20 needs replica
+// images, which tinker9 does not have.
+TEST_CASE("TESTGRAD-19_hippo_disp_sc_l04", "[ff][testgrad][hippo][disp]") { runFixture(fx("19_hippo_disp_sc_l04")); }
 // Pauli repulsion of a decoupled DMSO with a non-integer REPEL-SOFTCORE
 // exponent and shift shape, by neighbor list (test_testgrad.f case 18).
 TEST_CASE("TESTGRAD-18_hippo_rep_sc_real_l04", "[ff][testgrad][hippo][repel]") { runFixture(fx("18_hippo_rep_sc_real_l04")); }
-// tinker9 applies no group weights to the multipoles, so it refuses the key
-// rather than compute the unweighted energy (test_testgrad.f cases 12 to 15).
+// tinker9 applies no atom group weights to any term, so it refuses these keys
+// rather than compute the unweighted energy (test_testgrad.f cases 12 to 15,
+// 17 with charge transfer alone, and 21 with Ewald dispersion alone).
 TEST_CASE("TESTGRAD-12_hipwat_group_inter", "[ff][testgrad][hippo]") { runRefusedFixture(fx("12_hipwat_group_inter")); }
-// Nor to charge transfer, which this key turns on alone (test_testgrad.f case 17).
 TEST_CASE("TESTGRAD-17_hipwat_group_ct_replica", "[ff][testgrad][hippo]") { runRefusedFixture(fx("17_hipwat_group_ct_replica")); }
+TEST_CASE("TESTGRAD-21_hippo_dewald_group_l04", "[ff][testgrad][hippo][disp]") { runRefusedFixture(fx("21_hippo_dewald_group_l04")); }
 
 #if TINKER_GPULANG_CUDA
 TEST_CASE("TESTGRAD-04_water_ast_ye_l10", "[ff][testgrad][ast]") { runFixture(fx("04_water_ast_ye_l10")); }

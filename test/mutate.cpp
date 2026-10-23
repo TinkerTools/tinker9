@@ -8,6 +8,7 @@
 #include "ff/elec.h"
 #include "ff/energy.h"
 #include "ff/evdw.h"
+#include "ff/hippo/edisp.h"
 #include "ff/hippo/erepel.h"
 #include "ff/modamoeba.h"
 #include "ff/modhippo.h"
@@ -814,7 +815,7 @@ void runScexpTiFixture(const Fixture& fx)
 // A soft core Pauli repulsion parameter outside its allowed range is reset to
 // its default (mutate.f), n and m together if n is not above m/2, so each of
 // these keys must run, lambda derivatives included (test_mutate_repsc). The
-// dispersion case there stops in Fortran setup and cannot run in process.
+// last case turns on every HIPPO term, damped dispersion included.
 struct RepscCase
 {
    const char* key;
@@ -845,6 +846,55 @@ void runRepscCase(const RepscCase& c)
    REQUIRE(devdl == dedl);
 
    s.session.end();
+}
+
+// A soft core damped dispersion parameter outside its allowed range is reset
+// to its default (mutate.f): a switch radius that is negative or reaches the
+// dispersion cutoff, or the start of its taper with the long range correction,
+// an exponent below one, a nonpositive added exponent, and with "lambda-deriv2"
+// an exponent between one and two or an exponent sum below two. Each key must
+// then give the energy of a key that holds the reset values (test_mutate_dspsc).
+// Lambda derivatives with the long range correction stop in Fortran setup and
+// cannot run in process.
+struct DspscCase
+{
+   const char* key;
+   const char* refkey;
+   double rs, n, q;
+};
+
+static double dspscEnergy(const char* key, const DspscCase& c, bool deriv)
+{
+   INFO(key);
+   Fixture fx = {key, "hipwat", false, false, false, true};
+   Setup s(fx, calc::xyz | calc::mass | calc::vmask);
+   REQUIRE(use(Potent::DISP));
+   REQUIRE(mutant::scrdsp == c.rs);
+   REQUIRE(mutant::scexpd == c.n);
+   REQUIRE(mutant::scexpdq == c.q);
+   REQUIRE(scrdsp == c.rs);
+   REQUIRE(scexpd == c.n);
+   REQUIRE(scexpdq == c.q);
+
+   energy(calc::v1);
+   const double e = esum;
+   REQUIRE(std::isfinite(e));
+   if (deriv) {
+      REQUIRE(use_vdlmda);
+      REQUIRE(std::isfinite(dedl));
+      REQUIRE(std::isfinite(d2edl2));
+      REQUIRE(dedl != 0);
+      REQUIRE(devdl == dedl);
+   }
+   s.session.end();
+   return e;
+}
+
+void runDspscCase(const DspscCase& c, bool deriv)
+{
+   const double e = dspscEnergy(c.key, c, deriv);
+   const double eref = dspscEnergy(c.refkey, c, deriv);
+   REQUIRE(e == eref);
 }
 
 // One multipole or polarization result of runFlatFixture.
@@ -1620,9 +1670,25 @@ TEST_CASE("MUTATE-repsc", "[ff][mutate][repsc]")
       {"rsoft_n18_d1", 1, 1.8, 0, 2},
       {"rsoft_p15_d1", 1, 5, 3, 1.5},
       {"rsoft_default_d2", 1, 5, 3, 1},
+      {"rsoft_disp_d2", 1, 5, 3, 1},
    };
    for (const auto& c : cases)
       runRepscCase(c);
+}
+
+TEST_CASE("MUTATE-dspsc", "[ff][mutate][dspsc][disp]")
+{
+   const DspscCase deriv[] = {
+      {"dsoft_rs_neg_d1", "dsoft_default_d1", 2, 4, 1},
+      {"dsoft_n05_d1", "dsoft_default_d1", 2, 4, 1},
+      {"dsoft_q0_d1", "dsoft_default_d1", 2, 4, 1},
+      {"dsoft_n15_d2", "dsoft_default_d1", 2, 4, 1},
+      {"dsoft_n1_q05_d2", "dsoft_n1_d1", 2, 1, 1},
+      {"dsoft_rs_big_d1", "dsoft_box_d1", 2, 4, 1},
+   };
+   for (const auto& c : deriv)
+      runDspscCase(c, true);
+   runDspscCase({"dsoft_rs_taper_d0", "dsoft_box_dcorr_d0", 2, 4, 1}, false);
 }
 
 TEST_CASE("MUTATE-flags", "[ff][mutate][flags]")

@@ -7,6 +7,7 @@
 #include "seq/bsplgen.h"
 #include "seq/pair_disp.h"
 #include "tool/gpucard.h"
+#include <cassert>
 
 namespace tinker {
 template <bool DO_E, bool DO_V>
@@ -133,6 +134,8 @@ static void pmeConvDisp_acc1(PMEUnit pme_u, EnergyBuffer gpu_e, VirialBuffer gpu
 
 void pmeConvDisp_acc(int vers, DispSplit ds)
 {
+   assert(not(vers & calc::dlmda) && "damped dispersion lambda derivatives are CUDA only");
+   vers &= ~calc::dlmda;
    bool do_e = vers & calc::energy;
    bool do_v = vers & calc::virial;
    PMEUnit u = dpme_unit;
@@ -148,7 +151,7 @@ void pmeConvDisp_acc(int vers, DispSplit ds)
 }
 
 template <class Ver, class DTYP>
-static void edisp_acc1()
+static void edisp_acc1(DispSoft ds)
 {
    constexpr bool do_e = Ver::e;
    constexpr bool do_a = Ver::a;
@@ -173,7 +176,7 @@ static void edisp_acc1()
 
    #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,dedspx,dedspy,dedspz,ndisp,edsp,vir_edsp,\
-               csix,adisp,dspexclude,dspexclude_scale,mut)
+               csix,adisp,dspexclude,dspexclude_scale,mut) firstprivate(ds)
    #pragma acc loop independent
    for (int ii = 0; ii < ndspexclude; ++ii) {
       int offset = ii & (bufsize - 1);
@@ -198,9 +201,9 @@ static void edisp_acc1()
          real r = REAL_SQRT(r2);
          real rr1 = REAL_RECIP(r);
          real e0, de0, e1, de1;
-         real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
-         pair_disp<do_g, DTYP, 0, 1>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak, vlambda, cut, off, e0, de0);
-         pair_disp<do_g, DTYP, 1, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, vlambda, cut, off, e1, de1);
+         bool mutik = pair_mutik(vcouple, imut, kmut);
+         pair_disp<do_g, DTYP, 0>(r, r2, rr1, scalea, aewald, ci, ai, ck, ak, mutik, ds, cut, off, e0, de0);
+         pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, mutik, ds, cut, off, e1, de1);
          real e, de;
          e = e0 - e1;
          if CONSTEXPR (do_e) {
@@ -243,7 +246,8 @@ static void edisp_acc1()
    MAYBE_UNUSED int ngrid = gpuGridSize(BLOCK_DIM);
    #pragma acc parallel async present(lvec1,lvec2,lvec3,recipa,recipb,recipc)\
                deviceptr(x,y,z,dedspx,dedspy,dedspz,ndisp,edsp,vir_edsp,\
-               csix,adisp,nlst,lst,mut) num_gangs(ngrid) vector_length(BLOCK_DIM)
+               csix,adisp,nlst,lst,mut) firstprivate(ds)\
+               num_gangs(ngrid) vector_length(BLOCK_DIM)
    #pragma acc loop gang independent
    for (int i = 0; i < n; ++i) {
       int offset = i & (bufsize - 1);
@@ -273,8 +277,8 @@ static void edisp_acc1()
             real r = REAL_SQRT(r2);
             real rr1 = REAL_RECIP(r);
             real e, de;
-            real vlambda = pair_vlambda(vlam, vcouple, imut, kmut);
-            pair_disp<do_g, DTYP, 1, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, vlambda, cut, off, e, de);
+            bool mutik = pair_mutik(vcouple, imut, kmut);
+            pair_disp<do_g, DTYP, 1>(r, r2, rr1, 1, aewald, ci, ai, ck, ak, mutik, ds, cut, off, e, de);
             if CONSTEXPR (do_e) {
                etl += e;
             }
@@ -324,36 +328,40 @@ static void edisp_acc1()
    }
 }
 
-void edispNonEwald_acc(int vers)
+void edispNonEwald_acc(int vers, DispSoft ds)
 {
+   assert(not(vers & calc::dlmda) && "damped dispersion lambda derivatives are CUDA only");
+   vers &= ~calc::dlmda;
    if (vers == calc::v0)
-      edisp_acc1<calc::V0, NON_EWALD_TAPER>();
+      edisp_acc1<calc::V0, NON_EWALD_TAPER>(ds);
    else if (vers == calc::v1)
-      edisp_acc1<calc::V1, NON_EWALD_TAPER>();
+      edisp_acc1<calc::V1, NON_EWALD_TAPER>(ds);
    else if (vers == calc::v3)
-      edisp_acc1<calc::V3, NON_EWALD_TAPER>();
+      edisp_acc1<calc::V3, NON_EWALD_TAPER>(ds);
    else if (vers == calc::v4)
-      edisp_acc1<calc::V4, NON_EWALD_TAPER>();
+      edisp_acc1<calc::V4, NON_EWALD_TAPER>(ds);
    else if (vers == calc::v5)
-      edisp_acc1<calc::V5, NON_EWALD_TAPER>();
+      edisp_acc1<calc::V5, NON_EWALD_TAPER>(ds);
    else if (vers == calc::v6)
-      edisp_acc1<calc::V6, NON_EWALD_TAPER>();
+      edisp_acc1<calc::V6, NON_EWALD_TAPER>(ds);
 }
 
-void edispEwaldReal_acc(int vers)
+void edispEwaldReal_acc(int vers, DispSoft ds)
 {
+   assert(not(vers & calc::dlmda) && "damped dispersion lambda derivatives are CUDA only");
+   vers &= ~calc::dlmda;
    if (vers == calc::v0)
-      edisp_acc1<calc::V0, DEWALD>();
+      edisp_acc1<calc::V0, DEWALD>(ds);
    else if (vers == calc::v1)
-      edisp_acc1<calc::V1, DEWALD>();
+      edisp_acc1<calc::V1, DEWALD>(ds);
    else if (vers == calc::v3)
-      edisp_acc1<calc::V3, DEWALD>();
+      edisp_acc1<calc::V3, DEWALD>(ds);
    else if (vers == calc::v4)
-      edisp_acc1<calc::V4, DEWALD>();
+      edisp_acc1<calc::V4, DEWALD>(ds);
    else if (vers == calc::v5)
-      edisp_acc1<calc::V5, DEWALD>();
+      edisp_acc1<calc::V5, DEWALD>(ds);
    else if (vers == calc::v6)
-      edisp_acc1<calc::V6, DEWALD>();
+      edisp_acc1<calc::V6, DEWALD>(ds);
 }
 
 template <class Ver, int bsorder>
@@ -477,6 +485,8 @@ static void edisp_acc2(DispSplit ds)
 
 void edispEwaldRecipSelf_acc(int vers, DispSplit ds)
 {
+   assert(not(vers & calc::dlmda) && "damped dispersion lambda derivatives are CUDA only");
+   vers &= ~calc::dlmda;
    constexpr int order = 4;
    assert(dpme_unit->bsorder == order);
    if (vers == calc::v0)

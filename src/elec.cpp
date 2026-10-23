@@ -22,7 +22,6 @@
 #include <tinker/detail/couple.hh>
 #include <tinker/detail/dlmda.hh>
 #include <tinker/detail/extfld.hh>
-#include <tinker/detail/group.hh>
 #include <tinker/detail/kchrge.hh>
 #include <tinker/detail/limits.hh>
 #include <tinker/detail/mplpot.hh>
@@ -103,20 +102,6 @@ void pchgEnsureElec()
    // the fused charge and Lennard-Jones kernel keeps a sorted copy
    if (clistVersion() & Nbl::SPATIAL)
       cspatial_v2_unit->fresh |= cspatial_fresh_mask_echglj;
-}
-
-// Whether any pair of atom groups interacts with a weight other than one
-// (group.f), which the multipole, polarization, repulsion and charge transfer
-// kernels never apply.
-static bool groupsWeighted()
-{
-   if (not group::use_group)
-      return false;
-   for (int i = 0; i <= group::ngrp; ++i)
-      for (int j = 0; j <= group::ngrp; ++j)
-         if (group::wgrp[j + i * (1 + sizes::maxgrp)] != 1)
-            return true;
-   return false;
 }
 
 TINKER_FVOID2(cpp0, cu1, mpoleDataBinding, RcOp);
@@ -971,10 +956,6 @@ bool useEwald()
 void elecData(RcOp op)
 {
    if (op & RcOp::INIT) {
-      // Charge transfer never reaches mpoleData, so the refusal comes here,
-      // before pmeData, which a throw would leave open.
-      if ((use(Potent::MPOLE) or use(Potent::POLAR) or use(Potent::REPULS) or use(Potent::CHGTRN)) and groupsWeighted())
-         TINKER_THROW("Group weights are not supported for multipoles, polarization, repulsion or charge transfer.");
       electric = chgpot::electric;
       dielec = chgpot::dielec;
       elam = mutant::elambda;

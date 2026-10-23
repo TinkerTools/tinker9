@@ -149,8 +149,9 @@ static LambdaEvaluation evaluateAtOffset(const FdLambdaState& state, LambdaVaria
 
    LambdaEvaluation eout;
    copyEnergy(calc::energy, &eout.energy.total);
-   // Pauli repulsion follows the van der Waals lambda and counts with it
-   // (testlmda.f); energy_vdw already holds energy_er.
+   // Pauli repulsion and damped dispersion follow the van der Waals lambda and
+   // count with it (testlmda.f); energy_vdw already holds energy_er and
+   // energy_edsp.
    eout.energy.vdw = energy_vdw;
    eout.energy.mpole = energy_em;
    // Charge transfer follows the polarization lambda and counts with it

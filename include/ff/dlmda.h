@@ -599,8 +599,9 @@ void polarLmdaFlush(int vers);
 
 /// \ingroup ff
 /// The van der Waals lambda channels, devdl_buf and d2evdl2_buf, which Pauli
-/// repulsion shares with van der Waals (erepel1.f adds to devdl), managed as
-/// polarLmdaData() manages the polarization ones.
+/// repulsion and damped dispersion share with van der Waals (erepel1.f and
+/// edisp1.f add to devdl), managed as polarLmdaData() manages the polarization
+/// ones.
 void vdwLmdaData(RcOp op);
 void vdwLmdaZero(int vers);
 void vdwLmdaFlush(int vers);
